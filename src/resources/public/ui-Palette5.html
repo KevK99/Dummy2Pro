@@ -1,0 +1,228 @@
+<!-- ui-snippets-palette5.html  |  Palette 5: Business Dark (ruhig, professionell) -->
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>UI Snippets – Palette 5 (Business Dark)</title>
+</head>
+
+<body class="min-h-screen bg-slate-950 text-slate-100">
+<div class="mx-auto max-w-6xl px-6 py-10 space-y-10">
+
+    <!-- Header -->
+    <header class="flex items-start justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-extrabold tracking-tight">UI Snippets – Palette 5</h1>
+            <p class="mt-2 text-slate-300">Business Dark: neutral, ruhig, indigo als Primary. Success/Warn/Danger bleiben klar.</p>
+        </div>
+        <span class="rounded-full bg-slate-900 px-3 py-1 text-xs font-bold ring-1 ring-slate-700/40">Palette 5</span>
+    </header>
+
+    <!-- ===================================================== -->
+    <!-- COMPONENT: PageShell (Business Dark) -->
+    <!-- ===================================================== -->
+    <section class="rounded-2xl bg-slate-900 p-6 ring-1 ring-slate-700/40">
+        <h2 class="text-lg font-bold">PageShell / Surface</h2>
+        <p class="mt-2 text-slate-300">Standard-Fläche für Seiten und größere Bereiche.</p>
+        <div class="mt-4 rounded-xl bg-slate-950/30 p-4 ring-1 ring-slate-700/40">
+            <p class="text-sm text-slate-300">Inner Surface (z. B. Panel/Inset)</p>
+        </div>
+    </section>
+
+    <!-- ===================================================== -->
+    <!-- COMPONENT: Buttons -->
+    <!-- ===================================================== -->
+    <section class="rounded-2xl bg-slate-900 p-6 ring-1 ring-slate-700/40">
+        <h2 class="text-lg font-bold">Buttons</h2>
+        <p class="mt-2 text-slate-300">Primary = indigo, Secondary = neutral, Danger optional.</p>
+
+        <div class="mt-5 flex flex-wrap items-center gap-3">
+            <!-- Button Primary -->
+            <a href="#"
+               class="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white hover:bg-indigo-500">
+                Primary
+            </a>
+
+            <!-- Button Secondary -->
+            <button
+                    class="rounded-xl border border-slate-600/60 bg-slate-950/30 px-5 py-3 text-sm font-bold text-slate-100 hover:bg-slate-800/50">
+                Secondary
+            </button>
+
+            <!-- Button Ghost -->
+            <button class="rounded-xl px-5 py-3 text-sm font-bold text-slate-200 hover:bg-slate-800/40">
+                Ghost
+            </button>
+
+            <!-- Button Danger (optional) -->
+            <button class="rounded-xl bg-rose-600 px-5 py-3 text-sm font-bold text-white hover:bg-rose-500">
+                Danger Action
+            </button>
+        </div>
+    </section>
+
+    <!-- ===================================================== -->
+    <!-- COMPONENT: Badges / Status Pills (tinted) -->
+    <!-- ===================================================== -->
+    <section class="rounded-2xl bg-slate-900 p-6 ring-1 ring-slate-700/40">
+        <h2 class="text-lg font-bold">Badges / Status</h2>
+        <p class="mt-2 text-slate-300">Nicht knallig, sondern “tinted” + Ring (professioneller).</p>
+
+        <div class="mt-5 flex flex-wrap items-center gap-3">
+            <!-- Neutral -->
+            <span class="rounded-full bg-slate-950/40 px-3 py-1 text-xs font-bold text-slate-200 ring-1 ring-slate-700/40">
+          Neutral
+        </span>
+
+            <!-- Success -->
+            <span class="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-200 ring-1 ring-emerald-500/30">
+          ✅ erreicht
+        </span>
+
+            <!-- Warning -->
+            <span class="inline-flex items-center gap-2 rounded-full bg-amber-400/10 px-3 py-1 text-xs font-bold text-amber-200 ring-1 ring-amber-400/30">
+          ⏳ offen
+        </span>
+
+            <!-- Danger -->
+            <span class="inline-flex items-center gap-2 rounded-full bg-rose-500/10 px-3 py-1 text-xs font-bold text-rose-200 ring-1 ring-rose-500/30">
+          ❌ zu wenig
+        </span>
+
+            <!-- Category Chip -->
+            <span class="inline-flex items-center gap-2 rounded-full bg-indigo-600/10 px-3 py-1 text-xs font-bold text-indigo-200 ring-1 ring-indigo-600/30">
+          Kategorie: JOINs
+        </span>
+        </div>
+    </section>
+
+    <!-- ===================================================== -->
+    <!-- COMPONENT: Card -->
+    <!-- ===================================================== -->
+    <section class="rounded-2xl bg-slate-900 p-6 ring-1 ring-slate-700/40">
+        <h2 class="text-lg font-bold">Card</h2>
+        <p class="mt-2 text-slate-300">Standard-Card für Inhalte.</p>
+
+        <div class="mt-4 rounded-2xl bg-slate-950/25 p-6 ring-1 ring-slate-700/40">
+            <h3 class="text-base font-bold">Card Title</h3>
+            <p class="mt-2 text-slate-300">Text…</p>
+            <div class="mt-5 flex flex-wrap gap-3">
+                <a class="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white hover:bg-indigo-500" href="#">
+                    Primary
+                </a>
+                <button class="rounded-xl border border-slate-600/60 bg-slate-950/30 px-5 py-3 text-sm font-bold text-slate-100 hover:bg-slate-800/50">
+                    Secondary
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================================================== -->
+    <!-- COMPONENT: Table -->
+    <!-- ===================================================== -->
+    <section class="rounded-2xl bg-slate-900 p-6 ring-1 ring-slate-700/40">
+        <div class="flex items-center justify-between gap-3">
+            <h2 class="text-lg font-bold">Table</h2>
+            <span class="rounded-full bg-slate-950/40 px-3 py-1 text-xs font-bold text-slate-200 ring-1 ring-slate-700/40">Stand</span>
+        </div>
+
+        <div class="mt-4 overflow-hidden rounded-2xl ring-1 ring-slate-700/40">
+            <table class="w-full text-left text-sm">
+                <thead class="bg-slate-950/40 text-slate-200">
+                <tr>
+                    <th class="px-4 py-3 font-bold">Thema</th>
+                    <th class="px-4 py-3 font-bold">Punkte</th>
+                    <th class="px-4 py-3 font-bold">Status</th>
+                </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-700/40 bg-slate-950/20">
+                <tr class="hover:bg-slate-800/30">
+                    <td class="px-4 py-3 font-semibold">SQL</td>
+                    <td class="px-4 py-3 text-slate-200">22 / 20</td>
+                    <td class="px-4 py-3">
+                <span class="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-200 ring-1 ring-emerald-500/30">
+                  ✅ erreicht
+                </span>
+                    </td>
+                </tr>
+
+                <tr class="hover:bg-slate-800/30">
+                    <td class="px-4 py-3 font-semibold">Netzwerke</td>
+                    <td class="px-4 py-3 text-slate-200">14 / 20</td>
+                    <td class="px-4 py-3">
+                <span class="inline-flex items-center gap-2 rounded-full bg-amber-400/10 px-3 py-1 text-xs font-bold text-amber-200 ring-1 ring-amber-400/30">
+                  ⏳ offen
+                </span>
+                    </td>
+                </tr>
+
+                <tr class="hover:bg-slate-800/30">
+                    <td class="px-4 py-3 font-semibold">OOP</td>
+                    <td class="px-4 py-3 text-slate-200">8 / 20</td>
+                    <td class="px-4 py-3">
+                <span class="inline-flex items-center gap-2 rounded-full bg-rose-500/10 px-3 py-1 text-xs font-bold text-rose-200 ring-1 ring-rose-500/30">
+                  ❌ zu wenig
+                </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ===================================================== -->
+    <!-- COMPONENT: Question (MC) -->
+    <!-- ===================================================== -->
+    <section class="rounded-2xl bg-slate-900 p-6 ring-1 ring-slate-700/40">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <h2 class="text-lg font-bold">Frage 12 / 40</h2>
+            <div class="flex flex-wrap gap-2">
+                <span class="rounded-full bg-slate-950/40 px-3 py-1 text-xs font-bold text-slate-200 ring-1 ring-slate-700/40">Thema: SQL</span>
+                <span class="inline-flex items-center gap-2 rounded-full bg-indigo-600/10 px-3 py-1 text-xs font-bold text-indigo-200 ring-1 ring-indigo-600/30">
+            Kategorie: JOINs
+          </span>
+            </div>
+        </div>
+
+        <div class="mt-4 rounded-xl bg-slate-950/30 p-4 ring-1 ring-slate-700/40">
+            <p class="text-base font-semibold">Welche Aussage beschreibt einen INNER JOIN am besten?</p>
+            <p class="mt-1 text-sm text-slate-300">Wähle genau eine Antwort aus.</p>
+        </div>
+
+        <div class="mt-4 space-y-3">
+            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-600/60 bg-slate-950/10 p-4 hover:bg-slate-800/30">
+                <input type="radio" name="q12" class="mt-1 accent-indigo-600" />
+                <span class="text-slate-200"><span class="font-bold">A)</span> Gibt alle Zeilen aus A zurück, auch ohne Treffer in B</span>
+            </label>
+
+            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-600/60 bg-slate-950/10 p-4 hover:bg-slate-800/30">
+                <input type="radio" name="q12" class="mt-1 accent-indigo-600" />
+                <span class="text-slate-200"><span class="font-bold">B)</span> Gibt nur Zeilen zurück, die in beiden Tabellen passende Werte haben</span>
+            </label>
+
+            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-600/60 bg-slate-950/10 p-4 hover:bg-slate-800/30">
+                <input type="radio" name="q12" class="mt-1 accent-indigo-600" />
+                <span class="text-slate-200"><span class="font-bold">C)</span> Gibt alle Zeilen aus beiden Tabellen zurück (Vereinigung)</span>
+            </label>
+
+            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-600/60 bg-slate-950/10 p-4 hover:bg-slate-800/30">
+                <input type="radio" name="q12" class="mt-1 accent-indigo-600" />
+                <span class="text-slate-200"><span class="font-bold">D)</span> Gibt nur Zeilen zurück, die keinen Treffer haben</span>
+            </label>
+        </div>
+
+        <div class="mt-6 flex flex-wrap gap-3">
+            <button class="rounded-xl border border-slate-600/60 bg-slate-950/30 px-5 py-3 text-sm font-bold text-slate-100 hover:bg-slate-800/50">
+                Zurück
+            </button>
+            <button class="rounded-xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white hover:bg-indigo-500">
+                Antwort prüfen
+            </button>
+        </div>
+    </section>
+
+</div>
+</body>
+</html>

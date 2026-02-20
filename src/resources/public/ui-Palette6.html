@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>UI Test – Palette 6 (School Adult Hell)</title>
+</head>
+
+<body class="min-h-screen bg-slate-50 text-slate-900">
+<div class="mx-auto max-w-6xl px-6 py-10 space-y-8">
+
+    <!-- Header -->
+    <header class="flex items-start justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-extrabold tracking-tight">UI Komponenten – Palette 6</h1>
+            <p class="mt-2 text-slate-600">School Adult (Hell): klar, ruhig, erwachsen (blue + neutrals)</p>
+        </div>
+        <span class="rounded-full bg-blue-600/10 px-3 py-1 text-xs font-bold text-blue-700 ring-1 ring-blue-600/20">
+        Blue
+      </span>
+    </header>
+
+    <!-- Card -->
+    <section class="rounded-2xl bg-white p-6 ring-1 ring-slate-200">
+        <h2 class="text-lg font-bold">Card Title</h2>
+        <p class="mt-2 text-slate-600">Text…</p>
+
+        <div class="mt-5 flex flex-wrap items-center gap-3">
+            <a href="#"
+               class="inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-500">
+                Primary
+            </a>
+
+            <button class="rounded-xl border border-slate-300 px-5 py-3 text-sm font-bold hover:bg-slate-100">
+                Secondary
+            </button>
+
+            <span class="rounded-full bg-emerald-600 px-3 py-1 text-xs font-bold text-white">Success</span>
+            <span class="rounded-full bg-amber-500 px-3 py-1 text-xs font-bold text-slate-900">Warning</span>
+            <span class="rounded-full bg-red-600 px-3 py-1 text-xs font-bold text-white">Danger</span>
+        </div>
+    </section>
+
+    <!-- Table -->
+    <section class="rounded-2xl bg-white p-6 ring-1 ring-slate-200">
+        <div class="flex items-center justify-between gap-3">
+            <h2 class="text-lg font-bold">Themenübersicht</h2>
+            <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700 ring-1 ring-slate-200">Stand</span>
+        </div>
+
+        <div class="mt-4 overflow-hidden rounded-2xl ring-1 ring-slate-200">
+            <table class="w-full text-left text-sm">
+                <thead class="bg-slate-50 text-slate-700">
+                <tr>
+                    <th class="px-4 py-3 font-bold">Thema</th>
+                    <th class="px-4 py-3 font-bold">Punkte</th>
+                    <th class="px-4 py-3 font-bold">Status</th>
+                </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200 bg-white">
+                <tr class="hover:bg-slate-50">
+                    <td class="px-4 py-3 font-semibold">SQL</td>
+                    <td class="px-4 py-3">22 / 20</td>
+                    <td class="px-4 py-3">
+                <span class="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700 ring-1 ring-emerald-200">
+                  ✅ erreicht
+                </span>
+                    </td>
+                </tr>
+
+                <tr class="hover:bg-slate-50">
+                    <td class="px-4 py-3 font-semibold">Netzwerke</td>
+                    <td class="px-4 py-3">14 / 20</td>
+                    <td class="px-4 py-3">
+                <span class="inline-flex items-center gap-2 rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700 ring-1 ring-amber-200">
+                  ⏳ offen
+                </span>
+                    </td>
+                </tr>
+
+                <tr class="hover:bg-slate-50">
+                    <td class="px-4 py-3 font-semibold">OOP</td>
+                    <td class="px-4 py-3">8 / 20</td>
+                    <td class="px-4 py-3">
+                <span class="inline-flex items-center gap-2 rounded-full bg-red-50 px-3 py-1 text-xs font-bold text-red-700 ring-1 ring-red-200">
+                  ❌ zu wenig
+                </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Question -->
+    <section class="rounded-2xl bg-white p-6 ring-1 ring-slate-200">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <h2 class="text-lg font-bold">Frage 12 / 40</h2>
+            <div class="flex flex-wrap gap-2">
+                <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700 ring-1 ring-slate-200">Thema: SQL</span>
+                <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700 ring-1 ring-blue-200">
+            Kategorie: JOINs
+          </span>
+                <span class="rounded-full bg-slate-900 px-3 py-1 text-xs font-bold text-white">
+            Fokus: Prüfung
+          </span>
+            </div>
+        </div>
+
+        <div class="mt-4 rounded-xl bg-slate-50 p-4 ring-1 ring-slate-200">
+            <p class="text-base font-semibold">Welche Aussage beschreibt einen INNER JOIN am besten?</p>
+            <p class="mt-1 text-sm text-slate-600">Wähle genau eine Antwort aus.</p>
+        </div>
+
+        <div class="mt-4 space-y-3">
+            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-300 p-4 hover:bg-slate-50">
+                <input type="radio" name="q12" class="mt-1 accent-blue-600" />
+                <span><span class="font-bold">A)</span> Gibt alle Zeilen aus A zurück, auch ohne Treffer in B</span>
+            </label>
+
+            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-300 p-4 hover:bg-slate-50">
+                <input type="radio" name="q12" class="mt-1 accent-blue-600" />
+                <span><span class="font-bold">B)</span> Gibt nur Zeilen zurück, die in beiden Tabellen passende Werte haben</span>
+            </label>
+
+            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-300 p-4 hover:bg-slate-50">
+                <input type="radio" name="q12" class="mt-1 accent-blue-600" />
+                <span><span class="font-bold">C)</span> Gibt alle Zeilen aus beiden Tabellen zurück (Vereinigung)</span>
+            </label>
+
+            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-300 p-4 hover:bg-slate-50">
+                <input type="radio" name="q12" class="mt-1 accent-blue-600" />
+                <span><span class="font-bold">D)</span> Gibt nur Zeilen zurück, die keinen Treffer haben</span>
+            </label>
+        </div>
+
+        <div class="mt-6 flex flex-wrap gap-3">
+            <button class="rounded-xl border border-slate-300 px-5 py-3 text-sm font-bold hover:bg-slate-100">
+                Zurück
+            </button>
+            <button class="rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-500">
+                Antwort prüfen
+            </button>
+        </div>
+    </section>
+
+</div>
+</body>
+</html>
