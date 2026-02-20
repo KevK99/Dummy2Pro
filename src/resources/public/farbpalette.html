@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>UI-Palette</title>
+</head>
+
+<body class="min-h-screen bg-slate-950 text-slate-100">
+<div class="mx-auto max-w-7xl px-6 py-10">
+    <header class="mb-8">
+        <h1 class="text-3xl font-extrabold tracking-tight">Farbpalette</h1>
+        <p class="mt-2 text-slate-300">
+            Jede Spalte ist ein Vorschlag.
+        </p>
+    </header>
+
+    <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+        <!-- Palette 1: Dark + Indigo -->
+        <section class="rounded-2xl bg-slate-900/60 p-5 ring-1 ring-white/10">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <h2 class="text-lg font-bold">1) Dark + Indigo</h2>
+                    <p class="text-sm text-slate-300">Clean, modern, “Tech-Spiel”</p>
+                </div>
+                <span class="rounded-full bg-indigo-500 px-3 py-1 text-xs font-bold">Akzent</span>
+            </div>
+
+            <div class="mt-4 grid grid-cols-2 gap-3">
+                <div class="rounded-xl bg-slate-950 p-3 ring-1 ring-white/10">
+                    <p class="text-xs font-semibold text-slate-300">Background</p>
+                    <p class="mt-1 text-sm font-bold">slate-950</p>
+                </div>
+                <div class="rounded-xl bg-slate-900 p-3 ring-1 ring-white/10">
+                    <p class="text-xs font-semibold text-slate-300">Surface</p>
+                    <p class="mt-1 text-sm font-bold">slate-900</p>
+                </div>
+                <div class="rounded-xl bg-indigo-500 p-3 text-white">
+                    <p class="text-xs font-semibold opacity-90">Primary</p>
+                    <p class="mt-1 text-sm font-bold">indigo-500</p>
+                </div>
+                <div class="rounded-xl bg-emerald-500 p-3 text-white">
+                    <p class="text-xs font-semibold opacity-90">Success</p>
+                    <p class="mt-1 text-sm font-bold">emerald-500</p>
+                </div>
+                <div class="rounded-xl bg-amber-400 p-3 text-slate-900">
+                    <p class="text-xs font-semibold opacity-90">Warning</p>
+                    <p class="mt-1 text-sm font-bold">amber-400</p>
+                </div>
+                <div class="rounded-xl bg-rose-500 p-3 text-white">
+                    <p class="text-xs font-semibold opacity-90">Danger</p>
+                    <p class="mt-1 text-sm font-bold">rose-500</p>
+                </div>
+            </div>
+
+            <div class="mt-4 flex gap-3">
+                <button class="rounded-xl bg-indigo-500 px-4 py-2 text-sm font-bold text-white hover:bg-indigo-400">Primary</button>
+                <button class="rounded-xl border border-slate-700 px-4 py-2 text-sm font-bold hover:bg-slate-900">Secondary</button>
+            </div>
+        </section>
+
+        <!-- Palette 2: Cyber (Cyan + Fuchsia) -->
+        <section class="rounded-2xl bg-zinc-900/60 p-5 ring-1 ring-white/10">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <h2 class="text-lg font-bold">2) Cyber</h2>
+                    <p class="text-sm text-slate-300">Neon, sci-fi, auffällig</p>
+                </div>
+                <span class="rounded-full bg-cyan-400 px-3 py-1 text-xs font-bold text-slate-900">Akzent</span>
+            </div>
+
+            <div class="mt-4 grid grid-cols-2 gap-3">
+                <div class="rounded-xl bg-zinc-950 p-3 ring-1 ring-white/10">
+                    <p class="text-xs font-semibold text-slate-300">Background</p>
+                    <p class="mt-1 text-sm font-bold">zinc-950</p>
+                </div>
+                <div class="rounded-xl bg-zinc-900 p-3 ring-1 ring-white/10">
+                    <p class="text-xs font-semibold text-slate-300">Surface</p>
+                    <p class="mt-1 text-sm font-bold">zinc-900</p>
+                </div>
+                <div class="rounded-xl bg-cyan-400 p-3 text-slate-900">
+                    <p class="text-xs font-semibold opacity-90">Primary</p>
+                    <p class="mt-1 text-sm font-bold">cyan-400</p>
+                </div>
+                <div class="rounded-xl bg-fuchsia-500 p-3 text-white">
+                    <p class="text-xs font-semibold opacity-90">Accent</p>
+                    <p class="mt-1 text-sm font-bold">fuchsia-500</p>
+                </div>
+                <div class="rounded-xl bg-amber-300 p-3 text-slate-900">
+                    <p class="text-xs font-semibold opacity-90">Warning</p>
+                    <p class="mt-1 text-sm font-bold">amber-300</p>
+                </div>
+                <div class="rounded-xl bg-red-500 p-3 text-white">
+                    <p class="text-xs font-semibold opacity-90">Danger</p>
+                    <p class="mt-1 text-sm font-bold">red-500</p>
+                </div>
+            </div>
+
+            <div class="mt-4 flex gap-3">
+                <button class="rounded-xl bg-cyan-400 px-4 py-2 text-sm font-bold text-slate-900 hover:bg-cyan-300">Primary</button>
+                <button class="rounded-xl border border-zinc-700 px-4 py-2 text-sm font-bold hover:bg-zinc-900">Secondary</button>
+            </div>
+        </section>
+
+        <!-- Palette 3: Mystic (Violet + Emerald) -->
+        <section class="rounded-2xl bg-slate-900/60 p-5 ring-1 ring-white/10">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <h2 class="text-lg font-bold">3) Mystic</h2>
+                    <p class="text-sm text-slate-300">Fantasy/Quest, edel</p>
+                </div>
+                <span class="rounded-full bg-violet-500 px-3 py-1 text-xs font-bold">Akzent</span>
+            </div>
+
+            <div class="mt-4 grid grid-cols-2 gap-3">
+                <div class="rounded-xl bg-slate-950 p-3 ring-1 ring-white/10">
+                    <p class="text-xs font-semibold text-slate-300">Background</p>
+                    <p class="mt-1 text-sm font-bold">slate-950</p>
+                </div>
+                <div class="rounded-xl bg-slate-900 p-3 ring-1 ring-white/10">
+                    <p class="text-xs font-semibold text-slate-300">Surface</p>
+                    <p class="mt-1 text-sm font-bold">slate-900</p>
+                </div>
+                <div class="rounded-xl bg-violet-500 p-3 text-white">
+                    <p class="text-xs font-semibold opacity-90">Primary</p>
+                    <p class="mt-1 text-sm font-bold">violet-500</p>
+                </div>
+                <div class="rounded-xl bg-emerald-500 p-3 text-white">
+                    <p class="text-xs font-semibold opacity-90">Success</p>
+                    <p class="mt-1 text-sm font-bold">emerald-500</p>
+                </div>
+                <div class="rounded-xl bg-amber-400 p-3 text-slate-900">
+                    <p class="text-xs font-semibold opacity-90">Warning</p>
+                    <p class="mt-1 text-sm font-bold">amber-400</p>
+                </div>
+                <div class="rounded-xl bg-rose-500 p-3 text-white">
+                    <p class="text-xs font-semibold opacity-90">Danger</p>
+                    <p class="mt-1 text-sm font-bold">rose-500</p>
+                </div>
+            </div>
+
+            <div class="mt-4 flex gap-3">
+                <button class="rounded-xl bg-violet-500 px-4 py-2 text-sm font-bold text-white hover:bg-violet-400">Primary</button>
+                <button class="rounded-xl border border-slate-700 px-4 py-2 text-sm font-bold hover:bg-slate-900">Secondary</button>
+            </div>
+        </section>
+
+        <!-- Palette 4: Bright Arcade (Sky + Pink + Amber) -->
+        <section class="rounded-2xl bg-slate-100 p-5 text-slate-900 ring-1 ring-black/10">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <h2 class="text-lg font-bold">4) Arcade (Hell)</h2>
+                    <p class="text-sm text-slate-600">Frisch, freundlich, “Casual”</p>
+                </div>
+                <span class="rounded-full bg-sky-500 px-3 py-1 text-xs font-bold text-white">Akzent</span>
+            </div>
+
+            <div class="mt-4 grid grid-cols-2 gap-3">
+                <div class="rounded-xl bg-white p-3 ring-1 ring-black/10">
+                    <p class="text-xs font-semibold text-slate-600">Background</p>
+                    <p class="mt-1 text-sm font-bold">white</p>
+                </div>
+                <div class="rounded-xl bg-slate-50 p-3 ring-1 ring-black/10">
+                    <p class="text-xs font-semibold text-slate-600">Surface</p>
+                    <p class="mt-1 text-sm font-bold">slate-50</p>
+                </div>
+                <div class="rounded-xl bg-sky-500 p-3 text-white">
+                    <p class="text-xs font-semibold opacity-90">Primary</p>
+                    <p class="mt-1 text-sm font-bold">sky-500</p>
+                </div>
+                <div class="rounded-xl bg-pink-500 p-3 text-white">
+                    <p class="text-xs font-semibold opacity-90">Accent</p>
+                    <p class="mt-1 text-sm font-bold">pink-500</p>
+                </div>
+                <div class="rounded-xl bg-emerald-500 p-3 text-white">
+                    <p class="text-xs font-semibold opacity-90">Success</p>
+                    <p class="mt-1 text-sm font-bold">emerald-500</p>
+                </div>
+                <div class="rounded-xl bg-amber-400 p-3 text-slate-900">
+                    <p class="text-xs font-semibold opacity-90">Warning</p>
+                    <p class="mt-1 text-sm font-bold">amber-400</p>
+                </div>
+            </div>
+
+            <div class="mt-4 flex gap-3">
+                <button class="rounded-xl bg-sky-500 px-4 py-2 text-sm font-bold text-white hover:bg-sky-400">Primary</button>
+                <button class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold hover:bg-slate-200">Secondary</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Vorschlag 5 – Business Dark (Professional) -->
+    <section class="rounded-2xl bg-slate-900 p-5 ring-1 ring-slate-700/40 text-slate-100">
+        <div class="flex items-start justify-between gap-4">
+            <div>
+                <h2 class="text-lg font-bold">5) Business Dark</h2>
+                <p class="text-sm text-slate-300">Professionell, ruhig, modern (tinted Status, seriöser Primary)</p>
+            </div>
+            <span class="rounded-full bg-indigo-600/10 px-3 py-1 text-xs font-bold text-indigo-200 ring-1 ring-indigo-600/30">
+      Akzent
+    </span>
+        </div>
+
+        <div class="mt-4 grid grid-cols-2 gap-3">
+            <div class="rounded-xl bg-slate-950/30 p-3 ring-1 ring-slate-700/40">
+                <p class="text-xs font-semibold text-slate-300">Background</p>
+                <p class="mt-1 text-sm font-bold">slate-950</p>
+            </div>
+
+            <div class="rounded-xl bg-slate-900 p-3 ring-1 ring-slate-700/40">
+                <p class="text-xs font-semibold text-slate-300">Surface</p>
+                <p class="mt-1 text-sm font-bold">slate-900</p>
+            </div>
+
+            <div class="rounded-xl bg-indigo-600 p-3 text-white">
+                <p class="text-xs font-semibold opacity-90">Primary</p>
+                <p class="mt-1 text-sm font-bold">indigo-600</p>
+            </div>
+
+            <div class="rounded-xl bg-slate-950/20 p-3 text-slate-100 ring-1 ring-slate-700/40">
+                <p class="text-xs font-semibold opacity-90">Neutral</p>
+                <p class="mt-1 text-sm font-bold">slate-800 (tinted)</p>
+            </div>
+
+            <div class="rounded-xl bg-emerald-500/10 p-3 text-emerald-200 ring-1 ring-emerald-500/30">
+                <p class="text-xs font-semibold opacity-90">Success</p>
+                <p class="mt-1 text-sm font-bold">emerald-500/10</p>
+            </div>
+
+            <div class="rounded-xl bg-amber-400/10 p-3 text-amber-200 ring-1 ring-amber-400/30">
+                <p class="text-xs font-semibold opacity-90">Warning</p>
+                <p class="mt-1 text-sm font-bold">amber-400/10</p>
+            </div>
+
+            <div class="rounded-xl bg-rose-500/10 p-3 text-rose-200 ring-1 ring-rose-500/30">
+                <p class="text-xs font-semibold opacity-90">Danger</p>
+                <p class="mt-1 text-sm font-bold">rose-500/10</p>
+            </div>
+
+            <div class="rounded-xl bg-slate-100 p-3 text-slate-900">
+                <p class="text-xs font-semibold opacity-90">Text on Light</p>
+                <p class="mt-1 text-sm font-bold">slate-100</p>
+            </div>
+        </div>
+
+        <div class="mt-4 flex gap-3">
+            <button class="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white hover:bg-indigo-500">
+                Primary
+            </button>
+            <button class="rounded-xl border border-slate-600/60 bg-slate-950/30 px-4 py-2 text-sm font-bold text-slate-100 hover:bg-slate-800/50">
+                Secondary
+            </button>
+        </div>
+    </section>
+
+    <!-- Vorschlag 6 – Adult (Light, ruhig) -->
+    <section class="rounded-2xl bg-white p-5 text-slate-900 ring-1 ring-slate-200">
+        <div class="flex items-start justify-between gap-4">
+            <div>
+                <h2 class="text-lg font-bold">6) Adult (Hell)</h2>
+                <p class="text-sm text-slate-600">nicht bunt</p>
+            </div>
+            <span class="rounded-full bg-blue-600 px-3 py-1 text-xs font-bold text-white">Akzent</span>
+        </div>
+
+        <div class="mt-4 grid grid-cols-2 gap-3">
+            <div class="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-200">
+                <p class="text-xs font-semibold text-slate-600">Background</p>
+                <p class="mt-1 text-sm font-bold">slate-50</p>
+            </div>
+            <div class="rounded-xl bg-white p-3 ring-1 ring-slate-200">
+                <p class="text-xs font-semibold text-slate-600">Surface</p>
+                <p class="mt-1 text-sm font-bold">white</p>
+            </div>
+            <div class="rounded-xl bg-blue-600 p-3 text-white">
+                <p class="text-xs font-semibold opacity-90">Primary</p>
+                <p class="mt-1 text-sm font-bold">blue-600</p>
+            </div>
+            <div class="rounded-xl bg-slate-900 p-3 text-white">
+                <p class="text-xs font-semibold opacity-90">Neutral</p>
+                <p class="mt-1 text-sm font-bold">slate-900</p>
+            </div>
+            <div class="rounded-xl bg-emerald-600 p-3 text-white">
+                <p class="text-xs font-semibold opacity-90">Success</p>
+                <p class="mt-1 text-sm font-bold">emerald-600</p>
+            </div>
+            <div class="rounded-xl bg-amber-500 p-3 text-slate-900">
+                <p class="text-xs font-semibold opacity-90">Warning</p>
+                <p class="mt-1 text-sm font-bold">amber-500</p>
+            </div>
+            <div class="rounded-xl bg-red-600 p-3 text-white">
+                <p class="text-xs font-semibold opacity-90">Danger</p>
+                <p class="mt-1 text-sm font-bold">red-600</p>
+            </div>
+            <div class="rounded-xl bg-slate-200 p-3 text-slate-900">
+                <p class="text-xs font-semibold opacity-90">Muted</p>
+                <p class="mt-1 text-sm font-bold">slate-200</p>
+            </div>
+        </div>
+
+        <div class="mt-4 flex gap-3">
+            <button class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-500">Primary</button>
+            <button class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold hover:bg-slate-100">Secondary</button>
+        </div>
+    </section>
+
+    <!-- Dark Base A: Zinc (clean/modern) | Success: emerald-400 | Warning: amber-300 | Danger: red-500 -->
+    <section class="rounded-2xl bg-zinc-900/60 p-5 ring-1 ring-white/10 text-zinc-100">
+        <div class="flex items-start justify-between gap-4">
+            <div>
+                <h2 class="text-lg font-bold">A) Zinc</h2>
+                <p class="text-sm text-zinc-300">Modern-neutral</p>
+            </div>
+            <span class="rounded-full bg-cyan-400/15 px-3 py-1 text-xs font-bold text-cyan-200 ring-1 ring-cyan-400/30">Akzent</span>
+        </div>
+
+        <div class="mt-4 grid grid-cols-2 gap-3">
+            <div class="rounded-xl bg-zinc-950 p-3 ring-1 ring-white/10">
+                <p class="text-xs font-semibold text-zinc-300">Background</p><p class="mt-1 text-sm font-bold">zinc-950</p>
+            </div>
+            <div class="rounded-xl bg-zinc-900 p-3 ring-1 ring-white/10">
+                <p class="text-xs font-semibold text-zinc-300">Surface</p><p class="mt-1 text-sm font-bold">zinc-900</p>
+            </div>
+            <div class="rounded-xl bg-cyan-400 p-3 text-zinc-950">
+                <p class="text-xs font-semibold opacity-90">Primary</p><p class="mt-1 text-sm font-bold">cyan-400</p>
+            </div>
+            <div class="rounded-xl bg-fuchsia-500 p-3 text-white">
+                <p class="text-xs font-semibold opacity-90">Accent</p><p class="mt-1 text-sm font-bold">fuchsia-500</p>
+            </div>
+            <div class="rounded-xl bg-emerald-400 p-3 text-zinc-950">
+                <p class="text-xs font-semibold opacity-90">Success</p><p class="mt-1 text-sm font-bold">emerald-400</p>
+            </div>
+            <div class="rounded-xl bg-amber-300 p-3 text-zinc-950">
+                <p class="text-xs font-semibold opacity-90">Warning</p><p class="mt-1 text-sm font-bold">amber-300</p>
+            </div>
+            <div class="rounded-xl bg-red-500 p-3 text-white">
+                <p class="text-xs font-semibold opacity-90">Danger</p><p class="mt-1 text-sm font-bold">red-500</p>
+            </div>
+            <div class="rounded-xl bg-zinc-800 p-3 text-zinc-100 ring-1 ring-white/10">
+                <p class="text-xs font-semibold opacity-90">Neutral</p><p class="mt-1 text-sm font-bold">zinc-800</p>
+            </div>
+        </div>
+
+        <div class="mt-4 flex gap-3">
+            <button class="rounded-xl bg-cyan-400 px-4 py-2 text-sm font-bold text-zinc-950 hover:bg-cyan-300">Primary</button>
+            <button class="rounded-xl border border-zinc-700 px-4 py-2 text-sm font-bold hover:bg-zinc-900">Secondary</button>
+        </div>
+    </section>
+
+    <!-- Dark Base B: Neutral (warm/business) | Success: green-500 | Warning: yellow-400 | Danger: rose-600 -->
+    <section class="rounded-2xl bg-neutral-900/60 p-5 ring-1 ring-white/10 text-neutral-100">
+        <div class="flex items-start justify-between gap-4">
+            <div>
+                <h2 class="text-lg font-bold">B) Neutral</h2>
+                <p class="text-sm text-neutral-300">Warm, business</p>
+            </div>
+            <span class="rounded-full bg-indigo-600/10 px-3 py-1 text-xs font-bold text-indigo-200 ring-1 ring-indigo-600/30">Akzent</span>
+        </div>
+
+        <div class="mt-4 grid grid-cols-2 gap-3">
+            <div class="rounded-xl bg-neutral-950 p-3 ring-1 ring-white/10">
+                <p class="text-xs font-semibold text-neutral-300">Background</p><p class="mt-1 text-sm font-bold">neutral-950</p>
+            </div>
+            <div class="rounded-xl bg-neutral-900 p-3 ring-1 ring-white/10">
+                <p class="text-xs font-semibold text-neutral-300">Surface</p><p class="mt-1 text-sm font-bold">neutral-900</p>
+            </div>
+            <div class="rounded-xl bg-indigo-600 p-3 text-white">
+                <p class="text-xs font-semibold opacity-90">Primary</p><p class="mt-1 text-sm font-bold">indigo-600</p>
+            </div>
+            <div class="rounded-xl bg-slate-700 p-3 text-white">
+                <p class="text-xs font-semibold opacity-90">Accent</p><p class="mt-1 text-sm font-bold">slate-700</p>
+            </div>
+            <div class="rounded-xl bg-green-500 p-3 text-white">
+                <p class="text-xs font-semibold opacity-90">Success</p><p class="mt-1 text-sm font-bold">green-500</p>
+            </div>
+            <div class="rounded-xl bg-yellow-400 p-3 text-neutral-950">
+                <p class="text-xs font-semibold opacity-90">Warning</p><p class="mt-1 text-sm font-bold">yellow-400</p>
+            </div>
+            <div class="rounded-xl bg-rose-600 p-3 text-white">
+                <p class="text-xs font-semibold opacity-90">Danger</p><p class="mt-1 text-sm font-bold">rose-600</p>
+            </div>
+            <div class="rounded-xl bg-neutral-800 p-3 text-neutral-100 ring-1 ring-white/10">
+                <p class="text-xs font-semibold opacity-90">Neutral</p><p class="mt-1 text-sm font-bold">neutral-800</p>
+            </div>
+        </div>
+
+        <div class="mt-4 flex gap-3">
+            <button class="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white hover:bg-indigo-500">Primary</button>
+            <button class="rounded-xl border border-neutral-700 px-4 py-2 text-sm font-bold hover:bg-neutral-900">Secondary</button>
+        </div>
+    </section>
+
+    <!-- Dark Base C: Stone (premium/warm) | Success: teal-500 | Warning: orange-400 | Danger: red-600 -->
+    <section class="rounded-2xl bg-stone-900/60 p-5 ring-1 ring-white/10 text-stone-100">
+        <div class="flex items-start justify-between gap-4">
+            <div>
+                <h2 class="text-lg font-bold">C) Stone</h2>
+                <p class="text-sm text-stone-300">Warm, premium</p>
+            </div>
+            <span class="rounded-full bg-violet-600/10 px-3 py-1 text-xs font-bold text-violet-200 ring-1 ring-violet-600/30">Akzent</span>
+        </div>
+
+        <div class="mt-4 grid grid-cols-2 gap-3">
+            <div class="rounded-xl bg-stone-950 p-3 ring-1 ring-white/10">
+                <p class="text-xs font-semibold text-stone-300">Background</p><p class="mt-1 text-sm font-bold">stone-950</p>
+            </div>
+            <div class="rounded-xl bg-stone-900 p-3 ring-1 ring-white/10">
+                <p class="text-xs font-semibold text-stone-300">Surface</p><p class="mt-1 text-sm font-bold">stone-900</p>
+            </div>
+            <div class="rounded-xl bg-violet-600 p-3 text-white">
+                <p class="text-xs font-semibold opacity-90">Primary</p><p class="mt-1 text-sm font-bold">violet-600</p>
+            </div>
+            <div class="rounded-xl bg-slate-700 p-3 text-white">
+                <p class="text-xs font-semibold opacity-90">Accent</p><p class="mt-1 text-sm font-bold">slate-700</p>
+            </div>
+            <div class="rounded-xl bg-teal-500 p-3 text-white">
+                <p class="text-xs font-semibold opacity-90">Success</p><p class="mt-1 text-sm font-bold">teal-500</p>
+            </div>
+            <div class="rounded-xl bg-orange-400 p-3 text-stone-950">
+                <p class="text-xs font-semibold opacity-90">Warning</p><p class="mt-1 text-sm font-bold">orange-400</p>
+            </div>
+            <div class="rounded-xl bg-red-600 p-3 text-white">
+                <p class="text-xs font-semibold opacity-90">Danger</p><p class="mt-1 text-sm font-bold">red-600</p>
+            </div>
+            <div class="rounded-xl bg-stone-800 p-3 text-stone-100 ring-1 ring-white/10">
+                <p class="text-xs font-semibold opacity-90">Neutral</p><p class="mt-1 text-sm font-bold">stone-800</p>
+            </div>
+        </div>
+
+        <div class="mt-4 flex gap-3">
+            <button class="rounded-xl bg-violet-600 px-4 py-2 text-sm font-bold text-white hover:bg-violet-500">Primary</button>
+            <button class="rounded-xl border border-stone-700 px-4 py-2 text-sm font-bold hover:bg-stone-900">Secondary</button>
+        </div>
+    </section>
+
+    <!-- Dark Base D: Gray (classic) | Success: lime-500 | Warning: amber-500 | Danger: orange-600 -->
+    <section class="rounded-2xl bg-gray-900/60 p-5 ring-1 ring-white/10 text-gray-100">
+        <div class="flex items-start justify-between gap-4">
+            <div>
+                <h2 class="text-lg font-bold">D) Gray</h2>
+                <p class="text-sm text-gray-300">Klassisch, zurückhaltend</p>
+            </div>
+            <span class="rounded-full bg-blue-600/10 px-3 py-1 text-xs font-bold text-blue-200 ring-1 ring-blue-600/30">Akzent</span>
+        </div>
+
+        <div class="mt-4 grid grid-cols-2 gap-3">
+            <div class="rounded-xl bg-gray-950 p-3 ring-1 ring-white/10">
+                <p class="text-xs font-semibold text-gray-300">Background</p><p class="mt-1 text-sm font-bold">gray-950</p>
+            </div>
+            <div class="rounded-xl bg-gray-900 p-3 ring-1 ring-white/10">
+                <p class="text-xs font-semibold text-gray-300">Surface</p><p class="mt-1 text-sm font-bold">gray-900</p>
+            </div>
+            <div class="rounded-xl bg-blue-600 p-3 text-white">
+                <p class="text-xs font-semibold opacity-90">Primary</p><p class="mt-1 text-sm font-bold">blue-600</p>
+            </div>
+            <div class="rounded-xl bg-slate-700 p-3 text-white">
+                <p class="text-xs font-semibold opacity-90">Accent</p><p class="mt-1 text-sm font-bold">slate-700</p>
+            </div>
+            <div class="rounded-xl bg-lime-500 p-3 text-gray-950">
+                <p class="text-xs font-semibold opacity-90">Success</p><p class="mt-1 text-sm font-bold">lime-500</p>
+            </div>
+            <div class="rounded-xl bg-amber-500 p-3 text-gray-950">
+                <p class="text-xs font-semibold opacity-90">Warning</p><p class="mt-1 text-sm font-bold">amber-500</p>
+            </div>
+            <div class="rounded-xl bg-orange-600 p-3 text-white">
+                <p class="text-xs font-semibold opacity-90">Danger</p><p class="mt-1 text-sm font-bold">orange-600</p>
+            </div>
+            <div class="rounded-xl bg-gray-800 p-3 text-gray-100 ring-1 ring-white/10">
+                <p class="text-xs font-semibold opacity-90">Neutral</p><p class="mt-1 text-sm font-bold">gray-800</p>
+            </div>
+        </div>
+
+        <div class="mt-4 flex gap-3">
+            <button class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-500">Primary</button>
+            <button class="rounded-xl border border-gray-700 px-4 py-2 text-sm font-bold hover:bg-gray-900">Secondary</button>
+        </div>
+    </section>
+
+</div>
+</body>
+</html>
