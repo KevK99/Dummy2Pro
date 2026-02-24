@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Dummy2Pro</title>
+</head>
+
+<body class="min-h-screen bg-slate-950 text-slate-100">
+<div class="mx-auto max-w-6xl px-6 py-10 space-y-8">
+
+    <header class="flex items-start justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-extrabold tracking-tight">Willkommen zurück, NutzerName!</h1>
+            <p class="mt-2 text-slate-300">Spielstand: 25 / 78 Fragen abgeschlossen 🚀</p>
+        </div>
+
+        <span class="rounded-full bg-violet-500/20 px-3 py-1 text-xs font-bold text-violet-200 ring-1 ring-violet-500/30">
+                <a href="profile.html">❤️ Account</a>
+            </span>
+    </header>
+
+    <section class="rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <h2 class="text-lg font-bold">Frage 12 / 40</h2>
+            <div class="flex flex-wrap gap-2">
+                <span class="rounded-full bg-slate-800 px-3 py-1 text-xs font-bold ring-1 ring-white/10">Thema: SQL</span>
+                <span class="rounded-full bg-violet-500/20 px-3 py-1 text-xs font-bold text-violet-200 ring-1 ring-violet-500/30">
+            Kategorie: JOINs
+          </span>
+                <span class="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-bold text-emerald-200 ring-1 ring-emerald-500/30">
+            Quest: aktiv
+          </span>
+            </div>
+        </div>
+
+        <div class="mt-4 rounded-xl bg-slate-950/60 p-4 ring-1 ring-white/10">
+            <p class="text-base font-semibold">Welche Aussage beschreibt einen INNER JOIN am besten?</p>
+            <p class="mt-1 text-sm text-slate-300">Wähle genau eine Antwort aus.</p>
+        </div>
+
+        <div class="mt-4 space-y-3">
+            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-700 p-4 hover:bg-slate-900">
+                <input type="radio" name="q12" class="mt-1 accent-violet-500" />
+                <span class="text-slate-200"><span class="font-bold">A)</span> Gibt alle Zeilen aus A zurück, auch ohne Treffer in B</span>
+            </label>
+
+            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-700 p-4 hover:bg-slate-900">
+                <input type="radio" name="q12" class="mt-1 accent-violet-500" />
+                <span class="text-slate-200"><span class="font-bold">B)</span> Gibt nur Zeilen zurück, die in beiden Tabellen passende Werte haben</span>
+            </label>
+
+            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-700 p-4 hover:bg-slate-900">
+                <input type="radio" name="q12" class="mt-1 accent-violet-500" />
+                <span class="text-slate-200"><span class="font-bold">C)</span> Gibt alle Zeilen aus beiden Tabellen zurück (Vereinigung)</span>
+            </label>
+
+            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-700 p-4 hover:bg-slate-900">
+                <input type="radio" name="q12" class="mt-1 accent-violet-500" />
+                <span class="text-slate-200"><span class="font-bold">D)</span> Gibt nur Zeilen zurück, die keinen Treffer haben</span>
+            </label>
+        </div>
+
+        <div class="mt-6 flex flex-wrap gap-3">
+            <button class="rounded-xl border border-slate-700 px-5 py-3 text-sm font-bold text-slate-100 hover:bg-slate-900">
+                Zurück
+            </button>
+            <button class="rounded-xl bg-violet-500 px-5 py-3 text-sm font-bold text-white hover:bg-violet-400">
+                Antwort prüfen
+            </button>
+        </div>
+    </section>
+
+</div>
+</body>
+</html>
