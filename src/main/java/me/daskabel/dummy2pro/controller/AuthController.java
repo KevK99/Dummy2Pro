@@ -2,8 +2,9 @@ package me.daskabel.dummy2pro.controller;
 
 import me.daskabel.dummy2pro.model.User;
 import me.daskabel.dummy2pro.service.UserService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * Controller für die Registrierung.
@@ -24,7 +25,7 @@ public class AuthController {
     /**
      * Registriert einen neuen Benutzer.
      * Erwartet JSON:
-     * {"username":"abc","password":"Abcdefghijk1!"}
+     * {"username":"abc","password":"ASDFqwer1234!"}
      */
 
     @PostMapping("/register")
@@ -33,10 +34,37 @@ public class AuthController {
         return new RegisterResponse(user.getUsername(), "Registrierung erfolgreich");
     }
 
+
+    /**
+     * Überprüfung, ob eingegebene Daten richtig/passend sind
+     */
+    @PostMapping("/login")
+    public LoginResponse login(@RequestBody LoginRequest request) {
+        boolean ok = userService.loginInMemory(request.getUsername(), request.getPassword());
+
+        if (!ok) {
+            throw new UnauthorizedException("Benutzername oder Passwort falsch.");
+        }
+
+        return new LoginResponse(request.getUsername(), "Login erfolgreich");
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
-    @ResponseStatus(org.springframework.http.HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequest(IllegalArgumentException ex) {
         return new ErrorResponse("BAD_REQUEST", ex.getMessage());
+    }
+
+    public static class UnauthorizedException extends RuntimeException {
+        public UnauthorizedException(String message) {
+            super(message);
+        }
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleUnauthorized(UnauthorizedException ex) {
+        return new ErrorResponse("UNAUTHORIZED", ex.getMessage());
     }
 
     public static class ErrorResponse {
@@ -66,11 +94,37 @@ public class AuthController {
         public void setPassword(String password) { this.password = password; }
     }
 
+    public static class LoginRequest {
+        private String username;
+        private String password;
+
+        public LoginRequest() {}
+
+        public String getUsername() { return username; }
+        public void setUsername(String username) { this.username = username; }
+
+        public String getPassword() { return password; }
+        public void setPassword(String password) { this.password = password; }
+    }
+
     public static class RegisterResponse {
         private String username;
         private String message;
 
         public RegisterResponse(String username, String message) {
+            this.username = username;
+            this.message = message;
+        }
+
+        public String getUsername() { return username; }
+        public String getMessage() { return message; }
+    }
+
+    public static class LoginResponse {
+        private String username;
+        private String message;
+
+        public LoginResponse(String username, String message) {
             this.username = username;
             this.message = message;
         }

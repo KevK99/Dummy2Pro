@@ -57,4 +57,30 @@ public class UserService {
             throw new IllegalArgumentException("Passwort muss Groß-, Kleinbuchstaben, eine Zahl und ein Sonderzeichen enthalten. Es darf kein Leerzeichen benutzt werden!");
         }
     }
+
+    /**
+     * Übergangs-Login ohne Datenbank (In-Memory).
+     * TODO: durch DB-Login ersetzen!
+     */
+    public boolean loginInMemory(String username, String password) {
+        validateLoginInput(username, password);
+
+        final String demoUsername = "Test";
+        final String demoHash = "$2a$10$BzsrNXld8dbvPX7D8gUpAe0qa21gfyj9AKHYtBMWPKmO3nKmBA8QC";
+
+        if (!demoUsername.equals(username)) {
+            return false;
+        }
+        return encoder.matches(password, demoHash);
+    }
+
+    private void validateLoginInput(String username, String password) {
+        if (username == null || username.isBlank()) {
+            throw new IllegalArgumentException("Username darf nicht leer sein.");
+        }
+        if (password == null || password.isBlank()) {
+            throw new IllegalArgumentException("Passwort darf nicht leer sein.");
+        }
+    }
+
 }
