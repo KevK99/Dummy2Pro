@@ -1,4 +1,4 @@
-package model;
+package me.daskabel.dummy2pro.model;
 
 public class Player
 {
