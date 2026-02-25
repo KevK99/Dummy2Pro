@@ -1,6 +1,7 @@
 package me.daskabel.dummy2pro.service;
 
 import me.daskabel.dummy2pro.model.User;
+import me.daskabel.dummy2pro.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -12,18 +13,34 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    private final BCryptPasswordEncoder encoder;
+    private final UserRepository userRepository;
+
+    public UserService(BCryptPasswordEncoder encoder, UserRepository userRepository) {
+        this.encoder = encoder;
+        this.userRepository = userRepository;
+    }
 
     public User register(String username, String password) {
         validateUsername(username);
         validatePassword(password);
 
+        if (userRepository.existsByUsername(username)) {
+            throw new IllegalArgumentException("Username ist bereits vergeben.");
+        }
+
         String passwordHash = encoder.encode(password);
-        return new User(username, passwordHash);
+        User user = new User(username, passwordHash);
+
+        return userRepository.save(user);
     }
 
-    public boolean matches(String rawPassword, String storedHash) {
-        return encoder.matches(rawPassword, storedHash);
+    public boolean login(String username, String password) {
+        validateLoginInput(username, password);
+
+        return userRepository.findByUsername(username)
+                .map(u -> encoder.matches(password, u.getPasswordHash()))
+                .orElse(false);
     }
 
     // Regeln für den Usernamen
@@ -53,25 +70,12 @@ public class UserService {
         boolean hasSign = password.chars().anyMatch(ch -> !Character.isLetterOrDigit(ch) && !Character.isWhitespace(ch));
         boolean hasWhitespace = password.chars().anyMatch(Character::isWhitespace);
 
-        if (!hasUpper || !hasLower || !hasDigit  || !hasSign || hasWhitespace) {
-            throw new IllegalArgumentException("Passwort muss Groß-, Kleinbuchstaben, eine Zahl und ein Sonderzeichen enthalten. Es darf kein Leerzeichen benutzt werden!");
+        if (!hasUpper || !hasLower || !hasDigit || !hasSign || hasWhitespace) {
+            throw new IllegalArgumentException(
+                    "Passwort muss Groß-, Kleinbuchstaben, eine Zahl und ein Sonderzeichen enthalten. " +
+                            "Es darf kein Leerzeichen benutzt werden!"
+            );
         }
-    }
-
-    /**
-     * Übergangs-Login ohne Datenbank (In-Memory).
-     * TODO: durch DB-Login ersetzen!
-     */
-    public boolean loginInMemory(String username, String password) {
-        validateLoginInput(username, password);
-
-        final String demoUsername = "Test";
-        final String demoHash = "$2a$10$BzsrNXld8dbvPX7D8gUpAe0qa21gfyj9AKHYtBMWPKmO3nKmBA8QC";
-
-        if (!demoUsername.equals(username)) {
-            return false;
-        }
-        return encoder.matches(password, demoHash);
     }
 
     private void validateLoginInput(String username, String password) {
@@ -82,5 +86,4 @@ public class UserService {
             throw new IllegalArgumentException("Passwort darf nicht leer sein.");
         }
     }
-
 }

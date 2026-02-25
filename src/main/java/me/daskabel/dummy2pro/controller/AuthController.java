@@ -2,15 +2,9 @@ package me.daskabel.dummy2pro.controller;
 
 import me.daskabel.dummy2pro.model.User;
 import me.daskabel.dummy2pro.service.UserService;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-/**
- * Controller für die Registrierung.
- * Stellt Endpunkte bereit, über die sich Benutzer registrieren können.
- * Aktuell wird nur validiert und ein Passwort-Hash erzeugt, da noch keine DB.
- */
 
 @RestController
 @RequestMapping("/api")
@@ -22,25 +16,15 @@ public class AuthController {
         this.userService = userService;
     }
 
-    /**
-     * Registriert einen neuen Benutzer.
-     * Erwartet JSON:
-     * {"username":"abc","password":"ASDFqwer1234!"}
-     */
-
     @PostMapping("/register")
     public RegisterResponse register(@RequestBody RegisterRequest request) {
         User user = userService.register(request.getUsername(), request.getPassword());
         return new RegisterResponse(user.getUsername(), "Registrierung erfolgreich");
     }
 
-
-    /**
-     * Überprüfung, ob eingegebene Daten richtig/passend sind
-     */
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest request) {
-        boolean ok = userService.loginInMemory(request.getUsername(), request.getPassword());
+        boolean ok = userService.login(request.getUsername(), request.getPassword()); // <-- HIER
 
         if (!ok) {
             throw new UnauthorizedException("Benutzername oder Passwort falsch.");
@@ -55,16 +39,11 @@ public class AuthController {
         return new ErrorResponse("BAD_REQUEST", ex.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public static class UnauthorizedException extends RuntimeException {
         public UnauthorizedException(String message) {
             super(message);
         }
-    }
-
-    @ExceptionHandler(UnauthorizedException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorResponse handleUnauthorized(UnauthorizedException ex) {
-        return new ErrorResponse("UNAUTHORIZED", ex.getMessage());
     }
 
     public static class ErrorResponse {
@@ -80,7 +59,6 @@ public class AuthController {
         public String getMessage() { return message; }
     }
 
-    // --- Kleine DTOs direkt im Controller nur zum Testen ---
     public static class RegisterRequest {
         private String username;
         private String password;
