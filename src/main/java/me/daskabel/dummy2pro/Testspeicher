@@ -1,0 +1,22 @@
+# Eintrag Passwort für Datenbank:
+$env:OPENSHIFT_MYSQL_DB_PASSWORD =
+
+# Testabfragen für Powershell
+
+# Daten für Testuser:
+Username = "Test"
+Passwort = "ASDFqwer1234!"
+BcryptHash = "$2a$10$BzsrNXld8dbvPX7D8gUpAe0qa21gfyj9AKHYtBMWPKmO3nKmBA8QC"
+
+# Test1: richtige Daten
+$body = @{ username="Test"; password="ASDFqwer1234!" } | ConvertTo-Json
+Invoke-RestMethod -Method Post -Uri "http://localhost:8080/api/login" -ContentType "application/json" -Body $body
+
+#Test2: falsches Passwort
+$body = @{ username="Test"; password="ASDFqwer1234" } | ConvertTo-Json
+Invoke-RestMethod -Method Post -Uri "http://localhost:8080/api/login" -ContentType "application/json" -Body $body
+
+# Test3: falscher Benutzername
+$body = @{ username="ABCD"; password="ASDFqwer1234!" } | ConvertTo-Json
+Invoke-RestMethod -Method Post -Uri "http://localhost:8080/api/login" -ContentType "application/json" -Body $body
+
