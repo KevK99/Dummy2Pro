@@ -10,6 +10,9 @@ public class Bcrypt {
     public static void main(String[] args) {
         String raw = "ASDFqwer1234!";
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        System.out.println(encoder.encode(raw));
+
+        String hash = encoder.encode(raw);
+        System.out.println("hash=" + hash);
+        System.out.println("matches=" + encoder.matches(raw, hash));
     }
 }
