@@ -10,64 +10,11 @@
 <body class="min-h-screen bg-slate-950 text-slate-100">
     <div class="mx-auto max-w-6xl px-6 py-10 space-y-8">
 
-        <header class="flex items-start justify-between gap-4">
-            <div>
-                <h1 class="text-3xl font-extrabold tracking-tight">Willkommen zurück, NutzerName!</h1>
-                <p class="mt-2 text-slate-300">Spielstand: 25 / 78 Fragen abgeschlossen 🚀</p>
-            </div>
-
-            <span class="rounded-full bg-violet-500/20 px-3 py-1 text-xs font-bold text-violet-200 ring-1 ring-violet-500/30">
-                <a href="profile.html">🤩 Account</a>
-            </span>
-        </header>
+        <!-- <div id="headline">Regulärer Header für alle anderen Seiten als Login</div> -->
+        <div id="register"></div>
 
         <section class="rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10">
             <h2 class="text-lg font-bold">Seiten, die wir designen müssen (Seiten einzelne Cards):</h2>
-        </section>
-
-        <section class="rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10">
-            <h2 class="text-lg font-bold">Profilseite (Einstellungen, Spielstand)</h2>
-            <a href="profile.html">Zum Profil</a>
-        </section>
-
-        <section class="rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10">
-            <h2 class="text-lg font-bold">Dashboard (you are here)</h2>
-            <a href="dashboard.html">Dashboard</a>
-        </section>
-
-        <div class="flex m-6 space-x-6">
-            <section class="w-1/3 rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10">
-                <a href="room1.html">Raum 1</a>
-                <span class="rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold text-white">Abgeschlossen (100%)</span>
-            </section>
-            <section class="w-1/3 rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10">
-                <a href="room2.html">Raum 2</a>
-                <span class="rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold text-white">Abgeschlossen(100%)</span>
-            </section>
-            <section class="w-1/3 rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10">
-                <a href="room3.html">Raum 3</a>
-                <span class="rounded-full bg-yellow-500 px-3 py-1 text-xs font-bold text-white">in Progress (50%)</span>
-            </section>
-        </div>
-
-        <div class="flex m-6 space-x-6">
-            <section class="w-1/3 rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10">
-                <a href="room4.html">Raum 4</a>
-                <span class="rounded-full bg-yellow-500 px-3 py-1 text-xs font-bold text-white">in Progress (12%)</span>
-
-            </section>
-            <section class="w-1/3 rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10">
-                <a href="room5.html">Raum 5</a>
-            </section>
-            <section class="w-1/3 rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10">
-                <a href="room6.html">Raum 6</a>
-            </section>
-        </div>
-
-
-        <section class="rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10">
-            <h2 class="text-lg font-bold">Anmelde- und Registrierungsseite</h2>
-            <a href="login.html">Zum registrieren/anmelden</a>
         </section>
 
         <section class="rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10">
@@ -75,6 +22,39 @@
             <a href="room.html">Zum Raumdesign</a>
         </section>
 
+        <div id="dashboard"></div>
+
     </div>
+
+    <script>
+        fetch('headline.html')
+          .then(response => {
+            return response.text();
+          })
+          .then(headlineHTML => {
+            document.getElementById('headline').innerHTML = headlineHTML;
+          })
+
+        fetch('register.html')
+          .then(response => {
+            return response.text();
+          })
+          .then(registerHTML => {
+            document.getElementById('register').innerHTML = registerHTML;
+          })
+
+          fetch('dashboard.html')
+          .then(response => {
+            return response.text();
+          })
+          .then(dashboardHTML => {
+            document.getElementById('dashboard').innerHTML = dashboardHTML;
+          })
+
+        function registerUser() {
+
+            }
+
+    </script>
 </body>
 </html>
