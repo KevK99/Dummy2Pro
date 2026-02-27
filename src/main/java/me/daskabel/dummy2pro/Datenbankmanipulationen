@@ -4,12 +4,12 @@
 RENAME TABLE `mc_answer` TO `answer_option`;
 
 # Erstellen unserer Usertabelle
-CREATE TABLE `user` (
+CREATE TABLE `users` (
   `user_id` INT NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(255) NOT NULL,
   `password_hash` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`user_id`),
-  UNIQUE KEY `uq_user_username` (`username`)
+  UNIQUE KEY `uq_users_username` (`username`)
 ) ENGINE=InnoDB;
 
 --------------------------------------------------------------------------
@@ -22,7 +22,7 @@ CREATE TABLE `user_question_progress` (
   PRIMARY KEY (`user_id`, `question_id`),
   KEY `idx_uqp_question` (`question_id`),
   CONSTRAINT `fk_uqp_user`
-    FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`)
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_uqp_question`
@@ -50,8 +50,8 @@ CREATE TABLE `user_question_progress` (
     KEY `idx_uqp_question` (`question_id`),
     KEY `idx_uqp_answer` (`selected_answer_id`),
 
-    CONSTRAINT `fk_uqp_user`
-      FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`)
+    CONSTRAINT `fk_uqp_users`
+      FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`)
       ON DELETE CASCADE
       ON UPDATE CASCADE,
 
@@ -80,8 +80,8 @@ CREATE TABLE `user_gap_answer` (
   KEY `idx_uga_gap` (`gap_id`),
   KEY `idx_uga_option` (`selected_gap_option_id`),
 
-  CONSTRAINT `fk_uga_user`
-    FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`)
+  CONSTRAINT `fk_uga_users`
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
 
@@ -110,9 +110,9 @@ CREATE TABLE `game_run` (
   `started_at` DATETIME NOT NULL,
   `finished_at` DATETIME NULL,
   PRIMARY KEY (`run_id`),
-  KEY `idx_run_user` (`user_id`),
-  CONSTRAINT `fk_run_user`
-    FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`)
+  KEY `idx_run_users` (`user_id`),
+  CONSTRAINT `fk_run_users`
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE
 ) ENGINE=InnoDB;

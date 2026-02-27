@@ -1,5 +1,8 @@
 # Eintrag Passwort für Datenbank:
-$env:OPENSHIFT_MYSQL_DB_PASSWORD =
+Envirement: OPENSHIFT_MYSQL_DB_PASSWORD =
+
+# Datenbankverbindung
+Get-Content .\schema.txt | mysql -h 178.63.60.92 -P 31337 -u schulprojekt -p schulprojekt
 
 # Testabfragen für Powershell
 
