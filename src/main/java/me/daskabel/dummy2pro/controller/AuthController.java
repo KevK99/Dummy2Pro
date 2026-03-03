@@ -33,6 +33,12 @@ public class AuthController {
         return new LoginResponse(request.getUsername(), "Login erfolgreich");
     }
 
+    @ExceptionHandler(UnauthorizedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleUnauthorized(UnauthorizedException ex) {
+        return new ErrorResponse("UNAUTHORIZED", ex.getMessage());
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequest(IllegalArgumentException ex) {
