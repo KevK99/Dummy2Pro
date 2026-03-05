@@ -6,6 +6,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+/**
+ * Controller für Authentifizierung.
+ *
+ * Stellt HTTP-Endpunkte für Registrierung und Login bereit. Für die
+ * Kommunikation zwischen Frontend und {@link me.daskabel.dummy2pro.service.UserService}.</p>
+ *
+ *   Registrierung: Validiert Eingaben, erstellt einen neuen User
+ *       und speichert ihn mit BCrypt-Hash in der Tabelle {@code users}.</li>
+ *   Login: Prüft Benutzername/Passwort
+ *
+ * Delegiert für Passwort- und Hashlogik an den Service
+ */
+
 @RestController
 @RequestMapping("/api")
 public class AuthController {

@@ -21,7 +21,7 @@ public class Generator
         // }
 
         RoomController roomController = new RoomController();
-        Theme[] themes = Theme.values();
+        /*
         for (Theme theme : themes)
         {
             Room room = new Room(
@@ -32,5 +32,6 @@ public class Generator
                 questionController.getQuestions());
             roomController.addRoom(room);
         }
+         */
     }
 }
