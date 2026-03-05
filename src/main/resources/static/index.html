@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Dummy2Pro</title>
+</head>
+
+<body class="min-h-screen bg-slate-950 text-slate-100">
+<div class="mx-auto max-w-6xl px-6 py-10 space-y-8">
+
+    <div id="headline"></div> <!-- <div id="headline">Regulärer Header für alle anderen Seiten als Login</div> -->
+    <div id="register"></div>
+
+    <section class="rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10">
+        <h2 class="text-lg font-bold">Seiten, die wir designen müssen (Seiten einzelne Cards):</h2>
+    </section>
+
+    <section class="rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10">
+        <h2 class="text-lg font-bold">Raumdesign (+ Frage)</h2>
+        <a href="/room/7">Zum Raumdesign</a>
+    </section>
+
+    <div id="dashboard"></div>
+
+</div>
+
+<script>
+    fetch('/headline.html')
+        .then(response => {
+            return response.text();
+        })
+        .then(headlineHTML => {
+            document.getElementById('headline').innerHTML = headlineHTML;
+        })
+
+    fetch('/register.html')
+        .then(response => {
+            return response.text();
+        })
+        .then(registerHTML => {
+            document.getElementById('register').innerHTML = registerHTML;
+        })
+
+    fetch('/dashboard.html')
+        .then(response => {
+            return response.text();
+        })
+        .then(dashboardHTML => {
+            document.getElementById('dashboard').innerHTML = dashboardHTML;
+        })
+
+    function registerUser() {
+
+    }
+
+</script>
+</body>
+</html>

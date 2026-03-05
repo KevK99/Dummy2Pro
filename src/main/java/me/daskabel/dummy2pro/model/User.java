@@ -1,54 +1,44 @@
 package me.daskabel.dummy2pro.model;
 
 import jakarta.persistence.*;
-
-/**
- * Repräsentiert einen registrierten User (also den Account) des Spiels.
- * Der {@code username} dient als eindeutige Kennung (Login + Anzeige).
- * Das Passwort wird ausschließlich als Hash gespeichert.
- */
+import java.util.List;
 
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 public class User {
-    /** Eindeutige ID aus der Datenbank (wird später automatisch vergeben). */
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")          // passt zu deiner DB-Spalte
-    private Long id;
+    @Column(name = "user_id")
+    private Long userId;
 
-    /** Eindeutiger Anzeigename, welcher auch zum Login verwendet wird */
-    @Column(name = "username", nullable = false, unique = true, length = 30)
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
 
-    /** Gehashtes Passwort. Passwörter sollten nie Cleartext zu sehen sein */
-    @Column(name = "password_hash", nullable = false, length = 255)
-    private String passwordHash;
+    @Column(name = "passwort_hash", nullable = false)
+    private String passwortHash;
 
-    protected User() {}
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserQuestionProgress> questionProgress;
 
-    public User(String username, String passwordHash) {
+    // Constructors
+    public User() {}
+
+    public User(String username, String passwortHash) {
         this.username = username;
-        this.passwordHash = passwordHash;
+        this.passwortHash = passwortHash;
     }
 
-    public Long getId() {
-        return id;
-    }
+    // Getters & Setters
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
 
-    public String getUsername() {
-        return username;
-    }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    public String getPasswortHash() { return passwortHash; }
+    public void setPasswortHash(String passwortHash) { this.passwortHash = passwortHash; }
 
-    public String getPasswordHash() {
-        return passwordHash;
-    }
-
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
-    }
+    public List<UserQuestionProgress> getQuestionProgress() { return questionProgress; }
+    public void setQuestionProgress(List<UserQuestionProgress> questionProgress) { this.questionProgress = questionProgress; }
 }

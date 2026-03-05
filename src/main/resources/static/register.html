@@ -1,0 +1,107 @@
+<header class="flex items-start justify-between gap-4">
+    <div>
+        <h1 class="text-4xl font-extrabold tracking-tight">Willkommen auf Dummy2Pro!</h1>
+        <p class="mt-2 text-slate-300">Dein Weg zur AP2 🚀</p>
+    </div>
+</header>
+
+<form id="registerForm"> <!-- relevant für die Spring Boot Connection -->
+    <div class="pt-12">
+        <label class="block font-medium text-white mb-3">
+            Nutzername
+        </label>
+        <label>
+            <!-- id ist relevant für die Spring Boot Connection -->
+            <input
+                    id="username"
+                    type="text"
+                    name="username"
+                    placeholder="Bitte gib einen Namen ein"
+                    class="w-full text-purple-500 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                    required
+            >
+        </label>
+    </div>
+
+    <div>
+        <label class="block font-medium text-white pt-6 mb-3">
+            Passwort
+        </label>
+        <label>
+            <!-- id ist relevant für die Spring Boot Connection -->
+            <input
+                id="password"
+                type="password"
+                name="password"
+                placeholder="••••••••"
+                class="w-full text-purple-500 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                required
+            >
+        </label>
+    </div>
+
+    <!-- Button braucht keinen onclick. relevant für die Spring Boot -->
+    <button
+            type="submit"
+            class="w-full bg-indigo-600 text-white py-2 mt-6 rounded-lg hover:bg-indigo-500 transition duration-200 font-medium"
+    >
+        Registrieren
+    </button>
+</form>
+
+<div class="text-center text-sm text-gray-500 mt-6">
+    Bereits ein Konto?
+    <a href=/login.html"
+       class="text-indigo-500 hover:underline cursor-pointer"
+    >
+        Jetzt anmelden
+    </a>
+</div>
+
+<script>
+    document.getElementById("registerForm").addEventListener("submit", registerUser);
+    // damit das mit dem Backend interagiert.
+    async function registerUser(event) {
+        event.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        const response = await fetch('/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            alert(data.message);
+            return;
+        }
+
+        alert(data.message);
+        window.location.href="/login.html";
+    }
+</script>
+<!-- >
+    User braucht einen Namen (unique)
+
+    User muss ein PW angeben
+
+    PW Regeln müssen erstellt werden
+
+    PW muss gängige PW Regeln erfüllen
+
+    User muss angelegt werden
+
+    Benutzeranmeldung
+
+    Akzeptanzkriterien:
+
+
+    Benutzername auf Richtigkeit überprüfen
+
+    Passwort auf Richtigkeit überprüfen
+
+    Benutzer muss erkennen, wo er seinen Benutzernamen und sein Passwort eingeben kann
