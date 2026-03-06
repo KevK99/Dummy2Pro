@@ -1,36 +1,28 @@
 package me.daskabel.dummy2pro.controller;
 
-import javax.sql.DataSource;
-
 import me.daskabel.dummy2pro.model.Room;
-import me.daskabel.dummy2pro.model.Theme;
-import me.daskabel.dummy2pro.model.User;
 
-public class Generator
+class QuizGenerator
 {
-    public Generator()
-    {
-    }
+	public Quiz generateQuiz()
+	{
+		Quiz quiz = new Quiz();
 
-    public void generate(DataSource ds, User player)
-    {
-        QuestionController questionController = new QuestionController();
-        // for (Question question : questionList)
-        // {
-        // questionController.addQuestion(question);
-        // }
+		// Erstelle Räume und Fragen
+		Room room1 = new Room("Room1", "Math");
+		room1.addQuestion(new Question("Was ist 2 + 2?", "4"));
+		room1.addQuestion(new Question("Was ist 3 * 3?", "9"));
 
-        RoomController roomController = new RoomController();
-        Theme[] themes = Theme.values();
-        for (Theme theme : themes)
-        {
-            Room room = new Room(
-                theme,
-                "Room for " + theme.getName(),
-                "Description for " + theme.getName(),
-                player,
-                questionController.getQuestions());
-            roomController.addRoom(room);
-        }
-    }
+		Room room2 = new Room("Room2", "Science");
+		room2.addQuestion(new Question("Was ist die chemische Formel für Wasser?", "H2O"));
+		room2.addQuestion(new Question("Wie viele Planeten hat unser Sonnensystem?", "8"));
+
+		quiz.addRoom(room1);
+		quiz.addRoom(room2);
+
+		// Setze den aktuellen Raum
+		quiz.setCurrentRoom(room1); // Optional: initialer Raum
+
+		return quiz;
+	}
 }

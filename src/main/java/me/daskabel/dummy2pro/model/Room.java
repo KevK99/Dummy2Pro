@@ -34,44 +34,49 @@ public class Room
 		this.Question = Question;
 	}
 
+	public void addQuestion(Question question)
+	{
+		this.Question.add(question);
+	}
+
 	public String getDescription()
 	{
-		return description;
+		return this.description;
 	}
 
 	public String getName()
 	{
-		return roomName;
+		return this.roomName;
 	}
 
 	public User getOwner()
 	{
-		return User;
+		return this.User;
 	}
 
 	public List<Question> getQuestion()
 	{
-		return Question;
+		return this.Question;
 	}
 
 	public int getRoomId()
 	{
-		return roomId;
+		return this.roomId;
 	}
 
 	public String getRoomName()
 	{
-		return roomName;
+		return this.roomName;
 	}
 
 	public Theme getTheme()
 	{
-		return theme;
+		return this.theme;
 	}
 
 	public User getUsers()
 	{
-		return User;
+		return this.User;
 	}
 
 	public void setDescription(String description)

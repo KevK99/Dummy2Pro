@@ -18,7 +18,30 @@ public class RoomService
 		}
 	}
 
+	// Singleton Pattern
+	private static RoomService instance;
+
+	public static RoomService getInstance()
+	{
+		if (instance == null)
+		{
+			instance = new RoomService();
+		}
+		return instance;
+	}
+
 	private List<Room> rooms;
+
+	private RoomService()
+	{
+		this.rooms = new ArrayList<>();
+		loadRooms();
+	}
+
+	public List<Room> getAllRooms()
+	{
+		return this.rooms;
+	}
 
 	public Room getRoomById(int roomId)
 	{
@@ -37,5 +60,11 @@ public class RoomService
 		// Beispiel für die statische Definition von Räumen
 		this.rooms.add(new Room("Room1", "Theme1"));
 		this.rooms.add(new Room("Room2", "Theme2"));
+	}
+
+	public String navigateToRoom(int roomId)
+	{
+		Room room = getRoomById(roomId);
+		return "Navigating to " + room.getRoomId() + " with theme " + room.getTheme();
 	}
 }
