@@ -12,9 +12,21 @@
 
     <div id="register"></div>
     <div id="login"></div>
-    <div id="headline"></div>
     <div id="dashboard"></div>
-    <div id="room7"></div>
+    <div id="room7">
+    -->
+    <div id="headline"></div>
+    <div id="endscreen"></div>
+
+    <img src="/src/main/resources/static/images/catBlack.PNG"  alt="cat"/>
+    <img src="/src/main/resources/static/images/catFar.png" alt="cat" />
+    <img src="/src/main/resources/static/images/catWhite.PNG" alt="cat" />
+    <img src="/src/main/resources/static/images/catWhiteShadow.PNG" alt="cat" />
+    <img src="/src/main/resources/static/images/catRed.PNG" alt="Maike" />
+    <img src="/src/main/resources/static/images/sunflower.PNG" alt="sunflower" />
+    <img src="/src/main/resources/static/images/sunflowerCursed.PNG" alt="sunflower" />
+    <img src="/src/main/resources/static/images/Herberg.PNG" alt="Herbert der Koala" />
+    <img src="/src/main/resources/static/images/panda.PNG" alt="panda" />
 </div>
 
 <script>
@@ -56,6 +68,14 @@
         })
         .then(room7HTML => {
             document.getElementById('room7').innerHTML = room7HTML;
+        })
+
+     fetch('/src/main/resources/templates/endscreen.html')
+        .then(response => {
+            return response.text();
+        })
+        .then(endscreenHTML => {
+            document.getElementById('endscreen').innerHTML = endscreenHTML;
         })
 
 </script>
