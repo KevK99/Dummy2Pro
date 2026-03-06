@@ -56,7 +56,7 @@ public class UserService {
         }
     }
 
-    // Regeln für das Passwort
+    // Regeln für das Passwort: mit sinnvollen Kriterien den Nutzer zu sichereren Passwörtern zwingen
     private void validatePassword(String password) {
         if (password == null || password.isBlank()) {
             throw new IllegalArgumentException("Passwort darf nicht leer sein.");
