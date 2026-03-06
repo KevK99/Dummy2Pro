@@ -119,10 +119,6 @@
   <rect class="px" x="0" y="0" width="1200" height="680" fill="var(--bg0)"></rect>
   <rect class="px" x="0" y="0" width="1200" height="680" fill="var(--bg1)" opacity="0.55"></rect>
 
-  <!-- Header -->
-  <text class="t h0" x="60" y="70">RAUM 4</text>
-  <text class="t m" x="60" y="96">Thema: Netzwerke</text>
-  <line class="sep" x1="60" y1="110" x2="860" y2="110"></line>
 
   <!-- ===== Small character (left play area) ===== -->
   <g class="px" filter="url(#shadow)">
