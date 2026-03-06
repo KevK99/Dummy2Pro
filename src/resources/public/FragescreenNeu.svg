@@ -1,0 +1,215 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="Fragespiel Raumansicht mit Pixel-Figur und großem Fragen/Antwortbereich">
+  <title>Fragespiel – Raum 4</title>
+
+  <defs>
+    <style>
+      :root{
+        --bg0:#000010;
+        --bg1:#081020;
+
+        --panel:#0b1327;
+        --panel2:#0a1022;
+
+        --stroke:#e9f0ff;
+        --stroke2:#1a2a52;
+
+        --text:#f5f8ff;
+        --muted:#b7c6e6;
+
+        --green:#10B981;
+        --amber:#EAB308;
+
+        --bone:#e9f0ff;
+        --ink:#050a14;
+        --robe:#2b4aa8;
+        --staff:#8b5a2b;
+        --gem:#22c55e;
+      }
+      .px { shape-rendering: crispEdges; }
+      .t  { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+      .h0 { font-size: 28px; letter-spacing: 2px; font-weight: 950; fill: var(--text); }
+      .h2 { font-size: 16px; letter-spacing: .6px; font-weight: 900; fill: var(--text); }
+      .p  { font-size: 16px; letter-spacing: .3px; fill: var(--text); }
+      .m  { font-size: 12px; letter-spacing: .2px; fill: var(--muted); }
+      .sep { stroke: rgba(233,240,255,0.22); stroke-width: 2; }
+      .btnText { font-size: 18px; letter-spacing: 1px; font-weight: 950; }
+      .btnStroke { stroke-width: 4; stroke-linejoin: miter; }
+    </style>
+
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#000000" flood-opacity="0.55"></feDropShadow>
+    </filter>
+
+    <!-- Pixel skeleton-mage sprite (eigenständig, nur "pixel vibe") -->
+    <symbol id="sprite-skel-mage" viewBox="0 0 24 24">
+      <!-- staff -->
+      <rect class="px" x="19" y="4" width="2" height="16" fill="var(--staff)"></rect>
+      <rect class="px" x="18" y="3" width="4" height="2" fill="var(--staff)"></rect>
+      <rect class="px" x="18" y="2" width="4" height="1" fill="#6f4421"></rect>
+      <!-- gem -->
+      <rect class="px" x="19" y="1" width="2" height="2" fill="var(--gem)"></rect>
+      <rect class="px" x="18" y="2" width="1" height="1" fill="rgba(255,255,255,0.35)"></rect>
+
+      <!-- skull outline -->
+      <rect class="px" x="7" y="3" width="10" height="8" fill="var(--ink)"></rect>
+      <!-- skull fill -->
+      <rect class="px" x="8" y="4" width="8" height="6" fill="var(--bone)"></rect>
+      <!-- eyes -->
+      <rect class="px" x="10" y="6" width="2" height="2" fill="var(--ink)"></rect>
+      <rect class="px" x="14" y="6" width="2" height="2" fill="var(--ink)"></rect>
+      <!-- nose -->
+      <rect class="px" x="12" y="8" width="1" height="1" fill="var(--ink)"></rect>
+      <!-- jaw -->
+      <rect class="px" x="9" y="10" width="6" height="1" fill="var(--bone)"></rect>
+      <rect class="px" x="10" y="11" width="4" height="1" fill="var(--bone)"></rect>
+
+      <!-- crown/hat -->
+      <rect class="px" x="8" y="2" width="8" height="1" fill="var(--amber)"></rect>
+      <rect class="px" x="9" y="1" width="1" height="1" fill="var(--amber)"></rect>
+      <rect class="px" x="13" y="1" width="1" height="1" fill="var(--amber)"></rect>
+
+      <!-- robe outline -->
+      <rect class="px" x="6" y="12" width="12" height="9" fill="var(--ink)"></rect>
+      <!-- robe fill -->
+      <rect class="px" x="7" y="13" width="10" height="7" fill="var(--robe)"></rect>
+      <!-- robe trim -->
+      <rect class="px" x="7" y="13" width="10" height="1" fill="rgba(255,255,255,0.18)"></rect>
+      <rect class="px" x="11" y="14" width="2" height="6" fill="rgba(255,255,255,0.10)"></rect>
+
+      <!-- arms -->
+      <rect class="px" x="5" y="14" width="2" height="3" fill="var(--bone)"></rect>
+      <rect class="px" x="17" y="14" width="2" height="3" fill="var(--bone)"></rect>
+
+      <!-- feet -->
+      <rect class="px" x="8" y="20" width="3" height="2" fill="var(--bone)"></rect>
+      <rect class="px" x="13" y="20" width="3" height="2" fill="var(--bone)"></rect>
+    </symbol>
+
+    <!-- tiny pixel icons for answer boxes -->
+    <symbol id="ico-sword" viewBox="0 0 16 16">
+      <rect class="px" x="7" y="1" width="2" height="9" fill="var(--amber)"></rect>
+      <rect class="px" x="6" y="10" width="4" height="2" fill="var(--amber)"></rect>
+      <rect class="px" x="7" y="12" width="2" height="3" fill="var(--green)"></rect>
+    </symbol>
+    <symbol id="ico-hand" viewBox="0 0 16 16">
+      <rect class="px" x="6" y="3" width="1" height="5" fill="var(--amber)"></rect>
+      <rect class="px" x="7" y="2" width="1" height="6" fill="var(--amber)"></rect>
+      <rect class="px" x="8" y="3" width="1" height="5" fill="var(--amber)"></rect>
+      <rect class="px" x="9" y="4" width="1" height="4" fill="var(--amber)"></rect>
+      <rect class="px" x="6" y="8" width="5" height="4" fill="var(--green)"></rect>
+      <rect class="px" x="5" y="9" width="1" height="2" fill="var(--green)"></rect>
+    </symbol>
+    <symbol id="ico-bag" viewBox="0 0 16 16">
+      <rect class="px" x="5" y="4" width="6" height="1" fill="var(--amber)"></rect>
+      <rect class="px" x="4" y="5" width="8" height="8" fill="var(--green)"></rect>
+      <rect class="px" x="6" y="6" width="4" height="1" fill="rgba(255,255,255,0.25)"></rect>
+      <rect class="px" x="7" y="8" width="2" height="3" fill="rgba(255,255,255,0.18)"></rect>
+    </symbol>
+    <symbol id="ico-heart" viewBox="0 0 16 16">
+      <rect class="px" x="5" y="4" width="2" height="2" fill="var(--amber)"></rect>
+      <rect class="px" x="9" y="4" width="2" height="2" fill="var(--amber)"></rect>
+      <rect class="px" x="4" y="6" width="8" height="2" fill="var(--amber)"></rect>
+      <rect class="px" x="5" y="8" width="6" height="2" fill="var(--amber)"></rect>
+      <rect class="px" x="6" y="10" width="4" height="2" fill="var(--amber)"></rect>
+      <rect class="px" x="7" y="12" width="2" height="2" fill="var(--amber)"></rect>
+    </symbol>
+  </defs>
+
+  <!-- Background -->
+  <rect class="px" x="0" y="0" width="1200" height="680" fill="var(--bg0)"></rect>
+  <rect class="px" x="0" y="0" width="1200" height="680" fill="var(--bg1)" opacity="0.55"></rect>
+
+
+  <!-- ===== Small character (left play area) ===== -->
+  <g class="px" filter="url(#shadow)">
+    <!-- ground plate -->
+    <ellipse cx="450" cy="270" rx="85" ry="16" fill="rgba(0,0,0,0.35)"></ellipse>
+    <!-- sprite (smaller than before) -->
+    <g transform="translate(402, 155) scale(5)">
+      <use href="#sprite-skel-mage"></use>
+    </g>
+  </g>
+
+  <!-- ===== BIG Question + Answers Panel ===== -->
+  <g class="px" filter="url(#shadow)">
+    <path d="M 40 300 H 860 L 874 314 V 635 L 860 649 H 40 L 26 635 V 314 Z" fill="var(--panel2)" stroke="var(--stroke)" stroke-width="4" stroke-linejoin="miter"></path>
+    <path d="M 46 306 H 854 L 866 318 V 631 L 854 643 H 46 L 34 631 V 318 Z" fill="none" stroke="var(--stroke2)" stroke-width="3" opacity="0.9" stroke-linejoin="miter"></path>
+
+    <text class="t h2" x="70" y="342">FRAGE</text>
+    <line class="sep" x1="70" y1="360" x2="830" y2="360"></line>
+
+    <!-- Question text larger -->
+    <text class="t p" x="450" y="410" text-anchor="middle">
+      <tspan x="450" dy="0">Welches Protokoll arbeitet auf Schicht 3</tspan>
+      <tspan x="450" dy="26">und wird für Routing verwendet?</tspan>
+    </text>
+
+    <text class="t m" x="70" y="470">ANTWORTEN</text>
+
+    <!-- Answer boxes (2x2), with icons and colored borders like your screenshot -->
+    <!-- A (selected) -->
+    <g transform="translate(70, 490)">
+      <rect x="0" y="0" width="370" height="66" fill="rgba(0,0,0,0.22)" stroke="var(--green)" class="btnStroke"></rect>
+      <rect x="6" y="6" width="358" height="54" fill="rgba(16,185,129,0.10)" stroke="rgba(16,185,129,0.35)" stroke-width="2"></rect>
+      <g transform="translate(18, 14) scale(2.3)"><use href="#ico-sword"></use></g>
+      <text class="t btnText" x="86" y="42" fill="var(--green)">A) IP</text>
+    </g>
+
+    <!-- B -->
+    <g transform="translate(460, 490)">
+      <rect x="0" y="0" width="370" height="66" fill="rgba(0,0,0,0.22)" stroke="var(--amber)" class="btnStroke"></rect>
+      <g transform="translate(18, 14) scale(2.3)"><use href="#ico-hand"></use></g>
+      <text class="t btnText" x="86" y="42" fill="var(--amber)">B) TCP</text>
+    </g>
+
+    <!-- C -->
+    <g transform="translate(70, 565)">
+      <rect x="0" y="0" width="370" height="66" fill="rgba(0,0,0,0.22)" stroke="var(--amber)" class="btnStroke"></rect>
+      <g transform="translate(18, 14) scale(2.3)"><use href="#ico-bag"></use></g>
+      <text class="t btnText" x="86" y="42" fill="var(--amber)">C) Ethernet</text>
+    </g>
+
+    <!-- D -->
+    <g transform="translate(460, 565)">
+      <rect x="0" y="0" width="370" height="66" fill="rgba(0,0,0,0.22)" stroke="var(--amber)" class="btnStroke"></rect>
+      <g transform="translate(18, 14) scale(2.3)"><use href="#ico-heart"></use></g>
+      <text class="t btnText" x="86" y="42" fill="var(--amber)">D) DNS</text>
+    </g>
+  </g>
+
+  <!-- ===== RIGHT STATUS PANEL ===== -->
+  <g class="px" filter="url(#shadow)">
+    <path d="M 900 34 H 1160 L 1174 48 V 632 L 1160 646 H 900 L 886 632 V 48 Z" fill="var(--panel)" stroke="var(--stroke)" stroke-width="4" stroke-linejoin="miter"></path>
+    <path d="M 906 40 H 1154 L 1166 52 V 628 L 1154 640 H 906 L 894 628 V 52 Z" fill="none" stroke="var(--stroke2)" stroke-width="3" opacity="0.9" stroke-linejoin="miter"></path>
+
+    <text class="t" x="920" y="78" style="font-size:22px; letter-spacing:1px; font-weight:900; fill:var(--text);">STATUS</text>
+
+    <text class="t p" x="920" y="120">Punkte (Thema): <tspan font-weight="900">12/20</tspan></text>
+    <text class="t p" x="920" y="145">Gesamtfragen: <tspan font-weight="900">12/40</tspan></text>
+
+    <text class="t m" x="920" y="188">Thema-Fortschritt</text>
+    <rect x="920" y="202" width="220" height="18" fill="rgba(255,255,255,0.08)" stroke="var(--stroke)" stroke-width="2"></rect>
+    <rect x="920" y="202" width="132" height="18" fill="var(--green)"></rect>
+    <text class="t m" x="1140" y="217" text-anchor="end">60%</text>
+
+    <text class="t m" x="920" y="252">Fragen-Fortschritt</text>
+    <rect x="920" y="266" width="220" height="18" fill="rgba(255,255,255,0.08)" stroke="var(--stroke)" stroke-width="2"></rect>
+    <rect x="920" y="266" width="66" height="18" fill="var(--amber)"></rect>
+    <text class="t m" x="1140" y="281" text-anchor="end">30%</text>
+
+    <line class="sep" x1="920" y1="312" x2="1140" y2="312"></line>
+
+    <text class="t h2" x="920" y="344">Raum-Info</text>
+    <text class="t p" x="920" y="375">Status: <tspan font-weight="900">Bronze</tspan></text>
+    <text class="t p" x="920" y="400">Fragen: <tspan font-weight="900">2</tspan></text>
+    <text class="t p" x="920" y="425">Punkte: <tspan font-weight="900">0/2</tspan></text>
+
+    <g transform="translate(920, 455)">
+      <rect x="0" y="0" width="220" height="34" rx="10" ry="10" fill="var(--amber)"></rect>
+      <rect x="2" y="2" width="216" height="30" rx="9" ry="9" fill="rgba(255,255,255,0.10)"></rect>
+      <text class="t" x="110" y="22" text-anchor="middle" style="font-size:12px; letter-spacing:.6px; font-weight:900; fill:#06101c;">
+        IN PROGRESS (12%)
+      </text>
+    </g>
+  </g>
+</svg>

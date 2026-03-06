@@ -1,0 +1,50 @@
+<header class="flex items-start justify-between gap-4">
+    <div>
+        <h1 class="text-4xl font-extrabold tracking-tight">Willkommen zurück!</h1>
+        <p class="mt-2 text-slate-300">Dein Weg zur AP2 🚀</p>
+    </div>
+</header>
+
+<form id="registerForm"> <!-- relevant für die Spring Boot Connection -->
+    <div class="pt-12">
+        <label class="block font-medium text-white mb-3">
+            Nutzername
+        </label>
+        <label>
+            <!-- id ist relevant für die Spring Boot Connection -->
+            <input
+                    id="username"
+                    type="text"
+                    name="username"
+                    placeholder="Bitte gib einen Namen ein"
+                    class="w-full text-purple-500 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                    required
+            >
+        </label>
+    </div>
+
+    <div>
+        <label class="block font-medium text-white pt-6 mb-3">
+            Passwort
+        </label>
+        <label>
+            <!-- id ist relevant für die Spring Boot Connection -->
+            <input
+                    id="password"
+                    type="password"
+                    name="password"
+                    placeholder="••••••••"
+                    class="w-full text-purple-500 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                    required
+            >
+        </label>
+    </div>
+
+
+    <button
+            type="submit"
+            class="w-full bg-indigo-600 text-white py-2 mt-6 rounded-lg hover:bg-indigo-500 transition duration-200 font-medium"
+    >
+        Anmelden
+    </button>
+</form>

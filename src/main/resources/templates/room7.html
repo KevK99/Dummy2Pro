@@ -1,77 +1,210 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8">
+    <title>Dummy2Pro - Raum 7</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>Dummy2Pro</title>
 </head>
 
-<body class="min-h-screen bg-slate-950 text-slate-100">
-<div class="mx-auto max-w-6xl px-6 py-10 space-y-8">
+<body class="bg-[#000010] text-white font-mono min-h-screen">
 
-    <header class="flex items-start justify-between gap-4">
-        <div>
-            <h1 class="text-3xl font-extrabold tracking-tight">Willkommen zurück, NutzerName!</h1>
-            <p class="mt-2 text-slate-300">Spielstand: 25 / 78 Fragen abgeschlossen 🚀</p>
-        </div>
+    <!-- HEADER FULL WIDTH -->
+    <header class="w-full px-12 pt-10 pb-6 border-b border-white/20">
 
-        <span class="rounded-full bg-violet-500/20 px-3 py-1 text-xs font-bold text-violet-200 ring-1 ring-violet-500/30">
-                <a href="/profile.html">❤️ Account</a>
-            </span>
+        <h1 class="text-3xl font-black tracking-widest">
+            Raum 7
+        </h1>
+
+        <!-- TODO: use actual Theme -->
+        <p class="text-sm text-blue-200 mt-1">
+            Thema: Netzwerke
+        </p>
+
     </header>
 
-    <section class="rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10">
-        <div class="flex flex-wrap items-center justify-between gap-3">
-            <h2 class="text-lg font-bold">Frage 12 / 40</h2>
-            <div class="flex flex-wrap gap-2">
-                <span class="rounded-full bg-slate-800 px-3 py-1 text-xs font-bold ring-1 ring-white/10">Thema: SQL</span>
-                <span class="rounded-full bg-violet-500/20 px-3 py-1 text-xs font-bold text-violet-200 ring-1 ring-violet-500/30">
-            Kategorie: JOINs
-          </span>
-                <span class="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-bold text-emerald-200 ring-1 ring-emerald-500/30">
-            Quest: aktiv
-          </span>
+    <!-- TODO: show welcome container first, then show quiz game -->
+
+    <!-- WELCOME CONTAINER -->
+    <main class="flex justify-center mt-10 hidden">
+
+        <div class="w-full max-w-6xl px-6">
+
+            <!-- ROOM -->
+            <section class="relative bg-[#222a66] border-[10px] border-[#050a14] shadow-2xl">
+
+                <!-- FLOOR -->
+                <div class="absolute inset-12 bg-[#0a2a3a] border-4 border-white/30"></div>
+
+                <!-- ROOM CONTENT -->
+                <div class="relative h-[480px] flex items-center justify-center">
+
+                    <!-- SPEECH PANEL -->
+                    <div class="absolute top-8 left-1/2 -translate-x-1/2 w-1/2">
+                        <div class="bg-[#0a1022] border-4 border-[#e9f0ff] px-8 py-6 relative">
+                            <div class="border border-[#1a2a52] absolute inset-2 pointer-events-none"></div>
+                            <p class="text-lg">Hey.</p>
+                            <p class="text-lg">Willkommen im Raum 7…</p>
+                        </div>
+
+                        <!-- speech tail -->
+                        <div class="absolute left-1/2 -translate-x-1/2 top-full">
+                            <div class="w-10 h-10 bg-[#0a1022] border-4 border-[#e9f0ff] rotate-45 -translate-y-3"></div>
+                        </div>
+
+                    </div>
+
+                    <!-- CHARACTER HERE-->
+
+                </div>
+
+                <!-- CORRIDOR -->
+                <div class="absolute left-1/2 -translate-x-1/2 -bottom-16 w-28 h-36 bg-gray-500 border-x-[20px] border-black"></div>
+            </section>
+        </div>
+    </main>
+
+    <!-- GAME-->
+    <div class="bg-[#000010] text-white font-mono">
+
+        <div class="w-[1200px] h-[680px] mx-auto relative bg-[#081020]/70 overflow-hidden">
+
+            <!-- PANDA ÒwÓ bleibt !!!!!! -->
+            <div class="absolute left-[360px] top-[120px] flex flex-col items-center">
+
+                <div class="w-[170px] h-[30px] bg-white/80 rounded-full blur-sm"></div>
+
+                <svg class="w-[220px] mt-[-10px]" viewBox="0 0 24 24" shape-rendering="crispEdges">
+
+                    <rect x="19" y="4" width="2" height="16" fill="#8b5a2b"/>
+                    <rect x="18" y="3" width="4" height="2" fill="#8b5a2b"/>
+                    <rect x="18" y="2" width="4" height="1" fill="#6f4421"/>
+                    <rect x="19" y="1" width="2" height="2" fill="#22c55e"/>
+
+                    <rect x="7" y="3" width="10" height="8" fill="#050a14"/>
+                    <rect x="8" y="4" width="8" height="6" fill="#e9f0ff"/>
+
+                    <rect x="10" y="6" width="2" height="2" fill="#050a14"/>
+                    <rect x="14" y="6" width="2" height="2" fill="#050a14"/>
+
+                    <rect x="12" y="8" width="1" height="1" fill="#050a14"/>
+
+                    <rect x="6" y="12" width="12" height="9" fill="#050a14"/>
+                    <rect x="7" y="13" width="10" height="7" fill="#2b4aa8"/>
+
+                    <rect x="5" y="14" width="2" height="3" fill="#e9f0ff"/>
+                    <rect x="17" y="14" width="2" height="3" fill="#e9f0ff"/>
+
+                    <rect x="8" y="20" width="3" height="2" fill="#e9f0ff"/>
+                    <rect x="13" y="20" width="3" height="2" fill="#e9f0ff"/>
+
+                </svg>
+
+            </div>
+
+            <!-- QUESTION PANEL -->
+            <div class="absolute left-[30px] bottom-[30px] w-[830px] bg-[#0a1022] border-4 border-[#e9f0ff] shadow-2xl">
+
+                <div class="p-6">
+
+                    <h2 class="text-lg font-black tracking-widest">FRAGE</h2>
+
+                    <div class="border-t border-white/20 mt-2 mb-6"></div>
+
+                    <!-- TODO: show correct question -->
+                    <div class="text-center text-lg leading-7">
+                        Welches Protokoll arbeitet auf Schicht 3 <br>
+                        und wird für Routing verwendet?
+                    </div>
+
+                    <div class="text-sm text-gray-400 mt-8 mb-2">
+                        ANTWORTEN
+                    </div>
+
+                    <!-- TODO: show correct answers-->
+                    <!-- ANSWERS -->
+                    <div class="grid grid-cols-2 gap-4">
+
+                        <button class="flex items-center gap-4 border-4 border-yellow-400 px-6 py-4 font-black text-yellow-400 text-lg">
+                            ⚔️ A) IP
+                        </button>
+
+                        <button class="flex items-center gap-4 border-4 border-yellow-400 px-6 py-4 font-black text-yellow-400 text-lg">
+                            ✋ B) TCP
+                        </button>
+
+                        <button class="flex items-center gap-4 border-4 border-yellow-400 px-6 py-4 font-black text-yellow-400 text-lg">
+                            🎒 C) Ethernet
+                        </button>
+
+                        <button class="flex items-center gap-4 border-4 border-yellow-400 px-6 py-4 font-black text-yellow-400 text-lg">
+                            ❤️ D) DNS
+                        </button>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- TODO: show correct status -> watch TODO's-->
+            <!-- STATUS PANEL -->
+            <div class="absolute right-[30px] top-[30px] w-[260px] h-[600px] bg-[#0b1327] border-4 border-[#e9f0ff] shadow-2xl p-6">
+
+                <h2 class="text-xl font-black mb-6">STATUS</h2>
+
+                <div class="space-y-2 text-sm">
+                    <!-- TODO: -->
+                    <div>Punkte (Thema): <b>12/20</b></div>
+                    <!-- TODO: -->
+                    <div>Gesamtfragen: <b>12/40</b></div>
+
+                </div>
+
+                <!-- PROGRESS -->
+                <div class="mt-8">
+
+                    <div class="text-xs text-gray-400 mb-1">Thema-Fortschritt</div>
+
+                    <div class="h-4 bg-white/10 border border-white relative">
+                        <!-- TODO: enter correct % -->
+                        <div class="absolute left-0 top-0 h-full bg-emerald-500 w-[60%]"></div>
+                    </div>
+                    <!-- TODO: enter correct % -->
+                    <div class="text-right text-xs text-gray-400 mt-1">60%</div>
+
+                </div>
+
+                <div class="mt-6">
+
+                    <div class="text-xs text-gray-400 mb-1">Fragen-Fortschritt</div>
+
+                    <div class="h-4 bg-white/10 border border-white relative">
+                        <!-- TODO: enter correct % -->
+                        <div class="absolute left-0 top-0 h-full bg-yellow-400 w-[30%]"></div>
+                    </div>
+                    <!-- TODO: enter correct % -->
+                    <div class="text-right text-xs text-gray-400 mt-1">30%</div>
+
+                </div>
+
+                <hr class="my-8 border-white/20">
+
+                <!-- TODO: Show current step or else just let it invisible-->
+                <div class="space-y-2 text-sm invisible">
+                    <div>Status: <b>Bronze</b></div>
+                    <div>Fragen: <b>2</b></div>
+                    <div>Punkte: <b>0/2</b></div>
+                </div>
+
+                <!-- TODO: show actual progess-->
+                <div class="mt-8">
+                    <div class="bg-yellow-400 text-black font-black text-xs text-center py-2 rounded-lg">
+                        IN PROGRESS (12%)
+                    </div>
+                </div>
+
             </div>
         </div>
+    </div>
 
-        <div class="mt-4 rounded-xl bg-slate-950/60 p-4 ring-1 ring-white/10">
-            <p class="text-base font-semibold">Welche Aussage beschreibt einen INNER JOIN am besten?</p>
-            <p class="mt-1 text-sm text-slate-300">Wähle genau eine Antwort aus.</p>
-        </div>
-
-        <div class="mt-4 space-y-3">
-            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-700 p-4 hover:bg-slate-900">
-                <input type="radio" name="q12" class="mt-1 accent-violet-500" />
-                <span class="text-slate-200"><span class="font-bold">A)</span> Gibt alle Zeilen aus A zurück, auch ohne Treffer in B</span>
-            </label>
-
-            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-700 p-4 hover:bg-slate-900">
-                <input type="radio" name="q12" class="mt-1 accent-violet-500" />
-                <span class="text-slate-200"><span class="font-bold">B)</span> Gibt nur Zeilen zurück, die in beiden Tabellen passende Werte haben</span>
-            </label>
-
-            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-700 p-4 hover:bg-slate-900">
-                <input type="radio" name="q12" class="mt-1 accent-violet-500" />
-                <span class="text-slate-200"><span class="font-bold">C)</span> Gibt alle Zeilen aus beiden Tabellen zurück (Vereinigung)</span>
-            </label>
-
-            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-700 p-4 hover:bg-slate-900">
-                <input type="radio" name="q12" class="mt-1 accent-violet-500" />
-                <span class="text-slate-200"><span class="font-bold">D)</span> Gibt nur Zeilen zurück, die keinen Treffer haben</span>
-            </label>
-        </div>
-
-        <div class="mt-6 flex flex-wrap gap-3">
-            <button class="rounded-xl border border-slate-700 px-5 py-3 text-sm font-bold text-slate-100 hover:bg-slate-900">
-                Zurück
-            </button>
-            <button class="rounded-xl bg-violet-500 px-5 py-3 text-sm font-bold text-white hover:bg-violet-400">
-                Antwort prüfen
-            </button>
-        </div>
-    </section>
-
-</div>
 </body>
 </html>
