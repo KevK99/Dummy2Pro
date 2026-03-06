@@ -1,44 +1,58 @@
 package me.daskabel.dummy2pro.repository;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import me.daskabel.dummy2pro.model.Question;
 
-class QuestionRepository
+/**
+ * Datenbankzugriff für Fragen.
+ *
+ * Wichtigste Query: Alle Fragen eines bestimmten Themas laden, inklusive aller
+ * Antwortoptionen (MC/TF) und Gap-Felder mit deren Optionen. Die Shuffle-Logik
+ * passiert im RoomService (nicht per SQL ORDER BY RAND(), da das bei großen
+ * Mengen langsam ist und wir eh alles in den Speicher laden).
+ */
+public interface QuestionRepository extends JpaRepository<Question, Long>
 {
-	private String jdbcUrl = "jdbc:mysql://localhost:3306/your_db"; // Ersetze mit deinem DB-URL
-	private String username = "your_username"; // Ersetze mit deinem DB-Benutzernamen
-	private String password = "your_password"; // Ersetze mit deinem DB-Passwort
 
-	public List<Question> getQuestionsForRoom(String roomId)
-	{
-		List<Question> questions = new ArrayList<>();
-		String sql = "SELECT question_text, answer, points FROM questions WHERE room_id = ?";
+	/**
+	 * Alle Fragen zu einem bestimmten Theme (über die Join-Tabelle Question_Theme).
+	 * DISTINCT verhindert Duplikate durch den Join.
+	 */
+	@Query("""
+				    SELECT DISTINCT q FROM Question q
+				    JOIN q.themes t
+				    WHERE t.themeId = :themeId
+				    ORDER BY q.questionId
+				""")
+	List<Question> findByThemeId(@Param("themeId") Long themeId);
 
-		try (Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
-					PreparedStatement statement = connection.prepareStatement(sql))
-		{
-			statement.setString(1, roomId);
-			ResultSet resultSet = statement.executeQuery();
+	/**
+	 * Alle Fragen zu einem Theme, mit McAnswers vorgeladen (verhindert N+1). Wird
+	 * für MC/TF-Fragen genutzt.
+	 */
+	@Query("""
+				    SELECT DISTINCT q FROM Question q
+				    LEFT JOIN FETCH q.mcAnswers
+				    JOIN q.themes t
+				    WHERE t.themeId = :themeId
+				""")
+	List<Question> findByThemeIdWithAnswers(@Param("themeId") Long themeId);
 
-			while (resultSet.next())
-			{
-				String text = resultSet.getString("question_text");
-				String answer = resultSet.getString("answer");
-				int points = Integer.parseInt(resultSet.getString("points"));
-				questions.add(new Question(text, answer, points));
-			}
-		} catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-
-		return questions;
-	}
+	/**
+	 * Alle Fragen zu einem Theme, mit GapFields und GapOptions vorgeladen. Wird für
+	 * GAP-Fragen genutzt.
+	 */
+	@Query("""
+				    SELECT DISTINCT q FROM Question q
+				    LEFT JOIN FETCH q.gapFields gf
+				    LEFT JOIN FETCH gf.gapOptions
+				    JOIN q.themes t
+				    WHERE t.themeId = :themeId
+				""")
+	List<Question> findByThemeIdWithGaps(@Param("themeId") Long themeId);
 }

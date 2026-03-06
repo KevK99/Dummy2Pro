@@ -1,44 +1,84 @@
 package me.daskabel.dummy2pro.model;
 
-import jakarta.persistence.*;
 import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "user")
-public class User {
+public class User
+{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long userId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "user_id")
+	private Long userId;
 
-    @Column(name = "username", nullable = false, unique = true)
-    private String username;
+	@Column(name = "username", nullable = false, unique = true)
+	private String username;
 
-    @Column(name = "passwort_hash", nullable = false)
-    private String passwortHash;
+	@Column(name = "passwort_hash", nullable = false)
+	private String passwordHash;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserQuestionProgress> questionProgress;
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<UserQuestionProgress> questionProgress;
 
-    // Constructors
-    public User() {}
+	// Constructors
+	public User()
+	{
+	}
 
-    public User(String username, String passwortHash) {
-        this.username = username;
-        this.passwortHash = passwortHash;
-    }
+	public User(String username, String passwordHash)
+	{
+		this.username = username;
+		this.passwordHash = passwordHash;
+	}
 
-    // Getters & Setters
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
+	public String getPasswordHash()
+	{
+		return passwordHash;
+	}
 
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
+	public List<UserQuestionProgress> getQuestionProgress()
+	{
+		return questionProgress;
+	}
 
-    public String getPasswortHash() { return passwortHash; }
-    public void setPasswortHash(String passwortHash) { this.passwortHash = passwortHash; }
+	// Getters & Setters
+	public Long getUserId()
+	{
+		return userId;
+	}
 
-    public List<UserQuestionProgress> getQuestionProgress() { return questionProgress; }
-    public void setQuestionProgress(List<UserQuestionProgress> questionProgress) { this.questionProgress = questionProgress; }
+	public String getUsername()
+	{
+		return username;
+	}
+
+	public void setPasswordHash(String passwordHash)
+	{
+		this.passwordHash = passwordHash;
+	}
+
+	public void setQuestionProgress(List<UserQuestionProgress> questionProgress)
+	{
+		this.questionProgress = questionProgress;
+	}
+
+	public void setUserId(Long userId)
+	{
+		this.userId = userId;
+	}
+
+	public void setUsername(String username)
+	{
+		this.username = username;
+	}
 }
