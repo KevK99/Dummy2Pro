@@ -20,6 +20,7 @@ public class Generator
         // questionController.addQuestion(question);
         // }
 
+        /*
         RoomController roomController = new RoomController();
         Theme[] themes = Theme.values();
         for (Theme theme : themes)
@@ -32,5 +33,7 @@ public class Generator
                 questionController.getQuestions());
             roomController.addRoom(room);
         }
+
+         */
     }
 }

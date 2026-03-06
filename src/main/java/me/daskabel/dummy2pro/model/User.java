@@ -15,8 +15,8 @@ public class User {
     @Column(name = "username", nullable = false, unique = true)
     private String username;
 
-    @Column(name = "passwort_hash", nullable = false)
-    private String passwortHash;
+    @Column(name = "password_hash", nullable = false)
+    private String passwordHash;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserQuestionProgress> questionProgress;
@@ -24,9 +24,9 @@ public class User {
     // Constructors
     public User() {}
 
-    public User(String username, String passwortHash) {
+    public User(String username, String passwordHash) {
         this.username = username;
-        this.passwortHash = passwortHash;
+        this.passwordHash = passwordHash;
     }
 
     // Getters & Setters
@@ -36,8 +36,8 @@ public class User {
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
 
-    public String getPasswortHash() { return passwortHash; }
-    public void setPasswortHash(String passwortHash) { this.passwortHash = passwortHash; }
+    public String getPasswordHash() { return passwordHash; }
+    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
 
     public List<UserQuestionProgress> getQuestionProgress() { return questionProgress; }
     public void setQuestionProgress(List<UserQuestionProgress> questionProgress) { this.questionProgress = questionProgress; }
