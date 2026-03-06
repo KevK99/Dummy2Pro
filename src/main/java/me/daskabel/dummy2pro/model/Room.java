@@ -4,78 +4,88 @@ import java.util.List;
 
 public class Room
 {
-    private int roomId;
-    private String roomName;
-    private String description;
-    private Theme theme;
-    private User User;
-    private List<Question> Question;
+	private int roomId;
+	private String roomName;
+	private String description;
+	private Theme theme;
+	private User User;
+	private List<Question> Question;
 
-    public Room()
-    {
-    }
+	public Room()
+	{
+	}
 
-    public Room(Theme theme, String roomName, String description, User User, List<Question> Question)
-    {
-        this.theme = theme;
-        this.roomName = roomName;
-        this.description = description;
-        this.User = User;
-        this.Question = Question;
-    }
+	public Room(String roomName, String themeName)
+	{
+		this.theme = new Theme(themeName);
+		this.roomName = roomName;
+		this.description = null;
+		this.User = null;
+		this.Question = null;
+	}
 
-    public String getDescription()
-    {
-        return description;
-    }
+	public Room(Theme theme, String roomName, String description, User User,
+				List<Question> Question)
+	{
+		this.theme = theme;
+		this.roomName = roomName;
+		this.description = description;
+		this.User = User;
+		this.Question = Question;
+	}
 
-    public String getName()
-    {
-        return roomName;
-    }
+	public String getDescription()
+	{
+		return description;
+	}
 
-    public User getOwner()
-    {
-        return User;
-    }
+	public String getName()
+	{
+		return roomName;
+	}
 
-    public List<Question> getQuestion()
-    {
-        return Question;
-    }
+	public User getOwner()
+	{
+		return User;
+	}
 
-    public int getRoomId()
-    {
-        return roomId;
-    }
+	public List<Question> getQuestion()
+	{
+		return Question;
+	}
 
-    public String getRoomName()
-    {
-        return roomName;
-    }
+	public int getRoomId()
+	{
+		return roomId;
+	}
 
-    public Theme getTheme()
-    {
-        return theme;
-    }
+	public String getRoomName()
+	{
+		return roomName;
+	}
 
-    public User getUsers()
-    {
-        return User;
-    }
+	public Theme getTheme()
+	{
+		return theme;
+	}
 
-    public void setDescription(String description)
-    {
-        this.description = description;
-    }
+	public User getUsers()
+	{
+		return User;
+	}
 
-    public void setName(String name)
-    {
-        this.roomName = name;
-    }
+	public void setDescription(String description)
+	{
+		this.description = description;
+	}
 
-    public void setRoomId(int id)
-    {
-        this.roomId = id;
-    }
+	public void setName(String name)
+	{
+		this.roomName = name;
+	}
+
+	public void setRoomId(int id)
+	{
+		this.roomId = id;
+	}
 }
