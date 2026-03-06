@@ -9,25 +9,15 @@
 
 <body class="min-h-screen bg-slate-950 text-slate-100">
     <div class="mx-auto max-w-6xl px-6 py-10 space-y-8">
-
-        <div id="headline"></div> <!-- <div id="headline">Regulärer Header für alle anderen Seiten als Login</div> -->
         <div id="register"></div>
-
-        <section class="rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10">
-            <h2 class="text-lg font-bold">Seiten, die wir designen müssen (Seiten einzelne Cards):</h2>
-        </section>
-
-        <section class="rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10">
-            <h2 class="text-lg font-bold">Raumdesign (+ Frage)</h2>
-            <a href="/room/7">Zum Raumdesign</a>
-        </section>
-
+        <div id="login"></div>
+        <div id="headline"></div>
         <div id="dashboard"></div>
-
+        <div id="room7"></div>
     </div>
 
     <script>
-        fetch('/headline.html')
+        fetch('/src/main/resources/static/headline.html')
             .then(response => {
                 return response.text();
             })
@@ -35,7 +25,7 @@
                 document.getElementById('headline').innerHTML = headlineHTML;
             })
 
-        fetch('/register.html')
+        fetch('/src/main/resources/static/register.html')
             .then(response => {
                 return response.text();
             })
@@ -43,7 +33,15 @@
                 document.getElementById('register').innerHTML = registerHTML;
             })
 
-        fetch('/dashboard.html')
+        fetch('/src/main/resources/static/login.html')
+            .then(response => {
+                return response.text();
+            })
+            .then(loginHTML => {
+                document.getElementById('login').innerHTML = loginHTML;
+            })
+
+        fetch('/src/main/resources/templates/dashboard.html')
             .then(response => {
                 return response.text();
             })
@@ -51,10 +49,13 @@
                 document.getElementById('dashboard').innerHTML = dashboardHTML;
             })
 
-        function registerUser() {
-
-        }
-
+        fetch('/src/main/resources/templates/room7.html')
+            .then(response => {
+                return response.text();
+            })
+            .then(room7HTML => {
+                document.getElementById('room7').innerHTML = room7HTML;
+            })
     </script>
 </body>
 </html>
