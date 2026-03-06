@@ -1,5 +1,8 @@
 # Eintrag Passwort für Datenbank:
-$env:OPENSHIFT_MYSQL_DB_PASSWORD =
+Envirement: OPENSHIFT_MYSQL_DB_PASSWORD =
+
+# Datenbankverbindung
+Get-Content .\schema.txt | mysql -h 178.63.60.92 -P 31337 -u schulprojekt -p schulprojekt
 
 # Testabfragen für Powershell
 
@@ -7,6 +10,25 @@ $env:OPENSHIFT_MYSQL_DB_PASSWORD =
 Username = "Test"
 Passwort = "ASDFqwer1234!"
 BcryptHash = "$2a$10$BzsrNXld8dbvPX7D8gUpAe0qa21gfyj9AKHYtBMWPKmO3nKmBA8QC"
+
+("ByteBard", "Banane1234!!!");
+("NullNinja", "NullWert2026!!");
+("JoinJunkie", "LeftJoin1234!!A");
+("IndexIgel", "IndexBoost2026!!");
+("MergeMeister", "MergeMaster2026!");
+("RebaseRitter", "RebaseKnight2026!");
+("RollbackRudi", "Rollback2026!!Aa");
+("CommitKeks", "CommitCookie2026!");
+("PatchPanda", "PatchTuesday2026!");
+("CacheKobold", "CacheGoblin2026!");
+("BugBerserker", "BugSmash2026!!A");
+("DeployDrache", "DeployDragon2026!");
+("LintLuchs", "LintLynx2026!!A");
+("StackSchild", "StackShield2026!");
+("QueueQualle", "QueueJelly2026!!");
+("SchemaSchaf", "SchemaSheep2026!");
+("FKFuchs", "ForeignKey2026!!A");
+("TransaktionsToni", "Transaktion2026!!A");
 
 # Test1: richtige Daten
 $body = @{ username="Test"; password="ASDFqwer1234!" } | ConvertTo-Json

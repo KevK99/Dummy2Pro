@@ -46,6 +46,7 @@ CREATE TABLE `question` (
   `image_url` TEXT NULL,
   `end_text` TEXT NULL,
   `allows_multiple` TINYINT(1) NOT NULL DEFAULT 0,
+  `points` INT NOT NULL DEFAULT 1,
   PRIMARY KEY (`question_id`),
   KEY `idx_question_question_set` (`question_set_id`),
   KEY `idx_question_type` (`question_type`),
@@ -60,7 +61,6 @@ CREATE TABLE `Question_Theme` (
   `theme_id` INT NOT NULL,
   PRIMARY KEY (`question_id`, `theme_id`),
   KEY `idx_question_theme_theme` (`theme_id`),
-  KEY `idx_question_theme_question` (`question_id`),
   CONSTRAINT `fk_qt_question`
     FOREIGN KEY (`question_id`) REFERENCES `question`(`question_id`)
     ON DELETE CASCADE
@@ -75,7 +75,6 @@ CREATE TABLE `mc_answer` (
   `answer_id` INT NOT NULL AUTO_INCREMENT,
   `question_id` INT NOT NULL,
   `option_text` TEXT NOT NULL,
-  `points` INT NOT NULL DEFAULT 0,
   `is_correct` TINYINT(1) NOT NULL DEFAULT 0,
   `option_order` INT NOT NULL,
   PRIMARY KEY (`answer_id`),
@@ -91,11 +90,8 @@ CREATE TABLE `gap_field` (
   `gap_id` INT NOT NULL AUTO_INCREMENT,
   `question_id` INT NOT NULL,
   `gap_index` INT NOT NULL,
-  `input_type` ENUM('FREE_TEXT','CHOICE') NOT NULL DEFAULT 'FREE_TEXT',
-  `start_text` TEXT NULL,
-  `end_text` TEXT NULL,
-  `correct_text` TEXT NULL,
-  `case_sensitive` TINYINT(1) NOT NULL DEFAULT 0,
+  `text_before` TEXT NULL,
+  `text_after` TEXT NULL,
   PRIMARY KEY (`gap_id`),
   UNIQUE KEY `uq_gap_field_question_index` (`question_id`, `gap_index`),
   KEY `idx_gap_field_question` (`question_id`),
