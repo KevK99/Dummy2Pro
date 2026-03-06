@@ -23,7 +23,7 @@ public interface UserQuestionProgressRepository
 	/**
 	 * Alle Fortschrittseinträge eines Users (für Dashboard-Übersicht).
 	 */
-	List<UserQuestionProgress> findByUserId(Long userId);
+	List<UserQuestionProgress> findByUserUserId(Long userId);
 
 	/**
 	 * Einen einzelnen Fortschrittseintrag für User + Frage.
