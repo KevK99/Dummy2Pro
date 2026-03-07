@@ -1,4 +1,4 @@
-package me.daskabel.dummy2pro.repository;
+/** package me.daskabel.dummy2pro.repository;
 
 import java.util.List;
 import java.util.Optional;

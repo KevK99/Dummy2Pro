@@ -166,8 +166,7 @@ public class RoomApiController
 	 * geshuffelt). Gibt sessionId + ersten Raum zurück.
 	 */
 	@PostMapping("/start")
-	public ResponseEntity<SessionStartResponse> startSession(
-				@RequestParam(required = false) Long userId)
+    public ResponseEntity<SessionStartResponse> startSession(@RequestParam Long userId)
 	{
 		var session = this.sessionManager.createSession(userId);
 		RoomStartDto firstRoom = this.sessionManager.getRoomState(session.getSessionId(), 1);

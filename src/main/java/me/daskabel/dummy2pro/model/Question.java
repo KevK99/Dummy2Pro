@@ -2,210 +2,183 @@ package me.daskabel.dummy2pro.model;
 
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "question")
 public class Question
 {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "question_id")
+    private Long questionId;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "question_id")
-	private Long questionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_set_id", nullable = false)
+    private QuestionSet questionSet;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "question_set_id", nullable = false)
-	private QuestionSet questionSet;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "question_type", nullable = false)
+    private QuestionType questionType;
 
-	/**
-	 * Type of question: MC = Multiple Choice, TF = True/False, GAP = Gap Fill
-	 */
-	@Column(name = "question_type", nullable = false, length = 10)
-	private QuestionType questionType;
+    @Column(name = "start_text")
+    private String startText;
 
-	@Column(name = "start_text", columnDefinition = "TEXT")
-	private String startText;
+    @Column(name = "image_url")
+    private String imageUrl;
 
-	@Column(name = "image_url")
-	private String imageUrl;
+    @Column(name = "end_text")
+    private String endText;
 
-	@Column(name = "end_text", columnDefinition = "TEXT")
-	private String endText;
+    @Column(name = "allows_multiple", nullable = false)
+    private boolean allowsMultiple;
 
-	@Column(name = "allows_multiple")
-	private Boolean allowsMultiple;
+    @Column(name = "points", nullable = false)
+    private int points;
 
-	@Column(name = "points")
-	private Integer points;
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AnswerOption> answerOptions;
 
-	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<McAnswer> mcAnswers;
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<GapField> gapFields;
 
-	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<GapField> gapFields;
+    @ManyToMany
+    @JoinTable(
+            name = "Question_Theme",
+            joinColumns = @JoinColumn(name = "question_id"),
+            inverseJoinColumns = @JoinColumn(name = "theme_id")
+    )
+    private List<Theme> themes;
 
-	@ManyToMany
-	@JoinTable(name = "QUESTION_THEME", joinColumns = @JoinColumn(name = "question_id"), inverseJoinColumns = @JoinColumn(name = "theme_id"))
-	private List<Theme> themes;
+    public Question()
+    {
+    }
 
-	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<UserQuestionProgress> userProgress;
+    public Question(QuestionSet questionSet, QuestionType questionType, int points)
+    {
+        this.questionSet = questionSet;
+        this.questionType = questionType;
+        this.points = points;
+    }
 
-	// Constructors
-	public Question()
-	{
-	}
+    public Question(QuestionType questionType, String startText, String imageUrl, String endText,
+                    boolean allowsMultiple, int points)
+    {
+        this.questionType = questionType;
+        this.startText = startText;
+        this.imageUrl = imageUrl;
+        this.endText = endText;
+        this.allowsMultiple = allowsMultiple;
+        this.points = points;
+    }
 
-	public Question(QuestionSet questionSet, QuestionType questionType, Integer points)
-	{
-		this.questionSet = questionSet;
-		this.questionType = questionType;
-		this.points = points;
-	}
+    public Long getQuestionId()
+    {
+        return questionId;
+    }
 
-	public Question(QuestionType questionType, String startText, String imageUrl, String endText,
-				Boolean allowsMultiple, Integer points)
-	{
-		this.questionType = questionType;
-		this.startText = startText;
-		this.imageUrl = imageUrl;
-		this.endText = endText;
-		this.allowsMultiple = allowsMultiple;
-		this.points = points;
+    public void setQuestionId(Long questionId)
+    {
+        this.questionId = questionId;
+    }
 
-	}
+    public QuestionSet getQuestionSet()
+    {
+        return questionSet;
+    }
 
-	public Boolean getAllowsMultiple()
-	{
-		return allowsMultiple;
-	}
+    public void setQuestionSet(QuestionSet questionSet)
+    {
+        this.questionSet = questionSet;
+    }
 
-	public String getEndText()
-	{
-		return endText;
-	}
+    public QuestionType getQuestionType()
+    {
+        return questionType;
+    }
 
-	public List<GapField> getGapFields()
-	{
-		return gapFields;
-	}
+    public void setQuestionType(QuestionType questionType)
+    {
+        this.questionType = questionType;
+    }
 
-	public String getImageUrl()
-	{
-		return imageUrl;
-	}
+    public String getStartText()
+    {
+        return startText;
+    }
 
-	public List<McAnswer> getMcAnswers()
-	{
-		return mcAnswers;
-	}
+    public void setStartText(String startText)
+    {
+        this.startText = startText;
+    }
 
-	public Integer getPoints()
-	{
-		return points;
-	}
+    public String getImageUrl()
+    {
+        return imageUrl;
+    }
 
-	// Getters & Setters
-	public Long getQuestionId()
-	{
-		return questionId;
-	}
+    public void setImageUrl(String imageUrl)
+    {
+        this.imageUrl = imageUrl;
+    }
 
-	public QuestionSet getQuestionSet()
-	{
-		return questionSet;
-	}
+    public String getEndText()
+    {
+        return endText;
+    }
 
-	public QuestionType getQuestionType()
-	{
-		return questionType;
-	}
+    public void setEndText(String endText)
+    {
+        this.endText = endText;
+    }
 
-	public String getStartText()
-	{
-		return startText;
-	}
+    public boolean getAllowsMultiple()
+    {
+        return allowsMultiple;
+    }
 
-	public List<Theme> getThemes()
-	{
-		return themes;
-	}
+    public void setAllowsMultiple(boolean allowsMultiple)
+    {
+        this.allowsMultiple = allowsMultiple;
+    }
 
-	public List<UserQuestionProgress> getUserProgress()
-	{
-		return userProgress;
-	}
+    public int getPoints()
+    {
+        return points;
+    }
 
-	public void setAllowsMultiple(Boolean allowsMultiple)
-	{
-		this.allowsMultiple = allowsMultiple;
-	}
+    public void setPoints(int points)
+    {
+        this.points = points;
+    }
 
-	public void setEndText(String endText)
-	{
-		this.endText = endText;
-	}
+    public List<AnswerOption> getAnswerOptions()
+    {
+        return answerOptions;
+    }
 
-	public void setGapFields(List<GapField> gapFields)
-	{
-		this.gapFields = gapFields;
-	}
+    public void setAnswerOptions(List<AnswerOption> answerOptions)
+    {
+        this.answerOptions = answerOptions;
+    }
 
-	public void setImageUrl(String imageUrl)
-	{
-		this.imageUrl = imageUrl;
-	}
+    public List<GapField> getGapFields()
+    {
+        return gapFields;
+    }
 
-	public void setMcAnswers(List<McAnswer> mcAnswers)
-	{
-		this.mcAnswers = mcAnswers;
-	}
+    public void setGapFields(List<GapField> gapFields)
+    {
+        this.gapFields = gapFields;
+    }
 
-	public void setPoints(Integer points)
-	{
-		this.points = points;
-	}
+    public List<Theme> getThemes()
+    {
+        return themes;
+    }
 
-	public void setQuestionId(Long questionId)
-	{
-		this.questionId = questionId;
-	}
-
-	public void setQuestionSet(QuestionSet questionSet)
-	{
-		this.questionSet = questionSet;
-	}
-
-	public void setQuestionType(QuestionType questionType)
-	{
-		this.questionType = questionType;
-	}
-
-	public void setStartText(String startText)
-	{
-		this.startText = startText;
-	}
-
-	public void setThemes(List<Theme> themes)
-	{
-		this.themes = themes;
-	}
-
-	public void setUserProgress(List<UserQuestionProgress> userProgress)
-	{
-		this.userProgress = userProgress;
-	}
+    public void setThemes(List<Theme> themes)
+    {
+        this.themes = themes;
+    }
 }

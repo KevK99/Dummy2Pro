@@ -71,7 +71,6 @@ public class RoomDtos
 	public static class AnswerRequest
 	{
 		private Long questionId;
-		private Long userId; // null = kein Login (anonymer Modus)
 		private List<Long> selectedAnswerIds; // für MC / TF
 		private List<GapAnswerEntry> gapAnswers; // für GAP
 
@@ -94,11 +93,6 @@ public class RoomDtos
 			return this.selectedAnswerIds;
 		}
 
-		public Long getUserId()
-		{
-			return this.userId;
-		}
-
 		public void setGapAnswers(List<GapAnswerEntry> gapAnswers)
 		{
 			this.gapAnswers = gapAnswers;
@@ -114,10 +108,6 @@ public class RoomDtos
 			this.selectedAnswerIds = selectedAnswerIds;
 		}
 
-		public void setUserId(Long userId)
-		{
-			this.userId = userId;
-		}
 	}
 
 	/**

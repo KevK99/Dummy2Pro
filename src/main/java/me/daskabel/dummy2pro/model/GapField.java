@@ -17,7 +17,7 @@ public class GapField {
     private Question question;
 
     @Column(name = "gap_index", nullable = false)
-    private Integer gapIndex;
+    private int gapIndex;
 
     @Column(name = "text_before", columnDefinition = "TEXT")
     private String textBefore;
@@ -25,13 +25,13 @@ public class GapField {
     @Column(name = "text_after", columnDefinition = "TEXT")
     private String textAfter;
 
-    @OneToMany(mappedBy = "gapField", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "gapField", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<GapOption> gapOptions;
 
     // Constructors
     public GapField() {}
 
-    public GapField(Question question, Integer gapIndex) {
+    public GapField(Question question, int gapIndex) {
         this.question = question;
         this.gapIndex = gapIndex;
     }
@@ -43,8 +43,8 @@ public class GapField {
     public Question getQuestion() { return question; }
     public void setQuestion(Question question) { this.question = question; }
 
-    public Integer getGapIndex() { return gapIndex; }
-    public void setGapIndex(Integer gapIndex) { this.gapIndex = gapIndex; }
+    public int getGapIndex() { return gapIndex; }
+    public void setGapIndex(int gapIndex) { this.gapIndex = gapIndex; }
 
     public String getTextBefore() { return textBefore; }
     public void setTextBefore(String textBefore) { this.textBefore = textBefore; }

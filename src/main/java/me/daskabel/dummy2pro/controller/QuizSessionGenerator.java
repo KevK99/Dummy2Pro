@@ -67,9 +67,9 @@ public class QuizSessionGenerator
 		dto.setTotalCount(total);
 
 		// MC / TF: Antwortoptionen ohne is_correct
-		if (q.getMcAnswers() != null && !q.getMcAnswers().isEmpty())
+		if (q.getAnswerOptions() != null && !q.getAnswerOptions().isEmpty())
 		{
-			List<AnswerOptionDto> options = q.getMcAnswers().stream()
+			List<AnswerOptionDto> options = q.getAnswerOptions().stream()
 						.sorted(Comparator.comparingInt(
 									a -> a.getOptionOrder() != null ? a.getOptionOrder() : 0))
 						.map(a ->

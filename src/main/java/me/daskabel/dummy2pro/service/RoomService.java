@@ -26,7 +26,7 @@ import me.daskabel.dummy2pro.dto.RoomDtos.RoomStartDto;
 import me.daskabel.dummy2pro.dto.RoomDtos.RoomStatusDto;
 import me.daskabel.dummy2pro.model.GapField;
 import me.daskabel.dummy2pro.model.GapOption;
-import me.daskabel.dummy2pro.model.McAnswer;
+import me.daskabel.dummy2pro.model.AnswerOption;
 import me.daskabel.dummy2pro.model.Question;
 import me.daskabel.dummy2pro.model.QuestionType;
 import me.daskabel.dummy2pro.model.Theme;
@@ -126,8 +126,8 @@ public class RoomService
 	private static AnswerResultDto evaluateMcTf(Question question, AnswerRequest request)
 	{
 		// Korrekte IDs aus der DB
-		Set<Long> correctIds = question.getMcAnswers().stream()
-					.filter(a -> Boolean.TRUE.equals(a.getIsCorrect())).map(McAnswer::getAnswerId)
+		Set<Long> correctIds = question.getAnswerOptions().stream()
+					.filter(a -> Boolean.TRUE.equals(a.getIsCorrect())).map(AnswerOption::getAnswerId)
 					.collect(Collectors.toSet());
 
 		Set<Long> selectedIds = new HashSet<>(
@@ -160,9 +160,9 @@ public class RoomService
 		dto.setTotalCount(total);
 
 		// MC / TF: Antwortoptionen ohne is_correct
-		if (q.getMcAnswers() != null && !q.getMcAnswers().isEmpty())
+		if (q.getAnswerOptions() != null && !q.getAnswerOptions().isEmpty())
 		{
-			List<AnswerOptionDto> options = q.getMcAnswers().stream()
+			List<AnswerOptionDto> options = q.getAnswerOptions().stream()
 						.sorted(Comparator.comparingInt(
 									a -> a.getOptionOrder() != null ? a.getOptionOrder() : 0))
 						.map(a ->

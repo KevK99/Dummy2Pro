@@ -25,7 +25,7 @@ import me.daskabel.dummy2pro.dto.RoomDtos.RoomStartDto;
 import me.daskabel.dummy2pro.dto.RoomDtos.RoomStatusDto;
 import me.daskabel.dummy2pro.model.GapField;
 import me.daskabel.dummy2pro.model.GapOption;
-import me.daskabel.dummy2pro.model.McAnswer;
+import me.daskabel.dummy2pro.model.AnswerOption;
 import me.daskabel.dummy2pro.model.Question;
 import me.daskabel.dummy2pro.model.User;
 import me.daskabel.dummy2pro.model.UserQuestionProgress;
@@ -217,8 +217,8 @@ public class QuizSessionManager
 
 	private static AnswerResultDto evaluateMcTf(Question question, AnswerRequest request)
 	{
-		Set<Long> correctIds = question.getMcAnswers().stream()
-					.filter(a -> Boolean.TRUE.equals(a.getIsCorrect())).map(McAnswer::getAnswerId)
+		Set<Long> correctIds = question.getAnswerOptions().stream()
+					.filter(a -> Boolean.TRUE.equals(a.getIsCorrect())).map(AnswerOption::getAnswerId)
 					.collect(Collectors.toSet());
 
 		Set<Long> selectedIds = new HashSet<>(

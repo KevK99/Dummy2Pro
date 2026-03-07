@@ -2,17 +2,28 @@ package me.daskabel.dummy2pro.controller;
 
 import me.daskabel.dummy2pro.model.Room;
 
-class GameProgress
+public class GameProgress
 {
-	private Room currentRoom;
+    private Long runId;
+    private Room currentRoom;
 
-	public Room getCurrentRoom()
-	{
-		return this.currentRoom;
-	}
+    public Long getRunId()
+    {
+        return runId;
+    }
 
-	public void setCurrentRoom(Room room)
-	{
-		this.currentRoom = room;
-	}
+    public void setRunId(Long runId)
+    {
+        this.runId = runId;
+    }
+
+    public Room getCurrentRoom()
+    {
+        return currentRoom;
+    }
+
+    public void setCurrentRoom(Room room)
+    {
+        this.currentRoom = room;
+    }
 }
