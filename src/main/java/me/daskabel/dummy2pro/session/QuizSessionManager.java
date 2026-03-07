@@ -356,6 +356,7 @@ public class QuizSessionManager
         run = this.gameRunRepo.save(run);
 
 		QuizSession session = this.generator.generate(userId, run.getRunId());
+        persistInitialQuestionProgress(run, session);
 		this.sessions.put(session.getSessionId(), session);
         this.userSessionMap.put(userId, session.getSessionId());
 
@@ -476,7 +477,10 @@ public class QuizSessionManager
 
         QuestionProgress progress = this.questionProgressRepo
                 .findByRun_RunIdAndQuestion_QuestionId(runId, question.getQuestionId())
-                .orElseGet(() -> new QuestionProgress(run, question, ProgressStatus.OPEN, null));
+                .orElseThrow(() -> new NoSuchElementException(
+                        "QuestionProgress für runId=" + runId
+                                + " und questionId=" + question.getQuestionId()
+                                + " nicht gefunden."));
 
         progress.setStatus(result.isCorrect() ? ProgressStatus.CORRECT : ProgressStatus.WRONG);
 		progress.setAnsweredAt(LocalDateTime.now());
@@ -607,4 +611,33 @@ public class QuizSessionManager
 		dto.setQuestionSequence(room.getQuestionSequence());
 		return dto;
 	}
+
+    // Hilfsmethode um alle Fragen für diesen Run, also aus dieser Session in der Datenbank zu speichern
+    private void persistInitialQuestionProgress(GameRun run, QuizSession session)
+    {
+        for (RoomSession room : session.getRooms().values())
+        {
+            List<Long> sequence = room.getQuestionSequence();
+
+            for (int i = 0; i < sequence.size(); i++)
+            {
+                Long questionId = sequence.get(i);
+
+                Question question = this.questionRepo.findById(questionId)
+                        .orElseThrow(() -> new NoSuchElementException(
+                                "Frage " + questionId + " nicht gefunden."));
+
+                QuestionProgress progress = new QuestionProgress(
+                        run,
+                        question,
+                        room.getRoomId(),
+                        i + 1,
+                        ProgressStatus.OPEN,
+                        null
+                );
+
+                this.questionProgressRepo.save(progress);
+            }
+        }
+    }
 }

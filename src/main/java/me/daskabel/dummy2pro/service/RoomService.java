@@ -46,7 +46,7 @@ import me.daskabel.dummy2pro.repository.ThemeRepository;
  * Kernlogik für die Raum/Quiz-Mechanik.
  *
  * Zuständigkeiten:
- * - Fragen eines Themas laden und mischen
+ * - Fragen des Raums dieser Sitzung laden
  * - Antworten auswerten (MC, TF, GAP)
  * - Fortschritt in der DB speichern
  * - Raum-Status berechnen (%, Medal)
@@ -266,7 +266,7 @@ public class RoomService
 
 
 			List<QuestionProgress> progressList = this.questionProgressRepo
-						.findByRunIdAndThemeId(runId, (long) roomId);
+						.findByRunIdAndRoomIdOrderByQuestionOrder(runId, roomId);
 
 			Map<Long, QuestionProgress> progressMap = progressList.stream()
 						.collect(Collectors.toMap(p -> p.getQuestion().getQuestionId(), p -> p));
@@ -343,8 +343,13 @@ public class RoomService
 	{
         getRun(runId);
 		Theme theme = getTheme(roomId);
-		List<Question> allQuestions = loadAllQuestionsForTheme(roomId);
-		return buildStatus(roomId, theme, allQuestions, runId);
+        List<QuestionProgress> progressList = this.questionProgressRepo
+                .findByRunIdAndRoomIdOrderByQuestionOrder(runId, roomId);
+
+        List<Question> roomQuestions = progressList.stream()
+                .map(QuestionProgress::getQuestion)
+                .toList();
+		return buildStatus(roomId, theme, roomQuestions, runId);
 	}
 
     private GameRun getRun(Long runId)
@@ -417,12 +422,10 @@ public class RoomService
 
         QuestionProgress  progress = this.questionProgressRepo
                 .findByRun_RunIdAndQuestion_QuestionId(runId, question.getQuestionId())
-                .orElseGet(() -> new QuestionProgress(
-                        run,
-                        question,
-                        ProgressStatus.OPEN,
-                        null
-                ));
+                .orElseThrow(() -> new NoSuchElementException(
+                        "QuestionProgress für runId=" + runId
+                                + " und questionId=" + question.getQuestionId()
+                                + " nicht gefunden."));
 
 		progress.setStatus(result.isCorrect() ? ProgressStatus.CORRECT : ProgressStatus.WRONG);
 		progress.setAnsweredAt(LocalDateTime.now());
@@ -505,28 +508,26 @@ public class RoomService
         getRun(runId);
 		Theme theme = getTheme(roomId);
 
-		// Alle Fragen des Themas laden (mit Antworten und Gaps vorgeladen)
-		List<Question> questions = loadAllQuestionsForTheme(roomId);
+        List<QuestionProgress> progressList = this.questionProgressRepo
+                .findByRunIdAndRoomIdOrderByQuestionOrder(runId, roomId);
 
-		if (questions.isEmpty())
-		{
-			throw new IllegalStateException("Keine Fragen für Raum " + roomId + " gefunden.");
-		}
+        List<Question> orderedQuestions = progressList.stream()
+                .map(QuestionProgress::getQuestion)
+                .toList();
 
-		// Mischen — jeder Spielstart hat eine andere Reihenfolge
-		List<Question> shuffled = new ArrayList<>(questions);
-		Collections.shuffle(shuffled);
+        if (orderedQuestions.isEmpty())
+        {
+            throw new IllegalStateException("Keine Fragen für Raum " + roomId + " im Run " + runId + " gefunden.");
+        }
 
-		// Fragen-Sequenz als ID-Liste für den Client
-		List<Long> sequence = shuffled.stream()
-                    .map(Question::getQuestionId)
-					.collect(Collectors.toList());
+        List<Long> sequence = orderedQuestions.stream()
+                .map(Question::getQuestionId)
+                .collect(Collectors.toList());
 
-		// Erste Frage vollständig als DTO
-		QuestionDto firstQuestion = toQuestionDto(shuffled.get(0), 0, shuffled.size());
+        QuestionDto firstQuestion = toQuestionDto(orderedQuestions.get(0), 0, orderedQuestions.size());
 
 		// Status berechnen
-		RoomStatusDto status = buildStatus(roomId, theme, questions, runId);
+		RoomStatusDto status = buildStatus(roomId, theme, orderedQuestions, runId);
 
 		RoomStartDto result = new RoomStartDto();
 		result.setStatus(status);

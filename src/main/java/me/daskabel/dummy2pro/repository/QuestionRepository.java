@@ -20,7 +20,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long>
 {
 
 	/**
-	 * Alle Fragen zu einem bestimmten Theme (über die Join-Tabelle Question_Theme).
+	 * Alle Fragen zu einem bestimmten Theme (über die Join-Tabelle question_theme).
 	 * DISTINCT verhindert Duplikate durch den Join.
 	 */
 	@Query("""
@@ -47,12 +47,11 @@ public interface QuestionRepository extends JpaRepository<Question, Long>
 	 * Alle Fragen zu einem Theme, mit GapFields und GapOptions vorgeladen. Wird für
 	 * GAP-Fragen genutzt.
 	 */
-	@Query("""
-				    SELECT DISTINCT q FROM Question q
-				    LEFT JOIN FETCH q.gapFields gf
-				    LEFT JOIN FETCH gf.gapOptions
-				    JOIN q.themes t
-				    WHERE t.themeId = :themeId
-				""")
-	List<Question> findByThemeIdWithGaps(@Param("themeId") Long themeId);
+    @Query("""
+    SELECT DISTINCT q FROM Question q
+    LEFT JOIN FETCH q.gapFields gf
+    JOIN q.themes t
+    WHERE t.themeId = :themeId
+    """)
+    List<Question> findByThemeIdWithGaps(@Param("themeId") Long themeId);
 }

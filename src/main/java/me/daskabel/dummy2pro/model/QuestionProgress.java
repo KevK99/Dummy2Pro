@@ -27,15 +27,23 @@ public class QuestionProgress
     @Column(name = "answered_at")
     private LocalDateTime answeredAt;
 
+    @Column(name = "room_id", nullable = false)
+    private int roomId;
+
+    @Column(name = "question_order", nullable = false)
+    private int questionOrder;
+
     public QuestionProgress()
     {
     }
 
-    public QuestionProgress(GameRun run, Question question, ProgressStatus status, LocalDateTime answeredAt)
+    public QuestionProgress(GameRun run, Question question, int roomId, int questionOrder, ProgressStatus status, LocalDateTime answeredAt)
     {
         this.id = new QuestionProgressId(run.getRunId(), question.getQuestionId());
         this.run = run;
         this.question = question;
+        this.roomId = roomId;
+        this.questionOrder = questionOrder;
         this.status = status;
         this.answeredAt = answeredAt;
     }
@@ -68,6 +76,26 @@ public class QuestionProgress
     public void setQuestion(Question question)
     {
         this.question = question;
+    }
+
+    public int getRoomId()
+    {
+        return this.roomId;
+    }
+
+    public void setRoomId(int roomId)
+    {
+        this.roomId = roomId;
+    }
+
+    public int getQuestionOrder()
+    {
+        return this.questionOrder;
+    }
+
+    public void setQuestionOrder(int questionOrder)
+    {
+        this.questionOrder = questionOrder;
     }
 
     public ProgressStatus getStatus()

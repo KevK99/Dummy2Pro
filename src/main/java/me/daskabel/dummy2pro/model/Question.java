@@ -44,7 +44,7 @@ public class Question
 
     @ManyToMany
     @JoinTable(
-            name = "Question_Theme",
+            name = "question_theme",
             joinColumns = @JoinColumn(name = "question_id"),
             inverseJoinColumns = @JoinColumn(name = "theme_id")
     )

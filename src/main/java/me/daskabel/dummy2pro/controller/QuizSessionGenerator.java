@@ -28,7 +28,7 @@ import me.daskabel.dummy2pro.session.QuizSession.RoomSession;
 /**
  * Erzeugt eine vollständige QuizSession für alle 7 Räume.
  *
- * Was hier passiert: 1. Für jeden der 7 Räume (= Themes) werden alle Fragen aus
+ * Was hier passiert: 1. Für jeden der 7 Räume (= Themes) werden 40 Fragen aus
  * der DB geladen 2. Die Fragen werden zufällig gemischt (jede Session = andere
  * Reihenfolge) 3. Die QuestionDtos werden ohne is_correct gebaut und in den
  * Cache gelegt 4. Eine RoomSession pro Raum wird gebaut und in die QuizSession
@@ -49,6 +49,7 @@ public class QuizSessionGenerator
 
 	// Raum 1..7 entspricht theme_id 1..7 in der DB
 	private static final int ROOM_COUNT = 7;
+    private static final int QUESTIONS_PER_ROOM = 40;
 
 	/**
 	 * Question-Entity → QuestionDto (ohne is_correct). index und total werden
@@ -147,25 +148,35 @@ public class QuizSessionGenerator
 		// Alle Fragen des Themas laden (mit Answers und Gaps vorgeladen)
 		List<Question> questions = loadAllQuestionsForTheme(roomId);
 
+        if (questions.isEmpty())
+        {
+            throw new IllegalStateException("Für Raum " + roomId + " sind keine Fragen in der Datenbank vorhanden.");
+        }
+
 		// Reihenfolge mischen — pro Session anders
 		List<Question> shuffled = new ArrayList<>(questions);
 		Collections.shuffle(shuffled);
 
+        // pro Raum nur oben angegebene Anzahl an Fragen nehmen
+        int questionCountForRun = Math.min(QUESTIONS_PER_ROOM, shuffled.size());
+        List<Question> selectedQuestions = new ArrayList<>(shuffled.subList(0, questionCountForRun));
+
 		// IDs als Sequenz
-		List<Long> sequence = shuffled.stream().map(Question::getQuestionId)
+		List<Long> sequence = selectedQuestions.stream()
+                    .map(Question::getQuestionId)
 					.collect(Collectors.toList());
 
 		// QuestionDtos bauen und in Cache legen (ohne is_correct!)
 		Map<Long, QuestionDto> cache = new LinkedHashMap<>();
-		for (int i = 0; i < shuffled.size(); i++)
+		for (int i = 0; i < selectedQuestions.size(); i++)
 		{
-			Question q = shuffled.get(i);
-			QuestionDto dto = toQuestionDto(q, i, shuffled.size());
+			Question q = selectedQuestions.get(i);
+			QuestionDto dto = toQuestionDto(q, i, selectedQuestions.size());
 			cache.put(q.getQuestionId(), dto);
 		}
 
 		// Maximale Punkte des Raums
-        int maxPoints = questions.stream()
+        int maxPoints = selectedQuestions.stream()
                 .mapToInt(Question::getPoints)
                 .sum();
 
@@ -198,7 +209,7 @@ public class QuizSessionGenerator
 	}
 
 	/**
-	 * Lädt alle Fragen eines Themas mit MC-Antworten UND GAP-Feldern.
+	 * Lädt begrenzte Anzahl an Fragen eines Themas mit MC-Antworten UND GAP-Feldern.
 	 *
 	 * Da JPA keine zwei Bag-Fetches in einer Query erlaubt
 	 * (MultipleBagFetchException), werden zwei Queries gemacht und in-memory

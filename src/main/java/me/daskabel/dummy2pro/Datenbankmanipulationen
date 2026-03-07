@@ -2,6 +2,7 @@
 
 # Umbennen Tabelle, da Name unpassend
 RENAME TABLE `mc_answer` TO `answer_option`;
+ALTER TABLE IF EXISTS Question_Theme RENAME TO question_theme;
 
 # Erstellen unserer Usertabelle
 CREATE TABLE `users` (
@@ -31,7 +32,8 @@ CREATE TABLE `game_run` (
 CREATE TABLE `question_progress` (
   `run_id` INT NOT NULL,
   `question_id` INT NOT NULL,
-
+  `room_id` INT NOT NULL,
+  `question_order` INT NOT NULL,
   `status` ENUM('OPEN','CORRECT','WRONG') NOT NULL DEFAULT 'OPEN',
   `answered_at` DATETIME NULL,
 

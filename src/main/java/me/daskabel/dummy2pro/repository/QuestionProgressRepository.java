@@ -14,8 +14,6 @@ public interface QuestionProgressRepository extends JpaRepository<QuestionProgre
 {
     List<QuestionProgress> findByRun_RunId(Long runId);
 
-    List<QuestionProgress> findByRun_RunIdOrderByQuestion_QuestionIdAsc(Long runId);
-
     Optional<QuestionProgress> findByRun_RunIdAndQuestion_QuestionId(Long runId, Long questionId);
 
     long countByRun_RunId(Long runId);
@@ -23,12 +21,23 @@ public interface QuestionProgressRepository extends JpaRepository<QuestionProgre
     long countByRun_RunIdAndStatus(Long runId, ProgressStatus status);
 
     @Query("""
-            SELECT qp FROM QuestionProgress qp
-            JOIN qp.question q
-            JOIN q.themes t
-            WHERE qp.run.runId = :runId
-              AND t.themeId = :themeId
-            """)
-    List<QuestionProgress> findByRunIdAndThemeId(@Param("runId") Long runId,
-                                                 @Param("themeId") Long themeId);
+    SELECT qp FROM QuestionProgress qp
+    WHERE qp.run.runId = :runId
+      AND qp.roomId = :roomId
+    ORDER BY qp.questionOrder
+    """)
+    List<QuestionProgress> findByRunIdAndRoomIdOrderByQuestionOrder(@Param("runId") Long runId,
+        @Param("roomId") int roomId);
+
+    @Query("""
+    SELECT qp FROM QuestionProgress qp
+    WHERE qp.run.runId = :runId
+      AND qp.roomId = :roomId
+      AND qp.status = :status
+    ORDER BY qp.questionOrder
+    """)
+    List<QuestionProgress> findByRunIdAndRoomIdAndStatusOrderByQuestionOrder(@Param("runId") Long runId,
+        @Param("roomId") int roomId,
+        @Param("status") ProgressStatus status);
+
 }
