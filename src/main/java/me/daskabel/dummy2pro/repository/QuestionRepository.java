@@ -32,12 +32,12 @@ public interface QuestionRepository extends JpaRepository<Question, Long>
 	List<Question> findByThemeId(@Param("themeId") Long themeId);
 
 	/**
-	 * Alle Fragen zu einem Theme, mit McAnswers vorgeladen (verhindert N+1). Wird
+	 * Alle Fragen zu einem Theme, mit Antwortoptionen vorgeladen (verhindert N+1). Wird
 	 * für MC/TF-Fragen genutzt.
 	 */
 	@Query("""
 				    SELECT DISTINCT q FROM Question q
-				    LEFT JOIN FETCH q.mcAnswers
+				    LEFT JOIN FETCH q.answerOptions
 				    JOIN q.themes t
 				    WHERE t.themeId = :themeId
 				""")

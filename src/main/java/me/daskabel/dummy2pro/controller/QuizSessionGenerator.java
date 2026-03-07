@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import me.daskabel.dummy2pro.model.AnswerOption;
+import me.daskabel.dummy2pro.model.QuestionType;
 import me.daskabel.dummy2pro.dto.RoomDtos.AnswerOptionDto;
 import me.daskabel.dummy2pro.dto.RoomDtos.GapFieldDto;
 import me.daskabel.dummy2pro.dto.RoomDtos.GapOptionDto;
@@ -70,8 +72,7 @@ public class QuizSessionGenerator
 		if (q.getAnswerOptions() != null && !q.getAnswerOptions().isEmpty())
 		{
 			List<AnswerOptionDto> options = q.getAnswerOptions().stream()
-						.sorted(Comparator.comparingInt(
-									a -> a.getOptionOrder() != null ? a.getOptionOrder() : 0))
+                        .sorted(Comparator.comparingInt(AnswerOption::getOptionOrder))
 						.map(a ->
 						{
 							AnswerOptionDto aDto = new AnswerOptionDto();
@@ -87,8 +88,7 @@ public class QuizSessionGenerator
 		if (q.getGapFields() != null && !q.getGapFields().isEmpty())
 		{
 			List<GapFieldDto> gapDtos = q.getGapFields().stream()
-						.sorted(Comparator.comparingInt(
-									gf -> gf.getGapIndex() != null ? gf.getGapIndex() : 0))
+                        .sorted(Comparator.comparingInt(gf -> gf.getGapIndex()))
 						.map(gf ->
 						{
 							GapFieldDto gfDto = new GapFieldDto();
@@ -100,10 +100,7 @@ public class QuizSessionGenerator
 							if (gf.getGapOptions() != null)
 							{
 								List<GapOptionDto> gopts = gf.getGapOptions().stream()
-											.sorted(Comparator.comparingInt(
-														o -> o.getOptionOrder() != null
-																	? o.getOptionOrder()
-																	: 0))
+                                            .sorted(Comparator.comparingInt(o -> o.getOptionOrder()))
 											.map(go ->
 											{
 												GapOptionDto goDto = new GapOptionDto();
@@ -168,8 +165,9 @@ public class QuizSessionGenerator
 		}
 
 		// Maximale Punkte des Raums
-		int maxPoints = questions.stream().mapToInt(q -> q.getPoints() != null ? q.getPoints() : 1)
-					.sum();
+        int maxPoints = questions.stream()
+                .mapToInt(Question::getPoints)
+                .sum();
 
 		return new RoomSession(roomId, theme.getName(), sequence, cache, maxPoints);
 	}
@@ -181,13 +179,14 @@ public class QuizSessionGenerator
 	/**
 	 * Erzeugt eine neue, vollständige QuizSession.
 	 *
-	 * @param userId null = anonymer Modus, sonst DB-User-ID
+	 * @param userId DB-User-ID
+     * @param runId aktueller Spielstand
 	 * @return Fertige QuizSession, bereit zum Spielen
 	 */
 	@Transactional(readOnly = true)
-	public QuizSession generate(Long userId)
+	public QuizSession generate(Long userId, Long runId)
 	{
-		QuizSession session = new QuizSession(userId);
+		QuizSession session = new QuizSession(userId, runId);
 
 		for (int roomId = 1; roomId <= ROOM_COUNT; roomId++)
 		{
@@ -218,7 +217,7 @@ public class QuizSessionGenerator
 
 		for (Question q : withAnswers)
 		{
-			if ("GAP".equals(q.getQuestionType()))
+            if (q.getQuestionType() == QuestionType.GAP)
 			{
 				Question gapVersion = gapMap.get(q.getQuestionId());
 				if (gapVersion != null)

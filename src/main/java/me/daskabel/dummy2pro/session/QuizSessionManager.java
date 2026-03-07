@@ -13,6 +13,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import me.daskabel.dummy2pro.model.*;
+import me.daskabel.dummy2pro.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,27 +25,19 @@ import me.daskabel.dummy2pro.dto.RoomDtos.GapResultEntry;
 import me.daskabel.dummy2pro.dto.RoomDtos.QuestionDto;
 import me.daskabel.dummy2pro.dto.RoomDtos.RoomStartDto;
 import me.daskabel.dummy2pro.dto.RoomDtos.RoomStatusDto;
-import me.daskabel.dummy2pro.model.GapField;
-import me.daskabel.dummy2pro.model.GapOption;
-import me.daskabel.dummy2pro.model.AnswerOption;
-import me.daskabel.dummy2pro.model.Question;
-import me.daskabel.dummy2pro.model.User;
-import me.daskabel.dummy2pro.model.UserQuestionProgress;
-import me.daskabel.dummy2pro.model.UserQuestionProgressId;
-import me.daskabel.dummy2pro.repository.QuestionRepository;
-import me.daskabel.dummy2pro.repository.UserQuestionProgressRepository;
-import me.daskabel.dummy2pro.repository.UserRepository;
 import me.daskabel.dummy2pro.session.QuizSession.RoomSession;
 
 /**
  * Verwaltet alle aktiven QuizSessions im Arbeitsspeicher.
  *
- * Verantwortlichkeiten: - Sessions anlegen (über QuizSessionGenerator) und
- * speichern - Aktuelle Frage liefern - Antworten auswerten (MC / TF / GAP) und
- * Ergebnis in die Session schreiben - Optional: Fortschritt in die DB
- * persistieren (wenn User eingeloggt) - Session-Status (Raum-Übersicht,
- * Gesamt-Punkte) liefern - Abgelaufene Sessions aufräumen (einfaches
- * TTL-Konzept)
+ * Verantwortlichkeiten:
+ * - Sessions anlegen (über QuizSessionGenerator) und speichern
+ * - Aktuelle Frage liefern
+ * - Antworten auswerten (MC / TF / GAP) und
+ *  Ergebnis in die Session schreiben
+ * - Fortschritt in die DB persistieren
+ * - Session-Status (Raum-Übersicht, Gesamt-Punkte) liefern
+ * - Abgelaufene Sessions aufräumen (einfaches TTL-Konzept)
  *
  * Speicherstruktur: sessionId (String/UUID) → QuizSession
  *
@@ -172,8 +166,10 @@ public class QuizSessionManager
 			{
 				if (gf.getGapOptions() != null)
 				{
-					gf.getGapOptions().stream().filter(o -> Boolean.TRUE.equals(o.getIsCorrect()))
-								.findFirst().ifPresent(o -> correctByGapId.put(gf.getGapId(), o));
+					gf.getGapOptions().stream()
+                            .filter(GapOption::getIsCorrect)
+                            .findFirst()
+                            .ifPresent(o -> correctByGapId.put(gf.getGapId(), o));
 				}
 			}
 		}
@@ -211,14 +207,15 @@ public class QuizSessionManager
 		result.setCorrect(allCorrect);
 		result.setGapResults(gapResults);
 		result.setPointsEarned(
-					allCorrect ? (question.getPoints() != null ? question.getPoints() : 1) : 0);
+					allCorrect ? (question.getPoints()) : 0);
 		return result;
 	}
 
 	private static AnswerResultDto evaluateMcTf(Question question, AnswerRequest request)
 	{
 		Set<Long> correctIds = question.getAnswerOptions().stream()
-					.filter(a -> Boolean.TRUE.equals(a.getIsCorrect())).map(AnswerOption::getAnswerId)
+                    .filter(AnswerOption::getIsCorrect)
+                    .map(AnswerOption::getAnswerId)
 					.collect(Collectors.toSet());
 
 		Set<Long> selectedIds = new HashSet<>(
@@ -231,7 +228,7 @@ public class QuizSessionManager
 		result.setCorrect(correct);
 		result.setCorrectAnswerIds(new ArrayList<>(correctIds));
 		result.setPointsEarned(
-					correct ? (question.getPoints() != null ? question.getPoints() : 1) : 0);
+					correct ? (question.getPoints()) : 0);
 		return result;
 	}
 
@@ -247,22 +244,31 @@ public class QuizSessionManager
 	// ================================================================
 
 	private final QuestionRepository questionRepo;
-
-	private final UserQuestionProgressRepository progressRepo;
-
-	private final UserRepository userRepo;
+    private final GameRunRepository gameRunRepo;
+    private final QuestionProgressRepository questionProgressRepo;
+    private final RunSelectedAnswerRepository runSelectedAnswerRepo;
+    private final RunGapAnswerRepository runGapAnswerRepo;
+    private final UserRepository userRepo;
 
 	// ================================================================
 	// Navigation
 	// ================================================================
 
-	public QuizSessionManager(QuizSessionGenerator generator, QuestionRepository questionRepo,
-				UserQuestionProgressRepository progressRepo, UserRepository userRepo)
+	public QuizSessionManager(QuizSessionGenerator generator,
+                              QuestionRepository questionRepo,
+                              GameRunRepository gameRunRepo,
+                              QuestionProgressRepository questionProgressRepo,
+                              RunSelectedAnswerRepository runSelectedAnswerRepo,
+                              RunGapAnswerRepository runGapAnswerRepo,
+                              UserRepository userRepo)
 	{
 		this.generator = generator;
 		this.questionRepo = questionRepo;
-		this.progressRepo = progressRepo;
-		this.userRepo = userRepo;
+        this.gameRunRepo = gameRunRepo;
+        this.questionProgressRepo = questionProgressRepo;
+        this.runSelectedAnswerRepo = runSelectedAnswerRepo;
+        this.runGapAnswerRepo = runGapAnswerRepo;
+        this.userRepo = userRepo;
 	}
 
 	/**
@@ -323,28 +329,35 @@ public class QuizSessionManager
 	 * Wenn der User bereits eine aktive Session hat, wird diese überschrieben (=
 	 * neuer Spielstart).
 	 *
-	 * @param userId null = anonymer Modus
+	 * @param userId
 	 * @return Die neue Session
 	 */
+    @Transactional
 	public QuizSession createSession(Long userId)
 	{
-		// Alte Session des Users entfernen (falls vorhanden)
-		if (userId != null)
+		if (userId == null)
 		{
-			String oldSessionId = this.userSessionMap.get(userId);
-			if (oldSessionId != null)
-			{
-				this.sessions.remove(oldSessionId);
-			}
+            throw new IllegalArgumentException("userId darf nicht null sein.");
 		}
 
-		QuizSession session = this.generator.generate(userId);
+        if (this.userSessionMap.containsKey(userId))
+        {
+            String oldSessionId = this.userSessionMap.get(userId);
+            if (oldSessionId != null) {
+                this.sessions.remove(oldSessionId);
+            }
+        }
+
+        GameRun run = new GameRun();
+        run.setUser(this.userRepo.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("User " + userId + " nicht gefunden.")));
+        run.setStartedAt(LocalDateTime.now());
+        run.setFinishedAt(null);
+        run = this.gameRunRepo.save(run);
+
+		QuizSession session = this.generator.generate(userId, run.getRunId());
 		this.sessions.put(session.getSessionId(), session);
-
-		if (userId != null)
-		{
-			this.userSessionMap.put(userId, session.getSessionId());
-		}
+        this.userSessionMap.put(userId, session.getSessionId());
 
 		return session;
 	}
@@ -455,26 +468,70 @@ public class QuizSessionManager
 		return session;
 	}
 
-	private void persistProgress(Long userId, Question question, boolean correct,
-				List<Long> selectedAnswerIds)
+	private void persistProgress(Long runId, Question question,  AnswerResultDto result,
+                                 AnswerRequest request)
 	{
-		User user = this.userRepo.findById(userId).orElseThrow(
-					() -> new NoSuchElementException("User " + userId + " nicht gefunden."));
+        GameRun run = this.gameRunRepo.findById(runId)
+                .orElseThrow(() -> new NoSuchElementException("Run " + runId + " nicht gefunden."));
 
-		UserQuestionProgressId id = new UserQuestionProgressId(userId, question.getQuestionId());
+        QuestionProgress progress = this.questionProgressRepo
+                .findByRun_RunIdAndQuestion_QuestionId(runId, question.getQuestionId())
+                .orElseGet(() -> new QuestionProgress(run, question, ProgressStatus.OPEN, null));
 
-		UserQuestionProgress progress = this.progressRepo.findById(id)
-					.orElseGet(() -> new UserQuestionProgress(user, question));
-
-		progress.setStatus(correct ? "CORRECT" : "WRONG");
+        progress.setStatus(result.isCorrect() ? ProgressStatus.CORRECT : ProgressStatus.WRONG);
 		progress.setAnsweredAt(LocalDateTime.now());
+        this.questionProgressRepo.save(progress);
 
-		if (selectedAnswerIds != null && !selectedAnswerIds.isEmpty())
-		{
-			progress.setSelectedAnswerId(selectedAnswerIds.get(0));
-		}
+        if (question.getQuestionType() == QuestionType.GAP)
+        {
+            this.runGapAnswerRepo.deleteByRun_RunIdAndQuestion_QuestionId(runId, question.getQuestionId());
 
-		this.progressRepo.save(progress);
+            Map<Long, GapField> gapFieldMap = question.getGapFields().stream()
+                    .collect(Collectors.toMap(GapField::getGapId, gf -> gf));
+
+            if (request.getGapAnswers() != null)
+            {
+                for (var entry : request.getGapAnswers())
+                {
+                    GapField gapField = gapFieldMap.get(entry.getGapId());
+                    if (gapField == null)
+                    {
+                        throw new IllegalArgumentException("Ungültige gapId: " + entry.getGapId());
+                    }
+
+                    GapOption selectedOption = gapField.getGapOptions().stream()
+                            .filter(o -> o.getGapOptionId().equals(entry.getSelectedGapOptionId()))
+                            .findFirst()
+                            .orElseThrow(() -> new IllegalArgumentException(
+                                    "Ungültige selectedGapOptionId: " + entry.getSelectedGapOptionId()));
+
+                    this.runGapAnswerRepo.save(
+                            new RunGapAnswer(run, question, gapField, selectedOption, LocalDateTime.now()));
+                }
+            }
+        }
+        else
+        {
+            this.runSelectedAnswerRepo.deleteByRun_RunIdAndQuestion_QuestionId(runId, question.getQuestionId());
+
+            List<Long> selectedIds = request.getSelectedAnswerIds() != null
+                    ? request.getSelectedAnswerIds()
+                    : Collections.emptyList();
+
+            Map<Long, AnswerOption> answerMap = question.getAnswerOptions().stream()
+                    .collect(Collectors.toMap(AnswerOption::getAnswerId, a -> a));
+
+            for (Long selectedId : selectedIds)
+            {
+                AnswerOption answerOption = answerMap.get(selectedId);
+                if (answerOption == null)
+                {
+                    throw new IllegalArgumentException("Ungültige answerId: " + selectedId);
+                }
+
+                this.runSelectedAnswerRepo.save(new RunSelectedAnswer(run, question, answerOption));
+            }
+        }
 	}
 
 	// ================================================================
@@ -482,8 +539,8 @@ public class QuizSessionManager
 	// ================================================================
 
 	/**
-	 * Wertet eine Antwort aus, schreibt das Ergebnis in die Session und persistiert
-	 * es optional in der DB.
+	 * Wertet eine Antwort aus, schreibt das Ergebnis in die Session
+     * und persistiert es in der DB.
 	 *
 	 * @param sessionId Session-ID (aus dem Frontend)
 	 * @param roomId    1..7
@@ -505,6 +562,12 @@ public class QuizSessionManager
 					.orElseThrow(() -> new NoSuchElementException(
 								"Frage " + request.getQuestionId() + " nicht gefunden."));
 
+        if (room.getQuestion(request.getQuestionId()) == null)
+        {
+            throw new IllegalArgumentException(
+                    "Frage " + request.getQuestionId() + " gehört nicht zu Raum " + roomId + ".");
+        }
+
 		// Auswerten je nach Typ
 		AnswerResultDto result = switch (question.getQuestionType()) {
 		case MC, TF -> evaluateMcTf(question, request);
@@ -517,11 +580,7 @@ public class QuizSessionManager
 		room.recordResult(question.getQuestionId(), result.isCorrect(), result.getPointsEarned());
 
 		// DB-Persistierung wenn User eingeloggt
-		if (session.getUserId() != null)
-		{
-			persistProgress(session.getUserId(), question, result.isCorrect(),
-						request.getSelectedAnswerIds());
-		}
+		persistProgress(session.getRunId(), question, result, request);
 
 		return result;
 	}

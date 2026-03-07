@@ -260,8 +260,9 @@ public class QuizSession
 
 	// Einmaliger Key für diese Session (z.B. UUID)
 	private final String sessionId;
-	// null = anonymer Modus, sonst DB-User-ID
+    // DB-User-ID des eingeloggten Spielers
 	private final Long userId;
+    private final Long runId;
 
 	private final LocalDateTime createdAt;
 
@@ -281,10 +282,11 @@ public class QuizSession
 	// Navigation
 	// ----------------------------------------------------------------
 
-	public QuizSession(Long userId)
+	public QuizSession(Long userId, Long runId)
 	{
 		this.sessionId = UUID.randomUUID().toString();
 		this.userId = userId;
+        this.runId = runId;
 		this.createdAt = LocalDateTime.now();
 		this.lastActivityAt = LocalDateTime.now();
 		this.rooms = new LinkedHashMap<>();
@@ -360,6 +362,11 @@ public class QuizSession
 	{
 		return this.userId;
 	}
+
+    public Long getRunId()
+    {
+        return this.runId;
+    }
 
 	/**
 	 * Ist die gesamte Session abgeschlossen? (Alle 7 Räume completed)
