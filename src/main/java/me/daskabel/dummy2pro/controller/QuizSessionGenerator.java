@@ -47,8 +47,6 @@ import me.daskabel.dummy2pro.session.QuizSession.RoomSession;
 public class QuizSessionGenerator
 {
 
-	// Raum 1..7 entspricht theme_id 1..7 in der DB
-	private static final int ROOM_COUNT = 7;
     private static final int QUESTIONS_PER_ROOM = 40;
 
 	/**
@@ -140,10 +138,14 @@ public class QuizSessionGenerator
 	@Transactional(readOnly = true)
 	public RoomSession buildRoomSession(int roomId)
 	{
-		// Theme laden (Name für Anzeige)
-		Theme theme = this.themeRepo.findById((long) roomId)
-					.orElseThrow(() -> new NoSuchElementException(
-								"Theme für Raum " + roomId + " nicht in der DB gefunden."));
+		// Theme laden
+        List<Theme> themes = themeRepo.findAllByOrderByThemeIdAsc();
+
+        if (roomId < 1 || roomId > themes.size()) {
+            throw new IllegalArgumentException("Ungültige roomId: " + roomId);
+        }
+
+        Theme theme = themes.get(roomId - 1);
 
 		// Alle Fragen des Themas laden (mit Answers und Gaps vorgeladen)
 		List<Question> questions = loadAllQuestionsForTheme(roomId);
@@ -199,8 +201,10 @@ public class QuizSessionGenerator
 	{
 		QuizSession session = new QuizSession(userId, runId);
 
-		for (int roomId = 1; roomId <= ROOM_COUNT; roomId++)
+        List<Theme> themes = themeRepo.findAllByOrderByThemeIdAsc();
+		for (int i = 1; i < themes.size(); i++)
 		{
+            int roomId = i + 1;
 			RoomSession roomSession = buildRoomSession(roomId);
 			session.addRoom(roomSession);
 		}
@@ -217,7 +221,8 @@ public class QuizSessionGenerator
 	 */
 	private List<Question> loadAllQuestionsForTheme(int roomId)
 	{
-		long themeId = roomId;
+        List<Theme> themes = themeRepo.findAllByOrderByThemeIdAsc();
+		long themeId = themes.get(roomId - 1).getThemeId();
 
 		List<Question> withAnswers = this.questionRepo.findByThemeIdWithAnswers(themeId);
 		List<Question> withGaps = this.questionRepo.findByThemeIdWithGaps(themeId);

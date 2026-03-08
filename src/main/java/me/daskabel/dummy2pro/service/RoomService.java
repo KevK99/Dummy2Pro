@@ -365,12 +365,12 @@ public class RoomService
 
 	private Theme getTheme(int roomId)
 	{
-		if (roomId < 1 || roomId > 7)
+        List<Theme> themes = themeRepo.findAllByOrderByThemeIdAsc();
+		if (roomId < 1 || roomId >  themes.size())
 		{
-			throw new IllegalArgumentException("Raum-ID muss zwischen 1 und 7 liegen.");
+			throw new IllegalArgumentException("Raum-ID ist ungültig.");
 		}
-		return this.themeRepo.findById((long) roomId).orElseThrow(() -> new NoSuchElementException(
-					"Theme für Raum " + roomId + " nicht gefunden."));
+		return themes.get(roomId - 1);
 	}
 
 	/**
@@ -384,7 +384,8 @@ public class RoomService
 	 */
 	private List<Question> loadAllQuestionsForTheme(int roomId)
 	{
-		long themeId = roomId;
+        List<Theme> themes = themeRepo.findAllByOrderByThemeIdAsc();
+		long themeId = themes.get(roomId - 1).getThemeId();
 
 		// 1. Alle Fragen mit Antwortoptionen (für MC + TF)
 		List<Question> withAnswers = this.questionRepo.findByThemeIdWithAnswers(themeId);
@@ -569,9 +570,10 @@ public class RoomService
 
     private void validateQuestionBelongsToRoom(Question question, int roomId)
     {
+        Theme theme = getTheme(roomId);
         boolean belongs = question.getThemes() != null
                 && question.getThemes().stream()
-                .anyMatch(t -> t.getThemeId().equals((long) roomId));
+                .anyMatch(t -> t.getThemeId().equals(theme.getThemeId()));
 
         if (!belongs)
         {

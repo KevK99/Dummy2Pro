@@ -400,13 +400,9 @@ public class QuizSessionManager
 		QuizSession session = getSession(sessionId);
 
 		List<RoomStatusDto> roomStatuses = new ArrayList<>();
-		for (int i = 1; i <= 7; i++)
+		for (RoomSession room : session.getRooms().values())
 		{
-			RoomSession room = session.getRooms().get(i);
-			if (room != null)
-			{
 				roomStatuses.add(buildRoomStatus(room));
-			}
 		}
 
 		SessionOverviewDto overview = new SessionOverviewDto();
