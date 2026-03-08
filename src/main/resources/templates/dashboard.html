@@ -51,5 +51,29 @@
             <p>Schließe den vorherigen Raum zu 50% ab, um mit der Lektion beginnen zu können.</p>
         </section>
     </div>
+
+    <script>
+        async function loadOverview() {
+            const sessionId = sessionStorage.getItem("sessionId");
+
+            if (!sessionId) {
+                window.location.href = "/login.html";
+                return;
+            }
+
+            const response = await fetch(`/api/session/${sessionId}/overview`);
+            const data = await response.json();
+
+            if (!response.ok) {
+                alert(data.message || "Dashboard konnte nicht geladen werden.");
+                window.location.href = "/login.html";
+                return;
+            }
+
+            console.log(data);
+        }
+
+        loadOverview();
+    </script>
 </body>
 </html>

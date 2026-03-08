@@ -1,10 +1,15 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base :: layout(~{::body})}">
+
+<!-- head wird überschrieben
 <head>
     <meta charset="UTF-8">
     <title>Dummy2Pro - Raum 1</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+-->
 
 <body class="bg-[#000010] text-white font-mono min-h-screen">
 
@@ -110,36 +115,28 @@
 
                     <div class="border-t border-white/20 mt-2 mb-6"></div>
 
-                    <!-- TODO: show correct question -->
-                    <div class="text-center text-lg leading-7">
-                        Welches Protokoll arbeitet auf Schicht 3 <br>
-                        und wird für Routing verwendet?
+                    <div id="questionText" class="text-center text-lg leading-7 min-h-[84px]">
+                        Frage wird geladen...
                     </div>
 
                     <div class="text-sm text-gray-400 mt-8 mb-2">
                         ANTWORTEN
                     </div>
 
-                    <!-- TODO: show correct answers-->
-                    <!-- ANSWERS -->
-                    <div class="grid grid-cols-2 gap-4">
+                    <div id="answerContainer" class="grid grid-cols-2 gap-4"></div>
 
-                        <button class="flex items-center gap-4 border-4 border-yellow-400 px-6 py-4 font-black text-yellow-400 text-lg">
-                            ⚔️ A) IP
+                    <div id="feedbackBox" class="mt-6 text-center text-lg font-black"></div>
+
+                    <div class="mt-6 flex justify-center">
+                        <button id="submitAnswerBtn"
+                                class="hidden bg-indigo-600 text-white px-6 py-3 rounded-lg font-black hover:bg-indigo-500">
+                            Antwort prüfen
                         </button>
 
-                        <button class="flex items-center gap-4 border-4 border-yellow-400 px-6 py-4 font-black text-yellow-400 text-lg">
-                            ✋ B) TCP
+                        <button id="nextQuestionBtn"
+                                class="hidden bg-emerald-600 text-white px-6 py-3 rounded-lg font-black hover:bg-emerald-500">
+                            Nächste Frage
                         </button>
-
-                        <button class="flex items-center gap-4 border-4 border-yellow-400 px-6 py-4 font-black text-yellow-400 text-lg">
-                            🎒 C) Ethernet
-                        </button>
-
-                        <button class="flex items-center gap-4 border-4 border-yellow-400 px-6 py-4 font-black text-yellow-400 text-lg">
-                            ❤️ D) DNS
-                        </button>
-
                     </div>
                 </div>
             </div>
@@ -152,9 +149,9 @@
 
                 <div class="space-y-2 text-sm">
                     <!-- TODO: -->
-                    <div>Punkte (Thema): <b>12/20</b></div>
+                    <div>Punkte (Thema): <b id="earnedPoints">0/0</b></div>
                     <!-- TODO: -->
-                    <div>Gesamtfragen: <b>12/40</b></div>
+                    <div>Gesamtfragen: <b id="questionProgress">0/0</b></div>
                 </div>
 
                 <!-- PROGRESS -->
@@ -162,22 +159,20 @@
                     <div class="text-xs text-gray-400 mb-1">Thema-Fortschritt</div>
 
                     <div class="h-4 bg-white/10 border border-white relative">
-                                                            <!-- TODO: enter correct % -->
-                        <div class="absolute left-0 top-0 h-full bg-emerald-500 w-[60%]"></div>
+                        <div id="themeProgressBar" class="absolute left-0 top-0 h-full bg-emerald-500 w-0"></div>
                     </div>
-                                                <!-- TODO: enter correct % -->
-                    <div class="text-right text-xs text-gray-400 mt-1">60%</div>
+
+                    <div id="themeProgressText" class="text-right text-xs text-gray-400 mt-1">0%</div>
                 </div>
 
                 <div class="mt-6">
                     <div class="text-xs text-gray-400 mb-1">Fragen-Fortschritt</div>
 
                     <div class="h-4 bg-white/10 border border-white relative">
-                                                            <!-- TODO: enter correct % -->
-                        <div class="absolute left-0 top-0 h-full bg-yellow-400 w-[30%]"></div>
+                        <div id="questionProgressBar" class="absolute left-0 top-0 h-full bg-yellow-400 w-0"></div>
                     </div>
-                                                            <!-- TODO: enter correct % -->
-                    <div class="text-right text-xs text-gray-400 mt-1">30%</div>
+
+                    <div id="questionProgressText" class="text-right text-xs text-gray-400 mt-1">0%</div>
                 </div>
 
                 <hr class="my-8 border-white/20">
@@ -191,13 +186,242 @@
 
                 <!-- TODO: show actual progess-->
                 <div class="mt-8">
-                    <div class="bg-yellow-400 text-black font-black text-xs text-center py-2 rounded-lg">
-                        IN PROGRESS (12%)
+                    <div id="roomStatusBadge" class="bg-yellow-400 text-black font-black text-xs text-center py-2 rounded-lg">
+                        IN PROGRESS (0%)
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <script>
+        const roomId = 1;
+        const sessionId = sessionStorage.getItem("sessionId");
+
+        if (!sessionId) {
+            alert("Keine aktive Session gefunden.");
+            window.location.href = "/login.html";
+        }
+
+        let currentQuestion = null;
+        let selectedAnswerIds = [];
+
+        const questionText = document.getElementById("questionText");
+        const answerContainer = document.getElementById("answerContainer");
+        const feedbackBox = document.getElementById("feedbackBox");
+        const submitAnswerBtn = document.getElementById("submitAnswerBtn");
+        const nextQuestionBtn = document.getElementById("nextQuestionBtn");
+
+        async function loadRoom() {
+            try {
+                const response = await fetch(`/api/session/${sessionId}/room/${roomId}`);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    alert(data.message || "Raum konnte nicht geladen werden.");
+                    return;
+                }
+
+                currentQuestion = data.firstQuestion;
+                renderQuestion(currentQuestion);
+                updateStatus(data.status);
+            } catch (error) {
+                console.error("Fehler beim Laden des Raums:", error);
+                alert("Raum konnte nicht geladen werden.");
+            }
+        }
+
+        function renderQuestion(question) {
+            selectedAnswerIds = [];
+            feedbackBox.innerText = "";
+            submitAnswerBtn.classList.add("hidden");
+            nextQuestionBtn.classList.add("hidden");
+
+            if (!question) {
+                questionText.innerText = "Keine weitere Frage vorhanden.";
+                answerContainer.innerHTML = "";
+                return;
+            }
+
+            questionText.innerText = question.startText || "Keine Frage vorhanden.";
+            answerContainer.innerHTML = "";
+
+            if (!question.answerOptions || question.answerOptions.length === 0) {
+                answerContainer.innerHTML = `
+                <div class="col-span-2 text-center text-red-300">
+                    Dieser Fragetyp wird hier noch nicht unterstützt.
+                </div>
+            `;
+                return;
+            }
+
+            question.answerOptions.forEach((option, index) => {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.dataset.answerId = option.answerId;
+                button.className = "flex items-center gap-4 border-4 border-yellow-400 px-6 py-4 font-black text-yellow-400 text-lg text-left";
+                button.innerText = `${String.fromCharCode(65 + index)}) ${option.optionText}`;
+
+                button.addEventListener("click", () => {
+                    toggleAnswer(option.answerId, button, question.allowsMultiple);
+                });
+
+                answerContainer.appendChild(button);
+            });
+        }
+
+        function toggleAnswer(answerId, buttonElement, allowsMultiple) {
+            if (!allowsMultiple) {
+                selectedAnswerIds = [answerId];
+
+                document.querySelectorAll("#answerContainer button").forEach(btn => {
+                    btn.classList.remove("bg-yellow-400", "text-black");
+                });
+
+                buttonElement.classList.add("bg-yellow-400", "text-black");
+            } else {
+                if (selectedAnswerIds.includes(answerId)) {
+                    selectedAnswerIds = selectedAnswerIds.filter(id => id !== answerId);
+                    buttonElement.classList.remove("bg-yellow-400", "text-black");
+                } else {
+                    selectedAnswerIds.push(answerId);
+                    buttonElement.classList.add("bg-yellow-400", "text-black");
+                }
+            }
+
+            if (selectedAnswerIds.length > 0) {
+                submitAnswerBtn.classList.remove("hidden");
+            } else {
+                submitAnswerBtn.classList.add("hidden");
+            }
+        }
+
+        async function submitAnswer() {
+            if (!currentQuestion || selectedAnswerIds.length === 0) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/session/${sessionId}/room/${roomId}/answer`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        questionId: currentQuestion.questionId,
+                        selectedAnswerIds: selectedAnswerIds
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    alert(data.message || "Antwort konnte nicht geprüft werden.");
+                    return;
+                }
+
+                document.querySelectorAll("#answerContainer button").forEach(btn => {
+                    btn.disabled = true;
+                    const answerId = Number(btn.dataset.answerId);
+
+                    if (data.correctAnswerIds && data.correctAnswerIds.includes(answerId)) {
+                        btn.classList.remove("border-yellow-400", "text-yellow-400");
+                        btn.classList.add("border-emerald-500", "text-emerald-400");
+                    } else if (selectedAnswerIds.includes(answerId)) {
+                        btn.classList.remove("border-yellow-400", "text-yellow-400", "bg-yellow-400", "text-black");
+                        btn.classList.add("border-red-500", "text-red-400");
+                    }
+                });
+
+                feedbackBox.innerText = data.correct
+                    ? `Richtig! +${data.pointsEarned} Punkt(e)`
+                    : `Falsch! +${data.pointsEarned} Punkt(e)`;
+
+                feedbackBox.className = data.correct
+                    ? "mt-6 text-center text-lg font-black text-emerald-400"
+                    : "mt-6 text-center text-lg font-black text-red-400";
+
+                submitAnswerBtn.classList.add("hidden");
+                nextQuestionBtn.classList.remove("hidden");
+
+                await refreshRoomStatus();
+            } catch (error) {
+                console.error("Fehler beim Prüfen der Antwort:", error);
+                alert("Antwort konnte nicht geprüft werden.");
+            }
+        }
+
+        async function loadNextQuestion() {
+            try {
+                const response = await fetch(`/api/session/${sessionId}/room/${roomId}/advance`, {
+                    method: "POST"
+                });
+
+                const nextQuestion = await response.json();
+
+                if (!response.ok) {
+                    alert(nextQuestion.message || "Nächste Frage konnte nicht geladen werden.");
+                    return;
+                }
+
+                if (!nextQuestion) {
+                    questionText.innerText = "Raum abgeschlossen.";
+                    answerContainer.innerHTML = "";
+                    feedbackBox.innerText = "Du hast alle Fragen dieses Raums beantwortet.";
+                    nextQuestionBtn.classList.add("hidden");
+                    await refreshRoomStatus();
+                    return;
+                }
+
+                currentQuestion = nextQuestion;
+                renderQuestion(currentQuestion);
+                await refreshRoomStatus();
+            } catch (error) {
+                console.error("Fehler beim Laden der nächsten Frage:", error);
+                alert("Nächste Frage konnte nicht geladen werden.");
+            }
+        }
+
+        async function refreshRoomStatus() {
+            try {
+                const response = await fetch(`/api/session/${sessionId}/room/${roomId}/status`);
+                const status = await response.json();
+
+                if (!response.ok) {
+                    return;
+                }
+
+                updateStatus(status);
+            } catch (error) {
+                console.error("Fehler beim Aktualisieren des Status:", error);
+            }
+        }
+
+        function updateStatus(status) {
+            document.getElementById("earnedPoints").innerText = `${status.earnedPoints}/${status.totalPoints}`;
+            document.getElementById("questionProgress").innerText = `${status.answeredQuestions}/${status.totalQuestions}`;
+
+            document.getElementById("themeProgressBar").style.width = `${status.completionPercent}%`;
+            document.getElementById("themeProgressText").innerText = `${status.completionPercent}%`;
+
+            const questionPercent = status.totalQuestions > 0
+                ? Math.round((status.answeredQuestions / status.totalQuestions) * 1000) / 10
+                : 0;
+
+            document.getElementById("questionProgressBar").style.width = `${questionPercent}%`;
+            document.getElementById("questionProgressText").innerText = `${questionPercent}%`;
+
+            const medalText = !status.medal || status.medal === "NONE"
+                ? "IN PROGRESS"
+                : status.medal;
+            document.getElementById("roomStatusBadge").innerText =
+                `${medalText} (${status.completionPercent}%)`;
+        }
+
+        submitAnswerBtn.addEventListener("click", submitAnswer);
+        nextQuestionBtn.addEventListener("click", loadNextQuestion);
+
+        loadRoom();
+    </script>
 </body>
 </html>

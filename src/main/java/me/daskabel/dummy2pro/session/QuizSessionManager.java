@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 import me.daskabel.dummy2pro.model.*;
 import me.daskabel.dummy2pro.repository.*;
+import me.daskabel.dummy2pro.service.RoomService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -155,81 +156,6 @@ public class QuizSessionManager
 		s.setCompletionPercent(room.getCompletionPercent());
 		s.setMedal(room.getMedal());
 		return s;
-	}
-
-	private static AnswerResultDto evaluateGap(Question question, AnswerRequest request)
-	{
-		Map<Long, GapOption> correctByGapId = new HashMap<>();
-		if (question.getGapFields() != null)
-		{
-			for (GapField gf : question.getGapFields())
-			{
-				if (gf.getGapOptions() != null)
-				{
-					gf.getGapOptions().stream()
-                            .filter(GapOption::getIsCorrect)
-                            .findFirst()
-                            .ifPresent(o -> correctByGapId.put(gf.getGapId(), o));
-				}
-			}
-		}
-
-		Map<Long, Long> selectedByGapId = new HashMap<>();
-		if (request.getGapAnswers() != null)
-		{
-			for (var entry : request.getGapAnswers())
-			{
-				selectedByGapId.put(entry.getGapId(), entry.getSelectedGapOptionId());
-			}
-		}
-
-		List<GapResultEntry> gapResults = new ArrayList<>();
-		boolean allCorrect = true;
-
-		for (Map.Entry<Long, GapOption> entry : correctByGapId.entrySet())
-		{
-			Long gapId = entry.getKey();
-			GapOption correctOption = entry.getValue();
-			Long selected = selectedByGapId.get(gapId);
-			boolean gapCorrect = correctOption.getGapOptionId().equals(selected);
-			if (!gapCorrect)
-				allCorrect = false;
-
-			GapResultEntry gre = new GapResultEntry();
-			gre.setGapId(gapId);
-			gre.setCorrect(gapCorrect);
-			gre.setCorrectGapOptionId(correctOption.getGapOptionId());
-			gre.setCorrectOptionText(correctOption.getOptionText());
-			gapResults.add(gre);
-		}
-
-		AnswerResultDto result = new AnswerResultDto();
-		result.setCorrect(allCorrect);
-		result.setGapResults(gapResults);
-		result.setPointsEarned(
-					allCorrect ? (question.getPoints()) : 0);
-		return result;
-	}
-
-	private static AnswerResultDto evaluateMcTf(Question question, AnswerRequest request)
-	{
-		Set<Long> correctIds = question.getAnswerOptions().stream()
-                    .filter(AnswerOption::getIsCorrect)
-                    .map(AnswerOption::getAnswerId)
-					.collect(Collectors.toSet());
-
-		Set<Long> selectedIds = new HashSet<>(
-					request.getSelectedAnswerIds() != null ? request.getSelectedAnswerIds()
-								: Collections.emptyList());
-
-		boolean correct = correctIds.equals(selectedIds);
-
-		AnswerResultDto result = new AnswerResultDto();
-		result.setCorrect(correct);
-		result.setCorrectAnswerIds(new ArrayList<>(correctIds));
-		result.setPointsEarned(
-					correct ? (question.getPoints()) : 0);
-		return result;
 	}
 
 	// Sessions: sessionId → QuizSession
@@ -570,8 +496,8 @@ public class QuizSessionManager
 
 		// Auswerten je nach Typ
 		AnswerResultDto result = switch (question.getQuestionType()) {
-		case MC, TF -> evaluateMcTf(question, request);
-		case GAP -> evaluateGap(question, request);
+		case MC, TF -> RoomService.evaluateMcTf(question, request);
+		case GAP -> RoomService.evaluateGap(question, request);
 		default -> throw new IllegalArgumentException(
 					"Unbekannter Fragetyp: " + question.getQuestionType());
 		};

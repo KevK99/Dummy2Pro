@@ -78,7 +78,7 @@ public class RoomService
 	 * korrekt, wenn ALLE Lücken richtig ausgefüllt wurden.
 	 */
 
-	private static AnswerResultDto evaluateGap(Question question, AnswerRequest request)
+	public static AnswerResultDto evaluateGap(Question question, AnswerRequest request)
 	{
 		// Gap-Options aus der DB: gap_id -> korrekte gap_option_id + Text
 		Map<Long, GapOption> correctByGapId = new HashMap<>();
@@ -140,7 +140,7 @@ public class RoomService
 	 * MC / TF auswerten. Eine Antwort ist korrekt wenn ALLE korrekten Optionen
 	 * ausgewählt wurden und KEINE falschen.
 	 */
-	private static AnswerResultDto evaluateMcTf(Question question, AnswerRequest request)
+	public static AnswerResultDto evaluateMcTf(Question question, AnswerRequest request)
 	{
 		// Korrekte IDs aus der DB
 		Set<Long> correctIds = question.getAnswerOptions().stream()
