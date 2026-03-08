@@ -86,4 +86,18 @@ public class UserService {
             throw new IllegalArgumentException("Passwort darf nicht leer sein.");
         }
     }
+
+    public User authenticate(String username, String password) {
+        validateLoginInput(username, password);
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("Benutzername oder Passwort falsch."));
+
+        if (!encoder.matches(password, user.getPasswordHash())) {
+            throw new IllegalArgumentException("Benutzername oder Passwort falsch.");
+        }
+
+        return user;
+    }
+
 }

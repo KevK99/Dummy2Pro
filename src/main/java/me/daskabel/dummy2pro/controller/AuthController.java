@@ -37,13 +37,12 @@ public class AuthController {
 
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest request) {
-        boolean ok = userService.login(request.getUsername(), request.getPassword()); // <-- HIER
-
-        if (!ok) {
-            throw new UnauthorizedException("Benutzername oder Passwort falsch.");
+        try {
+            User user = userService.authenticate(request.getUsername(), request.getPassword());
+            return new LoginResponse(user.getUserId(), user.getUsername(), "Login erfolgreich");
+        } catch (IllegalArgumentException ex) {
+            throw new UnauthorizedException(ex.getMessage());
         }
-
-        return new LoginResponse(request.getUsername(), "Login erfolgreich");
     }
 
     @ExceptionHandler(UnauthorizedException.class)
@@ -118,14 +117,17 @@ public class AuthController {
     }
 
     public static class LoginResponse {
+        private Long userId;
         private String username;
         private String message;
 
-        public LoginResponse(String username, String message) {
+        public LoginResponse(Long userId, String username, String message) {
+            this.userId = userId;
             this.username = username;
             this.message = message;
         }
 
+        public Long getUserId() { return userId; }
         public String getUsername() { return username; }
         public String getMessage() { return message; }
     }

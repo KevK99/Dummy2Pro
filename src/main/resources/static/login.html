@@ -5,7 +5,7 @@
     </div>
 </header>
 
-<form id="registerForm"> <!-- relevant für die Spring Boot Connection -->
+<form id="loginForm"> <!-- relevant für die Spring Boot Connection -->
     <div class="pt-12">
         <label class="block font-medium text-white mb-3">
             Nutzername
@@ -48,3 +48,53 @@
         Anmelden
     </button>
 </form>
+
+<script>
+    document.getElementById("loginForm").addEventListener("submit", loginUser);
+
+    async function loginUser(event) {
+        event.preventDefault();
+
+        sessionStorage.removeItem("sessionId");
+        sessionStorage.removeItem("userId");
+        sessionStorage.removeItem("username");
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            alert(data.message);
+            return;
+        }
+
+        sessionStorage.setItem("userId", data.userId);
+        sessionStorage.setItem("username", data.username);
+
+        const sessionResponse = await fetch(`/api/session/start?userId=${data.userId}`, {
+            method: 'POST'
+        });
+
+        const sessionData = await sessionResponse.json();
+
+        if (!sessionResponse.ok) {
+            alert(sessionData.message);
+            return;
+        }
+
+        sessionStorage.setItem("sessionId", sessionData.sessionId);
+
+        console.log("Login ok:", data);
+        console.log("Session gestartet:", sessionData);
+        console.log("Gespeicherte sessionId:", sessionStorage.getItem("sessionId"));
+
+        window.location.href = "/dashboard";
+    }
+</script>
