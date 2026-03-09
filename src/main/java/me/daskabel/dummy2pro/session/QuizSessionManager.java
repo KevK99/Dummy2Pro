@@ -23,6 +23,7 @@ import me.daskabel.dummy2pro.dto.RoomDtos.QuestionDto;
 import me.daskabel.dummy2pro.dto.RoomDtos.RoomStartDto;
 import me.daskabel.dummy2pro.dto.RoomDtos.RoomStatusDto;
 import me.daskabel.dummy2pro.session.QuizSession.RoomSession;
+import me.daskabel.dummy2pro.service.RoomIntroDialogs;
 
 /**
  * Verwaltet alle aktiven QuizSessions im Arbeitsspeicher.
@@ -314,6 +315,7 @@ public class QuizSessionManager
         dto.setStatus(buildRoomStatus(room));
         dto.setFirstQuestion(room.currentQuestion());
         dto.setQuestionSequence(room.getQuestionSequence());
+        dto.setIntroDialog(RoomIntroDialogs.getDialogForRoom(roomId));
         return dto;
     }
 

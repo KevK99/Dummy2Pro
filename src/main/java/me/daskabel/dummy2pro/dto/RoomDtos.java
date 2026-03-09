@@ -16,7 +16,6 @@ public class RoomDtos
 	// =====================================================================
 	// OUTBOUND: Was der Server an den Client schickt
 	// =====================================================================
-
 	/**
 	 * Eine Antwortoption für MC/TF — OHNE is_correct. Die ID wird gebraucht, damit
 	 * der Client sie beim Antworten mitschicken kann.
@@ -537,6 +536,7 @@ public class RoomDtos
 		private RoomStatusDto status;
 		private QuestionDto firstQuestion; // erste Frage direkt dabei
 		private List<Long> questionSequence; // alle question_ids in zufälliger Reihenfolge
+        private List<DialogLineDto> introDialog;
 
 		public RoomStartDto()
 		{
@@ -571,7 +571,17 @@ public class RoomDtos
 		{
 			this.status = status;
 		}
-	}
+
+        public List<DialogLineDto> getIntroDialog()
+        {
+            return this.introDialog;
+        }
+
+        public void setIntroDialog(List<DialogLineDto> introDialog)
+        {
+            this.introDialog = introDialog;
+        }
+    }
 
 	/**
 	 * Der aktuelle Status eines Raums für einen User. Wird für die
@@ -705,4 +715,41 @@ public class RoomDtos
 			this.wrongAnswers = wrongAnswers;
 		}
 	}
+
+    public static class DialogLineDto
+    {
+        private String speaker;
+        private String text;
+
+        public DialogLineDto()
+        {
+        }
+
+        public DialogLineDto(String speaker, String text)
+        {
+            this.speaker = speaker;
+            this.text = text;
+        }
+
+        public String getSpeaker()
+        {
+            return this.speaker;
+        }
+
+        public String getText()
+        {
+            return this.text;
+        }
+
+        public void setSpeaker(String speaker)
+        {
+            this.speaker = speaker;
+        }
+
+        public void setText(String text)
+        {
+            this.text = text;
+        }
+    }
+
 }

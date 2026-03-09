@@ -165,7 +165,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- Troll-CHARACTER -->
+                <!-- Troll-CHARACTER  PANDA ÒwÓ bleibt -->
                 <div class="absolute left-1/2 -translate-x-1/2 bottom-[70px] flex flex-col items-center z-10">
                     <div class="w-[170px] h-[30px] bg-white/50 rounded-full blur-sm"></div>
 
@@ -204,6 +204,20 @@
                     >
                 </div>
 
+                <!-- SPIELERFIGUR -->
+                <div
+                        id="playerCharacter"
+                        class="absolute left-1/2 -translate-x-1/2 bottom-[-170px] z-10 transition-all duration-[1800ms] ease-linear"
+                >
+                    <img
+                            id="playerAvatar"
+                            src="/images/Informatiker.png"
+                            alt="Spielerfigur"
+                            class="w-[150px]"
+                            style="image-rendering: pixelated;"
+                    >
+                </div>
+
                 <!-- CONTROLS -->
                 <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-4">
                     <button id="dialogNextBtn"
@@ -213,7 +227,7 @@
 
                     <button id="startQuizBtn"
                             class="hidden bg-emerald-600 text-white px-6 py-3 rounded-lg font-black hover:bg-emerald-500">
-                        Gespräch beenden
+                        Prüfung beginnen
                     </button>
                 </div>
             </div>
@@ -241,7 +255,7 @@
 </main>
 
 <!-- GAME -->
-<div id="gameContainer" class="bg-[#000010] text-white font-mono tracking-wider hidden">
+<div id="gameContainer" class="bg-slate-950 text-white font-mono tracking-wider hidden">
     <div class="w-[1200px] h-[680px] mx-auto relative bg-[#081020]/70 overflow-hidden">
 
         <!-- PANDA -->
@@ -359,6 +373,17 @@
     const runId = sessionStorage.getItem("runId");
     const sessionId = sessionStorage.getItem("sessionId");
 
+    const playerCharacter = document.getElementById("playerCharacter");
+    const playerAvatar = document.getElementById("playerAvatar");
+
+    const storedAvatar = sessionStorage.getItem("avatar");
+
+    if (playerAvatar) {
+        playerAvatar.src = storedAvatar
+            ? `/images/${storedAvatar}`
+            : "/images/Informatiker.png";
+    }
+
     if (!userId) {
         alert("Kein eingeloggter User gefunden.");
         window.location.href = "/";
@@ -390,13 +415,7 @@
     const submitAnswerBtn = document.getElementById("submitAnswerBtn");
     const nextQuestionBtn = document.getElementById("nextQuestionBtn");
 
-    const introDialog = [
-        "Hey.",
-        "Willkommen im Raum 1…",
-        "Hier schauen wir uns die Grundlagen zu Netzwerken an.",
-        "Hör gut zu und lies genau.",
-        "Danach beginnt die erste Frage."
-    ];
+    let introDialog = [];
 
     let dialogIndex = 0;
 
@@ -407,7 +426,17 @@
     }
 
     function showCurrentDialogLine() {
-        dialogText.innerText = introDialog[dialogIndex];
+        if (!introDialog || introDialog.length === 0) {
+            dialogText.innerText = "...";
+            dialogNextBtn.classList.add("hidden");
+            startQuizBtn.classList.remove("hidden");
+            return;
+        }
+
+        const line = introDialog[dialogIndex];
+        const speakerLabel = line.speaker === "player" ? "Du" : "Krieger";
+
+        dialogText.innerText = `${speakerLabel}: ${line.text}`;
 
         if (dialogIndex >= introDialog.length - 1) {
             dialogNextBtn.classList.add("hidden");
@@ -425,38 +454,9 @@
         }
     }
 
-    async function startQuiz() {
+    function startQuiz() {
         welcomeContainer.classList.add("hidden");
         gameContainer.classList.remove("hidden");
-
-        if (!roomLoaded) {
-            const loaded = await loadRoom();
-            roomLoaded = loaded === true;
-        }
-    }
-
-    async function loadRoom() {
-        try {
-            const response = await fetch(`/api/session/${sessionId}/room/${roomId}`);
-            const data = await response.json();
-
-            if (!response.ok) {
-                sessionStorage.removeItem("sessionId");
-                sessionStorage.removeItem("runId");
-                alert(data.message || "Raum konnte nicht geladen werden.");
-                window.location.href = "/dashboard";
-                return false;
-            }
-
-            currentQuestion = data.firstQuestion;
-            renderQuestion(currentQuestion);
-            updateStatus(data.status);
-            return true;
-        } catch (error) {
-            console.error("Fehler beim Laden des Raums:", error);
-            alert("Raum konnte nicht geladen werden.");
-            return false;
-        }
     }
 
     function renderQuestion(question) {
@@ -783,12 +783,68 @@
             .replaceAll("'", "&#039;");
     }
 
+    function animatePlayerEntrance() {
+        if (!playerCharacter) {
+            return;
+        }
+
+        playerCharacter.classList.remove("left-[140px]", "-translate-x-0");
+        playerCharacter.classList.add("left-1/2", "-translate-x-1/2", "bottom-[-170px]");
+
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                playerCharacter.classList.remove("left-1/2", "-translate-x-1/2", "bottom-[-170px]");
+                playerCharacter.classList.add("left-[180px]", "-translate-x-0", "bottom-[95px]");
+            });
+        });
+    }
+
+    async function loadRoom() {
+        try {
+            const response = await fetch(`/api/session/${sessionId}/room/${roomId}`);
+            const data = await response.json();
+
+            if (!response.ok) {
+                sessionStorage.removeItem("sessionId");
+                sessionStorage.removeItem("runId");
+                alert(data.message || "Raum konnte nicht geladen werden.");
+                window.location.href = "/dashboard";
+                return false;
+            }
+
+            introDialog = data.introDialog || [];
+            dialogIndex = 0;
+
+            currentQuestion = data.firstQuestion;
+            renderQuestion(currentQuestion);
+            updateStatus(data.status);
+
+            animatePlayerEntrance();
+
+            setTimeout(() => {
+                showCurrentDialogLine();
+            }, 1850);
+
+            return true;
+        } catch (error) {
+            console.error("Fehler beim Laden des Raums:", error);
+            alert("Raum konnte nicht geladen werden.");
+            return false;
+        }
+    }
+
+    async function initWelcomeRoom() {
+        const loaded = await loadRoom();
+        roomLoaded = loaded === true;
+    }
+
     dialogNextBtn.addEventListener("click", nextDialogLine);
     startQuizBtn.addEventListener("click", startQuiz);
     submitAnswerBtn.addEventListener("click", submitAnswer);
     nextQuestionBtn.addEventListener("click", loadNextQuestion);
 
-    showCurrentDialogLine();
+    initWelcomeRoom();
+
 </script>
 </body>
 </html>
