@@ -13,20 +13,6 @@
         </div>
 
         <script>
-            fetch('/headline.html')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('headline.html konnte nicht geladen werden');
-                    }
-                    return response.text();
-                })
-                .then(headlineHTML => {
-                    document.getElementById('headline').innerHTML = headlineHTML;
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-
             fetch('/login.html')
                 .then(response => {
                     if (!response.ok) {
@@ -36,12 +22,71 @@
                 })
                 .then(loginHTML => {
                     document.getElementById('login').innerHTML = loginHTML;
+                    initLoginForm();
                 })
                 .catch(error => {
                     document.getElementById('login').innerHTML =
                         '<p class="text-red-400">Fehler beim Laden der Login-Seite.</p>';
                     console.error(error);
                 });
+            function initLoginForm() {
+                const form = document.getElementById("loginForm");
+
+                if (!form) {
+                    console.error("loginForm nicht gefunden.");
+                    return;
+                }
+
+                form.addEventListener("submit", loginUser);
+            }
+
+            async function loginUser(event) {
+                event.preventDefault();
+
+                sessionStorage.removeItem("sessionId");
+                sessionStorage.removeItem("userId");
+                sessionStorage.removeItem("username");
+
+                const username = document.getElementById("username").value;
+                const password = document.getElementById("password").value;
+
+                try {
+                    const response = await fetch("/api/login", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ username, password })
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        alert(data.message || "Login fehlgeschlagen.");
+                        return;
+                    }
+
+                    sessionStorage.setItem("userId", data.userId);
+                    sessionStorage.setItem("username", data.username);
+
+                    const sessionResponse = await fetch(`/api/session/start?userId=${data.userId}`, {
+                        method: "POST"
+                    });
+
+                    const sessionData = await sessionResponse.json();
+
+                    if (!sessionResponse.ok) {
+                        alert(sessionData.message || "Session konnte nicht gestartet werden.");
+                        return;
+                    }
+
+                    sessionStorage.setItem("sessionId", sessionData.sessionId);
+
+                    window.location.href = "/dashboard";
+                } catch (error) {
+                    console.error("Login-Fehler:", error);
+                    alert("Beim Login ist ein Fehler aufgetreten.");
+                }
+            }
+
         </script>
     </body>
 </html>

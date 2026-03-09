@@ -9,6 +9,6 @@ public class HomeController
     @GetMapping("/")
     public String home()
     {
-        return "index"; // Rendert die Datei src/main/resources/templates/index.html
+        return "redirect:/index.html";
     }
 }

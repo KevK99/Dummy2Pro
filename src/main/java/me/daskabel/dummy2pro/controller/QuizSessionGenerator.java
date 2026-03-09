@@ -202,7 +202,7 @@ public class QuizSessionGenerator
 		QuizSession session = new QuizSession(userId, runId);
 
         List<Theme> themes = themeRepo.findAllByOrderByThemeIdAsc();
-		for (int i = 1; i < themes.size(); i++)
+		for (int i = 0; i < themes.size(); i++)
 		{
             int roomId = i + 1;
 			RoomSession roomSession = buildRoomSession(roomId);
