@@ -53,20 +53,85 @@
     </div>
 
     <script>
-        async function loadOverview() {
-            const sessionId = sessionStorage.getItem("sessionId");
+        async function ensureActiveRun() {
+            const userId = sessionStorage.getItem("userId");
 
-            if (!sessionId) {
-                window.location.href = "/login.html";
+            if (!userId) {
+                window.location.href = "/";
+                return null;
+            }
+
+            let sessionId = sessionStorage.getItem("sessionId");
+            let runId = sessionStorage.getItem("runId");
+
+            if (sessionId && runId) {
+                return { sessionId, runId, userId };
+            }
+
+            const runsResponse = await fetch(`/api/session/runs?userId=${userId}`);
+            const runsData = await runsResponse.json();
+
+            if (!runsResponse.ok) {
+                alert(runsData.message || "Spielstände konnten nicht geladen werden.");
+                window.location.href = "/";
+                return null;
+            }
+
+            let sessionData;
+
+            if (runsData.length > 0) {
+                const openRun = runsData.find(run => !run.finished);
+                const selectedRun = openRun || runsData[0];
+
+                const loadResponse = await fetch(`/api/session/load?userId=${userId}&runId=${selectedRun.runId}`, {
+                    method: "POST"
+                });
+
+                sessionData = await loadResponse.json();
+
+                if (!loadResponse.ok) {
+                    alert(sessionData.message || "Spielstand konnte nicht geladen werden.");
+                    window.location.href = "/";
+                    return null;
+                }
+            } else {
+                const newResponse = await fetch(`/api/session/new?userId=${userId}`, {
+                    method: "POST"
+                });
+
+                sessionData = await newResponse.json();
+
+                if (!newResponse.ok) {
+                    alert(sessionData.message || "Neuer Spielstand konnte nicht erstellt werden.");
+                    window.location.href = "/";
+                    return null;
+                }
+            }
+
+            sessionStorage.setItem("userId", String(userId));
+            sessionStorage.setItem("sessionId", sessionData.sessionId);
+            sessionStorage.setItem("runId", String(sessionData.runId));
+
+            return {
+                userId: String(userId),
+                sessionId: sessionData.sessionId,
+                runId: String(sessionData.runId)
+            };
+        }
+
+        async function loadOverview() {
+            const activeRun = await ensureActiveRun();
+            if (!activeRun) {
                 return;
             }
 
-            const response = await fetch(`/api/session/${sessionId}/overview`);
+            const response = await fetch(`/api/session/${activeRun.sessionId}/overview`);
             const data = await response.json();
 
             if (!response.ok) {
-                alert(data.message || "Dashboard konnte nicht geladen werden.");
-                window.location.href = "/login.html";
+                sessionStorage.removeItem("sessionId");
+                sessionStorage.removeItem("runId");
+                window.location.reload();
                 return;
             }
 

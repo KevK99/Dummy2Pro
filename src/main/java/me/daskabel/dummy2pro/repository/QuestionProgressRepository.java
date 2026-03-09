@@ -15,6 +15,7 @@ public interface QuestionProgressRepository extends JpaRepository<QuestionProgre
     List<QuestionProgress> findByRun_RunId(Long runId);
 
     Optional<QuestionProgress> findByRun_RunIdAndQuestion_QuestionId(Long runId, Long questionId);
+    List<QuestionProgress> findByRun_RunIdOrderByRoomIdAscQuestionOrderAsc(Long runId);
 
     long countByRun_RunId(Long runId);
 

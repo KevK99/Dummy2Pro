@@ -44,6 +44,7 @@
                 event.preventDefault();
 
                 sessionStorage.removeItem("sessionId");
+                sessionStorage.removeItem("runId");
                 sessionStorage.removeItem("userId");
                 sessionStorage.removeItem("username");
 
@@ -64,21 +65,13 @@
                         return;
                     }
 
-                    sessionStorage.setItem("userId", data.userId);
+                    sessionStorage.setItem("userId", String(data.userId));
                     sessionStorage.setItem("username", data.username);
 
-                    const sessionResponse = await fetch(`/api/session/start?userId=${data.userId}`, {
-                        method: "POST"
-                    });
-
-                    const sessionData = await sessionResponse.json();
-
-                    if (!sessionResponse.ok) {
-                        alert(sessionData.message || "Session konnte nicht gestartet werden.");
-                        return;
-                    }
-
-                    sessionStorage.setItem("sessionId", sessionData.sessionId);
+                    // Alte Session-/Run-Daten verwerfen.
+                    // Das Dashboard lädt oder erstellt danach den AKTIVEN Spielstand.
+                    sessionStorage.removeItem("sessionId");
+                    sessionStorage.removeItem("runId");
 
                     window.location.href = "/dashboard";
                 } catch (error) {

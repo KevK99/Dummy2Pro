@@ -13,4 +13,6 @@ public interface GameRunRepository extends JpaRepository<GameRun, Long>
     Optional<GameRun> findByRunIdAndUser_UserId(Long runId, Long userId);
 
     Optional<GameRun> findTopByUser_UserIdOrderByStartedAtDesc(Long userId);
+
+    List<GameRun> findByUser_UserIdOrderByFinishedAtAscStartedAtDesc(Long userId);
 }

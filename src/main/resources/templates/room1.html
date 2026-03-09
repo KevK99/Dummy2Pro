@@ -354,11 +354,21 @@
 
 <script>
     const roomId = 1;
+
+    const userId = sessionStorage.getItem("userId");
+    const runId = sessionStorage.getItem("runId");
     const sessionId = sessionStorage.getItem("sessionId");
 
-    if (!sessionId) {
-        alert("Keine aktive Session gefunden.");
-        window.location.href = "/login.html";
+    if (!userId) {
+        alert("Kein eingeloggter User gefunden.");
+        window.location.href = "/";
+        throw new Error("Kein eingeloggter User gefunden.");
+    }
+
+    if (!sessionId || !runId) {
+        alert("Kein aktiver Spielstand geladen.");
+        window.location.href = "/dashboard";
+        throw new Error("Kein aktiver Spielstand geladen.");
     }
 
     let currentQuestion = null;
@@ -420,8 +430,8 @@
         gameContainer.classList.remove("hidden");
 
         if (!roomLoaded) {
-            await loadRoom();
-            roomLoaded = true;
+            const loaded = await loadRoom();
+            roomLoaded = loaded === true;
         }
     }
 
@@ -431,16 +441,21 @@
             const data = await response.json();
 
             if (!response.ok) {
+                sessionStorage.removeItem("sessionId");
+                sessionStorage.removeItem("runId");
                 alert(data.message || "Raum konnte nicht geladen werden.");
-                return;
+                window.location.href = "/dashboard";
+                return false;
             }
 
             currentQuestion = data.firstQuestion;
             renderQuestion(currentQuestion);
             updateStatus(data.status);
+            return true;
         } catch (error) {
             console.error("Fehler beim Laden des Raums:", error);
             alert("Raum konnte nicht geladen werden.");
+            return false;
         }
     }
 
@@ -702,9 +717,12 @@
             }
 
             if (!nextQuestion) {
+                currentQuestion = null;
                 questionText.innerText = "Raum abgeschlossen.";
                 answerContainer.innerHTML = "";
                 feedbackBox.innerText = "Du hast alle Fragen dieses Raums beantwortet.";
+                feedbackBox.className = "mt-6 text-center text-lg font-black text-emerald-400";
+                submitAnswerBtn.classList.add("hidden");
                 nextQuestionBtn.classList.add("hidden");
                 await refreshRoomStatus();
                 return;
