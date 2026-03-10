@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="Fragespiel Raumansicht mit Überschrift und Sprechblase im Panel-Stil">
+  <defs>
+    <style>
+      :root{
+        --bg0:#000010;
+        --bg1:#081020;
+
+        /* room */
+        --wall:#222a66;
+        --wall2:#1b2154;
+        --floor:#0a2a3a;
+        --floor2:#072233;
+
+        /* UI */
+        --panel:#0b1327;
+        --panel2:#0a1022;
+        --stroke:#e9f0ff;
+        --stroke2:#1a2a52;
+
+        --text:#f5f8ff;
+        --muted:#b7c6e6;
+
+        --green:#10B981;
+        --amber:#EAB308;
+
+        --outline:#050a14;
+      }
+
+      .px { shape-rendering: crispEdges; image-rendering: pixelated; }
+      .t  { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+      .h0 { font-size: 28px; letter-spacing: 2px; font-weight: 950; fill: var(--text); }
+      .m  { font-size: 12px; letter-spacing: .2px; fill: var(--muted); }
+      .p  { font-size: 16px; letter-spacing: .3px; fill: var(--text); }
+
+      .sep { stroke: rgba(233,240,255,0.22); stroke-width: 2; }
+    </style>
+
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#000" flood-opacity="0.55"></feDropShadow>
+    </filter>
+
+    <!-- floor pattern -->
+    <pattern id="pFloor" width="24" height="24" patternUnits="userSpaceOnUse">
+      <rect class="px" x="0" y="0" width="24" height="24" fill="var(--floor)"></rect>
+      <rect class="px" x="3" y="4" width="3" height="3" fill="var(--floor2)" opacity="0.9"></rect>
+      <rect class="px" x="14" y="9" width="4" height="4" fill="var(--floor2)" opacity="0.7"></rect>
+      <rect class="px" x="9" y="16" width="3" height="3" fill="var(--floor2)" opacity="0.8"></rect>
+      <rect class="px" x="19" y="2" width="2" height="2" fill="rgba(255,255,255,0.06)"></rect>
+    </pattern>
+
+    <!-- wall pattern -->
+    <pattern id="pWall" width="24" height="24" patternUnits="userSpaceOnUse">
+      <rect class="px" x="0" y="0" width="24" height="24" fill="var(--wall)"></rect>
+      <rect class="px" x="2" y="3" width="3" height="3" fill="var(--wall2)" opacity="0.9"></rect>
+      <rect class="px" x="13" y="6" width="5" height="5" fill="var(--wall2)" opacity="0.65"></rect>
+      <rect class="px" x="7" y="16" width="4" height="4" fill="var(--wall2)" opacity="0.8"></rect>
+      <rect class="px" x="19" y="18" width="2" height="2" fill="rgba(255,255,255,0.08)"></rect>
+    </pattern>
+
+    <!-- Pixel sprite (simple skeleton-mage vibe) -->
+    <symbol id="sprite-skel-mage" viewBox="0 0 32 32">
+      <!-- staff -->
+      <rect class="px" x="26" y="6" width="2" height="22" fill="#8b5a2b"></rect>
+      <rect class="px" x="25" y="5" width="4" height="2" fill="#8b5a2b"></rect>
+      <rect class="px" x="26" y="2" width="2" height="3" fill="var(--green)"></rect>
+      <rect class="px" x="26" y="1" width="2" height="1" fill="rgba(255,255,255,0.25)"></rect>
+
+      <!-- skull -->
+      <rect class="px" x="10" y="4" width="12" height="10" fill="var(--outline)"></rect>
+      <rect class="px" x="11" y="5" width="10" height="8" fill="var(--stroke)"></rect>
+      <!-- crown -->
+      <rect class="px" x="11" y="3" width="10" height="1" fill="var(--amber)"></rect>
+      <rect class="px" x="13" y="2" width="1" height="1" fill="var(--amber)"></rect>
+      <rect class="px" x="18" y="2" width="1" height="1" fill="var(--amber)"></rect>
+      <!-- eyes -->
+      <rect class="px" x="13" y="8" width="2" height="2" fill="var(--outline)"></rect>
+      <rect class="px" x="17" y="8" width="2" height="2" fill="var(--outline)"></rect>
+
+      <!-- robe -->
+      <rect class="px" x="9" y="13" width="14" height="16" fill="var(--outline)"></rect>
+      <rect class="px" x="10" y="14" width="12" height="14" fill="#2b4aa8"></rect>
+      <rect class="px" x="10" y="14" width="12" height="2" fill="rgba(255,255,255,0.12)"></rect>
+      <rect class="px" x="15" y="16" width="2" height="12" fill="rgba(255,255,255,0.10)"></rect>
+      <!-- arms -->
+      <rect class="px" x="8" y="17" width="2" height="5" fill="var(--stroke)"></rect>
+      <rect class="px" x="22" y="17" width="2" height="5" fill="var(--stroke)"></rect>
+      <!-- feet -->
+      <rect class="px" x="12" y="28" width="4" height="3" fill="var(--stroke)"></rect>
+      <rect class="px" x="16" y="28" width="4" height="3" fill="var(--stroke)"></rect>
+      <rect class="px" x="12" y="31" width="4" height="1" fill="var(--outline)"></rect>
+      <rect class="px" x="16" y="31" width="4" height="1" fill="var(--outline)"></rect>
+    </symbol>
+
+    <!-- Chamfer panel path helper (used inline with coords) -->
+  </defs>
+
+  <!-- Background -->
+  <rect class="px" x="0" y="0" width="1200" height="680" fill="var(--bg0)"></rect>
+  <rect class="px" x="0" y="0" width="1200" height="680" fill="var(--bg1)" opacity="0.55"></rect>
+
+  <!-- Header (euer Stil) -->
+  <text class="t h0" x="60" y="70">RAUM 4</text>
+  <text class="t m" x="60" y="96">Thema: Netzwerke</text>
+  <line class="sep" x1="60" y1="110" x2="1140" y2="110"></line>
+
+  <!-- Room -->
+  <g class="px" filter="url(#softShadow)">
+    <!-- outer wall -->
+    <rect x="240" y="140" width="720" height="500" fill="url(#pWall)" stroke="var(--outline)" stroke-width="10"></rect>
+    <!-- inner floor -->
+    <rect x="290" y="190" width="620" height="400" fill="url(#pFloor)" stroke="rgba(255,255,255,0.10)" stroke-width="4"></rect>
+
+    <!-- corridor opening bottom -->
+    <rect x="545" y="590" width="110" height="50" fill="var(--bg0)"></rect>
+    <rect x="565" y="590" width="70" height="90" fill="url(#pFloor)" stroke="rgba(255,255,255,0.06)" stroke-width="4"></rect>
+
+    <!-- props (minimal vibe) -->
+    <!-- sign -->
+    <g transform="translate(318,235)">
+      <rect x="0" y="0" width="46" height="34" fill="rgba(0,0,0,0.25)" stroke="rgba(233,240,255,0.20)" stroke-width="4"></rect>
+      <rect x="12" y="10" width="22" height="14" fill="rgba(255,255,255,0.10)"></rect>
+      <rect x="12" y="10" width="6" height="6" fill="var(--amber)"></rect>
+    </g>
+
+    <!-- character -->
+    <g transform="translate(555,370) scale(3.2)">
+      <use href="#sprite-skel-mage"></use>
+    </g>
+
+    <!-- ===== Speech bubble (im Stil eures Frageblocks) ===== -->
+    <!-- Panel outer -->
+    <path d="M 310 230 H 870 L 884 244 V 360 L 870 374 H 310 L 296 360 V 244 Z" fill="var(--panel2)" stroke="var(--stroke)" stroke-width="4" stroke-linejoin="miter"></path>
+    <!-- Panel inner stroke -->
+    <path d="M 316 236 H 864 L 876 248 V 356 L 864 368 H 316 L 304 356 V 248 Z" fill="none" stroke="var(--stroke2)" stroke-width="3" opacity="0.9" stroke-linejoin="miter"></path>
+
+    <!-- Tail (pixel-stufig, gleicher Look) -->
+    <!-- outer tail -->
+    <path d="M 590 374 H 628 L 642 388 V 410 L 628 424 H 612 L 598 410 V 388 Z" fill="var(--panel2)" stroke="var(--stroke)" stroke-width="4" stroke-linejoin="miter"></path>
+    <!-- inner tail stroke -->
+    <path d="M 596 380 H 624 L 634 390 V 408 L 624 418 H 616 L 606 408 V 390 Z" fill="none" stroke="var(--stroke2)" stroke-width="3" opacity="0.9" stroke-linejoin="miter"></path>
+
+    <!-- speech text -->
+    <text class="t p" x="340" y="280">Hey.</text>
+    <text class="t p" x="340" y="312">Willkommen im Raum 4…</text>
+  </g>
+</svg>
