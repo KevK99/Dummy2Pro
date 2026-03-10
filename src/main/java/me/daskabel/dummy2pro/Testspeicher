@@ -11,7 +11,7 @@ Username = "Test"
 Passwort = "ASDFqwer1234!"
 BcryptHash = "$2a$10$BzsrNXld8dbvPX7D8gUpAe0qa21gfyj9AKHYtBMWPKmO3nKmBA8QC"
 
-("ByteBard", "Banane1234!!!");
+("ByteBard", "Banane1234!!!"); # 1. Raum durchgespielt
 ("NullNinja", "NullWert2026!!");
 ("JoinJunkie", "LeftJoin1234!!A");
 ("IndexIgel", "IndexBoost2026!!");

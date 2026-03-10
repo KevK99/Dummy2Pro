@@ -8,7 +8,7 @@
             <p>Fragen beantwortet: 25</p>
             <p class="pb-6">Punkte: 25/25</p>
             <hr class="pb-6">
-            <a href="/room/1">Raum 1</a><br>
+            <a href="#" class="room-link" data-room-id="1">Raum 1</a>
             <span class="rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold text-white">Abgeschlossen (100%)</span>
         </section>
 
@@ -17,7 +17,7 @@
             <p>Fragen beantwortet: 25</p>
             <p class="pb-6">Punkte: 22/25</p>
             <hr class="pb-6">
-            <a href="/room/2">Raum 2</a><br>
+            <a href="#" class="room-link" data-room-id="2">Raum 2</a>
             <span class="rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold text-white">Abgeschlossen (100%)</span>
         </section>
 
@@ -26,7 +26,7 @@
             <p>Fragen beantwortet: 12</p>
             <p class="pb-6">Punkte: 8/12</p>
             <hr class="pb-6">
-            <a href="/room/3">Raum 3</a><br>
+            <a href="#" class="room-link" data-room-id="3">Raum 3</a>
             <span class="rounded-full bg-yellow-500 px-3 py-1 text-xs font-bold text-white">in Progress (50%)</span>
         </section>
     </div>
@@ -37,17 +37,22 @@
             <p>Fragen beantwortet: 2</p>
             <p class="pb-6">Punkte: 0/2</p>
             <hr class="pb-6">
-            <a href="/room/4">Raum 4</a><br>
+            <a href="#" class="room-link" data-room-id="4">Raum 4</a>
             <span class="rounded-full bg-yellow-500 px-3 py-1 text-xs font-bold text-white">in Progress (12%)</span>
         </section>
 
         <section class="w-1/3 rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10 text-center text-gray-500">
-            <a href="/room/5">Raum 5</a>
+            <a href="#" class="room-link" data-room-id="5">Raum 5</a>
             <p>Schließe den vorherigen Raum zu 50% ab, um mit der Lektion beginnen zu können.</p>
         </section>
 
         <section class="w-1/3 rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10 text-center text-gray-500">
-            <a href="/room/6">Raum 6</a>
+            <a href="#" class="room-link" data-room-id="6">Raum 6</a>
+            <p>Schließe den vorherigen Raum zu 50% ab, um mit der Lektion beginnen zu können.</p>
+        </section>
+
+        <section class="w-1/3 rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10 text-center text-gray-500">
+            <a href="#" class="room-link" data-room-id="7">Raum 7</a>
             <p>Schließe den vorherigen Raum zu 50% ab, um mit der Lektion beginnen zu können.</p>
         </section>
     </div>
@@ -65,7 +70,16 @@
             let runId = sessionStorage.getItem("runId");
 
             if (sessionId && runId) {
-                return { sessionId, runId, userId };
+                const probeResponse = await fetch(`/api/session/${sessionId}/overview`);
+
+                if (probeResponse.ok) {
+                    return { sessionId, runId, userId };
+                }
+
+                sessionStorage.removeItem("sessionId");
+                sessionStorage.removeItem("runId");
+                sessionId = null;
+                runId = null;
             }
 
             const runsResponse = await fetch(`/api/session/runs?userId=${userId}`);
@@ -138,6 +152,31 @@
             console.log(data);
         }
 
+        async function openRoom(roomId) {
+            const activeRun = await ensureActiveRun();
+            if (!activeRun) {
+                return;
+            }
+
+            window.location.href = `/room/${roomId}`;
+        }
+
+        function bindRoomLinks() {
+            document.querySelectorAll(".room-link").forEach(link => {
+                link.addEventListener("click", async (event) => {
+                    event.preventDefault();
+
+                    const roomId = link.dataset.roomId;
+                    if (!roomId) {
+                        return;
+                    }
+
+                    await openRoom(roomId);
+                });
+            });
+        }
+
+        bindRoomLinks();
         loadOverview();
     </script>
 </body>
