@@ -313,7 +313,7 @@ public class QuizSessionManager
 
         RoomStartDto dto = new RoomStartDto();
         dto.setStatus(buildRoomStatus(room));
-        dto.setFirstQuestion(room.currentQuestion());
+        dto.setFirstQuestion(room.isCompleted() ? null : room.currentQuestion());
         dto.setQuestionSequence(room.getQuestionSequence());
         dto.setIntroDialog(RoomIntroDialogs.getDialogForRoom(roomId));
         return dto;

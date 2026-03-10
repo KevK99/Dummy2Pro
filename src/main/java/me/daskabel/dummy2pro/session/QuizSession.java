@@ -123,7 +123,8 @@ public class QuizSession
         /** Gibt die aktuelle Frage zurück (null wenn Raum leer/fertig). */
         public QuestionDto currentQuestion()
         {
-            if (this.questionSequence.isEmpty()
+            if (this.completed
+                    || this.questionSequence.isEmpty()
                     || this.currentIndex >= this.questionSequence.size())
             {
                 return null;

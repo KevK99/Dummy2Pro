@@ -696,7 +696,7 @@
     }
 
     function renderGapQuestion(question) {
-        answerContainer.className = "flex flex-col gap-4 flex-1 min-h-0 overflow-y-auto pr-1";
+        answerContainer.className = "flex flex-col gap-4 flex-1 min-h-0";
 
         if (!question.gapFields || question.gapFields.length === 0) {
             answerContainer.innerHTML = `
@@ -927,31 +927,45 @@
     }
 
     async function loadNextQuestion() {
+        if (!currentQuestion) {
+            const nextRoomId = roomId + 1;
+
+            if (nextRoomId <= 7) {
+                window.location.href = `/room/${nextRoomId}`;
+            } else {
+                window.location.href = "/dashboard";
+            }
+            return;
+        }
+
         try {
             const response = await fetch(`/api/session/${sessionId}/room/${roomId}/advance`, {
                 method: "POST"
             });
 
-            const nextQuestion = await response.json();
-
             if (!response.ok) {
-                alert(nextQuestion.message || "Nächste Frage konnte nicht geladen werden.");
+                let errorMessage = "Nächste Frage konnte nicht geladen werden.";
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.message || errorMessage;
+                } catch (_) {
+                }
+
+                alert(errorMessage);
                 return;
             }
 
+            const responseText = await response.text();
+            const nextQuestion = responseText ? JSON.parse(responseText) : null;
+
             if (!nextQuestion) {
-                currentQuestion = null;
-                questionText.innerText = "Raum abgeschlossen.";
-                answerContainer.innerHTML = "";
-                feedbackBox.innerText = "Du hast alle Fragen dieses Raums beantwortet.";
-                feedbackBox.className = "mt-6 text-center text-lg font-black text-emerald-400";
-                submitAnswerBtn.classList.add("hidden");
-                nextQuestionBtn.classList.add("hidden");
                 await refreshRoomStatus();
+                showRoomCompletedState();
                 return;
             }
 
             currentQuestion = nextQuestion;
+            nextQuestionBtn.innerText = "Nächste Frage";
             renderQuestion(currentQuestion);
             await refreshRoomStatus();
         } catch (error) {
@@ -1036,8 +1050,16 @@
             }
 
             currentQuestion = data.firstQuestion;
-            renderQuestion(currentQuestion);
             updateStatus(data.status);
+
+            if (!currentQuestion) {
+                welcomeContainer.classList.add("hidden");
+                gameContainer.classList.remove("hidden");
+                showRoomCompletedState();
+                return true;
+            }
+
+            renderQuestion(currentQuestion);
 
             const answeredQuestions = data.status?.answeredQuestions ?? 0;
 
@@ -1067,6 +1089,27 @@
     async function initWelcomeRoom() {
         const loaded = await loadRoom();
         roomLoaded = loaded === true;
+    }
+
+    function showRoomCompletedState() {
+        currentQuestion = null;
+        questionText.innerText = "Raum abgeschlossen.";
+        answerContainer.innerHTML = "";
+
+        feedbackBox.innerText = "Du hast alle Fragen dieses Raums beantwortet.";
+        feedbackBox.className = "mt-6 text-center text-lg font-black text-emerald-400";
+
+        submitAnswerBtn.classList.add("hidden");
+
+        const nextRoomId = roomId + 1;
+
+        if (nextRoomId <= 7) {
+            nextQuestionBtn.innerText = `Zu Raum ${nextRoomId}`;
+            nextQuestionBtn.classList.remove("hidden");
+        } else {
+            nextQuestionBtn.innerText = "Zurück zum Dashboard";
+            nextQuestionBtn.classList.remove("hidden");
+        }
     }
 
     window.addEventListener("resize", () => {
