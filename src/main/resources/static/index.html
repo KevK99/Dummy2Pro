@@ -7,76 +7,79 @@
     <title>Dummy2Pro</title>
 </head>
 
-<body class="min-h-screen bg-slate-950 text-slate-100">
-    <div class="mx-auto max-w-6xl px-6 py-10 space-y-8">
-        <div id="register"></div>
-        <div id="login"></div>
-        <div id="dashboard"></div>
-        <div id="room7">
-        <div id="headline"></div>
-        <div id="endscreen"></div>
-    </div>
+    <body class="min-h-screen bg-slate-950 text-slate-100">
+        <div class="mx-auto max-w-6xl px-6 py-10">
+            <div id="login"></div>
+        </div>
 
-        <img src="/src/main/resources/static/images/lama.png" alt="lama" />
-        <img src="/src/main/resources/static/images/catBlack.PNG"  alt="cat"/>
-        <img src="/src/main/resources/static/images/catFar.png" alt="cat" />
-        <img src="/src/main/resources/static/images/catWhite.PNG" alt="cat" />
-        <img src="/src/main/resources/static/images/catWhiteShadow.PNG" alt="cat" />
-        <img src="/src/main/resources/static/images/catRed.PNG" alt="Maike" />
-        <img src="/src/main/resources/static/images/sunflower.PNG" alt="sunflower" />
-        <img src="/src/main/resources/static/images/sunflowerCursed.PNG" alt="sunflower" />
-        <img src="/src/main/resources/static/images/Herberg.PNG" alt="Herbert der Koala" />
-        <img src="/src/main/resources/static/images/panda.PNG" alt="panda" />
-
-    <script>
-        fetch('/src/main/resources/static/headline.html')
-            .then(response => {
-                return response.text();
-            })
-            .then(headlineHTML => {
-                document.getElementById('headline').innerHTML = headlineHTML;
-            })
-
-            fetch('/src/main/resources/static/login.html')
+        <script>
+            fetch('/login.html')
                 .then(response => {
+                    if (!response.ok) {
+                        throw new Error('login.html konnte nicht geladen werden');
+                    }
                     return response.text();
                 })
                 .then(loginHTML => {
                     document.getElementById('login').innerHTML = loginHTML;
+                    initLoginForm();
                 })
+                .catch(error => {
+                    document.getElementById('login').innerHTML =
+                        '<p class="text-red-400">Fehler beim Laden der Login-Seite.</p>';
+                    console.error(error);
+                });
+            function initLoginForm() {
+                const form = document.getElementById("loginForm");
 
-            fetch('/src/main/resources/templates/dashboard.html')
-                .then(response => {
-                    return response.text();
-                })
-                .then(dashboardHTML => {
-                    document.getElementById('dashboard').innerHTML = dashboardHTML;
-                })
+                if (!form) {
+                    console.error("loginForm nicht gefunden.");
+                    return;
+                }
 
-        fetch('/src/main/resources/templates/dashboard.html')
-            .then(response => {
-                return response.text();
-            })
-            .then(dashboardHTML => {
-                document.getElementById('dashboard').innerHTML = dashboardHTML;
-            })
+                form.addEventListener("submit", loginUser);
+            }
 
-        fetch('/src/main/resources/templates/room7.html')
-            .then(response => {
-                return response.text();
-            })
-            .then(room7HTML => {
-                document.getElementById('room7').innerHTML = room7HTML;
-            })
+            async function loginUser(event) {
+                event.preventDefault();
 
-         fetch('/src/main/resources/templates/endscreen.html')
-            .then(response => {
-                return response.text();
-            })
-            .then(endscreenHTML => {
-                document.getElementById('endscreen').innerHTML = endscreenHTML;
-            })
+                sessionStorage.removeItem("sessionId");
+                sessionStorage.removeItem("runId");
+                sessionStorage.removeItem("userId");
+                sessionStorage.removeItem("username");
 
-    </script>
-</body>
+                const username = document.getElementById("username").value;
+                const password = document.getElementById("password").value;
+
+                try {
+                    const response = await fetch("/api/login", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ username, password })
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        alert(data.message || "Login fehlgeschlagen.");
+                        return;
+                    }
+
+                    sessionStorage.setItem("userId", String(data.userId));
+                    sessionStorage.setItem("username", data.username);
+
+                    // Alte Session-/Run-Daten verwerfen.
+                    // Das Dashboard lädt oder erstellt danach den AKTIVEN Spielstand.
+                    sessionStorage.removeItem("sessionId");
+                    sessionStorage.removeItem("runId");
+
+                    window.location.href = "/dashboard";
+                } catch (error) {
+                    console.error("Login-Fehler:", error);
+                    alert("Beim Login ist ein Fehler aufgetreten.");
+                }
+            }
+
+        </script>
+    </body>
 </html>

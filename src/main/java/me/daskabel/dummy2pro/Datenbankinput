@@ -1,0 +1,27 @@
+-- =========================
+-- möglicher Input für Livedatenbank
+-- =========================
+
+-- =========================
+-- Tabelle Theme
+-- =========================
+
+INSERT INTO theme (theme_id, name, description) VALUES (2, 'Recht', 'Alles was mit Gesetzesgrundlagen zu tun hat');
+INSERT INTO theme (theme_id, name, description) VALUES (3, 'Wirtschaft', 'Alles, was NICHT mit Recht, aber mit Wirtschaft zu tun hat (Kalkulation, Prozesse,...)');
+INSERT INTO theme (theme_id, name, description) VALUES (4, 'Datenbanken Modellierung', 'ERD, relationales Tabellenmodell');
+INSERT INTO theme (theme_id, name, description) VALUES (5, 'Datenbank - SQL', NULL);
+INSERT INTO theme (theme_id, name, description) VALUES (6, 'UML', 'Klassendiagramm, Sequenzdiagramm, Zustandsdiagramm, Use-Case Diagramm, Aktivitätsdiagramm');
+INSERT INTO theme (theme_id, name, description) VALUES (7, 'Maschinelles Lernen', NULL);
+INSERT INTO theme (theme_id, name, description) VALUES (8, 'Programmierung Pseudocode', NULL);
+
+-- =========================
+-- mögliche Erweiterung Theme
+-- =========================
+
+INSERT INTO theme (theme_id, name, description) VALUES (9, 'Programmierung', 'Grundlagen der Programmierung, OOP, Kontrollstrukturen, Datentypen, Algorithmen, Pseudocode, Git und Codequalität');
+INSERT INTO theme (theme_id, name, description) VALUES (10, 'Netzwerke', 'OSI-Modell, TCP/IP, IPv4/IPv6, DNS, Routing, Subnetting, Protokolle');
+INSERT INTO theme (theme_id, name, description) VALUES (11, 'IT-Sicherheit', 'Schutzziele, Authentifizierung, Autorisierung, Verschlüsselung, Hashing, Backup, Sicherheitsmaßnahmen');
+INSERT INTO theme (theme_id, name, description) VALUES (12, 'Softwareentwicklung', 'Softwarelebenszyklus, Anforderungsanalyse, Architektur, Entwurf, Wartbarkeit und Entwicklungsprozesse');
+INSERT INTO theme (theme_id, name, description) VALUES (13, 'Projektmanagement', 'Projektphasen, Aufwandsschätzung, Risiken, Meilensteine, Scrum und andere Vorgehensmodelle');
+INSERT INTO theme (theme_id, name, description) VALUES (14, 'Betriebssysteme', 'Prozesse, Threads, Speicherverwaltung, Dateisysteme, Benutzer- und Rechteverwaltung');
+INSERT INTO theme (theme_id, name, description) VALUES (15, 'Cloud und Infrastruktur', 'Virtualisierung, Container, Server, Hosting, Deployment, Verfügbarkeit und Skalierung');

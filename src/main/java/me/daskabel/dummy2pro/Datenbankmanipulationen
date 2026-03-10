@@ -2,108 +2,20 @@
 
 # Umbennen Tabelle, da Name unpassend
 RENAME TABLE `mc_answer` TO `answer_option`;
+ALTER TABLE IF EXISTS Question_Theme RENAME TO question_theme;
 
 # Erstellen unserer Usertabelle
 CREATE TABLE `users` (
   `user_id` INT NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(255) NOT NULL,
   `password_hash` VARCHAR(255) NOT NULL,
+  `avatar` VARCHAR(100) DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `uq_users_username` (`username`)
 ) ENGINE=InnoDB;
 
---------------------------------------------------------------------------
 
-#A: Erstellen unserer Question_Prozess-Tabelle
-CREATE TABLE `user_question_progress` (
-  `user_id` INT NOT NULL,
-  `question_id` INT NOT NULL,
-  `status` ENUM('OPEN','CORRECT','WRONG') NOT NULL DEFAULT 'OPEN',
-  PRIMARY KEY (`user_id`, `question_id`),
-  KEY `idx_uqp_question` (`question_id`),
-  CONSTRAINT `fk_uqp_user`
-    FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_uqp_question`
-    FOREIGN KEY (`question_id`) REFERENCES `question`(`question_id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE
-) ENGINE=InnoDB;
-
-----------------------------------------------------------------------
-
-#B: alternative Question_Prozess-Tabelle
-CREATE TABLE `user_question_progress` (
-  `user_id` INT NOT NULL,
-  `question_id` INT NOT NULL,
-
-  -- Status/Ergebnis
-  `status` ENUM('OPEN','ANSWERED') NOT NULL DEFAULT 'OPEN',
-  `answered_at` DATETIME NULL,
-
-  -- konkrete Antwort (je nach question_type wird genau eins davon genutzt)
-  `selected_answer_id` INT NULL,
-
-  PRIMARY KEY (`user_id`, `question_id`),
-
-    KEY `idx_uqp_question` (`question_id`),
-    KEY `idx_uqp_answer` (`selected_answer_id`),
-
-    CONSTRAINT `fk_uqp_users`
-      FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`)
-      ON DELETE CASCADE
-      ON UPDATE CASCADE,
-
-    CONSTRAINT `fk_uqp_question`
-      FOREIGN KEY (`question_id`) REFERENCES `question`(`question_id`)
-      ON DELETE CASCADE
-      ON UPDATE CASCADE,
-
-    CONSTRAINT `fk_uqp_answer`
-      FOREIGN KEY (`selected_answer_id`) REFERENCES `answer_option`(`answer_id`)
-      ON DELETE SET NULL
-      ON UPDATE CASCADE
-) ENGINE=InnoDB;
-
-CREATE TABLE `user_gap_answer` (
-  `user_id` INT NOT NULL,
-  `question_id` INT NOT NULL,
-  `gap_id` INT NOT NULL,
-
-  `selected_gap_option_id` INT NOT NULL,
-  `answered_at` DATETIME NULL,
-
-  PRIMARY KEY (`user_id`, `question_id`, `gap_id`),
-
-  KEY `idx_uga_question` (`question_id`),
-  KEY `idx_uga_gap` (`gap_id`),
-  KEY `idx_uga_option` (`selected_gap_option_id`),
-
-  CONSTRAINT `fk_uga_users`
-    FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-
-  CONSTRAINT `fk_uga_question`
-    FOREIGN KEY (`question_id`) REFERENCES `question`(`question_id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-
-  CONSTRAINT `fk_uga_gap`
-    FOREIGN KEY (`gap_id`) REFERENCES `gap_field`(`gap_id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-
-  CONSTRAINT `fk_uga_gap_option`
-    FOREIGN KEY (`selected_gap_option_id`) REFERENCES `gap_option`(`gap_option_id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE
-) ENGINE=InnoDB;
-
----------------------------------------------------------
-
-# C: mit mehreren Speicherständen
+# mit mehreren Speicherständen
 CREATE TABLE `game_run` (
   `run_id` INT NOT NULL AUTO_INCREMENT,
   `user_id` INT NOT NULL,
@@ -120,30 +32,49 @@ CREATE TABLE `game_run` (
 CREATE TABLE `question_progress` (
   `run_id` INT NOT NULL,
   `question_id` INT NOT NULL,
-
+  `room_id` INT NOT NULL,
+  `question_order` INT NOT NULL,
   `status` ENUM('OPEN','CORRECT','WRONG') NOT NULL DEFAULT 'OPEN',
   `answered_at` DATETIME NULL,
 
-  `selected_answer_id` INT NULL,
-
   PRIMARY KEY (`run_id`, `question_id`),
 
-  KEY `idx_question` (`question_id`),
-  KEY `idx_answer` (`selected_answer_id`),
+  KEY `idx_qp_question` (`question_id`),
 
-  CONSTRAINT `fk_rqp_run`
+  CONSTRAINT `fk_qp_run`
     FOREIGN KEY (`run_id`) REFERENCES `game_run`(`run_id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
 
-  CONSTRAINT `fk_rqp_question`
+  CONSTRAINT `fk_qp_question`
+    FOREIGN KEY (`question_id`) REFERENCES `question`(`question_id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE `run_selected_answer` (
+  `run_id` INT NOT NULL,
+  `question_id` INT NOT NULL,
+  `answer_id` INT NOT NULL,
+
+  PRIMARY KEY (`run_id`, `question_id`, `answer_id`),
+
+  KEY `idx_rsa_question` (`question_id`),
+  KEY `idx_rsa_answer` (`answer_id`),
+
+  CONSTRAINT `fk_rsa_run`
+    FOREIGN KEY (`run_id`) REFERENCES `game_run`(`run_id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+
+  CONSTRAINT `fk_rsa_question`
     FOREIGN KEY (`question_id`) REFERENCES `question`(`question_id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
 
-  CONSTRAINT `fk_rqp_answer`
-    FOREIGN KEY (`selected_answer_id`) REFERENCES `answer_option`(`answer_id`)
-    ON DELETE SET NULL
+  CONSTRAINT `fk_rsa_answer`
+    FOREIGN KEY (`answer_id`) REFERENCES `answer_option`(`answer_id`)
+    ON DELETE CASCADE
     ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
@@ -182,4 +113,3 @@ CREATE TABLE `run_gap_answer` (
     ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
-#

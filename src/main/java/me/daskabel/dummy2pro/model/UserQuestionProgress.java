@@ -1,4 +1,4 @@
-package me.daskabel.dummy2pro.model;
+/** package me.daskabel.dummy2pro.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public class UserQuestionProgress {
 
     @EmbeddedId
-    private UserQuestionProgressId id;
+AnswerOption  private UserQuestionProgressId id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("userId")
@@ -57,3 +57,4 @@ public class UserQuestionProgress {
     public Long getSelectedAnswerId() { return selectedAnswerId; }
     public void setSelectedAnswerId(Long selectedAnswerId) { this.selectedAnswerId = selectedAnswerId; }
 }
+ */

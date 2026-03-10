@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "answer_option")
-public class McAnswer {
+public class AnswerOption {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,19 +15,19 @@ public class McAnswer {
     @JoinColumn(name = "question_id", nullable = false)
     private Question question;
 
-    @Column(name = "option_text", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "option_text", nullable = false)
     private String optionText;
 
     @Column(name = "is_correct", nullable = false)
-    private Boolean isCorrect;
+    private boolean isCorrect;
 
-    @Column(name = "option_order")
-    private Integer optionOrder;
+    @Column(name = "option_order", nullable = false)
+    private int optionOrder;
 
     // Constructors
-    public McAnswer() {}
+    public AnswerOption() {}
 
-    public McAnswer(Question question, String optionText, Boolean isCorrect, Integer optionOrder) {
+    public AnswerOption(Question question, String optionText, boolean isCorrect, int optionOrder) {
         this.question = question;
         this.optionText = optionText;
         this.isCorrect = isCorrect;
@@ -44,9 +44,9 @@ public class McAnswer {
     public String getOptionText() { return optionText; }
     public void setOptionText(String optionText) { this.optionText = optionText; }
 
-    public Boolean getIsCorrect() { return isCorrect; }
-    public void setIsCorrect(Boolean isCorrect) { this.isCorrect = isCorrect; }
+    public boolean getIsCorrect() { return isCorrect; }
+    public void setIsCorrect(boolean isCorrect) { this.isCorrect = isCorrect; }
 
-    public Integer getOptionOrder() { return optionOrder; }
-    public void setOptionOrder(Integer optionOrder) { this.optionOrder = optionOrder; }
+    public int getOptionOrder() { return optionOrder; }
+    public void setOptionOrder(int optionOrder) { this.optionOrder = optionOrder; }
 }

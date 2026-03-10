@@ -1,6 +1,6 @@
 package me.daskabel.dummy2pro.model;
 
-import jakarta.persistence.Column;
+/** import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
@@ -43,3 +43,4 @@ public class UserQuestionProgressId implements Serializable {
         return Objects.hash(userId, questionId);
     }
 }
+ */

@@ -116,4 +116,17 @@ CREATE TABLE `gap_option` (
     ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
+-- =========================
+-- SEED DATA (auto-generated; edit via GUI)
+-- =========================
+-- === SEED DATA: BEGIN ===
+INSERT INTO theme (theme_id, name, description) VALUES (2, 'Recht', 'Alles was mit Gesetzesgrundlagen zu tun hat');
+INSERT INTO theme (theme_id, name, description) VALUES (3, 'Wirtschaft', 'Alles, was NICHT mit Recht, aber mit Wirtschaft zu tun hat (Kalkulation, Prozesse,...)');
+INSERT INTO theme (theme_id, name, description) VALUES (4, 'Datenbanken Modellierung', 'ERD, relationales Tabellenmodell');
+INSERT INTO theme (theme_id, name, description) VALUES (5, 'Datenbank - SQL', NULL);
+INSERT INTO theme (theme_id, name, description) VALUES (6, 'UML', 'Klassendiagramm, Sequenzdiagramm, Zustandsdiagramm, Use-Case Diagramm, Aktivitätsdiagramm');
+INSERT INTO theme (theme_id, name, description) VALUES (7, 'Maschinelles Lernen', NULL);
+INSERT INTO theme (theme_id, name, description) VALUES (8, 'Programmierung Pseudocode', NULL);
+-- === SEED DATA: END ===
+
 COMMIT;
