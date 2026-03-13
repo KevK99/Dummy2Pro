@@ -1,9 +1,20 @@
 <!doctype html>
-<html lang="de" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{base :: layout(~{::body})}">
-<body>
-    <div class="flex m-6 space-x-6">
-        <section class="w-1/3 rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10 text-center">
+<!--html lang="de" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base :: layout(~{::body})}" -->
+<html lang="de">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Dummy2Pro</title>
+</head>
+
+<body class="min-h-screen bg-slate-950 text-slate-100">
+
+    <div id="headline"></div>
+
+    <div class="grid grid-cols-3 gap-6 px-64">
+        <section class="rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10 text-center">
             <p>Status: Gold 🥇</p><br>
             <p>Fragen beantwortet: 25</p>
             <p class="pb-6">Punkte: 25/25</p>
@@ -12,7 +23,7 @@
             <span class="rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold text-white">Abgeschlossen (100%)</span>
         </section>
 
-        <section class="w-1/3 rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10 text-center">
+        <section class="rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10 text-center">
             <p>Status: Gold 🥇</p><br>
             <p>Fragen beantwortet: 25</p>
             <p class="pb-6">Punkte: 22/25</p>
@@ -21,7 +32,7 @@
             <span class="rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold text-white">Abgeschlossen (100%)</span>
         </section>
 
-        <section class="w-1/3 rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10 text-center">
+        <section class="rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10 text-center">
             <p>Status: Silber 🥈</p><br>
             <p>Fragen beantwortet: 12</p>
             <p class="pb-6">Punkte: 8/12</p>
@@ -29,10 +40,8 @@
             <a href="#" class="room-link" data-room-id="3">Raum 3</a>
             <span class="rounded-full bg-yellow-500 px-3 py-1 text-xs font-bold text-white">in Progress (50%)</span>
         </section>
-    </div>
 
-    <div class="flex m-6 space-x-6">
-        <section class="w-1/3 rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10 text-center">
+        <section class="rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10 text-center">
             <p>Status: Bronze 🥉</p><br>
             <p>Fragen beantwortet: 2</p>
             <p class="pb-6">Punkte: 0/2</p>
@@ -41,23 +50,33 @@
             <span class="rounded-full bg-yellow-500 px-3 py-1 text-xs font-bold text-white">in Progress (12%)</span>
         </section>
 
-        <section class="w-1/3 rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10 text-center text-gray-500">
+        <section class="rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10 text-center text-gray-500">
             <a href="#" class="room-link" data-room-id="5">Raum 5</a>
             <p>Schließe den vorherigen Raum zu 50% ab, um mit der Lektion beginnen zu können.</p>
         </section>
 
-        <section class="w-1/3 rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10 text-center text-gray-500">
+        <section class="rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10 text-center text-gray-500">
             <a href="#" class="room-link" data-room-id="6">Raum 6</a>
             <p>Schließe den vorherigen Raum zu 50% ab, um mit der Lektion beginnen zu können.</p>
         </section>
 
-        <section class="w-1/3 rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10 text-center text-gray-500">
+        <section class="rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10 text-center text-gray-500">
             <a href="#" class="room-link" data-room-id="7">Raum 7</a>
             <p>Schließe den vorherigen Raum zu 50% ab, um mit der Lektion beginnen zu können.</p>
         </section>
     </div>
 
     <script>
+        fetch('/src/main/resources/static/headline.html')
+           .then(response => {
+               return response.text();
+           })
+           .then(headlineHTML => {
+               document.getElementById('headline').innerHTML = headlineHTML;
+           })
+    </script>
+
+    <!--script>
         async function ensureActiveRun() {
             const userId = sessionStorage.getItem("userId");
 
