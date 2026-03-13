@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Dummy2Pro - Raum 1</title>
+    <title>DB - Modellierung</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -12,7 +12,7 @@
 <!-- HEADER FULL WIDTH -->
 <header class="w-full px-12 pt-10 pb-6 border-b border-white/20">
     <h1 class="text-3xl font-black tracking-widest">
-        Raum 1
+        Raum 3
     </h1>
 
     <p class="text-sm text-blue-200 mt-1">
@@ -21,13 +21,29 @@
 </header>
 
 <!-- GAME -->
-<div id="gameContainer" class="bg-indigo-700 text-white font-mono tracking-wider hidden">
-    <div class="w-[1200px] h-[680px] mx-auto relative bg-yellow-500/90 overflow-hidden">
+<!--<div id="gameContainer" class="bg-indigo-700 text-white font-mono tracking-wider hidden">-->
+<div id="gameContainer" class="bg-indigo-700 text-white font-mono tracking-wider">
+    <div class="w-[1200px] h-[680px] mx-auto relative bg-yellow-500/90">
+<!--
+         style="
+                clip-path: polygon(
+                    18px 0,
+                    calc(100% - 18px) 0,
+                    100% 18px,
+                    100% calc(100% - 18px),
+                    calc(100% - 18px) 100%,
+                    18px 100%,
+                    0 calc(100% - 18px),
+                    0 18px
+               );
+    >-->
+
 
         <!-- ROOM CHARACTER -->
         <div class="absolute left-[105px] top-[-5px] z-20 pointer-events-none">
+            <!-- TODO Maike: dynamischen Pfad für room-character angeben -->
             <img
-                    src="/room-characters/Krieger.png"
+                    src="/src/main/resources/static/room-characters/Krieger.png"
                     alt="Raumcharakter Krieger"
                     class="w-[110px]"
                     style="image-rendering: pixelated;"
@@ -35,7 +51,7 @@
         </div>
 
         <!-- PANDA -->
-        <div class="absolute left-[360px] top-[18px] flex flex-col items-center z-[5] pointer-events-none opacity-90">
+        <div class="absolute left-[360px] top-[18px] flex flex-col items-center pointer-events-none animate-pulse [animation-duration:2s] z-50">
             <div class="w-[150px] h-[26px] bg-white/80 rounded-full blur-sm"></div>
 
             <svg class="w-[190px] mt-[-10px]" viewBox="0 0 24 24" shape-rendering="crispEdges">
@@ -133,8 +149,37 @@
                         ANTWORTEN
                     </div>
 
+      <!--              <div id="answerContainer"
+                         class="grid grid-cols-2 gap-4 flex-1 min-h-0 content-stretch">
+                    </div>-->
+
+                    <!-- statische Antworten --- NUR FÜR MS -->
                     <div id="answerContainer"
                          class="grid grid-cols-2 gap-4 flex-1 min-h-0 content-stretch">
+
+                        <button class="quiz-answer-btn relative w-full h-full border-4 border-yellow-400 px-6 py-4 font-black text-yellow-400 text-left bg-[#09122a] flex items-center min-h-[120px]">
+                            <div class="answer-label w-full leading-[1.35] text-[22px]">
+                                A) IP
+                            </div>
+                        </button>
+
+                        <button class="quiz-answer-btn relative w-full h-full border-4 border-yellow-400 px-6 py-4 font-black text-yellow-400 text-left bg-[#09122a] flex items-center min-h-[120px]">
+                            <div class="answer-label w-full leading-[1.35] text-[22px]">
+                                B) TCP
+                            </div>
+                        </button>
+
+                        <button class="quiz-answer-btn relative w-full h-full border-4 border-yellow-400 px-6 py-4 font-black text-yellow-400 text-left bg-[#09122a] flex items-center min-h-[120px]">
+                            <div class="answer-label w-full leading-[1.35] text-[22px]">
+                                C) Ethernet
+                            </div>
+                        </button>
+
+                        <button class="quiz-answer-btn relative w-full h-full border-4 border-yellow-400 px-6 py-4 font-black text-yellow-400 text-left bg-[#09122a] flex items-center min-h-[120px]">
+                            <div class="answer-label w-full leading-[1.35] text-[22px]">
+                                D) DNS
+                            </div>
+                        </button>
                     </div>
 
                     <div id="feedbackBox"
@@ -143,12 +188,12 @@
 
                     <div class="mt-4 flex justify-center gap-4 relative z-20 shrink-0">
                         <button id="submitAnswerBtn"
-                                class="hidden bg-indigo-600 text-white px-6 py-3 rounded-lg font-black hover:bg-indigo-500">
+                                class=" bg-indigo-600 text-white px-6 py-3 rounded-lg font-black hover:bg-indigo-500">
                             Antwort prüfen
                         </button>
 
                         <button id="nextQuestionBtn"
-                                class="hidden bg-emerald-600 text-white px-6 py-3 rounded-lg font-black hover:bg-emerald-500">
+                                class=" bg-emerald-600 text-white px-6 py-3 rounded-lg font-black hover:bg-emerald-500">
                             Nächste Frage
                         </button>
                     </div>
