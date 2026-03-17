@@ -635,13 +635,15 @@
             return;
         }
 
-        questionText.innerText = question.startText || "Keine Frage vorhanden.";
         answerContainer.innerHTML = "";
 
         if (isGapQuestion(question)) {
+            questionText.innerText = "Fülle die Lücken korrekt aus.";
             renderGapQuestion(question);
             return;
         }
+
+        questionText.innerText = question.startText || "Keine Frage vorhanden.";
 
         if (!question.answerOptions || question.answerOptions.length === 0) {
             answerContainer.innerHTML = `
@@ -696,7 +698,7 @@
     }
 
     function renderGapQuestion(question) {
-        answerContainer.className = "flex flex-col gap-4 flex-1 min-h-0";
+        answerContainer.className = "flex flex-col gap-5 flex-1 min-h-0 overflow-y-auto";
 
         if (!question.gapFields || question.gapFields.length === 0) {
             answerContainer.innerHTML = `
@@ -707,37 +709,78 @@
             return;
         }
 
-        question.gapFields.forEach((gapField, gapIndex) => {
-            const wrapper = document.createElement("div");
-            wrapper.className = "border-4 border-yellow-400 p-4";
+        const gapFields = [...question.gapFields].sort((a, b) => a.gapIndex - b.gapIndex);
 
-            const textBlock = document.createElement("div");
-            textBlock.className = "text-lg text-white mb-4 leading-8";
+        const textPanel = document.createElement("div");
+        textPanel.className = "border-4 border-yellow-400 bg-[#09122a] p-6 text-white leading-8 text-lg";
 
+        const textFlow = document.createElement("div");
+        textFlow.className = "flex flex-wrap items-center gap-x-2 gap-y-3";
+
+        if (question.startText) {
+            const startSpan = document.createElement("span");
+            startSpan.className = "mr-2";
+            startSpan.textContent = question.startText + " ";
+            textFlow.appendChild(startSpan);
+        }
+
+        gapFields.forEach((gapField, gapIndex) => {
             const before = gapField.textBefore || "";
             const after = gapField.textAfter || "";
 
-            textBlock.innerHTML = `
-                <span>${escapeHtml(before)}</span>
-                <span id="gapPreview-${gapField.gapId}" class="inline-block min-w-[180px] px-4 py-2 mx-2 border-2 border-dashed border-white/40 text-center text-yellow-300">
-                    [ Lücke ${gapIndex + 1} ]
-                </span>
-                <span>${escapeHtml(after)}</span>
-            `;
+            if (before) {
+                const beforeSpan = document.createElement("span");
+                beforeSpan.className = "mr-2";
+                beforeSpan.textContent = before;
+                textFlow.appendChild(beforeSpan);
+            }
 
-            wrapper.appendChild(textBlock);
+            const preview = document.createElement("span");
+            preview.id = `gapPreview-${gapField.gapId}`;
+            preview.className = "inline-block min-w-[180px] px-4 py-2 mx-2 border-2 border-dashed border-white/40 text-center text-yellow-300";
+            preview.textContent = `[ Lücke ${gapIndex + 1} ]`;
+            textFlow.appendChild(preview);
+
+            if (after) {
+                const afterSpan = document.createElement("span");
+                afterSpan.className = "ml-2";
+                afterSpan.textContent = after;
+                textFlow.appendChild(afterSpan);
+            }
+        });
+
+        if (question.endText) {
+            const endSpan = document.createElement("span");
+            endSpan.className = "ml-2";
+            endSpan.textContent = " " + question.endText;
+            textFlow.appendChild(endSpan);
+        }
+
+        textPanel.appendChild(textFlow);
+        answerContainer.appendChild(textPanel);
+
+        gapFields.forEach((gapField, gapIndex) => {
+            const wrapper = document.createElement("div");
+            wrapper.className = "border-4 border-yellow-400 bg-[#09122a] p-4";
+            wrapper.dataset.gapBlockId = gapField.gapId;
+
+            const label = document.createElement("div");
+            label.className = "text-sm text-gray-300 mb-3 font-black tracking-wide";
+            label.textContent = `LÜCKE ${gapIndex + 1}`;
+            wrapper.appendChild(label);
 
             const optionsWrap = document.createElement("div");
             optionsWrap.className = "grid grid-cols-2 gap-3";
 
-            const options = gapField.gapOptions || [];
+            const options = [...(gapField.gapOptions || [])].sort((a, b) => a.optionOrder - b.optionOrder);
 
             options.forEach((option, optionIndex) => {
                 const button = document.createElement("button");
                 button.type = "button";
                 button.dataset.gapId = gapField.gapId;
                 button.dataset.gapOptionId = option.gapOptionId;
-                button.className = "border-4 border-yellow-400 px-4 py-3 font-black text-yellow-400 text-left";
+                button.dataset.optionText = option.optionText;
+                button.className = "border-4 border-yellow-400 px-4 py-3 font-black text-yellow-400 text-left bg-[#0a1022]";
                 button.innerText = `${String.fromCharCode(65 + optionIndex)}) ${option.optionText}`;
 
                 button.addEventListener("click", () => {
@@ -768,9 +811,7 @@
 
         const preview = document.getElementById(`gapPreview-${gapId}`);
         if (preview) {
-            const fullText = buttonElement.innerText;
-            const cleanedText = fullText.replace(/^[A-Z]\)\s*/, "");
-
+            const cleanedText = buttonElement.dataset.optionText || buttonElement.innerText.replace(/^[A-Z]\)\s*/, "");
             preview.innerText = cleanedText;
             preview.classList.remove("border-dashed", "border-white/40", "text-yellow-300");
             preview.classList.add("border-solid", "border-yellow-400", "text-white", "bg-yellow-400/10");
@@ -906,6 +947,38 @@
                 document.querySelectorAll("#answerContainer button").forEach(btn => {
                     btn.disabled = true;
                 });
+
+                if (data.gapResults && Array.isArray(data.gapResults)) {
+                    data.gapResults.forEach(entry => {
+                        const preview = document.getElementById(`gapPreview-${entry.gapId}`);
+                        const gapButtons = document.querySelectorAll(`[data-gap-id="${entry.gapId}"]`);
+
+                        if (entry.correct) {
+                            if (preview) {
+                                preview.classList.remove("border-yellow-400", "text-white", "bg-yellow-400/10");
+                                preview.classList.add("border-emerald-500", "text-emerald-300", "bg-emerald-500/10");
+                            }
+                        } else {
+                            if (preview) {
+                                preview.classList.remove("border-yellow-400", "text-white", "bg-yellow-400/10");
+                                preview.classList.add("border-red-500", "text-red-300", "bg-red-500/10");
+                                preview.innerText = `${preview.innerText} → richtig: ${entry.correctOptionText}`;
+                            }
+                        }
+
+                        gapButtons.forEach(btn => {
+                            const btnOptionId = Number(btn.dataset.gapOptionId);
+
+                            if (btnOptionId === entry.correctGapOptionId) {
+                                btn.classList.remove("border-yellow-400", "text-yellow-400");
+                                btn.classList.add("border-emerald-500", "text-emerald-400");
+                            } else if (btn.classList.contains("bg-yellow-400")) {
+                                btn.classList.remove("border-yellow-400", "text-yellow-400", "bg-yellow-400", "text-black");
+                                btn.classList.add("border-red-500", "text-red-400");
+                            }
+                        });
+                    });
+                }
             }
 
             feedbackBox.innerText = data.correct

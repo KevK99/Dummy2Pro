@@ -51,8 +51,8 @@ import me.daskabel.dummy2pro.repository.ThemeRepository;
  * - Fortschritt in der DB speichern
  * - Raum-Status berechnen (%, Medal)
  *
- * Raum-ID = Theme-ID (1..7). Räume existieren NICHT in der DB, sie sind nur ein
- * Konzept das Theme + Fragen zusammenbringt.
+ * Räume sind ein Konzept das Theme + Fragen zusammenbringt.
+ * Die erste RaumID entspricht dem ersten Thema der Datenbank, egal welche ThemeID.
  *
  * Medal-Logik: - BRONZE: >= 50% der Fragen beantwortet - SILVER: >= 75% der
  * Fragen korrekt beantwortet - GOLD: 100% der Fragen korrekt beantwortet
@@ -500,7 +500,7 @@ public class RoomService
      * - Berechnet den aktuellen Status
      * - Gibt die erste Frage + die Sequenz (alle IDs) zurück
 	 *
-	 * @param roomId 1..7 (entspricht theme_id)
+	 * @param roomId 1..7 (entsprechend der Themen in der Tabelle theme)
 	 * @param runId aktueller Spielstand
 	 */
 	@Transactional(readOnly = true)
@@ -581,4 +581,38 @@ public class RoomService
                     "Frage " + question.getQuestionId() + " gehört nicht zu Raum " + roomId + ".");
         }
     }
+
+    private int getRoomIdForThemeId(Long themeId)
+    {
+        List<Theme> themes = this.themeRepo.findAllByOrderByThemeIdAsc();
+
+        for (int i = 0; i < themes.size(); i++)
+        {
+            if (themes.get(i).getThemeId().equals(themeId))
+            {
+                return i + 1;
+            }
+        }
+
+        throw new IllegalArgumentException("Kein Raum für themeId " + themeId + " gefunden.");
+    }
+
+    private int getRoomIdForQuestion(Question question)
+    {
+        if (question.getThemes() == null || question.getThemes().isEmpty())
+        {
+            throw new IllegalStateException(
+                    "Frage " + question.getQuestionId() + " hat kein Theme.");
+        }
+
+        if (question.getThemes().size() > 1)
+        {
+            throw new IllegalStateException(
+                    "Frage " + question.getQuestionId() + " hat mehrere Themes und ist keinem eindeutigen Raum zuordenbar.");
+        }
+
+        Long themeId = question.getThemes().get(0).getThemeId();
+        return getRoomIdForThemeId(themeId);
+    }
+
 }

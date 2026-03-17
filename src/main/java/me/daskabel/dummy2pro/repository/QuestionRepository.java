@@ -24,11 +24,11 @@ public interface QuestionRepository extends JpaRepository<Question, Long>
 	 * DISTINCT verhindert Duplikate durch den Join.
 	 */
 	@Query("""
-				    SELECT DISTINCT q FROM Question q
-				    JOIN q.themes t
-				    WHERE t.themeId = :themeId
-				    ORDER BY q.questionId
-				""")
+        SELECT DISTINCT q FROM Question q
+        JOIN q.themes t
+        WHERE t.themeId = :themeId
+        ORDER BY q.questionId
+    """)
 	List<Question> findByThemeId(@Param("themeId") Long themeId);
 
 	/**
@@ -36,11 +36,11 @@ public interface QuestionRepository extends JpaRepository<Question, Long>
 	 * für MC/TF-Fragen genutzt.
 	 */
 	@Query("""
-				    SELECT DISTINCT q FROM Question q
-				    LEFT JOIN FETCH q.answerOptions
-				    JOIN q.themes t
-				    WHERE t.themeId = :themeId
-				""")
+        SELECT DISTINCT q FROM Question q
+        LEFT JOIN FETCH q.answerOptions
+        JOIN q.themes t
+        WHERE t.themeId = :themeId
+    """)
 	List<Question> findByThemeIdWithAnswers(@Param("themeId") Long themeId);
 
 	/**
@@ -48,10 +48,13 @@ public interface QuestionRepository extends JpaRepository<Question, Long>
 	 * GAP-Fragen genutzt.
 	 */
     @Query("""
-    SELECT DISTINCT q FROM Question q
-    LEFT JOIN FETCH q.gapFields gf
-    JOIN q.themes t
-    WHERE t.themeId = :themeId
-    """)
+        SELECT DISTINCT q
+        FROM Question q
+        LEFT JOIN FETCH q.gapFields gf
+        LEFT JOIN FETCH gf.gapOptions go
+        JOIN q.themes t
+        WHERE t.themeId = :themeId
+        ORDER BY q.questionId
+        """)
     List<Question> findByThemeIdWithGaps(@Param("themeId") Long themeId);
 }
