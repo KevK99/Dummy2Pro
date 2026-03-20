@@ -72,7 +72,7 @@ public final class RoomIntroDialogs
             ),
             6, List.of(
                     new DialogLineDto("char6", "Hier lernst du Maschinelles Lernen kennen."),
-                    new DialogLineDto("player", "Scheiß auf KI"),
+                    new DialogLineDto("player", "Ich hasse KI"),
                     new DialogLineDto("char6", "Ich bin aber keine KI sondern eine Schülerin aus der ITF233, die für die Dialoge verantwortlich ist."),
                     new DialogLineDto("player", "Klingt wie etwas, das eine KI sagen würde"),
                     new DialogLineDto("char6", "..."),
@@ -83,7 +83,16 @@ public final class RoomIntroDialogs
                     new DialogLineDto("player", "Blöde KI")
             ),
             7, List.of(
-                    new DialogLineDto("char7", "Die letzte Halle: Programmierung Pseudocode.")
+                    new DialogLineDto("char7", "..."),
+                    new DialogLineDto("char7", "..."),
+                    new DialogLineDto("player", "Hallo?"),
+                    new DialogLineDto("char7", "..."),
+                    new DialogLineDto("player", "Geht's dir gut?"),
+                    new DialogLineDto("char7", "..."),
+                    new DialogLineDto("player", "..."),
+                    new DialogLineDto("player", "...Das hier müsste Programmierung Pseudocode sein, oder?"),
+                    new DialogLineDto("char7", "..."),
+                    new DialogLineDto("player", "...Danke für die Info."),
             )
     );
 
