@@ -92,7 +92,7 @@ public final class RoomIntroDialogs
                     new DialogLineDto("player", "..."),
                     new DialogLineDto("player", "...Das hier müsste Programmierung Pseudocode sein, oder?"),
                     new DialogLineDto("char7", "..."),
-                    new DialogLineDto("player", "...Danke für die Info."),
+                    new DialogLineDto("player", "...Danke für die Info.")
             )
     );
 
