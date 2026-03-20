@@ -5,28 +5,42 @@
     <meta charset="UTF-8">
     <title>Dummy2Pro - Raum 1</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+          darkMode: 'class'
+        }
+    </script>
 </head>
 
-<body class="bg-[#FFF123] text-white font-mono tracking-wider min-h-screen">
+<body class="bg-[#FFF123] dark:bg-[#000010] text-white font-mono tracking-wider min-h-screen">
 
 <!-- HEADER FULL WIDTH -->
-<header class="w-full px-12 pt-10 pb-6 border-b border-white/20">
-    <h1 class="text-3xl font-black tracking-widest">
-        Raum 1
-    </h1>
+<header class="w-full flex justify-between px-12 pt-10 pb-6 border-b border-white/20">
+    <div>
+        <h1 class="text-3xl font-black tracking-widest">
+            Raum 1
+        </h1>
 
-    <p class="text-sm text-blue-200 mt-1">
-        Thema: Netzwerke
-    </p>
+        <p class="text-sm text-blue-200 mt-1">
+            Thema: Netzwerke
+        </p>
+    </div>
+
+    <button
+        type="button"
+        id="darkmodeBtn"
+        class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-1.5 px-2 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20"
+    >
+        Toggle Darkmode
+    </button>
 </header>
 
 <!-- WELCOME CONTAINER -->
 <main id="welcomeContainer" class="flex justify-center mt-10">
-    <div class="w-full max-w-6xl px-6 relative">
+    <div class="w-full max-w-6xl px-6 relative dark">
         <section
-                class="relative border-[10px] border-[#050a14] shadow-2xl overflow-visible"
+                class="relative border-[10px] border-[#050a14] shadow-2xl overflow-visible bg-[#18FA70] dark:bg-[#222a66]"
                 style="
-                background-color: #18FA70;
                 background-image:
                     radial-gradient(rgba(255,255,255,0.10) 1px, transparent 1px),
                     radial-gradient(rgba(140,170,255,0.10) 1px, transparent 1px),
@@ -169,7 +183,7 @@
                         <rect x="19" y="4" width="2" height="16" fill="#8b5a2b"/>
                         <rect x="18" y="3" width="4" height="2" fill="#8b5a2b"/>
                         <rect x="18" y="2" width="4" height="1" fill="#6f4421"/>
-                        <rect x="19" y="1" width="2" height="2" fill="#22c55e"/>
+                        <rect x="19" y="1" width="2" height="2" class="fill-yellow-500"/>
 
                         <rect x="7" y="3" width="10" height="8" fill="#050a14"/>
                         <rect x="8" y="4" width="8" height="6" fill="#e9f0ff"/>
@@ -246,7 +260,7 @@
         <!-- CORRIDOR -->
         <div class="absolute left-1/2 -translate-x-1/2 top-[calc(100%-3rem)] w-28 h-[220px] z-0 pointer-events-none">
             <!-- linke Außenwand -->
-            <div class="absolute left-0 top-0 w-[10px] h-full bg-[#18FA70]"></div>
+            <div class="absolute left-0 top-0 w-[10px] h-full bg-[#18FA70] dark:bg-[#222a66]" ></div>
 
             <!-- linke graue Innenkante -->
             <div class="absolute left-[10px] top-0 w-[4px] h-full bg-[#8f9fa3]"></div>
@@ -258,8 +272,40 @@
             <div class="absolute left-[98px] top-0 w-[4px] h-full bg-[#8f9fa3]"></div>
 
             <!-- rechte Außenwand -->
-            <div class="absolute left-[102px] top-0 w-[10px] h-full bg-[#18FA70]"></div>
+            <div class="absolute left-[102px] top-0 w-[10px] h-full bg-[#18FA70] dark:bg-[#222a66]"></div>
         </div>
     </div>
 
 </main>
+
+<script>
+    const button = document.getElementById('darkmodeBtn');
+       const html = document.documentElement;
+
+       function updateButtonText() {
+           if (html.classList.contains("dark")) {
+               button.textContent = "Bunt edition ☀️";
+           } else {
+               button.textContent = "Hello Darkmode, my old friend 🌙";
+           }
+       }
+
+       if (localStorage.theme === "dark") {
+           html.classList.add("dark");
+       } else {
+           html.classList.remove("dark");
+       }
+       updateButtonText();
+
+       button.addEventListener("click", () => {
+           if (html.classList.contains("dark")) {
+               html.classList.remove("dark");
+               localStorage.theme = "light";
+           } else {
+               html.classList.add("dark");
+               localStorage.theme = "dark";
+           }
+
+           updateButtonText();
+       });
+</script>
