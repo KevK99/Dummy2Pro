@@ -5,6 +5,11 @@
     <meta charset="UTF-8">
     <title>Wirtschaft</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+          darkMode: 'class'
+        }
+    </script>
 </head>
 
 <style>
@@ -47,24 +52,34 @@
     }
 </style>
 
-<body class="bg-[#7C7C7C] text-white font-mono tracking-wider min-h-screen">
+<body class="bg-[#7C7C7C] dark:bg-[#000010] text-white font-mono tracking-wider min-h-screen">
 
 <!-- HEADER FULL WIDTH -->
-<header class="w-full px-12 pt-10 pb-6 border-b border-white/20">
-    <h1 class="text-3xl font-black tracking-widest">
-        Raum 1
-    </h1>
+<header class="w-full flex justify-between px-12 pt-10 pb-6 border-b border-white/20">
+    <div>
+        <h1 class="text-3xl font-black tracking-widest">
+            Raum 1
+        </h1>
 
-    <p class="text-sm text-blue-200 mt-1">
-        Thema: Netzwerke
-    </p>
+        <p class="text-sm text-blue-200 mt-1">
+            Thema: Netzwerke
+        </p>
+    </div>
+
+    <button
+            type="button"
+            id="darkmodeBtn"
+            class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-1.5 px-2 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20"
+    >
+        Toggle Darkmode
+    </button>
 </header>
 
 <!-- GAME -->
 
 <!--<div id="gameContainer" class="bg-slate-950 text-white font-mono tracking-wider hidden>"-->
-<div id="gameContainer" class="bg-[#7C7C7C] text-white font-mono tracking-wider">
-        <div class="w-[1200px] h-[680px] mx-auto relative bg-[#EA0A8F]">
+<div id="gameContainer" class="bg-[#7C7C7C] dark:bg-slate-950 text-white font-mono tracking-wider">
+        <div class="w-[1200px] h-[680px] mx-auto relative bg-[#EA0A8F] dark:bg-slate-950">
 
         <!-- ROOM CHARACTER -->
         <div class="absolute left-[105px] top-[-5px] z-20 pointer-events-none">
@@ -429,3 +444,35 @@
         </div>
     </div>
 </div>
+
+<script>
+    const button = document.getElementById('darkmodeBtn');
+       const html = document.documentElement;
+
+       function updateButtonText() {
+           if (html.classList.contains("dark")) {
+               button.textContent = "Bunt edition ☀️";
+           } else {
+               button.textContent = "Hello Darkmode, my old friend 🌙";
+           }
+       }
+
+       if (localStorage.theme === "dark") {
+           html.classList.add("dark");
+       } else {
+           html.classList.remove("dark");
+       }
+       updateButtonText();
+
+       button.addEventListener("click", () => {
+           if (html.classList.contains("dark")) {
+               html.classList.remove("dark");
+               localStorage.theme = "light";
+           } else {
+               html.classList.add("dark");
+               localStorage.theme = "dark";
+           }
+
+           updateButtonText();
+       });
+</script>
