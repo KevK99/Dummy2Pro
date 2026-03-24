@@ -6,14 +6,27 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+          darkMode: 'class'
+        }
+    </script>
     <title>Dummy2Pro</title>
 </head>
 
 <body class="min-h-screen bg-slate-950 text-slate-100">
 
+<button
+    type="button"
+    id="darkmodeBtn"
+    class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-1.5 px-2 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20"
+>
+    Toggle Darkmode
+</button>
+
     <div id="headline"></div>
 
-    <div class="grid grid-cols-3 gap-6 px-64">
+    <div class="grid grid-cols-3 gap-6 px-64 pt-6">
         <section class="rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10 text-center">
             <p>Status: Gold 🥇</p><br>
             <p>Fragen beantwortet: 25</p>
@@ -73,7 +86,37 @@
            })
            .then(headlineHTML => {
                document.getElementById('headline').innerHTML = headlineHTML;
-           })
+        })
+
+       const button = document.getElementById('darkmodeBtn');
+       const html = document.documentElement;
+
+       function updateButtonText() {
+           if (html.classList.contains("dark")) {
+               button.textContent = "Hello Darkmode, my old friend 🌙";
+           } else {
+               button.textContent = "Pride edition ☀️";
+           }
+       }
+
+       if (localStorage.theme === "dark") {
+           html.classList.add("dark");
+       } else {
+           html.classList.remove("dark");
+       }
+       updateButtonText();
+
+       button.addEventListener("click", () => {
+           if (html.classList.contains("dark")) {
+               html.classList.remove("dark");
+               localStorage.theme = "light";
+           } else {
+               html.classList.add("dark");
+               localStorage.theme = "dark";
+           }
+
+           updateButtonText();
+       });
     </script>
 
     <!--script>
