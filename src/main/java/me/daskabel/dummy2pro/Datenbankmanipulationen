@@ -40,6 +40,7 @@ CREATE TABLE `question_progress` (
   PRIMARY KEY (`run_id`, `question_id`),
 
   KEY `idx_qp_question` (`question_id`),
+  KEY `idx_qp_run_room_order` (`run_id`, `room_id`, `question_order`),
 
   CONSTRAINT `fk_qp_run`
     FOREIGN KEY (`run_id`) REFERENCES `game_run`(`run_id`)
@@ -83,7 +84,7 @@ CREATE TABLE `run_gap_answer` (
   `question_id` INT NOT NULL,
   `gap_id` INT NOT NULL,
 
-  `selected_gap_option_id` INT NOT NULL,
+  `selected_gap_option_id` INT NULL,
   `answered_at` DATETIME NULL,
 
   PRIMARY KEY (`run_id`, `question_id`, `gap_id`),
