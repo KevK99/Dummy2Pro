@@ -304,10 +304,10 @@
 
 <!-- GAME -->
 <div id="gameContainer" class="bg-slate-950 text-white font-mono tracking-wider hidden">
-    <div class="w-[1200px] h-[780px] mx-auto relative bg-slate-950 overflow-hidden">
+    <div id="gameScene" class="w-[1200px] h-[680px] mx-auto relative bg-slate-950 overflow-hidden">
 
         <!-- ROOM CHARACTER -->
-        <div class="absolute left-[105px] top-[-5px] z-20 pointer-events-none">
+        <div id="gameRoomCharacter" class="absolute left-[105px] top-[-5px] z-20 pointer-events-none">
             <img
                     src="/room-characters/Krieger.png"
                     alt="Raumcharakter Krieger"
@@ -346,7 +346,7 @@
         </div>
 
         <!-- QUESTION PANEL -->
-        <div class="absolute left-[30px] bottom-[20px] w-[830px] h-[620px] z-10">
+        <div id="questionPanel" class="absolute left-[30px] bottom-[30px] w-[830px] h-[520px] z-10">
             <div class="relative w-full h-full">
 
                 <!-- outer frame -->
@@ -439,7 +439,7 @@
         </div>
 
         <!-- STATUS PANEL -->
-        <div class="absolute right-[30px] top-[30px] w-[260px] h-[700px] z-10">
+        <div id="statusPanel" class="absolute right-[30px] top-[30px] w-[260px] h-[600px] z-10">
             <div class="relative w-full h-full">
 
                 <!-- outer frame -->
@@ -576,6 +576,11 @@
     const welcomeContainer = document.getElementById("welcomeContainer");
     const gameContainer = document.getElementById("gameContainer");
 
+    const gameScene = document.getElementById("gameScene");
+    const gameRoomCharacter = document.getElementById("gameRoomCharacter");
+    const questionPanel = document.getElementById("questionPanel");
+    const statusPanel = document.getElementById("statusPanel");
+
     const dialogText = document.getElementById("dialogText");
     const dialogNextBtn = document.getElementById("dialogNextBtn");
     const startQuizBtn = document.getElementById("startQuizBtn");
@@ -594,6 +599,196 @@
         return question &&
             (question.questionType === "GAP" ||
                 (question.gapFields && question.gapFields.length > 0));
+    }
+
+    function getGapMetrics(question) {
+        const gapFields = [...(question?.gapFields || [])];
+
+        const textLength = [
+            question?.startText,
+            question?.endText,
+            ...gapFields.flatMap(gapField => [gapField.textBefore, gapField.textAfter])
+        ]
+            .filter(Boolean)
+            .join(" ")
+            .length;
+
+        const maxOptionCount = Math.max(
+            0,
+            ...gapFields.map(gapField => (gapField.gapOptions || []).length)
+        );
+
+        const columnCount = maxOptionCount >= 7 ? 3 : 2;
+        const rowCount = Math.max(1, Math.ceil(maxOptionCount / columnCount));
+
+        return {
+            gapCount: gapFields.length,
+            textLength,
+            maxOptionCount,
+            rowCount
+        };
+    }
+
+    function syncQuestionSideLayout() {
+        if (!questionPanel) {
+            return;
+        }
+
+        const panelBottom = 30;
+        const panelHeight = questionPanel.offsetHeight || parseInt(questionPanel.style.height || "520", 10);
+
+        if (statusPanel) {
+            statusPanel.style.height = `${panelHeight}px`;
+            statusPanel.style.top = "auto";
+            statusPanel.style.bottom = `${panelBottom}px`;
+        }
+
+        if (gameRoomCharacter) {
+            gameRoomCharacter.style.top = "auto";
+            gameRoomCharacter.style.bottom = `${panelHeight + panelBottom}px`;
+        }
+    }
+
+    function applyQuestionLayout(question) {
+        if (!gameScene || !questionPanel) {
+            return;
+        }
+
+        let sceneHeight = 680;
+        let panelHeight = 520;
+
+        questionText.style.maxHeight = "";
+
+        if (isGapQuestion(question)) {
+            const { gapCount, textLength, maxOptionCount, rowCount } = getGapMetrics(question);
+
+            panelHeight = 560;
+
+            if (gapCount >= 3) {
+                panelHeight += 25;
+            }
+            if (gapCount >= 4) {
+                panelHeight += 30;
+            }
+
+            if (textLength > 180) {
+                panelHeight += 30;
+            }
+            if (textLength > 260) {
+                panelHeight += 35;
+            }
+            if (textLength > 340) {
+                panelHeight += 25;
+            }
+
+            if (maxOptionCount >= 5) {
+                panelHeight += 20;
+            }
+            if (maxOptionCount >= 7) {
+                panelHeight += 35;
+            }
+            if (maxOptionCount >= 9) {
+                panelHeight += 35;
+            }
+
+            if (rowCount >= 3) {
+                panelHeight += 25;
+            }
+            if (rowCount >= 4) {
+                panelHeight += 25;
+            }
+
+            panelHeight = Math.min(panelHeight, 760);
+            sceneHeight = Math.max(680, panelHeight + 80);
+
+            let questionTextMaxHeight = 190;
+
+            if (textLength > 220) {
+                questionTextMaxHeight += 30;
+            }
+            if (textLength > 320) {
+                questionTextMaxHeight += 25;
+            }
+            if (gapCount >= 4) {
+                questionTextMaxHeight += 20;
+            }
+
+            questionText.style.maxHeight = `${Math.min(questionTextMaxHeight, 300)}px`;
+        }
+
+        gameScene.style.height = `${sceneHeight}px`;
+        questionPanel.style.height = `${panelHeight}px`;
+
+        requestAnimationFrame(() => {
+            syncQuestionSideLayout();
+        });
+    }
+
+    function applyQuestionLayout(question) {
+        if (!gameScene || !questionPanel) {
+            return;
+        }
+
+        if (!isGapQuestion(question)) {
+            gameScene.style.height = "680px";
+            questionPanel.style.height = "520px";
+            questionText.style.maxHeight = "";
+            return;
+        }
+
+        const { gapCount, textLength, maxOptionCount, maxRowCount } = getGapMetrics(question);
+
+        let panelHeight = 520;
+
+        if (gapCount >= 3) {
+            panelHeight += 25;
+        }
+        if (gapCount >= 4) {
+            panelHeight += 25;
+        }
+
+        if (textLength > 140) {
+            panelHeight += 35;
+        }
+        if (textLength > 220) {
+            panelHeight += 35;
+        }
+        if (textLength > 320) {
+            panelHeight += 25;
+        }
+
+        if (maxOptionCount >= 5) {
+            panelHeight += 35;
+        }
+        if (maxOptionCount >= 7) {
+            panelHeight += 35;
+        }
+        if (maxOptionCount >= 9) {
+            panelHeight += 35;
+        }
+
+        if (maxRowCount >= 3) {
+            panelHeight += 20;
+        }
+
+        panelHeight = Math.min(panelHeight, 690);
+
+        const sceneHeight = Math.max(680, panelHeight + 80);
+
+        questionPanel.style.height = `${panelHeight}px`;
+        gameScene.style.height = `${sceneHeight}px`;
+
+        let questionTextMaxHeight = 180;
+
+        if (textLength > 220) {
+            questionTextMaxHeight += 30;
+        }
+        if (gapCount >= 4) {
+            questionTextMaxHeight += 20;
+        }
+
+        questionTextMaxHeight = Math.min(questionTextMaxHeight, 290);
+        questionText.style.maxHeight = `${questionTextMaxHeight}px`;
     }
 
     function showCurrentDialogLine() {
@@ -646,9 +841,10 @@
         }
 
         answerContainer.innerHTML = "";
+        applyQuestionLayout(question);
 
         if (isGapQuestion(question)) {
-            questionText.className = "text-center px-2 min-h-0 max-h-[250px] overflow-hidden text-[clamp(10px,0.95vw,16px)] leading-[1.18]";
+            questionText.className = "text-center px-2 min-h-0 overflow-hidden text-[clamp(10px,0.95vw,16px)] leading-[1.15]";
             renderGapQuestionText(question);
             renderGapQuestion(question);
 
@@ -721,7 +917,7 @@
         const gapFields = [...(question.gapFields || [])].sort((a, b) => a.gapIndex - b.gapIndex);
 
         const textFlow = document.createElement("div");
-        textFlow.className = "flex flex-wrap items-center justify-center gap-x-2 gap-y-2 leading-[1.15] text-inherit";
+        textFlow.className = "flex flex-wrap items-center justify-center gap-x-2 gap-y-2 leading-[1.1] text-inherit";
 
         if (question.startText) {
             const startSpan = document.createElement("span");
@@ -746,7 +942,7 @@
             preview.dataset.gapStep = gapIndex;
             preview.className = `
                 relative inline-flex items-center justify-center
-                min-w-[90px] max-w-full
+                min-w-[88px] max-w-full
                 px-2.5 py-1
                 border-2 border-dashed border-white/40
                 text-center font-black text-yellow-300
@@ -777,7 +973,7 @@
     }
 
     function renderGapQuestion(question) {
-        answerContainer.className = "flex flex-col gap-2 flex-1 min-h-0 overflow-hidden";
+        answerContainer.className = "flex flex-col gap-2 min-h-0";
 
         if (!question.gapFields || question.gapFields.length === 0) {
             answerContainer.innerHTML = `
@@ -790,17 +986,14 @@
 
         const gapFields = [...question.gapFields].sort((a, b) => a.gapIndex - b.gapIndex);
 
-        const optionsArea = document.createElement("div");
-        optionsArea.className = "flex flex-col gap-2 flex-1 min-h-0 overflow-hidden";
-
         const currentGapLabel = document.createElement("div");
         currentGapLabel.id = "gapCurrentLabel";
         currentGapLabel.className = "text-xs text-gray-300 font-black tracking-wide shrink-0";
-        optionsArea.appendChild(currentGapLabel);
+        answerContainer.appendChild(currentGapLabel);
 
         gapFields.forEach((gapField, gapIndex) => {
             const block = document.createElement("div");
-            block.className = "hidden flex flex-col flex-1 min-h-0 overflow-hidden";
+            block.className = "hidden";
             block.dataset.gapOptionsStep = gapIndex;
 
             const options = [...(gapField.gapOptions || [])].sort((a, b) => a.optionOrder - b.optionOrder);
@@ -811,7 +1004,7 @@
                 columnCount = 3;
             }
 
-            const rowCount = Math.ceil(optionCount / columnCount);
+            const rowCount = Math.max(1, Math.ceil(optionCount / columnCount));
 
             let minHeight = 68;
             if (rowCount >= 4) {
@@ -823,7 +1016,7 @@
             }
 
             const optionsWrap = document.createElement("div");
-            optionsWrap.className = `grid ${columnCount === 3 ? "grid-cols-3" : "grid-cols-2"} gap-2 flex-1 min-h-0`;
+            optionsWrap.className = `grid ${columnCount === 3 ? "grid-cols-3" : "grid-cols-2"} gap-2`;
             optionsWrap.style.gridTemplateRows = `repeat(${rowCount}, minmax(0, 1fr))`;
 
             options.forEach((option, optionIndex) => {
@@ -834,7 +1027,7 @@
                 button.dataset.optionText = option.optionText;
                 button.className = `
                     gap-option-btn
-                    relative w-full h-full
+                    relative w-full
                     border-4 border-yellow-400
                     px-3 py-2
                     font-black text-yellow-400 text-left
@@ -857,13 +1050,11 @@
             });
 
             block.appendChild(optionsWrap);
-            optionsArea.appendChild(block);
+            answerContainer.appendChild(block);
         });
 
-        answerContainer.appendChild(optionsArea);
-
         const navWrap = document.createElement("div");
-        navWrap.className = "mt-1 flex justify-between gap-3 shrink-0";
+        navWrap.className = "mt-2 flex justify-between gap-3 shrink-0";
 
         const prevBtn = document.createElement("button");
         prevBtn.type = "button";
@@ -1086,7 +1277,7 @@
             return;
         }
 
-        let fontSize = 15;
+        let fontSize = 14;
         const minFontSize = 8;
 
         textFlow.style.fontSize = fontSize + "px";
@@ -1409,6 +1600,7 @@
 
     function showRoomCompletedState() {
         currentQuestion = null;
+        applyQuestionLayout(null);
         questionText.innerText = "Raum abgeschlossen.";
         answerContainer.innerHTML = "";
 
@@ -1429,6 +1621,7 @@
     }
 
     window.addEventListener("resize", () => {
+        applyQuestionLayout(currentQuestion);
         fitAnswerTexts();
         fitGapOptionTexts();
         fitGapQuestionText();
