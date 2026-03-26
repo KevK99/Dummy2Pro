@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <title>DB - Modellierung</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+          darkMode: 'class'
+        }
+    </script>
+</head>
+
+<body class="bg-indigo-700 dark:bg-[#000010] text-white font-mono tracking-wider min-h-screen">
+
+<!-- HEADER FULL WIDTH -->
+<header class="w-full flex justify-between px-12 pt-10 pb-6 border-b border-white/20">
+    <div>
+        <h1 class="text-3xl font-black tracking-widest">
+            Raum 1
+        </h1>
+
+        <p class="text-sm text-blue-200 mt-1">
+            Thema: Netzwerke
+        </p>
+    </div>
+
+    <button
+            type="button"
+            id="darkmodeBtn"
+            class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-1.5 px-2 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20"
+    >
+        Toggle Darkmode
+    </button>
+</header>
+
+<!-- GAME -->
+<!--<div id="gameContainer" class="bg-indigo-700 text-white font-mono tracking-wider hidden">-->
+<div id="gameContainer" class="bg-indigo-700 dark:bg-slate-950 text-white font-mono tracking-wider">
+    <div class="w-[1200px] h-[680px] mx-auto relative bg-yellow-500/90 dark:bg-slate-950">
+<!--
+         style="
+                clip-path: polygon(
+                    18px 0,
+                    calc(100% - 18px) 0,
+                    100% 18px,
+                    100% calc(100% - 18px),
+                    calc(100% - 18px) 100%,
+                    18px 100%,
+                    0 calc(100% - 18px),
+                    0 18px
+               );
+    >-->
+
+
+        <!-- ROOM CHARACTER -->
+        <div class="absolute left-[105px] top-[-5px] z-20 pointer-events-none">
+            <!-- TODO Maike: dynamischen Pfad für room-character angeben -->
+            <img
+                    src="/src/main/resources/static/room-characters/Krieger.png"
+                    alt="Raumcharakter Krieger"
+                    class="w-[110px]"
+                    style="image-rendering: pixelated;"
+            >
+        </div>
+
+        <!-- PANDA -->
+        <div class="absolute left-[360px] top-[18px] flex flex-col items-center pointer-events-none animate-pulse [animation-duration:2s] z-50">
+            <div class="w-[150px] h-[26px] bg-white/80 rounded-full blur-sm"></div>
+
+            <svg class="w-[190px] mt-[-10px]" viewBox="0 0 24 24" shape-rendering="crispEdges">
+                <rect x="19" y="4" width="2" height="16" fill="#8b5a2b"/>
+                <rect x="18" y="3" width="4" height="2" fill="#8b5a2b"/>
+                <rect x="18" y="2" width="4" height="1" fill="#6f4421"/>
+                <rect x="19" y="1" width="2" height="2" fill="#22c55e"/>
+
+                <rect x="7" y="3" width="10" height="8" fill="#050a14"/>
+                <rect x="8" y="4" width="8" height="6" fill="#e9f0ff"/>
+
+                <rect x="10" y="6" width="2" height="2" fill="#050a14"/>
+                <rect x="14" y="6" width="2" height="2" fill="#050a14"/>
+
+                <rect x="12" y="8" width="1" height="1" fill="#050a14"/>
+
+                <rect x="6" y="12" width="12" height="9" fill="#050a14"/>
+                <rect x="7" y="13" width="10" height="7" fill="#2b4aa8"/>
+
+                <rect x="5" y="14" width="2" height="3" fill="#e9f0ff"/>
+                <rect x="17" y="14" width="2" height="3" fill="#e9f0ff"/>
+
+                <rect x="8" y="20" width="3" height="2" fill="#e9f0ff"/>
+                <rect x="13" y="20" width="3" height="2" fill="#e9f0ff"/>
+            </svg>
+        </div>
+
+        <!-- QUESTION PANEL -->
+        <div class="absolute left-[30px] bottom-[30px] w-[830px] h-[520px] z-10">
+            <div class="relative w-full h-full">
+
+                <!-- outer frame -->
+                <div
+                        class="absolute inset-0 bg-[#e9f0ff]"
+                        style="
+                        clip-path: polygon(
+                            22px 0,
+                            calc(100% - 22px) 0,
+                            100% 22px,
+                            100% calc(100% - 22px),
+                            calc(100% - 22px) 100%,
+                            22px 100%,
+                            0 calc(100% - 22px),
+                            0 22px
+                        );
+                    ">
+                </div>
+
+                <!-- fill -->
+                <div
+                        class="absolute inset-[5px] bg-emerald-500 dark:bg-[#0a1022]"
+                        style="
+                        clip-path: polygon(
+                            18px 0,
+                            calc(100% - 18px) 0,
+                            100% 18px,
+                            100% calc(100% - 18px),
+                            calc(100% - 18px) 100%,
+                            18px 100%,
+                            0 calc(100% - 18px),
+                            0 18px
+                        );
+                    ">
+                </div>
+
+                <!-- inner line -->
+                <div
+                        class="absolute inset-[16px] border border-[#1a2a52]"
+                        style="
+                        clip-path: polygon(
+                            12px 0,
+                            calc(100% - 12px) 0,
+                            100% 12px,
+                            100% calc(100% - 12px),
+                            calc(100% - 12px) 100%,
+                            12px 100%,
+                            0 calc(100% - 12px),
+                            0 12px
+                        );
+                    ">
+                </div>
+
+                <!-- content -->
+                <div class="relative h-full px-8 py-8 flex flex-col min-h-0 text-white">
+                    <h2 class="text-lg font-black tracking-widest shrink-0">FRAGE</h2>
+
+                    <div class="border-t border-white/20 mt-2 mb-5 shrink-0"></div>
+
+                    <div id="questionText"
+                         class="text-center leading-8 px-8 shrink-0 min-h-[72px] text-[clamp(18px,2vw,32px)]">
+                        Frage wird geladen...
+                    </div>
+
+                    <div class="text-sm text-yellow-200 mt-6 mb-3 shrink-0">
+                        ANTWORTEN
+                    </div>
+
+      <!--              <div id="answerContainer"
+                         class="grid grid-cols-2 gap-4 flex-1 min-h-0 content-stretch">
+                    </div>-->
+
+                    <!-- statische Antworten --- NUR FÜR MS -->
+                    <div id="answerContainer"
+                         class="grid grid-cols-2 gap-4 flex-1 min-h-0 content-stretch">
+
+                        <button class="quiz-answer-btn relative w-full h-full border-4 border-yellow-400 px-6 py-4 font-black text-yellow-400 text-left bg-[#09122a] flex items-center min-h-[120px]">
+                            <div class="answer-label w-full leading-[1.35] text-[22px]">
+                                A) IP
+                            </div>
+                        </button>
+
+                        <button class="quiz-answer-btn relative w-full h-full border-4 border-yellow-400 px-6 py-4 font-black text-yellow-400 text-left bg-[#09122a] flex items-center min-h-[120px]">
+                            <div class="answer-label w-full leading-[1.35] text-[22px]">
+                                B) TCP
+                            </div>
+                        </button>
+
+                        <button class="quiz-answer-btn relative w-full h-full border-4 border-yellow-400 px-6 py-4 font-black text-yellow-400 text-left bg-[#09122a] flex items-center min-h-[120px]">
+                            <div class="answer-label w-full leading-[1.35] text-[22px]">
+                                C) Ethernet
+                            </div>
+                        </button>
+
+                        <button class="quiz-answer-btn relative w-full h-full border-4 border-yellow-400 px-6 py-4 font-black text-yellow-400 text-left bg-[#09122a] flex items-center min-h-[120px]">
+                            <div class="answer-label w-full leading-[1.35] text-[22px]">
+                                D) DNS
+                            </div>
+                        </button>
+                    </div>
+
+                    <div id="feedbackBox"
+                         class="mt-4 text-center text-lg font-black min-h-[32px] shrink-0">
+                    </div>
+
+                    <div class="mt-4 flex justify-center gap-4 relative z-20 shrink-0">
+                        <button id="submitAnswerBtn"
+                                class=" bg-indigo-600 text-white px-6 py-3 rounded-lg font-black hover:bg-indigo-500">
+                            Antwort prüfen
+                        </button>
+
+                        <button id="nextQuestionBtn"
+                                class=" bg-emerald-600 text-white px-6 py-3 rounded-lg font-black hover:bg-emerald-500">
+                            Nächste Frage
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STATUS PANEL -->
+        <div class="absolute right-[30px] top-[30px] w-[260px] h-[600px] z-10">
+            <div class="relative w-full h-full">
+
+                <!-- outer frame -->
+                <div
+                        class="absolute inset-0 bg-[#e9f0ff]"
+                        style="
+                        clip-path: polygon(
+                            18px 0,
+                            calc(100% - 18px) 0,
+                            100% 18px,
+                            100% calc(100% - 18px),
+                            calc(100% - 18px) 100%,
+                            18px 100%,
+                            0 calc(100% - 18px),
+                            0 18px
+                        );
+                    ">
+                </div>
+
+                <!-- fill -->
+                <div
+                        class="absolute inset-[5px] bg-emerald-500 dark:bg-[#0a1022]"
+                        style="
+                        clip-path: polygon(
+                            14px 0,
+                            calc(100% - 14px) 0,
+                            100% 14px,
+                            100% calc(100% - 14px),
+                            calc(100% - 14px) 100%,
+                            14px 100%,
+                            0 calc(100% - 14px),
+                            0 14px
+                        );
+                    ">
+                </div>
+
+                <!-- inner line -->
+                <div
+                        class="absolute inset-[16px] border border-[#1a2a52]"
+                        style="
+                        clip-path: polygon(
+                            10px 0,
+                            calc(100% - 10px) 0,
+                            100% 10px,
+                            100% calc(100% - 10px),
+                            calc(100% - 10px) 100%,
+                            10px 100%,
+                            0 calc(100% - 10px),
+                            0 10px
+                        );
+                    ">
+                </div>
+
+                <div class="relative h-full p-8 text-white">
+                    <h2 class="text-xl font-black mb-6">STATUS</h2>
+
+                    <div class="space-y-2 text-sm">
+                        <div>Punkte (Thema): <b id="earnedPoints">0/0</b></div>
+                        <div>Gesamtfragen: <b id="questionProgress">0/0</b></div>
+                    </div>
+
+                    <div class="mt-8">
+                        <div class="text-xs text-gray-200 mb-1">Thema-Fortschritt</div>
+
+                        <div class="h-4 bg-white/10 border border-white relative">
+                            <div id="themeProgressBar" class="absolute left-0 top-0 h-full bg-emerald-600 w-0"></div>
+                        </div>
+
+                        <div id="themeProgressText" class="text-right text-xs text-gray-200 mt-1">0%</div>
+                    </div>
+
+                    <div class="mt-6">
+                        <div class="text-xs text-gray-200 mb-1">Fragen-Fortschritt</div>
+
+                        <div class="h-4 bg-white/10 border border-white relative">
+                            <div id="questionProgressBar" class="absolute left-0 top-0 h-full bg-yellow-400 w-0"></div>
+                        </div>
+
+                        <div id="questionProgressText" class="text-right text-xs text-gray-200 mt-1">0%</div>
+                    </div>
+
+                    <hr class="my-8 border-white/20">
+
+                    <div class="mt-8">
+                        <div id="roomStatusBadge" class="bg-yellow-400 text-black font-black text-xs text-center py-3 rounded-xl">
+                            IN PROGRESS (0%)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const button = document.getElementById('darkmodeBtn');
+       const html = document.documentElement;
+
+       function updateButtonText() {
+           if (html.classList.contains("dark")) {
+               button.textContent = "Bunt edition ☀️";
+           } else {
+               button.textContent = "Hello Darkmode, my old friend 🌙";
+           }
+       }
+
+       if (localStorage.theme === "dark") {
+           html.classList.add("dark");
+       } else {
+           html.classList.remove("dark");
+       }
+       updateButtonText();
+
+       button.addEventListener("click", () => {
+           if (html.classList.contains("dark")) {
+               html.classList.remove("dark");
+               localStorage.theme = "light";
+           } else {
+               html.classList.add("dark");
+               localStorage.theme = "dark";
+           }
+
+           updateButtonText();
+       });
+</script>
