@@ -61,53 +61,53 @@
                     <div class="relative min-h-[150px]">
                         <!-- outer bubble -->
                         <div
-                                class="absolute inset-0 bg-[#f5f8ff]"
-                                style="
-                clip-path: polygon(
-                    20px 0,
-                    calc(100% - 20px) 0,
-                    100% 20px,
-                    100% calc(100% - 20px),
-                    calc(100% - 20px) 100%,
-                    20px 100%,
-                    0 calc(100% - 20px),
-                    0 20px
-                );
-            ">
+                            class="absolute inset-0 bg-[#f5f8ff]"
+                            style="
+                                clip-path: polygon(
+                                    20px 0,
+                                    calc(100% - 20px) 0,
+                                    100% 20px,
+                                    100% calc(100% - 20px),
+                                    calc(100% - 20px) 100%,
+                                    20px 100%,
+                                    0 calc(100% - 20px),
+                                    0 20px
+                                );
+                            ">
                         </div>
 
                         <!-- bubble fill -->
                         <div
-                                class="absolute inset-[5px] bg-[#0a1022]"
-                                style="
-                                    clip-path: polygon(
-                                        18px 0,
-                                        calc(100% - 18px) 0,
-                                        100% 18px,
-                                        100% calc(100% - 18px),
-                                        calc(100% - 18px) 100%,
-                                        18px 100%,
-                                        0 calc(100% - 18px),
-                                        0 18px
-                                    );
-                                ">
+                            class="absolute inset-[5px] bg-[#0a1022]"
+                            style="
+                                clip-path: polygon(
+                                    18px 0,
+                                    calc(100% - 18px) 0,
+                                    100% 18px,
+                                    100% calc(100% - 18px),
+                                    calc(100% - 18px) 100%,
+                                    18px 100%,
+                                    0 calc(100% - 18px),
+                                    0 18px
+                                );
+                            ">
                         </div>
 
                         <!-- inner stroke -->
                         <div
-                                class="absolute inset-[14px] border border-[#1a2a52]"
-                                style="
-                                    clip-path: polygon(
-                                        14px 0,
-                                        calc(100% - 14px) 0,
-                                        100% 14px,
-                                        100% calc(100% - 14px),
-                                        calc(100% - 14px) 100%,
-                                        14px 100%,
-                                        0 calc(100% - 14px),
-                                        0 14px
-                                    );
-                                ">
+                            class="absolute inset-[14px] border border-[#1a2a52]"
+                            style="
+                                clip-path: polygon(
+                                    14px 0,
+                                    calc(100% - 14px) 0,
+                                    100% 14px,
+                                    100% calc(100% - 14px),
+                                    calc(100% - 14px) 100%,
+                                    14px 100%,
+                                    0 calc(100% - 14px),
+                                    0 14px
+                                );
+                            ">
                         </div>
 
                         <!-- text -->
@@ -122,7 +122,20 @@
                     <div class="absolute left-[72%] -translate-x-1/2 top-full -translate-y-[1px]">
                         <!-- tail outer -->
                         <div
-                                class="relative w-[40px] h-[34px] bg-[#f5f8ff]"
+                            class="relative w-[40px] h-[34px] bg-[#f5f8ff]"
+                            style="
+                                clip-path: polygon(
+                                    0 0,
+                                    100% 0,
+                                    100% 55%,
+                                    68% 100%,
+                                    32% 100%,
+                                    0 55%
+                                );
+                            ">
+                            <!-- tail fill -->
+                            <div
+                                class="absolute inset-[4px] bg-[#0a1022]"
                                 style="
                                     clip-path: polygon(
                                         0 0,
@@ -133,34 +146,21 @@
                                         0 55%
                                     );
                                 ">
-                            <!-- tail fill -->
-                            <div
-                                    class="absolute inset-[4px] bg-[#0a1022]"
-                                    style="
-                                        clip-path: polygon(
-                                            0 0,
-                                            100% 0,
-                                            100% 55%,
-                                            68% 100%,
-                                            32% 100%,
-                                            0 55%
-                                        );
-                                    ">
                             </div>
 
                             <!-- tail inner stroke -->
                             <div
-                                    class="absolute inset-[10px] border border-[#1a2a52]"
-                                    style="
-                                        clip-path: polygon(
-                                            0 0,
-                                            100% 0,
-                                            100% 55%,
-                                            68% 100%,
-                                            32% 100%,
-                                            0 55%
-                                        );
-                                    ">
+                                class="absolute inset-[10px] border border-[#1a2a52]"
+                                style="
+                                    clip-path: polygon(
+                                        0 0,
+                                        100% 0,
+                                        100% 55%,
+                                        68% 100%,
+                                        32% 100%,
+                                        0 55%
+                                    );
+                                ">
                             </div>
                         </div>
                     </div>
@@ -261,7 +261,15 @@
             width: 100%;
         }
 
-        .quiz-answer-btn.has-answer-tooltip:hover::after {
+        .gap-option-btn .gap-option-label {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .has-answer-tooltip:hover::after {
             content: attr(data-tooltip);
             position: absolute;
             left: 50%;
@@ -282,7 +290,7 @@
             pointer-events: none;
         }
 
-        .quiz-answer-btn.has-answer-tooltip:hover::before {
+        .has-answer-tooltip:hover::before {
             content: "";
             position: absolute;
             inset: 0;
@@ -296,7 +304,7 @@
 
 <!-- GAME -->
 <div id="gameContainer" class="bg-slate-950 text-white font-mono tracking-wider hidden">
-    <div class="w-[1200px] h-[680px] mx-auto relative bg-slate-950 overflow-hidden">
+    <div class="w-[1200px] h-[780px] mx-auto relative bg-slate-950 overflow-hidden">
 
         <!-- ROOM CHARACTER -->
         <div class="absolute left-[105px] top-[-5px] z-20 pointer-events-none">
@@ -338,7 +346,7 @@
         </div>
 
         <!-- QUESTION PANEL -->
-        <div class="absolute left-[30px] bottom-[30px] w-[830px] h-[520px] z-10">
+        <div class="absolute left-[30px] bottom-[20px] w-[830px] h-[620px] z-10">
             <div class="relative w-full h-full">
 
                 <!-- outer frame -->
@@ -431,7 +439,7 @@
         </div>
 
         <!-- STATUS PANEL -->
-        <div class="absolute right-[30px] top-[30px] w-[260px] h-[600px] z-10">
+        <div class="absolute right-[30px] top-[30px] w-[260px] h-[700px] z-10">
             <div class="relative w-full h-full">
 
                 <!-- outer frame -->
@@ -562,6 +570,7 @@
     let selectedAnswerIds = [];
     let selectedGapAnswers = [];
     let selectedGapAnswersMap = {};
+    let currentGapStep = 0;
     let roomLoaded = false;
 
     const welcomeContainer = document.getElementById("welcomeContainer");
@@ -625,6 +634,7 @@
         selectedAnswerIds = [];
         selectedGapAnswers = [];
         selectedGapAnswersMap = {};
+        currentGapStep = 0;
         feedbackBox.innerText = "";
         submitAnswerBtn.classList.add("hidden");
         nextQuestionBtn.classList.add("hidden");
@@ -638,11 +648,19 @@
         answerContainer.innerHTML = "";
 
         if (isGapQuestion(question)) {
-            questionText.innerText = "Fülle die Lücken korrekt aus.";
+            questionText.className = "text-center px-2 min-h-0 max-h-[250px] overflow-hidden text-[clamp(10px,0.95vw,16px)] leading-[1.18]";
+            renderGapQuestionText(question);
             renderGapQuestion(question);
+
+            requestAnimationFrame(() => {
+                fitGapQuestionText();
+                fitGapOptionTexts();
+            });
+
             return;
         }
 
+        questionText.className = "text-center leading-8 px-8 shrink-0 min-h-[72px] text-[clamp(18px,2vw,32px)]";
         questionText.innerText = question.startText || "Keine Frage vorhanden.";
 
         if (!question.answerOptions || question.answerOptions.length === 0) {
@@ -697,30 +715,17 @@
         });
     }
 
-    function renderGapQuestion(question) {
-        answerContainer.className = "flex flex-col gap-5 flex-1 min-h-0 overflow-y-auto";
+    function renderGapQuestionText(question) {
+        questionText.innerHTML = "";
 
-        if (!question.gapFields || question.gapFields.length === 0) {
-            answerContainer.innerHTML = `
-            <div class="text-center text-red-300">
-                GAP-Frage enthält keine Lückenfelder.
-            </div>
-        `;
-            return;
-        }
-
-        const gapFields = [...question.gapFields].sort((a, b) => a.gapIndex - b.gapIndex);
-
-        const textPanel = document.createElement("div");
-        textPanel.className = "border-4 border-yellow-400 bg-[#09122a] p-6 text-white leading-8 text-lg";
+        const gapFields = [...(question.gapFields || [])].sort((a, b) => a.gapIndex - b.gapIndex);
 
         const textFlow = document.createElement("div");
-        textFlow.className = "flex flex-wrap items-center gap-x-2 gap-y-3";
+        textFlow.className = "flex flex-wrap items-center justify-center gap-x-2 gap-y-2 leading-[1.15] text-inherit";
 
         if (question.startText) {
             const startSpan = document.createElement("span");
-            startSpan.className = "mr-2";
-            startSpan.textContent = question.startText + " ";
+            startSpan.textContent = question.startText;
             textFlow.appendChild(startSpan);
         }
 
@@ -730,20 +735,33 @@
 
             if (before) {
                 const beforeSpan = document.createElement("span");
-                beforeSpan.className = "mr-2";
                 beforeSpan.textContent = before;
                 textFlow.appendChild(beforeSpan);
             }
 
-            const preview = document.createElement("span");
+            const preview = document.createElement("button");
+            preview.type = "button";
             preview.id = `gapPreview-${gapField.gapId}`;
-            preview.className = "inline-block min-w-[180px] px-4 py-2 mx-2 border-2 border-dashed border-white/40 text-center text-yellow-300";
+            preview.dataset.gapId = gapField.gapId;
+            preview.dataset.gapStep = gapIndex;
+            preview.className = `
+                relative inline-flex items-center justify-center
+                min-w-[90px] max-w-full
+                px-2.5 py-1
+                border-2 border-dashed border-white/40
+                text-center font-black text-yellow-300
+                bg-[#0a1022] transition
+            `;
             preview.textContent = `[ Lücke ${gapIndex + 1} ]`;
+
+            preview.addEventListener("click", () => {
+                setActiveGapStep(gapIndex);
+            });
+
             textFlow.appendChild(preview);
 
             if (after) {
                 const afterSpan = document.createElement("span");
-                afterSpan.className = "ml-2";
                 afterSpan.textContent = after;
                 textFlow.appendChild(afterSpan);
             }
@@ -751,28 +769,62 @@
 
         if (question.endText) {
             const endSpan = document.createElement("span");
-            endSpan.className = "ml-2";
-            endSpan.textContent = " " + question.endText;
+            endSpan.textContent = question.endText;
             textFlow.appendChild(endSpan);
         }
 
-        textPanel.appendChild(textFlow);
-        answerContainer.appendChild(textPanel);
+        questionText.appendChild(textFlow);
+    }
+
+    function renderGapQuestion(question) {
+        answerContainer.className = "flex flex-col gap-2 flex-1 min-h-0 overflow-hidden";
+
+        if (!question.gapFields || question.gapFields.length === 0) {
+            answerContainer.innerHTML = `
+        <div class="text-center text-red-300">
+            GAP-Frage enthält keine Lückenfelder.
+        </div>
+    `;
+            return;
+        }
+
+        const gapFields = [...question.gapFields].sort((a, b) => a.gapIndex - b.gapIndex);
+
+        const optionsArea = document.createElement("div");
+        optionsArea.className = "flex flex-col gap-2 flex-1 min-h-0 overflow-hidden";
+
+        const currentGapLabel = document.createElement("div");
+        currentGapLabel.id = "gapCurrentLabel";
+        currentGapLabel.className = "text-xs text-gray-300 font-black tracking-wide shrink-0";
+        optionsArea.appendChild(currentGapLabel);
 
         gapFields.forEach((gapField, gapIndex) => {
-            const wrapper = document.createElement("div");
-            wrapper.className = "border-4 border-yellow-400 bg-[#09122a] p-4";
-            wrapper.dataset.gapBlockId = gapField.gapId;
-
-            const label = document.createElement("div");
-            label.className = "text-sm text-gray-300 mb-3 font-black tracking-wide";
-            label.textContent = `LÜCKE ${gapIndex + 1}`;
-            wrapper.appendChild(label);
-
-            const optionsWrap = document.createElement("div");
-            optionsWrap.className = "grid grid-cols-2 gap-3";
+            const block = document.createElement("div");
+            block.className = "hidden flex flex-col flex-1 min-h-0 overflow-hidden";
+            block.dataset.gapOptionsStep = gapIndex;
 
             const options = [...(gapField.gapOptions || [])].sort((a, b) => a.optionOrder - b.optionOrder);
+            const optionCount = options.length;
+
+            let columnCount = 2;
+            if (optionCount >= 7) {
+                columnCount = 3;
+            }
+
+            const rowCount = Math.ceil(optionCount / columnCount);
+
+            let minHeight = 68;
+            if (rowCount >= 4) {
+                minHeight = 38;
+            } else if (rowCount === 3) {
+                minHeight = 46;
+            } else if (rowCount === 2) {
+                minHeight = 56;
+            }
+
+            const optionsWrap = document.createElement("div");
+            optionsWrap.className = `grid ${columnCount === 3 ? "grid-cols-3" : "grid-cols-2"} gap-2 flex-1 min-h-0`;
+            optionsWrap.style.gridTemplateRows = `repeat(${rowCount}, minmax(0, 1fr))`;
 
             options.forEach((option, optionIndex) => {
                 const button = document.createElement("button");
@@ -780,8 +832,22 @@
                 button.dataset.gapId = gapField.gapId;
                 button.dataset.gapOptionId = option.gapOptionId;
                 button.dataset.optionText = option.optionText;
-                button.className = "border-4 border-yellow-400 px-4 py-3 font-black text-yellow-400 text-left bg-[#0a1022]";
-                button.innerText = `${String.fromCharCode(65 + optionIndex)}) ${option.optionText}`;
+                button.className = `
+                    gap-option-btn
+                    relative w-full h-full
+                    border-4 border-yellow-400
+                    px-3 py-2
+                    font-black text-yellow-400 text-left
+                    bg-[#0a1022]
+                    flex items-center
+                `;
+                button.style.minHeight = `${minHeight}px`;
+
+                const label = document.createElement("div");
+                label.className = "gap-option-label w-full leading-[1.15]";
+                label.innerText = `${String.fromCharCode(65 + optionIndex)}) ${option.optionText}`;
+
+                button.appendChild(label);
 
                 button.addEventListener("click", () => {
                     selectGapOption(gapField.gapId, option.gapOptionId, button);
@@ -790,8 +856,52 @@
                 optionsWrap.appendChild(button);
             });
 
-            wrapper.appendChild(optionsWrap);
-            answerContainer.appendChild(wrapper);
+            block.appendChild(optionsWrap);
+            optionsArea.appendChild(block);
+        });
+
+        answerContainer.appendChild(optionsArea);
+
+        const navWrap = document.createElement("div");
+        navWrap.className = "mt-1 flex justify-between gap-3 shrink-0";
+
+        const prevBtn = document.createElement("button");
+        prevBtn.type = "button";
+        prevBtn.id = "gapPrevBtn";
+        prevBtn.className = "bg-slate-700 text-white px-5 py-2.5 rounded-lg font-black hover:bg-slate-600";
+        prevBtn.innerText = "Zurück";
+
+        prevBtn.addEventListener("click", () => {
+            setActiveGapStep(currentGapStep - 1);
+        });
+
+        const stepBtn = document.createElement("button");
+        stepBtn.type = "button";
+        stepBtn.id = "gapStepBtn";
+        stepBtn.className = "bg-indigo-600 text-white px-5 py-2.5 rounded-lg font-black hover:bg-indigo-500";
+        stepBtn.innerText = "Weiter";
+
+        stepBtn.addEventListener("click", () => {
+            if (!currentQuestion || !currentQuestion.gapFields) {
+                return;
+            }
+
+            const sortedGapFields = [...currentQuestion.gapFields].sort((a, b) => a.gapIndex - b.gapIndex);
+
+            if (currentGapStep >= sortedGapFields.length - 1) {
+                submitAnswer();
+            } else {
+                setActiveGapStep(currentGapStep + 1);
+            }
+        });
+
+        navWrap.appendChild(prevBtn);
+        navWrap.appendChild(stepBtn);
+        answerContainer.appendChild(navWrap);
+
+        requestAnimationFrame(() => {
+            setActiveGapStep(0);
+            fitGapOptionTexts();
         });
     }
 
@@ -803,28 +913,110 @@
             selectedGapOptionId: Number(gapOptionIdValue)
         }));
 
-        document.querySelectorAll(`[data-gap-id="${gapId}"]`).forEach(btn => {
-            btn.classList.remove("bg-yellow-400", "text-black");
+        document.querySelectorAll(`[data-gap-id="${gapId}"][data-gap-option-id]`).forEach(btn => {
+            btn.classList.remove("bg-yellow-400", "text-black", "ring-4", "ring-white/30");
         });
 
-        buttonElement.classList.add("bg-yellow-400", "text-black");
+        buttonElement.classList.add("bg-yellow-400", "text-black", "ring-4", "ring-white/30");
 
         const preview = document.getElementById(`gapPreview-${gapId}`);
         if (preview) {
             const cleanedText = buttonElement.dataset.optionText || buttonElement.innerText.replace(/^[A-Z]\)\s*/, "");
             preview.innerText = cleanedText;
-            preview.classList.remove("border-dashed", "border-white/40", "text-yellow-300");
-            preview.classList.add("border-solid", "border-yellow-400", "text-white", "bg-yellow-400/10");
         }
 
-        const requiredGapCount = currentQuestion?.gapFields?.length || 0;
-        const selectedGapCount = selectedGapAnswers.length;
+        updateGapStepUI();
+    }
 
-        if (selectedGapCount === requiredGapCount && requiredGapCount > 0) {
-            submitAnswerBtn.classList.remove("hidden");
-        } else {
-            submitAnswerBtn.classList.add("hidden");
+    function setActiveGapStep(stepIndex) {
+        if (!currentQuestion || !currentQuestion.gapFields || currentQuestion.gapFields.length === 0) {
+            return;
         }
+
+        const maxStep = currentQuestion.gapFields.length - 1;
+        currentGapStep = Math.max(0, Math.min(stepIndex, maxStep));
+
+        updateGapStepUI();
+    }
+
+    function updateGapStepUI() {
+        if (!currentQuestion || !currentQuestion.gapFields || currentQuestion.gapFields.length === 0) {
+            return;
+        }
+
+        const gapFields = [...currentQuestion.gapFields].sort((a, b) => a.gapIndex - b.gapIndex);
+        const currentGap = gapFields[currentGapStep];
+
+        document.querySelectorAll("[data-gap-options-step]").forEach(block => {
+            const blockStep = Number(block.dataset.gapOptionsStep);
+            block.classList.toggle("hidden", blockStep !== currentGapStep);
+        });
+
+        document.querySelectorAll("[data-gap-step]").forEach(preview => {
+            const previewStep = Number(preview.dataset.gapStep);
+            const gapId = Number(preview.dataset.gapId);
+            const hasAnswer = selectedGapAnswersMap[gapId] !== undefined;
+
+            preview.classList.remove(
+                "border-dashed",
+                "border-white/40",
+                "text-yellow-300",
+                "border-yellow-400",
+                "text-white",
+                "bg-yellow-400/10",
+                "bg-indigo-500/20",
+                "ring-2",
+                "ring-white/40"
+            );
+
+            if (hasAnswer) {
+                preview.classList.add("border-yellow-400", "text-white", "bg-yellow-400/10");
+            } else {
+                preview.classList.add("border-dashed", "border-white/40", "text-yellow-300");
+            }
+
+            if (previewStep === currentGapStep) {
+                preview.classList.add("bg-indigo-500/20", "ring-2", "ring-white/40");
+            }
+        });
+
+        const currentGapLabel = document.getElementById("gapCurrentLabel");
+        if (currentGapLabel) {
+            const selectedCount = selectedGapAnswers.length;
+            const totalCount = gapFields.length;
+            currentGapLabel.innerText = `LÜCKE ${currentGapStep + 1} VON ${totalCount}  •  AUSGEWÄHLT: ${selectedCount}/${totalCount}`;
+        }
+
+        const prevBtn = document.getElementById("gapPrevBtn");
+        if (prevBtn) {
+            prevBtn.disabled = currentGapStep === 0;
+            prevBtn.classList.toggle("opacity-50", currentGapStep === 0);
+            prevBtn.classList.toggle("cursor-not-allowed", currentGapStep === 0);
+        }
+
+        const stepBtn = document.getElementById("gapStepBtn");
+        if (stepBtn) {
+            const hasSelectionForCurrentGap = selectedGapAnswersMap[currentGap.gapId] !== undefined;
+            const isLastGap = currentGapStep === gapFields.length - 1;
+
+            stepBtn.disabled = !hasSelectionForCurrentGap;
+            stepBtn.classList.toggle("opacity-50", !hasSelectionForCurrentGap);
+            stepBtn.classList.toggle("cursor-not-allowed", !hasSelectionForCurrentGap);
+
+            if (isLastGap) {
+                stepBtn.innerText = "Antwort prüfen";
+                stepBtn.classList.remove("bg-indigo-600", "hover:bg-indigo-500");
+                stepBtn.classList.add("bg-emerald-600", "hover:bg-emerald-500");
+            } else {
+                stepBtn.innerText = "Weiter";
+                stepBtn.classList.remove("bg-emerald-600", "hover:bg-emerald-500");
+                stepBtn.classList.add("bg-indigo-600", "hover:bg-indigo-500");
+            }
+        }
+
+        requestAnimationFrame(() => {
+            fitGapOptionTexts();
+        });
     }
 
     function toggleAnswer(answerId, buttonElement, allowsMultiple) {
@@ -881,6 +1073,56 @@
             if (isLong) {
                 button.classList.add("has-answer-tooltip");
                 button.setAttribute("data-tooltip", button.dataset.fullText);
+            } else {
+                button.classList.remove("has-answer-tooltip");
+                button.removeAttribute("data-tooltip");
+            }
+        });
+    }
+
+    function fitGapQuestionText() {
+        const textFlow = questionText.firstElementChild;
+        if (!textFlow) {
+            return;
+        }
+
+        let fontSize = 15;
+        const minFontSize = 8;
+
+        textFlow.style.fontSize = fontSize + "px";
+
+        while (fontSize > minFontSize && questionText.scrollHeight > questionText.clientHeight) {
+            fontSize--;
+            textFlow.style.fontSize = fontSize + "px";
+        }
+    }
+
+    function fitGapOptionTexts() {
+        const buttons = answerContainer.querySelectorAll(".gap-option-btn");
+
+        buttons.forEach(button => {
+            const label = button.querySelector(".gap-option-label");
+            if (!label) {
+                return;
+            }
+
+            let fontSize = 16;
+            const minFontSize = 9;
+
+            label.style.fontSize = fontSize + "px";
+
+            while (fontSize > minFontSize && label.scrollHeight > label.clientHeight) {
+                fontSize--;
+                label.style.fontSize = fontSize + "px";
+            }
+
+            const isLong =
+                label.scrollHeight > label.clientHeight ||
+                (button.dataset.optionText && button.dataset.optionText.length > 36);
+
+            if (isLong) {
+                button.classList.add("has-answer-tooltip");
+                button.setAttribute("data-tooltip", button.dataset.optionText);
             } else {
                 button.classList.remove("has-answer-tooltip");
                 button.removeAttribute("data-tooltip");
@@ -946,12 +1188,13 @@
             } else {
                 document.querySelectorAll("#answerContainer button").forEach(btn => {
                     btn.disabled = true;
+                    btn.classList.add("opacity-70", "cursor-not-allowed");
                 });
 
                 if (data.gapResults && Array.isArray(data.gapResults)) {
                     data.gapResults.forEach(entry => {
                         const preview = document.getElementById(`gapPreview-${entry.gapId}`);
-                        const gapButtons = document.querySelectorAll(`[data-gap-id="${entry.gapId}"]`);
+                        const gapButtons = document.querySelectorAll(`[data-gap-id="${entry.gapId}"][data-gap-option-id]`);
 
                         if (entry.correct) {
                             if (preview) {
@@ -1187,6 +1430,8 @@
 
     window.addEventListener("resize", () => {
         fitAnswerTexts();
+        fitGapOptionTexts();
+        fitGapQuestionText();
     });
 
     dialogNextBtn.addEventListener("click", nextDialogLine);
