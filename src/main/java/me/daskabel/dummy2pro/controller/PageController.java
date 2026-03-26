@@ -3,6 +3,7 @@ package me.daskabel.dummy2pro.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.ui.Model;
 
 import me.daskabel.dummy2pro.repository.ThemeRepository;
 
@@ -17,8 +18,13 @@ public class PageController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard()
+    public String dashboard(Model model)
     {
+        model.addAttribute("username", "NutzerName");
+        model.addAttribute("answeredQuestions", 0);
+        model.addAttribute("totalQuestions", 0);
+        model.addAttribute("avatarUrl", "/images/duck.jpg");
+
         return "dashboard";
     }
 

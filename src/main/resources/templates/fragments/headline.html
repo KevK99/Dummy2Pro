@@ -1,0 +1,32 @@
+<header th:fragment="headline(username, answeredQuestions, totalQuestions, avatarUrl)" class="w-full px-64 pt-6 pb-2">
+    <div class="flex justify-between gap-6">
+        <div>
+            <h1 class="text-3xl font-extrabold tracking-tight">
+                Willkommen zurück, <span id="headlineUsername" th:text="${username}">NutzerName</span>!
+            </h1>
+            <p class="mt-2 text-slate-300">
+                Spielstand:
+                <span id="headlineAnsweredQuestions" th:text="${answeredQuestions}">0</span>
+                /
+                <span id="headlineTotalQuestions" th:text="${totalQuestions}">0</span>
+                Fragen abgeschlossen 🚀
+            </p>
+        </div>
+
+        <div class="flex items-start gap-4">
+            <div th:replace="~{fragments/darkmode-button :: darkmodeButton}"></div>
+
+            <div>
+                <a th:href="@{/profile.html}" class="block text-center">
+                    <img id="headlineAvatar"
+                         th:src="${avatarUrl}"
+                         alt="duck"
+                         class="w-20 h-20 rounded-full hover:cursor-pointer mb-3 object-cover" />
+                    <span class="rounded-full bg-indigo-600 px-3 py-1 mt-3 font-bold inline-block">
+                        Account
+                    </span>
+                </a>
+            </div>
+        </div>
+    </div>
+</header>

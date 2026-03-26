@@ -1,245 +1,220 @@
 <!doctype html>
-<!--html lang="de" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{base :: layout(~{::body})}" -->
-<html lang="de">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-          darkMode: 'class'
-        }
-    </script>
-    <title>Dummy2Pro</title>
-</head>
+<html lang="de"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base :: layout(~{::body})}">
+<body class="min-h-screen bg-slate-600 text-slate-100 dark:bg-slate-950 dark:text-slate-100">
 
-<body class="min-h-screen bg-slate-950 text-slate-100">
+<div th:replace="~{fragments/headline :: headline(${username}, ${answeredQuestions}, ${totalQuestions}, ${avatarUrl})}"></div>
 
-<button
-    type="button"
-    id="darkmodeBtn"
-    class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-1.5 px-2 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20"
->
-    Toggle Darkmode
-</button>
+<div class="grid grid-cols-3 gap-6 px-64 pt-0">
+    <section class="rounded-2xl bg-slate-500/90 dark:bg-slate-900/60 p-6 ring-1 ring-slate-400/50 dark:ring-white/10 text-center shadow-sm dark:shadow-none">
+        <p>Fragen beantwortet: 25</p>
+        <p class="pb-6">Punkte: 25/25</p>
+        <hr class="pb-6 border-slate-400/50 dark:border-white/10">
+        <a th:href="@{/room/{id}(id=1)}" class="room-link" data-room-id="1">Raum 1</a>
+        <span class="rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold text-white">Abgeschlossen (100%)</span>
+    </section>
 
-    <div id="headline"></div>
+    <section class="rounded-2xl bg-slate-500/90 dark:bg-slate-900/60 p-6 ring-1 ring-slate-400/50 dark:ring-white/10 text-center shadow-sm dark:shadow-none">
+        <p>Fragen beantwortet: 25</p>
+        <p class="pb-6">Punkte: 22/25</p>
+        <hr class="pb-6 border-slate-400/50 dark:border-white/10">
+        <a th:href="@{/room/{id}(id=2)}" class="room-link" data-room-id="2">Raum 2</a>
+        <span class="rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold text-white">Abgeschlossen (100%)</span>
+    </section>
 
-    <div class="grid grid-cols-3 gap-6 px-64 pt-6">
-        <section class="rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10 text-center">
-            <p>Status: Gold 🥇</p><br>
-            <p>Fragen beantwortet: 25</p>
-            <p class="pb-6">Punkte: 25/25</p>
-            <hr class="pb-6">
-            <a href="#" class="room-link" data-room-id="1">Raum 1</a>
-            <span class="rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold text-white">Abgeschlossen (100%)</span>
-        </section>
+    <section class="rounded-2xl bg-slate-500/90 dark:bg-slate-900/60 p-6 ring-1 ring-slate-400/50 dark:ring-white/10 text-center shadow-sm dark:shadow-none">
+        <p>Fragen beantwortet: 12</p>
+        <p class="pb-6">Punkte: 8/12</p>
+        <hr class="pb-6 border-slate-400/50 dark:border-white/10">
+        <a th:href="@{/room/{id}(id=3)}" class="room-link" data-room-id="3">Raum 3</a>
+        <span class="rounded-full bg-yellow-500 px-3 py-1 text-xs font-bold text-white">in Progress (50%)</span>
+    </section>
 
-        <section class="rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10 text-center">
-            <p>Status: Gold 🥇</p><br>
-            <p>Fragen beantwortet: 25</p>
-            <p class="pb-6">Punkte: 22/25</p>
-            <hr class="pb-6">
-            <a href="#" class="room-link" data-room-id="2">Raum 2</a>
-            <span class="rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold text-white">Abgeschlossen (100%)</span>
-        </section>
+    <section class="rounded-2xl bg-slate-500/90 dark:bg-slate-900/60 p-6 ring-1 ring-slate-400/50 dark:ring-white/10 text-center shadow-sm dark:shadow-none">
+        <p>Fragen beantwortet: 2</p>
+        <p class="pb-6">Punkte: 0/2</p>
+        <hr class="pb-6 border-slate-400/50 dark:border-white/10">
+        <a th:href="@{/room/{id}(id=4)}" class="room-link" data-room-id="4">Raum 4</a>
+        <span class="rounded-full bg-yellow-500 px-3 py-1 text-xs font-bold text-white">in Progress (12%)</span>
+    </section>
 
-        <section class="rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10 text-center">
-            <p>Status: Silber 🥈</p><br>
-            <p>Fragen beantwortet: 12</p>
-            <p class="pb-6">Punkte: 8/12</p>
-            <hr class="pb-6">
-            <a href="#" class="room-link" data-room-id="3">Raum 3</a>
-            <span class="rounded-full bg-yellow-500 px-3 py-1 text-xs font-bold text-white">in Progress (50%)</span>
-        </section>
+    <section class="rounded-2xl bg-slate-600/80 dark:bg-slate-900/60 p-6 ring-1 ring-slate-400/40 dark:ring-white/10 text-center text-slate-200 dark:text-gray-500 shadow-sm dark:shadow-none">
+        <a href="#" class="room-link" data-room-id="5">Raum 5</a>
+        <p>Schließe den vorherigen Raum zu 50% ab, um mit der Lektion beginnen zu können.</p>
+    </section>
 
-        <section class="rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10 text-center">
-            <p>Status: Bronze 🥉</p><br>
-            <p>Fragen beantwortet: 2</p>
-            <p class="pb-6">Punkte: 0/2</p>
-            <hr class="pb-6">
-            <a href="#" class="room-link" data-room-id="4">Raum 4</a>
-            <span class="rounded-full bg-yellow-500 px-3 py-1 text-xs font-bold text-white">in Progress (12%)</span>
-        </section>
+    <section class="rounded-2xl bg-slate-600/80 dark:bg-slate-900/60 p-6 ring-1 ring-slate-400/40 dark:ring-white/10 text-center text-slate-200 dark:text-gray-500 shadow-sm dark:shadow-none">
+        <a href="#" class="room-link" data-room-id="6">Raum 6</a>
+        <p>Schließe den vorherigen Raum zu 50% ab, um mit der Lektion beginnen zu können.</p>
+    </section>
 
-        <section class="rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10 text-center text-gray-500">
-            <a href="#" class="room-link" data-room-id="5">Raum 5</a>
-            <p>Schließe den vorherigen Raum zu 50% ab, um mit der Lektion beginnen zu können.</p>
-        </section>
+    <section class="rounded-2xl bg-slate-600/80 dark:bg-slate-900/60 p-6 ring-1 ring-slate-400/40 dark:ring-white/10 text-center text-slate-200 dark:text-gray-500 shadow-sm dark:shadow-none">
+        <a href="#" class="room-link" data-room-id="7">Raum 7</a>
+        <p>Schließe den vorherigen Raum zu 50% ab, um mit der Lektion beginnen zu können.</p>
+    </section>
+</div>
 
-        <section class="rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10 text-center text-gray-500">
-            <a href="#" class="room-link" data-room-id="6">Raum 6</a>
-            <p>Schließe den vorherigen Raum zu 50% ab, um mit der Lektion beginnen zu können.</p>
-        </section>
+<script th:src="@{/js/darkmode.js}"></script>
+<script>
+    async function ensureActiveRun() {
+        const userId = sessionStorage.getItem("userId");
 
-        <section class="rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10 text-center text-gray-500">
-            <a href="#" class="room-link" data-room-id="7">Raum 7</a>
-            <p>Schließe den vorherigen Raum zu 50% ab, um mit der Lektion beginnen zu können.</p>
-        </section>
-    </div>
-
-    <script>
-        fetch('/src/main/resources/static/headline.html')
-           .then(response => {
-               return response.text();
-           })
-           .then(headlineHTML => {
-               document.getElementById('headline').innerHTML = headlineHTML;
-        })
-
-       const button = document.getElementById('darkmodeBtn');
-       const html = document.documentElement;
-
-       function updateButtonText() {
-           if (html.classList.contains("dark")) {
-               button.textContent = "Hello Darkmode, my old friend 🌙";
-           } else {
-               button.textContent = "Pride edition ☀️";
-           }
-       }
-
-       if (localStorage.theme === "dark") {
-           html.classList.add("dark");
-       } else {
-           html.classList.remove("dark");
-       }
-       updateButtonText();
-
-       button.addEventListener("click", () => {
-           if (html.classList.contains("dark")) {
-               html.classList.remove("dark");
-               localStorage.theme = "light";
-           } else {
-               html.classList.add("dark");
-               localStorage.theme = "dark";
-           }
-
-           updateButtonText();
-       });
-    </script>
-
-    <!--script>
-        async function ensureActiveRun() {
-            const userId = sessionStorage.getItem("userId");
-
-            if (!userId) {
-                window.location.href = "/";
-                return null;
-            }
-
-            let sessionId = sessionStorage.getItem("sessionId");
-            let runId = sessionStorage.getItem("runId");
-
-            if (sessionId && runId) {
-                const probeResponse = await fetch(`/api/session/${sessionId}/overview`);
-
-                if (probeResponse.ok) {
-                    return { sessionId, runId, userId };
-                }
-
-                sessionStorage.removeItem("sessionId");
-                sessionStorage.removeItem("runId");
-                sessionId = null;
-                runId = null;
-            }
-
-            const runsResponse = await fetch(`/api/session/runs?userId=${userId}`);
-            const runsData = await runsResponse.json();
-
-            if (!runsResponse.ok) {
-                alert(runsData.message || "Spielstände konnten nicht geladen werden.");
-                window.location.href = "/";
-                return null;
-            }
-
-            let sessionData;
-
-            if (runsData.length > 0) {
-                const openRun = runsData.find(run => !run.finished);
-                const selectedRun = openRun || runsData[0];
-
-                const loadResponse = await fetch(`/api/session/load?userId=${userId}&runId=${selectedRun.runId}`, {
-                    method: "POST"
-                });
-
-                sessionData = await loadResponse.json();
-
-                if (!loadResponse.ok) {
-                    alert(sessionData.message || "Spielstand konnte nicht geladen werden.");
-                    window.location.href = "/";
-                    return null;
-                }
-            } else {
-                const newResponse = await fetch(`/api/session/new?userId=${userId}`, {
-                    method: "POST"
-                });
-
-                sessionData = await newResponse.json();
-
-                if (!newResponse.ok) {
-                    alert(sessionData.message || "Neuer Spielstand konnte nicht erstellt werden.");
-                    window.location.href = "/";
-                    return null;
-                }
-            }
-
-            sessionStorage.setItem("userId", String(userId));
-            sessionStorage.setItem("sessionId", sessionData.sessionId);
-            sessionStorage.setItem("runId", String(sessionData.runId));
-
-            return {
-                userId: String(userId),
-                sessionId: sessionData.sessionId,
-                runId: String(sessionData.runId)
-            };
+        if (!userId) {
+            window.location.href = "/";
+            return null;
         }
 
-        async function loadOverview() {
-            const activeRun = await ensureActiveRun();
-            if (!activeRun) {
-                return;
+        let sessionId = sessionStorage.getItem("sessionId");
+        let runId = sessionStorage.getItem("runId");
+
+        if (sessionId && runId) {
+            const probeResponse = await fetch(`/api/session/${sessionId}/overview`);
+
+            if (probeResponse.ok) {
+                return { sessionId, runId, userId };
             }
 
-            const response = await fetch(`/api/session/${activeRun.sessionId}/overview`);
-            const data = await response.json();
-
-            if (!response.ok) {
-                sessionStorage.removeItem("sessionId");
-                sessionStorage.removeItem("runId");
-                window.location.reload();
-                return;
-            }
-
-            console.log(data);
+            sessionStorage.removeItem("sessionId");
+            sessionStorage.removeItem("runId");
+            sessionId = null;
+            runId = null;
         }
 
-        async function openRoom(roomId) {
-            const activeRun = await ensureActiveRun();
-            if (!activeRun) {
-                return;
-            }
+        const runsResponse = await fetch(`/api/session/runs?userId=${userId}`);
+        const runsData = await runsResponse.json();
 
-            window.location.href = `/room/${roomId}`;
+        if (!runsResponse.ok) {
+            alert(runsData.message || "Spielstände konnten nicht geladen werden.");
+            window.location.href = "/";
+            return null;
         }
 
-        function bindRoomLinks() {
-            document.querySelectorAll(".room-link").forEach(link => {
-                link.addEventListener("click", async (event) => {
-                    event.preventDefault();
+        let sessionData;
 
-                    const roomId = link.dataset.roomId;
-                    if (!roomId) {
-                        return;
-                    }
+        if (runsData.length > 0) {
+            const openRun = runsData.find(run => !run.finished);
+            const selectedRun = openRun || runsData[0];
 
-                    await openRoom(roomId);
-                });
+            const loadResponse = await fetch(`/api/session/load?userId=${userId}&runId=${selectedRun.runId}`, {
+                method: "POST"
             });
+
+            sessionData = await loadResponse.json();
+
+            if (!loadResponse.ok) {
+                alert(sessionData.message || "Spielstand konnte nicht geladen werden.");
+                window.location.href = "/";
+                return null;
+            }
+        } else {
+            const newResponse = await fetch(`/api/session/new?userId=${userId}`, {
+                method: "POST"
+            });
+
+            sessionData = await newResponse.json();
+
+            if (!newResponse.ok) {
+                alert(sessionData.message || "Neuer Spielstand konnte nicht erstellt werden.");
+                window.location.href = "/";
+                return null;
+            }
         }
 
-        bindRoomLinks();
-        loadOverview();
-    </script>
+        sessionStorage.setItem("userId", String(userId));
+        sessionStorage.setItem("sessionId", sessionData.sessionId);
+        sessionStorage.setItem("runId", String(sessionData.runId));
+
+        return {
+            userId: String(userId),
+            sessionId: sessionData.sessionId,
+            runId: String(sessionData.runId)
+        };
+    }
+
+    function updateHeadline(data) {
+        const usernameElement = document.getElementById("headlineUsername");
+        const answeredElement = document.getElementById("headlineAnsweredQuestions");
+        const totalElement = document.getElementById("headlineTotalQuestions");
+        const avatarElement = document.getElementById("headlineAvatar");
+
+        if (usernameElement) {
+            usernameElement.textContent =
+                data.username ??
+                sessionStorage.getItem("username") ??
+                "NutzerName";
+        }
+
+        if (answeredElement) {
+            answeredElement.textContent =
+                data.answeredQuestions ??
+                data.totalAnsweredQuestions ??
+                data.answered ??
+                0;
+        }
+
+        if (totalElement) {
+            totalElement.textContent =
+                data.totalQuestions ??
+                data.questionCount ??
+                data.total ??
+                0;
+        }
+
+        if (avatarElement) {
+            const avatarFromStorage = sessionStorage.getItem("avatar");
+            if (avatarFromStorage) {
+                avatarElement.src = avatarFromStorage;
+            }
+        }
+    }
+
+    async function loadOverview() {
+        const activeRun = await ensureActiveRun();
+        if (!activeRun) {
+            return;
+        }
+
+        const response = await fetch(`/api/session/${activeRun.sessionId}/overview`);
+        const data = await response.json();
+
+        if (!response.ok) {
+            sessionStorage.removeItem("sessionId");
+            sessionStorage.removeItem("runId");
+            window.location.reload();
+            return;
+        }
+
+        updateHeadline(data);
+        console.log(data);
+    }
+
+    async function openRoom(roomId) {
+        const activeRun = await ensureActiveRun();
+        if (!activeRun) {
+            return;
+        }
+
+        window.location.href = `/room/${roomId}`;
+    }
+
+    function bindRoomLinks() {
+        document.querySelectorAll(".room-link").forEach(link => {
+            link.addEventListener("click", async (event) => {
+                event.preventDefault();
+
+                const roomId = link.dataset.roomId;
+                if (!roomId) {
+                    return;
+                }
+
+                await openRoom(roomId);
+            });
+        });
+    }
+
+    bindRoomLinks();
+    loadOverview();
+</script>
 </body>
 </html>
