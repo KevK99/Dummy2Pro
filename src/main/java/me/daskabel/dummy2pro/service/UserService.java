@@ -1,11 +1,13 @@
 package me.daskabel.dummy2pro.service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import me.daskabel.dummy2pro.model.GameRun;
+import me.daskabel.dummy2pro.model.QuestionProgress;
 import me.daskabel.dummy2pro.model.User;
 import me.daskabel.dummy2pro.repository.GameRunRepository;
 import me.daskabel.dummy2pro.repository.QuestionProgressRepository;
@@ -91,6 +93,20 @@ public class UserService
         return userRepository.save(user);
     }
 
+    public void saveCurrentGameProgress(Long userId)
+    {
+        // Hier kannst du die Logik implementieren, um den aktuellen Spielstand zu speichern.
+        // Das könnte das Speichern von `GameRun`-Objekten und deren Fortschritt beinhalten.
+        GameRun run = gameRunRepository.findTopByUser_UserIdOrderByStartedAtDesc(userId)
+            .orElseThrow(() -> new NoSuchElementException("Kein aktiver Spielstand gefunden."));
+
+        // Speichere den Fortschritt, falls erforderlich
+        // Hier musst du möglicherweise den Fortschritt des Spiels speichern, bevor der Benutzer sich abmeldet.
+        // Beispiel:
+        List<QuestionProgress> progressList = questionProgressRepository.findByRun_RunId(run.getRunId());
+        // Speichere Fortschritte oder führe hier eine spezifische Logik aus.
+    }
+
     private void validateLoginInput(String username, String password)
     {
         if (username == null || username.isBlank())
@@ -145,5 +161,4 @@ public class UserService
             throw new IllegalArgumentException("Username ist zu lang. Er darf nur 30 Zeichen lang sein.");
         }
     }
-
 }

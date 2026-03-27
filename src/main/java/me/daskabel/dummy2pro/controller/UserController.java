@@ -3,6 +3,7 @@ package me.daskabel.dummy2pro.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,5 +31,16 @@ public class UserController
 
         userService.deleteUser(userId);
         return ResponseEntity.ok("Benutzer erfolgreich gelöscht.");
+    }
+
+    @PostMapping("/logout/{userId}")
+    public ResponseEntity<String> logout(@PathVariable Long userId)
+    {
+        // Speichere den aktuellen Spielstand
+        userService.saveCurrentGameProgress(userId);
+
+        // Optional: Hier könntest du auch die Session invalidieren, wenn du Sessions verwendest.
+
+        return ResponseEntity.ok("Erfolgreich ausgeloggt.");
     }
 }
