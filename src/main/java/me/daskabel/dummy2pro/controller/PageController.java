@@ -29,9 +29,21 @@ public class PageController {
     }
 
     @GetMapping("/room/{id}")
-    public String room(@PathVariable int id) {
-        int roomCount =  Math.min(themeRepository.findAllByOrderByThemeIdAsc().size(), 7);
-        if (id < 1 || id > roomCount) return "redirect:/dashboard";
-        return "room" + id; // http://localhost:8080/room/1 .. http://localhost:8080/room/7
+    public String room(@PathVariable int id, Model model) {
+        var themes = themeRepository.findAllByOrderByThemeIdAsc();
+        int roomCount = Math.min(themes.size(), 7);
+
+        if (id < 1 || id > roomCount) {
+            return "redirect:/dashboard";
+        }
+
+        var theme = themes.get(id - 1);
+
+        model.addAttribute("roomId", id);
+
+        // Hier den richtigen Getter deiner Theme-Klasse einsetzen
+        model.addAttribute("themeName", theme.getName());
+
+        return "room" + id;
     }
 }

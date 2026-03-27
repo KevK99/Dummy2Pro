@@ -19,47 +19,56 @@ public class RoomDtos
      * Eine Antwortoption für MC/TF — OHNE is_correct. Die ID wird gebraucht, damit der Client sie beim Antworten
      * mitschicken kann.
      */
-    public static class AnswerOptionDto
-    {
+    public static class AnswerOptionDto {
         private Long answerId;
         private String optionText;
         private Integer optionOrder;
+        private int correctAnswers;
+        private int wrongAnswers;
 
-        public AnswerOptionDto()
-        {
+        public AnswerOptionDto() {
         }
 
-        public Long getAnswerId()
-        {
+        public Long getAnswerId() {
             return this.answerId;
         }
 
-        public Integer getOptionOrder()
-        {
+        public Integer getOptionOrder() {
             return this.optionOrder;
         }
 
-        public String getOptionText()
-        {
+        public String getOptionText() {
             return this.optionText;
         }
 
-        public void setAnswerId(Long answerId)
-        {
+        public void setAnswerId(Long answerId) {
             this.answerId = answerId;
         }
 
-        public void setOptionOrder(Integer optionOrder)
-        {
+        public void setOptionOrder(Integer optionOrder) {
             this.optionOrder = optionOrder;
         }
 
-        public void setOptionText(String optionText)
-        {
+        public void setOptionText(String optionText) {
             this.optionText = optionText;
         }
-    }
 
+        public void setCorrectAnswers(int correctAnswers) {
+            this.correctAnswers = correctAnswers;
+        }
+
+        public void setWrongAnswers(int wrongAnswers) {
+            this.wrongAnswers = wrongAnswers;
+        }
+
+        public int getCorrectAnswers() {
+            return this.correctAnswers;
+        }
+        public int getWrongAnswers() {
+            return this.wrongAnswers;
+        }
+
+    }
     /**
      * Der Client schickt seine Antwort(en) auf eine Frage.
      *
