@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="de" xmlns:th="http://www.thymeleaf.org"
-      th:fragment="layout(content)">
+      th:fragment="layout(content, bodyClass)">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -14,7 +14,7 @@
     </script>
 </head>
 
-<body class="min-h-screen bg-slate-950 text-white">
+<body th:class="${bodyClass} ?: 'min-h-screen bg-slate-950 text-white'">
     <div class="w-full">
         <th:block th:replace="${content}"></th:block>
     </div>

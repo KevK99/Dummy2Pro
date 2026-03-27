@@ -1,56 +1,58 @@
 <!doctype html>
 <html lang="de"
       xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{base :: layout(~{::body})}">
-<body class="min-h-screen bg-slate-600 text-slate-100 dark:bg-slate-950 dark:text-slate-100">
+      th:replace="~{base :: layout(~{::body}, 'min-h-screen bg-blue-400 text-slate-950 dark:bg-slate-950 dark:text-slate-100')}">
+<body>
 
-<div th:replace="~{fragments/headline :: headline(${username}, ${answeredQuestions}, ${totalQuestions}, ${avatarUrl})}"></div>
+<div class="bg-violet-400 text-slate-950 dark:bg-transparent dark:text-inherit">
+    <div th:replace="~{fragments/headline :: headline(${username}, ${answeredQuestions}, ${totalQuestions}, ${avatarUrl})}"></div>
+</div>
 
-<div class="grid grid-cols-3 gap-6 px-64 pt-0">
-    <section class="rounded-2xl bg-slate-500/90 dark:bg-slate-900/60 p-6 ring-1 ring-slate-400/50 dark:ring-white/10 text-center shadow-sm dark:shadow-none">
+<div class="grid grid-cols-3 gap-6 px-64 pt-6 pb-10">
+    <section class="rounded-2xl bg-yellow-400 dark:bg-slate-900/60 p-6 ring-2 ring-violet-400 dark:ring-white/10 text-center text-slate-950 dark:text-slate-100 shadow-sm dark:shadow-none">
         <p>Fragen beantwortet: 25</p>
         <p class="pb-6">Punkte: 25/25</p>
-        <hr class="pb-6 border-slate-400/50 dark:border-white/10">
-        <a th:href="@{/room/{id}(id=1)}" class="room-link" data-room-id="1">Raum 1</a>
-        <span class="rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold text-white">Abgeschlossen (100%)</span>
+        <hr class="pb-6 border-slate-950/20 dark:border-white/10">
+        <a th:href="@{/room/{id}(id=1)}" class="room-link font-bold text-slate-950 dark:text-slate-100" data-room-id="1">Raum 1</a>
+        <span class="rounded-full bg-green-400 px-3 py-1 text-xs font-bold text-slate-950">Abgeschlossen (100%)</span>
     </section>
 
-    <section class="rounded-2xl bg-slate-500/90 dark:bg-slate-900/60 p-6 ring-1 ring-slate-400/50 dark:ring-white/10 text-center shadow-sm dark:shadow-none">
+    <section class="rounded-2xl bg-yellow-400 dark:bg-slate-900/60 p-6 ring-2 ring-violet-400 dark:ring-white/10 text-center text-slate-950 dark:text-slate-100 shadow-sm dark:shadow-none">
         <p>Fragen beantwortet: 25</p>
         <p class="pb-6">Punkte: 22/25</p>
-        <hr class="pb-6 border-slate-400/50 dark:border-white/10">
-        <a th:href="@{/room/{id}(id=2)}" class="room-link" data-room-id="2">Raum 2</a>
-        <span class="rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold text-white">Abgeschlossen (100%)</span>
+        <hr class="pb-6 border-slate-950/20 dark:border-white/10">
+        <a th:href="@{/room/{id}(id=2)}" class="room-link font-bold text-slate-950 dark:text-slate-100" data-room-id="2">Raum 2</a>
+        <span class="rounded-full bg-green-400 px-3 py-1 text-xs font-bold text-slate-950">Abgeschlossen (100%)</span>
     </section>
 
-    <section class="rounded-2xl bg-slate-500/90 dark:bg-slate-900/60 p-6 ring-1 ring-slate-400/50 dark:ring-white/10 text-center shadow-sm dark:shadow-none">
+    <section class="rounded-2xl bg-yellow-400 dark:bg-slate-900/60 p-6 ring-2 ring-violet-400 dark:ring-white/10 text-center text-slate-950 dark:text-slate-100 shadow-sm dark:shadow-none">
         <p>Fragen beantwortet: 12</p>
         <p class="pb-6">Punkte: 8/12</p>
-        <hr class="pb-6 border-slate-400/50 dark:border-white/10">
-        <a th:href="@{/room/{id}(id=3)}" class="room-link" data-room-id="3">Raum 3</a>
-        <span class="rounded-full bg-yellow-500 px-3 py-1 text-xs font-bold text-white">in Progress (50%)</span>
+        <hr class="pb-6 border-slate-950/20 dark:border-white/10">
+        <a th:href="@{/room/{id}(id=3)}" class="room-link font-bold text-slate-950 dark:text-slate-100" data-room-id="3">Raum 3</a>
+        <span class="rounded-full bg-teal-400 px-3 py-1 text-xs font-bold text-slate-950">in Progress (50%)</span>
     </section>
 
-    <section class="rounded-2xl bg-slate-500/90 dark:bg-slate-900/60 p-6 ring-1 ring-slate-400/50 dark:ring-white/10 text-center shadow-sm dark:shadow-none">
+    <section class="rounded-2xl bg-yellow-400 dark:bg-slate-900/60 p-6 ring-2 ring-violet-400 dark:ring-white/10 text-center text-slate-950 dark:text-slate-100 shadow-sm dark:shadow-none">
         <p>Fragen beantwortet: 2</p>
         <p class="pb-6">Punkte: 0/2</p>
-        <hr class="pb-6 border-slate-400/50 dark:border-white/10">
-        <a th:href="@{/room/{id}(id=4)}" class="room-link" data-room-id="4">Raum 4</a>
-        <span class="rounded-full bg-yellow-500 px-3 py-1 text-xs font-bold text-white">in Progress (12%)</span>
+        <hr class="pb-6 border-slate-950/20 dark:border-white/10">
+        <a th:href="@{/room/{id}(id=4)}" class="room-link font-bold text-slate-950 dark:text-slate-100" data-room-id="4">Raum 4</a>
+        <span class="rounded-full bg-teal-400 px-3 py-1 text-xs font-bold text-slate-950">in Progress (12%)</span>
     </section>
 
-    <section class="rounded-2xl bg-slate-600/80 dark:bg-slate-900/60 p-6 ring-1 ring-slate-400/40 dark:ring-white/10 text-center text-slate-200 dark:text-gray-500 shadow-sm dark:shadow-none">
-        <a href="#" class="room-link" data-room-id="5">Raum 5</a>
+    <section class="rounded-2xl bg-pink-400 dark:bg-slate-900/60 p-6 ring-2 ring-violet-400 dark:ring-white/10 text-center text-slate-950 dark:text-gray-500 shadow-sm dark:shadow-none">
+        <a href="#" class="room-link font-bold text-slate-950 dark:text-gray-500" data-room-id="5">Raum 5</a>
         <p>Schließe den vorherigen Raum zu 50% ab, um mit der Lektion beginnen zu können.</p>
     </section>
 
-    <section class="rounded-2xl bg-slate-600/80 dark:bg-slate-900/60 p-6 ring-1 ring-slate-400/40 dark:ring-white/10 text-center text-slate-200 dark:text-gray-500 shadow-sm dark:shadow-none">
-        <a href="#" class="room-link" data-room-id="6">Raum 6</a>
+    <section class="rounded-2xl bg-pink-400 dark:bg-slate-900/60 p-6 ring-2 ring-violet-400 dark:ring-white/10 text-center text-slate-950 dark:text-gray-500 shadow-sm dark:shadow-none">
+        <a href="#" class="room-link font-bold text-slate-950 dark:text-gray-500" data-room-id="6">Raum 6</a>
         <p>Schließe den vorherigen Raum zu 50% ab, um mit der Lektion beginnen zu können.</p>
     </section>
 
-    <section class="rounded-2xl bg-slate-600/80 dark:bg-slate-900/60 p-6 ring-1 ring-slate-400/40 dark:ring-white/10 text-center text-slate-200 dark:text-gray-500 shadow-sm dark:shadow-none">
-        <a href="#" class="room-link" data-room-id="7">Raum 7</a>
+    <section class="rounded-2xl bg-pink-400 dark:bg-slate-900/60 p-6 ring-2 ring-violet-400 dark:ring-white/10 text-center text-slate-950 dark:text-gray-500 shadow-sm dark:shadow-none">
+        <a href="#" class="room-link font-bold text-slate-950 dark:text-gray-500" data-room-id="7">Raum 7</a>
         <p>Schließe den vorherigen Raum zu 50% ab, um mit der Lektion beginnen zu können.</p>
     </section>
 </div>
