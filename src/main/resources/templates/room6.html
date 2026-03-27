@@ -1,205 +1,1699 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base :: layout(~{::body})}">
+
+<!-- head wird überschrieben
 <head>
     <meta charset="UTF-8">
-    <title>Dummy2Pro - Raum 6</title>
+    <title>Dummy2Pro - Raum 1</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+-->
 
-<body class="bg-[#000010] text-white font-mono min-h-screen">
+<body class="bg-[#000010] text-white font-mono tracking-wider min-h-screen">
 
-    <!-- HEADER FULL WIDTH -->
-    <header class="w-full px-12 pt-10 pb-6 border-b border-white/20">
+<!-- HEADER FULL WIDTH -->
+<header class="w-full px-12 pt-10 pb-6 border-b border-white/20 bg-[#000010]">
+    <h1 class="text-3xl font-black tracking-widest">
+        Raum <span th:text="${roomId}">6</span>
+    </h1>
 
-        <h1 class="text-3xl font-black tracking-widest">
-            Raum 6
-        </h1>
+    <p class="text-sm text-blue-200 mt-1">
+        Thema: <span th:text="${themeName}">Netzwerke</span>
+    </p>
+</header>
 
-        <!-- TODO: use actual Theme -->
-        <p class="text-sm text-blue-200 mt-1">
-            Thema: Netzwerke
-        </p>
+<!-- WELCOME CONTAINER -->
+<main id="welcomeContainer" class="flex justify-center mt-10">
+    <div class="w-full max-w-6xl px-6 relative">
+        <section
+                class="relative border-[10px] border-[#050a14] shadow-2xl overflow-visible"
+                style="
+                background-color: #222a66;
+                background-image:
+                    radial-gradient(rgba(255,255,255,0.10) 1px, transparent 1px),
+                    radial-gradient(rgba(140,170,255,0.10) 1px, transparent 1px),
+                    radial-gradient(rgba(20,30,90,0.18) 1px, transparent 1px);
+                background-size: 18px 18px, 18px 18px, 18px 18px;
+                background-position: 0 0, 9px 9px, 4px 4px;
+            ">
 
-    </header>
-
-    <!-- TODO: show welcome container first, then show quiz game -->
-
-    <!-- WELCOME CONTAINER -->
-    <main class="flex justify-center mt-10 hidden">
-
-        <div class="w-full max-w-6xl px-6">
-
-            <!-- ROOM -->
-            <section class="relative bg-[#222a66] border-[10px] border-[#050a14] shadow-2xl">
-
-                <!-- FLOOR -->
-                <div class="absolute inset-12 bg-[#0a2a3a] border-4 border-white/30"></div>
-
-                <!-- ROOM CONTENT -->
-                <div class="relative h-[480px] flex items-center justify-center">
-
-                    <!-- SPEECH PANEL -->
-                    <div class="absolute top-8 left-1/2 -translate-x-1/2 w-1/2">
-                        <div class="bg-[#0a1022] border-4 border-[#e9f0ff] px-8 py-6 relative">
-                            <div class="border border-[#1a2a52] absolute inset-2 pointer-events-none"></div>
-                            <p class="text-lg">Hey.</p>
-                            <p class="text-lg">Willkommen im Raum 6…</p>
-                        </div>
-
-                        <!-- speech tail -->
-                        <div class="absolute left-1/2 -translate-x-1/2 top-full">
-                            <div class="w-10 h-10 bg-[#0a1022] border-4 border-[#e9f0ff] rotate-45 -translate-y-3"></div>
-                        </div>
-
-                    </div>
-
-                    <!-- CHARACTER HERE-->
-
-                </div>
-
-                <!-- CORRIDOR -->
-                <div class="absolute left-1/2 -translate-x-1/2 -bottom-16 w-28 h-36 bg-gray-500 border-x-[20px] border-black"></div>
-            </section>
-        </div>
-    </main>
-
-    <!-- GAME-->
-    <div class="bg-[#000010] text-white font-mono">
-
-        <div class="w-[1200px] h-[680px] mx-auto relative bg-[#081020]/70 overflow-hidden">
-
-            <!-- PANDA ÒwÓ bleibt !!!!!! -->
-            <div class="absolute left-[360px] top-[120px] flex flex-col items-center">
-
-                <div class="w-[170px] h-[30px] bg-white/80 rounded-full blur-sm"></div>
-
-                <svg class="w-[220px] mt-[-10px]" viewBox="0 0 24 24" shape-rendering="crispEdges">
-
-                    <rect x="19" y="4" width="2" height="16" fill="#8b5a2b"/>
-                    <rect x="18" y="3" width="4" height="2" fill="#8b5a2b"/>
-                    <rect x="18" y="2" width="4" height="1" fill="#6f4421"/>
-                    <rect x="19" y="1" width="2" height="2" fill="#22c55e"/>
-
-                    <rect x="7" y="3" width="10" height="8" fill="#050a14"/>
-                    <rect x="8" y="4" width="8" height="6" fill="#e9f0ff"/>
-
-                    <rect x="10" y="6" width="2" height="2" fill="#050a14"/>
-                    <rect x="14" y="6" width="2" height="2" fill="#050a14"/>
-
-                    <rect x="12" y="8" width="1" height="1" fill="#050a14"/>
-
-                    <rect x="6" y="12" width="12" height="9" fill="#050a14"/>
-                    <rect x="7" y="13" width="10" height="7" fill="#2b4aa8"/>
-
-                    <rect x="5" y="14" width="2" height="3" fill="#e9f0ff"/>
-                    <rect x="17" y="14" width="2" height="3" fill="#e9f0ff"/>
-
-                    <rect x="8" y="20" width="3" height="2" fill="#e9f0ff"/>
-                    <rect x="13" y="20" width="3" height="2" fill="#e9f0ff"/>
-
-                </svg>
-
+            <!-- FLOOR -->
+            <div
+                    class="absolute inset-12 border-4 border-white/30"
+                    style="
+                    background-color: #0a2a3a;
+                    background-image:
+                        radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+                        radial-gradient(rgba(120,170,190,0.10) 1px, transparent 1px),
+                        radial-gradient(rgba(5,20,30,0.22) 1px, transparent 1px);
+                    background-size: 20px 20px, 20px 20px, 20px 20px;
+                    background-position: 0 0, 10px 10px, 5px 5px;
+                ">
             </div>
 
-            <!-- QUESTION PANEL -->
-            <div class="absolute left-[30px] bottom-[30px] w-[830px] bg-[#0a1022] border-4 border-[#e9f0ff] shadow-2xl">
+            <!-- ROOM CONTENT -->
+            <div class="relative h-[560px] flex items-center justify-center">
 
-                <div class="p-6">
+                <!-- SPEECH PANEL -->
+                <div class="absolute top-8 left-1/2 -translate-x-[42%] w-[62%] z-20">
+                    <div class="relative min-h-[150px]">
+                        <!-- outer bubble -->
+                        <div
+                                class="absolute inset-0 bg-[#f5f8ff]"
+                                style="
+                                clip-path: polygon(
+                                    20px 0,
+                                    calc(100% - 20px) 0,
+                                    100% 20px,
+                                    100% calc(100% - 20px),
+                                    calc(100% - 20px) 100%,
+                                    20px 100%,
+                                    0 calc(100% - 20px),
+                                    0 20px
+                                );
+                            ">
+                        </div>
 
-                    <h2 class="text-lg font-black tracking-widest">FRAGE</h2>
+                        <!-- bubble fill -->
+                        <div
+                                class="absolute inset-[5px] bg-[#0a1022]"
+                                style="
+                                clip-path: polygon(
+                                    18px 0,
+                                    calc(100% - 18px) 0,
+                                    100% 18px,
+                                    100% calc(100% - 18px),
+                                    calc(100% - 18px) 100%,
+                                    18px 100%,
+                                    0 calc(100% - 18px),
+                                    0 18px
+                                );
+                            ">
+                        </div>
 
-                    <div class="border-t border-white/20 mt-2 mb-6"></div>
+                        <!-- inner stroke -->
+                        <div
+                                class="absolute inset-[14px] border border-[#1a2a52]"
+                                style="
+                                clip-path: polygon(
+                                    14px 0,
+                                    calc(100% - 14px) 0,
+                                    100% 14px,
+                                    100% calc(100% - 14px),
+                                    calc(100% - 14px) 100%,
+                                    14px 100%,
+                                    0 calc(100% - 14px),
+                                    0 14px
+                                );
+                            ">
+                        </div>
 
-                    <!-- TODO: show correct question -->
-                    <div class="text-center text-lg leading-7">
-                        Welches Protokoll arbeitet auf Schicht 3 <br>
-                        und wird für Routing verwendet?
+                        <!-- text -->
+                        <div class="relative px-10 py-8 min-h-[150px]">
+                            <div id="dialogText" class="text-lg leading-8 whitespace-pre-line pr-2 text-white">
+                                Hey.
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="text-sm text-gray-400 mt-8 mb-2">
+                    <!-- speech tail -->
+                    <div class="absolute left-[72%] -translate-x-1/2 top-full -translate-y-[1px]">
+                        <!-- tail outer -->
+                        <div
+                                class="relative w-[40px] h-[34px] bg-[#f5f8ff]"
+                                style="
+                                clip-path: polygon(
+                                    0 0,
+                                    100% 0,
+                                    100% 55%,
+                                    68% 100%,
+                                    32% 100%,
+                                    0 55%
+                                );
+                            ">
+                            <!-- tail fill -->
+                            <div
+                                    class="absolute inset-[4px] bg-[#0a1022]"
+                                    style="
+                                    clip-path: polygon(
+                                        0 0,
+                                        100% 0,
+                                        100% 55%,
+                                        68% 100%,
+                                        32% 100%,
+                                        0 55%
+                                    );
+                                ">
+                            </div>
+
+                            <!-- tail inner stroke -->
+                            <div
+                                    class="absolute inset-[10px] border border-[#1a2a52]"
+                                    style="
+                                    clip-path: polygon(
+                                        0 0,
+                                        100% 0,
+                                        100% 55%,
+                                        68% 100%,
+                                        32% 100%,
+                                        0 55%
+                                    );
+                                ">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Troll-CHARACTER  PANDA ÒwÓ bleibt -->
+                <div class="absolute left-1/2 -translate-x-1/2 bottom-[70px] flex flex-col items-center z-10">
+                    <div class="w-[170px] h-[30px] bg-white/50 rounded-full blur-sm"></div>
+
+                    <svg class="w-[230px] mt-[-10px]" viewBox="0 0 24 24" shape-rendering="crispEdges">
+                        <rect x="19" y="4" width="2" height="16" fill="#8b5a2b"/>
+                        <rect x="18" y="3" width="4" height="2" fill="#8b5a2b"/>
+                        <rect x="18" y="2" width="4" height="1" fill="#6f4421"/>
+                        <rect x="19" y="1" width="2" height="2" fill="#22c55e"/>
+
+                        <rect x="7" y="3" width="10" height="8" fill="#050a14"/>
+                        <rect x="8" y="4" width="8" height="6" fill="#e9f0ff"/>
+
+                        <rect x="10" y="6" width="2" height="2" fill="#050a14"/>
+                        <rect x="14" y="6" width="2" height="2" fill="#050a14"/>
+
+                        <rect x="12" y="8" width="1" height="1" fill="#050a14"/>
+
+                        <rect x="6" y="12" width="12" height="9" fill="#050a14"/>
+                        <rect x="7" y="13" width="10" height="7" fill="#2b4aa8"/>
+
+                        <rect x="5" y="14" width="2" height="3" fill="#e9f0ff"/>
+                        <rect x="17" y="14" width="2" height="3" fill="#e9f0ff"/>
+
+                        <rect x="8" y="20" width="3" height="2" fill="#e9f0ff"/>
+                        <rect x="13" y="20" width="3" height="2" fill="#e9f0ff"/>
+                    </svg>
+                </div>
+
+                <!-- Raum-CHARACTER -->
+                <div class="absolute right-[140px] bottom-[95px] z-10">
+                    <img
+                            src="/room-characters/Krieger.png"
+                            alt="Raumcharakter Krieger"
+                            class="w-[150px]"
+                            style="image-rendering: pixelated;"
+                    >
+                </div>
+
+                <!-- SPIELERFIGUR -->
+                <div
+                        id="playerCharacter"
+                        class="absolute left-1/2 -translate-x-1/2 bottom-[-170px] z-10 transition-all duration-[1800ms] ease-linear"
+                >
+                    <img
+                            id="playerAvatar"
+                            src="/images/Informatiker.png"
+                            alt="Spielerfigur"
+                            class="w-[150px]"
+                            style="image-rendering: pixelated;"
+                    >
+                </div>
+
+                <!-- CONTROLS -->
+                <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-4">
+                    <button id="dialogNextBtn"
+                            class="bg-violet-700 text-white px-6 py-3 rounded-lg font-black hover:bg-violet-600">
+                        Weiter
+                    </button>
+
+                    <button id="startQuizBtn"
+                            class="hidden bg-emerald-600 text-white px-6 py-3 rounded-lg font-black hover:bg-emerald-500">
+                        Prüfung beginnen
+                    </button>
+                </div>
+            </div>
+
+        </section>
+        <!-- CORRIDOR -->
+        <div class="absolute left-1/2 -translate-x-1/2 top-[calc(100%-3rem)] w-28 h-[220px] z-0 pointer-events-none">
+            <!-- linke Außenwand -->
+            <div class="absolute left-0 top-0 w-[10px] h-full bg-[#222a66]"></div>
+
+            <!-- linke graue Innenkante -->
+            <div class="absolute left-[10px] top-0 w-[4px] h-full bg-[#8f9fa3]"></div>
+
+            <!-- Mitte / Flurboden -->
+            <div class="absolute left-[14px] top-0 w-[84px] h-full bg-[#0a2a3a]"></div>
+
+            <!-- rechte graue Innenkante -->
+            <div class="absolute left-[98px] top-0 w-[4px] h-full bg-[#8f9fa3]"></div>
+
+            <!-- rechte Außenwand -->
+            <div class="absolute left-[102px] top-0 w-[10px] h-full bg-[#222a66]"></div>
+        </div>
+    </div>
+
+    <style>
+        .quiz-answer-btn .answer-label {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 4;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .gap-option-btn .gap-option-label {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .has-answer-tooltip:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: calc(100% - 24px);
+            max-width: 520px;
+            padding: 16px 18px;
+            background: #09122a;
+            color: #ffd60a;
+            border: 4px solid #facc15;
+            box-shadow: 0 0 0 3px rgba(255,255,255,0.08);
+            z-index: 50;
+            white-space: normal;
+            line-height: 1.4;
+            font-size: 18px;
+            text-align: left;
+            pointer-events: none;
+        }
+
+        .has-answer-tooltip:hover::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(5, 10, 20, 0.25);
+            z-index: 40;
+            pointer-events: none;
+        }
+    </style>
+
+</main>
+
+<!-- GAME -->
+<div id="gameContainer" class="bg-slate-950 text-white font-mono tracking-wider hidden">
+    <div id="gameScene" class="w-[1200px] h-[680px] mx-auto relative bg-[#000010] overflow-visible">
+
+        <!-- ROOM CHARACTER -->
+        <div id="gameRoomCharacter" class="absolute left-[105px] top-[-5px] z-20 pointer-events-none">
+            <img
+                    src="/room-characters/Krieger.png"
+                    alt="Raumcharakter Krieger"
+                    class="w-[110px]"
+                    style="image-rendering: pixelated;"
+            >
+        </div>
+
+        <!-- PANDA -->
+        <div id="gamePanda" class="absolute left-[390px] top-[-34px] flex flex-col items-center pointer-events-none animate-bounce [animation-duration:2s] z-50">
+            <div class="w-[130px] h-[22px] bg-white/80 rounded-full blur-sm"></div>
+
+            <svg class="w-[160px] mt-[-8px]" viewBox="0 0 24 24" shape-rendering="crispEdges">
+                <rect x="19" y="4" width="2" height="16" fill="#8b5a2b"/>
+                <rect x="18" y="3" width="4" height="2" fill="#8b5a2b"/>
+                <rect x="18" y="2" width="4" height="1" fill="#6f4421"/>
+                <rect x="19" y="1" width="2" height="2" fill="#22c55e"/>
+
+                <rect x="7" y="3" width="10" height="8" fill="#050a14"/>
+                <rect x="8" y="4" width="8" height="6" fill="#e9f0ff"/>
+
+                <rect x="10" y="6" width="2" height="2" fill="#050a14"/>
+                <rect x="14" y="6" width="2" height="2" fill="#050a14"/>
+
+                <rect x="12" y="8" width="1" height="1" fill="#050a14"/>
+
+                <rect x="6" y="12" width="12" height="9" fill="#050a14"/>
+                <rect x="7" y="13" width="10" height="7" fill="#2b4aa8"/>
+
+                <rect x="5" y="14" width="2" height="3" fill="#e9f0ff"/>
+                <rect x="17" y="14" width="2" height="3" fill="#e9f0ff"/>
+
+                <rect x="8" y="20" width="3" height="2" fill="#e9f0ff"/>
+                <rect x="13" y="20" width="3" height="2" fill="#e9f0ff"/>
+            </svg>
+        </div>
+
+        <!-- QUESTION PANEL -->
+        <div id="questionPanel" class="absolute left-[30px] bottom-[30px] w-[830px] h-[520px] z-10">
+            <div class="relative w-full h-full">
+
+                <!-- outer frame -->
+                <div
+                        class="absolute inset-0 bg-[#f5f8ff]"
+                        style="
+                    clip-path: polygon(
+                        22px 0,
+                        calc(100% - 22px) 0,
+                        100% 22px,
+                        100% calc(100% - 22px),
+                        calc(100% - 22px) 100%,
+                        22px 100%,
+                        0 calc(100% - 22px),
+                        0 22px
+                    );
+                ">
+                </div>
+
+                <!-- fill -->
+                <div
+                        class="absolute inset-[5px] bg-[#0a1022]"
+                        style="
+                    clip-path: polygon(
+                        18px 0,
+                        calc(100% - 18px) 0,
+                        100% 18px,
+                        100% calc(100% - 18px),
+                        calc(100% - 18px) 100%,
+                        18px 100%,
+                        0 calc(100% - 18px),
+                        0 18px
+                    );
+                ">
+                </div>
+
+                <!-- inner line -->
+                <div
+                        class="absolute inset-[16px] border border-[#1a2a52]"
+                        style="
+                    clip-path: polygon(
+                        12px 0,
+                        calc(100% - 12px) 0,
+                        100% 12px,
+                        100% calc(100% - 12px),
+                        calc(100% - 12px) 100%,
+                        12px 100%,
+                        0 calc(100% - 12px),
+                        0 12px
+                    );
+                ">
+                </div>
+
+                <!-- content -->
+                <div class="relative h-full px-8 py-8 flex flex-col min-h-0">
+                    <h2 class="text-lg font-black tracking-widest shrink-0">FRAGE</h2>
+
+                    <div class="border-t border-white/20 mt-2 mb-5 shrink-0"></div>
+
+                    <div id="questionText"
+                         class="text-center leading-8 px-8 shrink-0 min-h-[72px] text-[clamp(18px,2vw,32px)]">
+                        Frage wird geladen...
+                    </div>
+
+                    <div class="text-sm text-gray-400 mt-6 mb-3 shrink-0">
                         ANTWORTEN
                     </div>
 
-                    <!-- TODO: show correct answers-->
-                    <!-- ANSWERS -->
-                    <div class="grid grid-cols-2 gap-4">
-
-                        <button class="flex items-center gap-4 border-4 border-yellow-400 px-6 py-4 font-black text-yellow-400 text-lg">
-                            ⚔️ A) IP
-                        </button>
-
-                        <button class="flex items-center gap-4 border-4 border-yellow-400 px-6 py-4 font-black text-yellow-400 text-lg">
-                            ✋ B) TCP
-                        </button>
-
-                        <button class="flex items-center gap-4 border-4 border-yellow-400 px-6 py-4 font-black text-yellow-400 text-lg">
-                            🎒 C) Ethernet
-                        </button>
-
-                        <button class="flex items-center gap-4 border-4 border-yellow-400 px-6 py-4 font-black text-yellow-400 text-lg">
-                            ❤️ D) DNS
-                        </button>
-
+                    <div id="answerContainer"
+                         class="grid grid-cols-2 gap-4 flex-1 min-h-0 content-stretch">
                     </div>
 
+                    <div id="feedbackBox"
+                         class="mt-4 text-center text-lg font-black min-h-[32px] shrink-0">
+                    </div>
+
+                    <div class="mt-4 flex justify-center gap-4 relative z-20 shrink-0">
+                        <button id="submitAnswerBtn"
+                                class="hidden bg-indigo-600 text-white px-6 py-3 rounded-lg font-black hover:bg-indigo-500">
+                            Antwort prüfen
+                        </button>
+
+                        <button id="nextQuestionBtn"
+                                class="hidden bg-emerald-600 text-white px-6 py-3 rounded-lg font-black hover:bg-emerald-500">
+                            Nächste Frage
+                        </button>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <!-- TODO: show correct status -> watch TODO's-->
-            <!-- STATUS PANEL -->
-            <div class="absolute right-[30px] top-[30px] w-[260px] h-[600px] bg-[#0b1327] border-4 border-[#e9f0ff] shadow-2xl p-6">
+        <!-- STATUS PANEL -->
+        <div id="statusPanel" class="absolute right-[30px] top-[30px] w-[260px] h-[600px] z-10">
+            <div class="relative w-full h-full">
 
-                <h2 class="text-xl font-black mb-6">STATUS</h2>
-
-                <div class="space-y-2 text-sm">
-                    <!-- TODO: -->
-                    <div>Punkte (Thema): <b>12/20</b></div>
-                    <!-- TODO: -->
-                    <div>Gesamtfragen: <b>12/40</b></div>
-
+                <!-- outer frame -->
+                <div
+                        class="absolute inset-0 bg-[#f5f8ff]"
+                        style="
+                    clip-path: polygon(
+                        18px 0,
+                        calc(100% - 18px) 0,
+                        100% 18px,
+                        100% calc(100% - 18px),
+                        calc(100% - 18px) 100%,
+                        18px 100%,
+                        0 calc(100% - 18px),
+                        0 18px
+                    );
+                ">
                 </div>
 
-                <!-- PROGRESS -->
-                <div class="mt-8">
-                    <div class="text-xs text-gray-400 mb-1">Thema-Fortschritt</div>
+                <!-- fill -->
+                <div
+                        class="absolute inset-[5px] bg-[#0b1327]"
+                        style="
+                    clip-path: polygon(
+                        14px 0,
+                        calc(100% - 14px) 0,
+                        100% 14px,
+                        100% calc(100% - 14px),
+                        calc(100% - 14px) 100%,
+                        14px 100%,
+                        0 calc(100% - 14px),
+                        0 14px
+                    );
+                ">
+                </div>
 
-                    <div class="h-4 bg-white/10 border border-white relative">
-                        <!-- TODO: enter correct % -->
-                        <div class="absolute left-0 top-0 h-full bg-emerald-500 w-[60%]"></div>
+                <!-- inner line -->
+                <div
+                        class="absolute inset-[16px] border border-[#1a2a52]"
+                        style="
+                    clip-path: polygon(
+                        10px 0,
+                        calc(100% - 10px) 0,
+                        100% 10px,
+                        100% calc(100% - 10px),
+                        calc(100% - 10px) 100%,
+                        10px 100%,
+                        0 calc(100% - 10px),
+                        0 10px
+                    );
+                ">
+                </div>
+
+                <div class="relative h-full p-8">
+                    <h2 class="text-xl font-black mb-6">STATUS</h2>
+
+                    <div class="space-y-2 text-sm">
+                        <div>Punkte (Thema): <b id="earnedPoints">0/0</b></div>
+                        <div>Fragen im Raum: <b id="questionProgress">0/0</b></div>
                     </div>
-                    <!-- TODO: enter correct % -->
-                    <div class="text-right text-xs text-gray-400 mt-1">60%</div>
-                </div>
 
-                <div class="mt-6">
-                    <div class="text-xs text-gray-400 mb-1">Fragen-Fortschritt</div>
+                    <div class="mt-8">
+                        <div class="text-xs text-gray-400 mb-1">Thema-Fortschritt</div>
 
-                    <div class="h-4 bg-white/10 border border-white relative">
-                        <!-- TODO: enter correct % -->
-                        <div class="absolute left-0 top-0 h-full bg-yellow-400 w-[30%]"></div>
+                        <div class="h-4 bg-white/10 border border-white relative overflow-hidden">
+                            <div id="themeProgressBar" class="absolute left-0 top-0 h-full bg-emerald-500 w-0"></div>
+                        </div>
+
+                        <div id="themeProgressText" class="text-right text-xs text-gray-400 mt-1">0%</div>
                     </div>
-                    <!-- TODO: enter correct % -->
-                    <div class="text-right text-xs text-gray-400 mt-1">30%</div>
-                </div>
 
-                <hr class="my-8 border-white/20">
+                    <div class="mt-6">
+                        <div class="text-xs text-gray-400 mb-1">Fragen-Fortschritt</div>
 
-                <!-- TODO: Show current step or else just let it invisible-->
-                <div class="space-y-2 text-sm invisible">
-                    <div>Status: <b>Bronze</b></div>
-                    <div>Fragen: <b>2</b></div>
-                    <div>Punkte: <b>0/2</b></div>
-                </div>
+                        <div class="h-4 bg-white/10 border border-white relative overflow-hidden">
+                            <div id="questionCorrectBar" class="absolute left-0 top-0 h-full bg-emerald-500 w-0"></div>
+                            <div id="questionWrongBar" class="absolute right-0 top-0 h-full bg-red-500 w-0"></div>
+                        </div>
 
-                <!-- TODO: show actual progess-->
-                <div class="mt-8">
-                    <div class="bg-yellow-400 text-black font-black text-xs text-center py-2 rounded-lg">
-                        IN PROGRESS (12%)
+                        <div class="mt-2 flex justify-between text-xs text-gray-300">
+                            <span>Richtig: <b id="correctAnswersText">0</b></span>
+                            <span>Falsch: <b id="wrongAnswersText">0</b></span>
+                        </div>
+                    </div>
+
+                    <hr class="my-8 border-white/20">
+
+                    <div class="mt-8">
+                        <div id="roomStatusBadge" class="bg-yellow-400 text-black font-black text-xs text-center py-3 rounded-xl">
+                            IN PROGRESS (0%)
+                        </div>
+
+                        <div id="medalContainer" class="mt-6 flex justify-center hidden">
+                            <div id="medalCoin" class="w-20 h-20 rounded-full border-4 flex items-center justify-center font-black text-xs tracking-wide shadow-lg">
+                                ---
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
+<!-- TODO Sessionproblem beim Laden des Raumes. Der Raum kann oft nicht laden. -->
+<script th:inline="javascript">
+    const roomId = /*[[${roomId}]]*/ 6;
+
+    const userId = sessionStorage.getItem("userId");
+    const runId = sessionStorage.getItem("runId");
+    const sessionId = sessionStorage.getItem("sessionId");
+
+    const playerCharacter = document.getElementById("playerCharacter");
+    const playerAvatar = document.getElementById("playerAvatar");
+
+    const storedAvatar = sessionStorage.getItem("avatar");
+
+    if (playerAvatar) {
+        playerAvatar.src = storedAvatar
+            ? `/images/${storedAvatar}`
+            : "/images/Informatiker.png";
+    }
+
+    if (!userId) {
+        alert("Kein eingeloggter User gefunden.");
+        window.location.href = "/";
+        throw new Error("Kein eingeloggter User gefunden.");
+    }
+
+    if (!sessionId || !runId) {
+        alert("Kein aktiver Spielstand geladen.");
+        window.location.href = "/dashboard";
+        throw new Error("Kein aktiver Spielstand geladen.");
+    }
+
+    let currentQuestion = null;
+    let selectedAnswerIds = [];
+    let selectedGapAnswers = [];
+    let selectedGapAnswersMap = {};
+    let currentGapStep = 0;
+    let roomLoaded = false;
+
+    const welcomeContainer = document.getElementById("welcomeContainer");
+    const gameContainer = document.getElementById("gameContainer");
+
+    const gameScene = document.getElementById("gameScene");
+    const gameRoomCharacter = document.getElementById("gameRoomCharacter");
+    const gamePanda = document.getElementById("gamePanda");
+    const questionPanel = document.getElementById("questionPanel");
+    const statusPanel = document.getElementById("statusPanel");
+
+    const dialogText = document.getElementById("dialogText");
+    const dialogNextBtn = document.getElementById("dialogNextBtn");
+    const startQuizBtn = document.getElementById("startQuizBtn");
+
+    const questionText = document.getElementById("questionText");
+    const answerContainer = document.getElementById("answerContainer");
+    const feedbackBox = document.getElementById("feedbackBox");
+    const submitAnswerBtn = document.getElementById("submitAnswerBtn");
+    const nextQuestionBtn = document.getElementById("nextQuestionBtn");
+
+    let introDialog = [];
+
+    let dialogIndex = 0;
+
+    function isGapQuestion(question) {
+        return question &&
+            (question.questionType === "GAP" ||
+                (question.gapFields && question.gapFields.length > 0));
+    }
+
+    function getGapMetrics(question) {
+        const gapFields = [...(question?.gapFields || [])];
+
+        const textLength = [
+            question?.startText,
+            question?.endText,
+            ...gapFields.flatMap(gapField => [gapField.textBefore, gapField.textAfter])
+        ]
+            .filter(Boolean)
+            .join(" ")
+            .length;
+
+        const maxOptionCount = Math.max(
+            0,
+            ...gapFields.map(gapField => (gapField.gapOptions || []).length)
+        );
+
+        const columnCount = maxOptionCount >= 7 ? 3 : 2;
+        const rowCount = Math.max(1, Math.ceil(maxOptionCount / columnCount));
+
+        return {
+            gapCount: gapFields.length,
+            textLength,
+            maxOptionCount,
+            rowCount
+        };
+    }
+
+    function syncQuestionSideLayout() {
+        if (!questionPanel || !gameScene) {
+            return;
+        }
+
+        const panelBottom = 30;
+        const panelHeight = questionPanel.offsetHeight || parseInt(questionPanel.style.height || "520", 10);
+        const sceneHeight = gameScene.offsetHeight || parseInt(gameScene.style.height || "680", 10);
+        const questionPanelTop = sceneHeight - panelHeight - panelBottom;
+
+        if (statusPanel) {
+            statusPanel.style.height = `${panelHeight}px`;
+            statusPanel.style.top = "auto";
+            statusPanel.style.bottom = `${panelBottom}px`;
+        }
+
+        if (gameRoomCharacter) {
+            const roomCharacterTop = Math.max(10, questionPanelTop - 150);
+            gameRoomCharacter.style.bottom = "auto";
+            gameRoomCharacter.style.top = `${roomCharacterTop}px`;
+        }
+
+        if (gamePanda) {
+            const pandaTop = Math.max(-42, questionPanelTop - 185);
+            gamePanda.style.top = `${pandaTop}px`;
+        }
+    }
+
+    function applyQuestionLayout(question) {
+        if (!gameScene || !questionPanel) {
+            return;
+        }
+
+        if (!isGapQuestion(question)) {
+            const questionLength = (question?.startText || "").length;
+
+            let panelHeight = 520;
+            let sceneHeight = 680;
+            let questionTextMaxHeight = 250;
+
+            if (questionLength > 180) {
+                panelHeight += 30;
+                questionTextMaxHeight += 20;
+            }
+            if (questionLength > 260) {
+                panelHeight += 40;
+                questionTextMaxHeight += 30;
+            }
+            if (questionLength > 360) {
+                panelHeight += 35;
+                questionTextMaxHeight += 20;
+            }
+
+            panelHeight = Math.min(panelHeight, 625);
+            sceneHeight = Math.max(680, panelHeight + 80);
+            questionTextMaxHeight = Math.min(questionTextMaxHeight, 320);
+
+            gameScene.style.height = `${sceneHeight}px`;
+            questionPanel.style.height = `${panelHeight}px`;
+            questionText.style.maxHeight = `${questionTextMaxHeight}px`;
+
+            requestAnimationFrame(() => {
+                syncQuestionSideLayout();
+            });
+            return;
+        }
+
+        const { gapCount, textLength, maxOptionCount, rowCount } = getGapMetrics(question);
+
+        let panelHeight = 520;
+
+        if (gapCount >= 3) {
+            panelHeight += 25;
+        }
+        if (gapCount >= 4) {
+            panelHeight += 25;
+        }
+
+        if (textLength > 140) {
+            panelHeight += 35;
+        }
+        if (textLength > 220) {
+            panelHeight += 35;
+        }
+        if (textLength > 320) {
+            panelHeight += 25;
+        }
+
+        if (maxOptionCount >= 5) {
+            panelHeight += 35;
+        }
+        if (maxOptionCount >= 7) {
+            panelHeight += 35;
+        }
+        if (maxOptionCount >= 9) {
+            panelHeight += 35;
+        }
+
+        if (rowCount >= 3) {
+            panelHeight += 20;
+        }
+        if (rowCount >= 4) {
+            panelHeight += 20;
+        }
+
+        panelHeight = Math.min(panelHeight, 690);
+
+        const sceneHeight = Math.max(680, panelHeight + 80);
+
+        questionPanel.style.height = `${panelHeight}px`;
+        gameScene.style.height = `${sceneHeight}px`;
+
+        let questionTextMaxHeight = 180;
+
+        if (textLength > 220) {
+            questionTextMaxHeight += 30;
+        }
+        if (gapCount >= 4) {
+            questionTextMaxHeight += 20;
+        }
+
+        questionTextMaxHeight = Math.min(questionTextMaxHeight, 290);
+        questionText.style.maxHeight = `${questionTextMaxHeight}px`;
+
+        requestAnimationFrame(() => {
+            syncQuestionSideLayout();
+        });
+    }
+
+    function showCurrentDialogLine() {
+        if (!introDialog || introDialog.length === 0) {
+            dialogText.innerText = "...";
+            dialogNextBtn.classList.add("hidden");
+            startQuizBtn.classList.remove("hidden");
+            return;
+        }
+
+        const line = introDialog[dialogIndex];
+        const speakerLabel = line.speaker === "player" ? "Du" : "Krieger";
+
+        dialogText.innerText = `${speakerLabel}: ${line.text}`;
+
+        if (dialogIndex >= introDialog.length - 1) {
+            dialogNextBtn.classList.add("hidden");
+            startQuizBtn.classList.remove("hidden");
+        } else {
+            dialogNextBtn.classList.remove("hidden");
+            startQuizBtn.classList.add("hidden");
+        }
+    }
+
+    function nextDialogLine() {
+        if (dialogIndex < introDialog.length - 1) {
+            dialogIndex++;
+            showCurrentDialogLine();
+        }
+    }
+
+    function startQuiz() {
+        welcomeContainer.classList.add("hidden");
+        gameContainer.classList.remove("hidden");
+    }
+
+    function renderQuestion(question) {
+        selectedAnswerIds = [];
+        selectedGapAnswers = [];
+        selectedGapAnswersMap = {};
+        currentGapStep = 0;
+        feedbackBox.innerText = "";
+        submitAnswerBtn.classList.add("hidden");
+        nextQuestionBtn.classList.add("hidden");
+
+        if (!question) {
+            questionText.innerText = "Keine weitere Frage vorhanden.";
+            answerContainer.innerHTML = "";
+            return;
+        }
+
+        answerContainer.innerHTML = "";
+        applyQuestionLayout(question);
+
+        if (isGapQuestion(question)) {
+            questionText.className = "text-center px-2 min-h-0 overflow-hidden text-[clamp(9px,0.9vw,14px)] leading-[1.1]";
+            renderGapQuestionText(question);
+            renderGapQuestion(question);
+
+            requestAnimationFrame(() => {
+                fitGapQuestionText();
+                fitGapOptionTexts();
+            });
+
+            return;
+        }
+
+        questionText.className = "text-center px-6 shrink-0 min-h-[72px] max-h-[250px] overflow-hidden leading-[1.08] text-[clamp(10px,1.15vw,18px)]";
+        questionText.innerText = question.startText || "Keine Frage vorhanden.";
+        questionText.style.wordBreak = "break-word";
+
+        if (!question.answerOptions || question.answerOptions.length === 0) {
+            answerContainer.innerHTML = `
+            <div class="col-span-2 text-center text-red-300">
+                Dieser Fragetyp wird hier noch nicht unterstützt.
+            </div>
+        `;
+            return;
+        }
+
+        answerContainer.className = "grid grid-cols-2 gap-4 flex-1 min-h-0 content-stretch";
+
+        const optionCount = question.answerOptions.length;
+        const rows = Math.ceil(optionCount / 2);
+
+        answerContainer.style.gridAutoRows = "1fr";
+
+        question.answerOptions.forEach((option, index) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.dataset.answerId = option.answerId;
+            button.dataset.fullText = option.optionText;
+
+            button.className = `
+            quiz-answer-btn
+            relative w-full h-full
+            border-4 border-yellow-400
+            px-6 py-4
+            font-black text-yellow-400 text-left
+            bg-[#09122a]
+            flex items-center
+        `;
+
+            button.style.minHeight = rows >= 2 ? "120px" : "150px";
+
+            const label = document.createElement("div");
+            label.className = "answer-label w-full leading-[1.35]";
+            label.innerText = `${String.fromCharCode(65 + index)}) ${option.optionText}`;
+
+            button.appendChild(label);
+
+            button.addEventListener("click", () => {
+                toggleAnswer(option.answerId, button, question.allowsMultiple);
+            });
+
+            answerContainer.appendChild(button);
+        });
+
+        requestAnimationFrame(() => {
+            fitQuestionText();
+            fitAnswerTexts();
+        });
+    }
+
+    function renderGapQuestionText(question) {
+        questionText.innerHTML = "";
+
+        const gapFields = [...(question.gapFields || [])].sort((a, b) => a.gapIndex - b.gapIndex);
+
+        const textFlow = document.createElement("div");
+        textFlow.className = "flex flex-wrap items-center justify-center gap-x-2 gap-y-2 leading-[1.1] text-inherit";
+
+        if (question.startText) {
+            const startSpan = document.createElement("span");
+            startSpan.textContent = question.startText;
+            textFlow.appendChild(startSpan);
+        }
+
+        gapFields.forEach((gapField, gapIndex) => {
+            const before = gapField.textBefore || "";
+            const after = gapField.textAfter || "";
+
+            if (before) {
+                const beforeSpan = document.createElement("span");
+                beforeSpan.textContent = before;
+                textFlow.appendChild(beforeSpan);
+            }
+
+            const preview = document.createElement("button");
+            preview.type = "button";
+            preview.id = `gapPreview-${gapField.gapId}`;
+            preview.dataset.gapId = gapField.gapId;
+            preview.dataset.gapStep = gapIndex;
+            preview.className = `
+                relative inline-flex items-center justify-center
+                min-w-[88px] max-w-full
+                px-2.5 py-1
+                border-2 border-dashed border-white/40
+                text-center font-black text-yellow-300
+                bg-[#0a1022] transition
+            `;
+            preview.textContent = `[ Lücke ${gapIndex + 1} ]`;
+
+            preview.addEventListener("click", () => {
+                setActiveGapStep(gapIndex);
+            });
+
+            textFlow.appendChild(preview);
+
+            if (after) {
+                const afterSpan = document.createElement("span");
+                afterSpan.textContent = after;
+                textFlow.appendChild(afterSpan);
+            }
+        });
+
+        if (question.endText) {
+            const endSpan = document.createElement("span");
+            endSpan.textContent = question.endText;
+            textFlow.appendChild(endSpan);
+        }
+
+        questionText.appendChild(textFlow);
+    }
+
+    function renderGapQuestion(question) {
+        answerContainer.className = "flex flex-col gap-2 min-h-0";
+
+        if (!question.gapFields || question.gapFields.length === 0) {
+            answerContainer.innerHTML = `
+        <div class="text-center text-red-300">
+            GAP-Frage enthält keine Lückenfelder.
+        </div>
+    `;
+            return;
+        }
+
+        const gapFields = [...question.gapFields].sort((a, b) => a.gapIndex - b.gapIndex);
+
+        const currentGapLabel = document.createElement("div");
+        currentGapLabel.id = "gapCurrentLabel";
+        currentGapLabel.className = "text-xs text-gray-300 font-black tracking-wide shrink-0";
+        answerContainer.appendChild(currentGapLabel);
+
+        gapFields.forEach((gapField, gapIndex) => {
+            const block = document.createElement("div");
+            block.className = "hidden";
+            block.dataset.gapOptionsStep = gapIndex;
+
+            const options = [...(gapField.gapOptions || [])].sort((a, b) => a.optionOrder - b.optionOrder);
+            const optionCount = options.length;
+
+            let columnCount = 2;
+            if (optionCount >= 7) {
+                columnCount = 3;
+            }
+
+            const rowCount = Math.max(1, Math.ceil(optionCount / columnCount));
+
+            let minHeight = 68;
+            if (rowCount >= 4) {
+                minHeight = 38;
+            } else if (rowCount === 3) {
+                minHeight = 46;
+            } else if (rowCount === 2) {
+                minHeight = 56;
+            }
+
+            const optionsWrap = document.createElement("div");
+            optionsWrap.className = `grid ${columnCount === 3 ? "grid-cols-3" : "grid-cols-2"} gap-2`;
+            optionsWrap.style.gridTemplateRows = `repeat(${rowCount}, minmax(0, 1fr))`;
+
+            options.forEach((option, optionIndex) => {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.dataset.gapId = gapField.gapId;
+                button.dataset.gapOptionId = option.gapOptionId;
+                button.dataset.optionText = option.optionText;
+                button.className = `
+                    gap-option-btn
+                    relative w-full
+                    border-4 border-yellow-400
+                    px-3 py-2
+                    font-black text-yellow-400 text-left
+                    bg-[#0a1022]
+                    flex items-center
+                `;
+                button.style.minHeight = `${minHeight}px`;
+
+                const label = document.createElement("div");
+                label.className = "gap-option-label w-full leading-[1.15]";
+                label.innerText = `${String.fromCharCode(65 + optionIndex)}) ${option.optionText}`;
+
+                button.appendChild(label);
+
+                button.addEventListener("click", () => {
+                    selectGapOption(gapField.gapId, option.gapOptionId, button);
+                });
+
+                optionsWrap.appendChild(button);
+            });
+
+            block.appendChild(optionsWrap);
+            answerContainer.appendChild(block);
+        });
+
+        const navWrap = document.createElement("div");
+        navWrap.className = "mt-2 flex justify-between gap-3 shrink-0";
+
+        const prevBtn = document.createElement("button");
+        prevBtn.type = "button";
+        prevBtn.id = "gapPrevBtn";
+        prevBtn.className = "bg-slate-700 text-white px-5 py-2.5 rounded-lg font-black hover:bg-slate-600";
+        prevBtn.innerText = "Zurück";
+
+        prevBtn.addEventListener("click", () => {
+            setActiveGapStep(currentGapStep - 1);
+        });
+
+        const stepBtn = document.createElement("button");
+        stepBtn.type = "button";
+        stepBtn.id = "gapStepBtn";
+        stepBtn.className = "bg-indigo-600 text-white px-5 py-2.5 rounded-lg font-black hover:bg-indigo-500";
+        stepBtn.innerText = "Weiter";
+
+        stepBtn.addEventListener("click", () => {
+            if (!currentQuestion || !currentQuestion.gapFields) {
+                return;
+            }
+
+            const sortedGapFields = [...currentQuestion.gapFields].sort((a, b) => a.gapIndex - b.gapIndex);
+
+            if (currentGapStep >= sortedGapFields.length - 1) {
+                submitAnswer();
+            } else {
+                setActiveGapStep(currentGapStep + 1);
+            }
+        });
+
+        navWrap.appendChild(prevBtn);
+        navWrap.appendChild(stepBtn);
+        answerContainer.appendChild(navWrap);
+
+        requestAnimationFrame(() => {
+            setActiveGapStep(0);
+            fitGapOptionTexts();
+        });
+    }
+
+    function selectGapOption(gapId, gapOptionId, buttonElement) {
+        selectedGapAnswersMap[gapId] = gapOptionId;
+
+        selectedGapAnswers = Object.entries(selectedGapAnswersMap).map(([gapIdKey, gapOptionIdValue]) => ({
+            gapId: Number(gapIdKey),
+            selectedGapOptionId: Number(gapOptionIdValue)
+        }));
+
+        document.querySelectorAll(`[data-gap-id="${gapId}"][data-gap-option-id]`).forEach(btn => {
+            btn.classList.remove("bg-yellow-400", "text-black", "ring-4", "ring-white/30");
+        });
+
+        buttonElement.classList.add("bg-yellow-400", "text-black", "ring-4", "ring-white/30");
+
+        const preview = document.getElementById(`gapPreview-${gapId}`);
+        if (preview) {
+            const cleanedText = buttonElement.dataset.optionText || buttonElement.innerText.replace(/^[A-Z]\)\s*/, "");
+            preview.innerText = cleanedText;
+        }
+
+        updateGapStepUI();
+    }
+
+    function setActiveGapStep(stepIndex) {
+        if (!currentQuestion || !currentQuestion.gapFields || currentQuestion.gapFields.length === 0) {
+            return;
+        }
+
+        const maxStep = currentQuestion.gapFields.length - 1;
+        currentGapStep = Math.max(0, Math.min(stepIndex, maxStep));
+
+        updateGapStepUI();
+    }
+
+    function updateGapStepUI() {
+        if (!currentQuestion || !currentQuestion.gapFields || currentQuestion.gapFields.length === 0) {
+            return;
+        }
+
+        const gapFields = [...currentQuestion.gapFields].sort((a, b) => a.gapIndex - b.gapIndex);
+        const currentGap = gapFields[currentGapStep];
+
+        document.querySelectorAll("[data-gap-options-step]").forEach(block => {
+            const blockStep = Number(block.dataset.gapOptionsStep);
+            block.classList.toggle("hidden", blockStep !== currentGapStep);
+        });
+
+        document.querySelectorAll("[data-gap-step]").forEach(preview => {
+            const previewStep = Number(preview.dataset.gapStep);
+            const gapId = Number(preview.dataset.gapId);
+            const hasAnswer = selectedGapAnswersMap[gapId] !== undefined;
+
+            preview.classList.remove(
+                "border-dashed",
+                "border-white/40",
+                "text-yellow-300",
+                "border-yellow-400",
+                "text-white",
+                "bg-yellow-400/10",
+                "bg-indigo-500/20",
+                "ring-2",
+                "ring-white/40"
+            );
+
+            if (hasAnswer) {
+                preview.classList.add("border-yellow-400", "text-white", "bg-yellow-400/10");
+            } else {
+                preview.classList.add("border-dashed", "border-white/40", "text-yellow-300");
+            }
+
+            if (previewStep === currentGapStep) {
+                preview.classList.add("bg-indigo-500/20", "ring-2", "ring-white/40");
+            }
+        });
+
+        const currentGapLabel = document.getElementById("gapCurrentLabel");
+        if (currentGapLabel) {
+            const selectedCount = selectedGapAnswers.length;
+            const totalCount = gapFields.length;
+            currentGapLabel.innerText = `LÜCKE ${currentGapStep + 1} VON ${totalCount}  •  AUSGEWÄHLT: ${selectedCount}/${totalCount}`;
+        }
+
+        const prevBtn = document.getElementById("gapPrevBtn");
+        if (prevBtn) {
+            prevBtn.disabled = currentGapStep === 0;
+            prevBtn.classList.toggle("opacity-50", currentGapStep === 0);
+            prevBtn.classList.toggle("cursor-not-allowed", currentGapStep === 0);
+        }
+
+        const stepBtn = document.getElementById("gapStepBtn");
+        if (stepBtn) {
+            const hasSelectionForCurrentGap = selectedGapAnswersMap[currentGap.gapId] !== undefined;
+            const isLastGap = currentGapStep === gapFields.length - 1;
+
+            stepBtn.disabled = !hasSelectionForCurrentGap;
+            stepBtn.classList.toggle("opacity-50", !hasSelectionForCurrentGap);
+            stepBtn.classList.toggle("cursor-not-allowed", !hasSelectionForCurrentGap);
+
+            if (isLastGap) {
+                stepBtn.innerText = "Antwort prüfen";
+                stepBtn.classList.remove("bg-indigo-600", "hover:bg-indigo-500");
+                stepBtn.classList.add("bg-emerald-600", "hover:bg-emerald-500");
+            } else {
+                stepBtn.innerText = "Weiter";
+                stepBtn.classList.remove("bg-emerald-600", "hover:bg-emerald-500");
+                stepBtn.classList.add("bg-indigo-600", "hover:bg-indigo-500");
+            }
+        }
+
+        requestAnimationFrame(() => {
+            fitGapOptionTexts();
+        });
+    }
+
+    function toggleAnswer(answerId, buttonElement, allowsMultiple) {
+        const selectedClasses = ["bg-yellow-400", "text-black", "ring-4", "ring-white/30"];
+
+        if (!allowsMultiple) {
+            selectedAnswerIds = [answerId];
+
+            document.querySelectorAll("#answerContainer button").forEach(btn => {
+                btn.classList.remove(...selectedClasses);
+            });
+
+            buttonElement.classList.add(...selectedClasses);
+        } else {
+            if (selectedAnswerIds.includes(answerId)) {
+                selectedAnswerIds = selectedAnswerIds.filter(id => id !== answerId);
+                buttonElement.classList.remove(...selectedClasses);
+            } else {
+                selectedAnswerIds.push(answerId);
+                buttonElement.classList.add(...selectedClasses);
+            }
+        }
+
+        if (selectedAnswerIds.length > 0) {
+            submitAnswerBtn.classList.remove("hidden");
+        } else {
+            submitAnswerBtn.classList.add("hidden");
+        }
+    }
+
+    function fitQuestionText() {
+        if (!questionText) {
+            return;
+        }
+
+        let fontSize = 18;
+        const minFontSize = 8;
+
+        questionText.style.fontSize = fontSize + "px";
+        questionText.style.lineHeight = "1.08";
+
+        while (fontSize > minFontSize && questionText.scrollHeight > questionText.clientHeight) {
+            fontSize--;
+            questionText.style.fontSize = fontSize + "px";
+        }
+    }
+
+    function fitAnswerTexts() {
+        const buttons = answerContainer.querySelectorAll(".quiz-answer-btn");
+
+        buttons.forEach(button => {
+            const label = button.querySelector(".answer-label");
+            if (!label) {
+                return;
+            }
+
+            let fontSize = 22;
+            const minFontSize = 14;
+
+            label.style.fontSize = fontSize + "px";
+
+            while (fontSize > minFontSize && label.scrollHeight > label.clientHeight) {
+                fontSize--;
+                label.style.fontSize = fontSize + "px";
+            }
+
+            const isLong =
+                label.scrollHeight > label.clientHeight ||
+                (button.dataset.fullText && button.dataset.fullText.length > 55);
+
+            if (isLong) {
+                button.classList.add("has-answer-tooltip");
+                button.setAttribute("data-tooltip", button.dataset.fullText);
+            } else {
+                button.classList.remove("has-answer-tooltip");
+                button.removeAttribute("data-tooltip");
+            }
+        });
+    }
+
+    function fitGapQuestionText() {
+        const textFlow = questionText.firstElementChild;
+        if (!textFlow) {
+            return;
+        }
+
+        let fontSize = 14;
+        const minFontSize = 8;
+
+        textFlow.style.fontSize = fontSize + "px";
+
+        while (fontSize > minFontSize && questionText.scrollHeight > questionText.clientHeight) {
+            fontSize--;
+            textFlow.style.fontSize = fontSize + "px";
+        }
+    }
+
+    function fitGapOptionTexts() {
+        const buttons = answerContainer.querySelectorAll(".gap-option-btn");
+
+        buttons.forEach(button => {
+            const label = button.querySelector(".gap-option-label");
+            if (!label) {
+                return;
+            }
+
+            let fontSize = 16;
+            const minFontSize = 9;
+
+            label.style.fontSize = fontSize + "px";
+
+            while (fontSize > minFontSize && label.scrollHeight > label.clientHeight) {
+                fontSize--;
+                label.style.fontSize = fontSize + "px";
+            }
+
+            const isLong =
+                label.scrollHeight > label.clientHeight ||
+                (button.dataset.optionText && button.dataset.optionText.length > 36);
+
+            if (isLong) {
+                button.classList.add("has-answer-tooltip");
+                button.setAttribute("data-tooltip", button.dataset.optionText);
+            } else {
+                button.classList.remove("has-answer-tooltip");
+                button.removeAttribute("data-tooltip");
+            }
+        });
+    }
+
+    async function submitAnswer() {
+        const gapQuestion = isGapQuestion(currentQuestion);
+
+        if (!currentQuestion) {
+            return;
+        }
+
+        if (!gapQuestion && selectedAnswerIds.length === 0) {
+            return;
+        }
+
+        if (gapQuestion) {
+            const requiredGapCount = currentQuestion?.gapFields?.length || 0;
+            const selectedGapCount = selectedGapAnswers.length;
+
+            if (selectedGapCount !== requiredGapCount) {
+                return;
+            }
+        }
+
+        try {
+            const requestBody = {
+                questionId: currentQuestion.questionId,
+                selectedAnswerIds: gapQuestion ? [] : selectedAnswerIds,
+                gapAnswers: gapQuestion ? selectedGapAnswers : []
+            };
+
+            const response = await fetch(`/api/session/${sessionId}/room/${roomId}/answer`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                alert(data.message || "Antwort konnte nicht geprüft werden.");
+                return;
+            }
+
+            if (!gapQuestion) {
+                document.querySelectorAll("#answerContainer button").forEach(btn => {
+                    btn.disabled = true;
+                    const answerId = Number(btn.dataset.answerId);
+
+                    if (data.correctAnswerIds && data.correctAnswerIds.includes(answerId)) {
+                        btn.classList.remove("border-yellow-400", "text-yellow-400");
+                        btn.classList.add("border-emerald-500", "text-emerald-400");
+                    } else if (selectedAnswerIds.includes(answerId)) {
+                        btn.classList.remove("border-yellow-400", "text-yellow-400", "bg-yellow-400", "text-black");
+                        btn.classList.add("border-red-500", "text-red-400");
+                    }
+                });
+            } else {
+                document.querySelectorAll("#answerContainer button").forEach(btn => {
+                    btn.disabled = true;
+                    btn.classList.add("opacity-70", "cursor-not-allowed");
+                });
+
+                if (data.gapResults && Array.isArray(data.gapResults)) {
+                    data.gapResults.forEach(entry => {
+                        const preview = document.getElementById(`gapPreview-${entry.gapId}`);
+                        const gapButtons = document.querySelectorAll(`[data-gap-id="${entry.gapId}"][data-gap-option-id]`);
+
+                        if (entry.correct) {
+                            if (preview) {
+                                preview.classList.remove("border-yellow-400", "text-white", "bg-yellow-400/10");
+                                preview.classList.add("border-emerald-500", "text-emerald-300", "bg-emerald-500/10");
+                            }
+                        } else {
+                            if (preview) {
+                                preview.classList.remove("border-yellow-400", "text-white", "bg-yellow-400/10");
+                                preview.classList.add("border-red-500", "text-red-300", "bg-red-500/10");
+                                preview.innerText = `${preview.innerText} → richtig: ${entry.correctOptionText}`;
+                            }
+                        }
+
+                        gapButtons.forEach(btn => {
+                            const btnOptionId = Number(btn.dataset.gapOptionId);
+
+                            if (btnOptionId === entry.correctGapOptionId) {
+                                btn.classList.remove("border-yellow-400", "text-yellow-400");
+                                btn.classList.add("border-emerald-500", "text-emerald-400");
+                            } else if (btn.classList.contains("bg-yellow-400")) {
+                                btn.classList.remove("border-yellow-400", "text-yellow-400", "bg-yellow-400", "text-black");
+                                btn.classList.add("border-red-500", "text-red-400");
+                            }
+                        });
+                    });
+                }
+            }
+
+            feedbackBox.innerText = data.correct
+                ? `Richtig! +${data.pointsEarned} Punkt(e)`
+                : `Falsch! +${data.pointsEarned} Punkt(e)`;
+
+            feedbackBox.className = data.correct
+                ? "mt-6 text-center text-lg font-black text-emerald-400"
+                : "mt-6 text-center text-lg font-black text-red-400";
+
+            submitAnswerBtn.classList.add("hidden");
+            nextQuestionBtn.classList.remove("hidden");
+
+            await refreshRoomStatus();
+        } catch (error) {
+            console.error("Fehler beim Prüfen der Antwort:", error);
+            alert("Antwort konnte nicht geprüft werden.");
+        }
+    }
+
+    async function loadNextQuestion() {
+        if (!currentQuestion) {
+            const nextRoomId = roomId + 1;
+
+            if (nextRoomId <= 7) {
+                window.location.href = `/room/${nextRoomId}`;
+            } else {
+                window.location.href = "/dashboard";
+            }
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/session/${sessionId}/room/${roomId}/advance`, {
+                method: "POST"
+            });
+
+            if (!response.ok) {
+                let errorMessage = "Nächste Frage konnte nicht geladen werden.";
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.message || errorMessage;
+                } catch (_) {
+                }
+
+                alert(errorMessage);
+                return;
+            }
+
+            const responseText = await response.text();
+            const nextQuestion = responseText ? JSON.parse(responseText) : null;
+
+            if (!nextQuestion) {
+                await refreshRoomStatus();
+                showRoomCompletedState();
+                return;
+            }
+
+            currentQuestion = nextQuestion;
+            nextQuestionBtn.innerText = "Nächste Frage";
+            renderQuestion(currentQuestion);
+            await refreshRoomStatus();
+        } catch (error) {
+            console.error("Fehler beim Laden der nächsten Frage:", error);
+            alert("Nächste Frage konnte nicht geladen werden.");
+        }
+    }
+
+    async function refreshRoomStatus() {
+        try {
+            const response = await fetch(`/api/session/${sessionId}/room/${roomId}/status`);
+            const status = await response.json();
+
+            if (!response.ok) {
+                return;
+            }
+
+            updateStatus(status);
+        } catch (error) {
+            console.error("Fehler beim Aktualisieren des Status:", error);
+        }
+    }
+
+    function updateMedalCoin(medal) {
+        const medalContainer = document.getElementById("medalContainer");
+        const medalCoin = document.getElementById("medalCoin");
+
+        if (!medalContainer || !medalCoin) {
+            return;
+        }
+
+        medalContainer.classList.add("hidden");
+
+        medalCoin.className =
+            "w-20 h-20 rounded-full border-4 flex items-center justify-center font-black text-xs tracking-wide shadow-lg";
+
+        medalCoin.innerText = "---";
+
+        if (!medal || medal === "NONE") {
+            return;
+        }
+
+        medalContainer.classList.remove("hidden");
+
+        if (medal === "BRONZE") {
+            medalCoin.classList.add("bg-amber-700", "border-amber-300", "text-white");
+            medalCoin.innerText = "BRONZE";
+            return;
+        }
+
+        if (medal === "SILVER") {
+            medalCoin.classList.add("bg-slate-300", "border-white", "text-slate-900");
+            medalCoin.innerText = "SILBER";
+            return;
+        }
+
+        if (medal === "GOLD") {
+            medalCoin.classList.add("bg-yellow-400", "border-yellow-100", "text-slate-900");
+            medalCoin.innerText = "GOLD";
+        }
+    }
+
+    function updateStatus(status) {
+        document.getElementById("earnedPoints").innerText = `${status.earnedPoints}/${status.totalPoints}`;
+        document.getElementById("questionProgress").innerText = `${status.answeredQuestions}/${status.totalQuestions}`;
+
+        // Thema-Fortschritt = Fortschritt innerhalb dieses Raums
+        const roomPercent = status.totalQuestions > 0
+            ? Math.round((status.answeredQuestions / status.totalQuestions) * 1000) / 10
+            : 0;
+
+        document.getElementById("themeProgressBar").style.width = `${roomPercent}%`;
+        document.getElementById("themeProgressText").innerText = `${roomPercent}%`;
+
+        // Fragen-Fortschritt = richtig / falsch
+        const correctAnswers =
+            status.correctAnswers ??
+            0;
+
+        const wrongAnswers =
+            status.wrongAnswers ??
+            Math.max(0, (status.answeredQuestions ?? 0) - correctAnswers);
+
+        const totalQuestions = status.totalQuestions ?? 0;
+
+        const correctPercent = totalQuestions > 0
+            ? (correctAnswers / totalQuestions) * 100
+            : 0;
+
+        const wrongPercent = totalQuestions > 0
+            ? (wrongAnswers / totalQuestions) * 100
+            : 0;
+
+        document.getElementById("questionCorrectBar").style.width = `${correctPercent}%`;
+        document.getElementById("questionWrongBar").style.width = `${wrongPercent}%`;
+
+        document.getElementById("correctAnswersText").innerText = correctAnswers;
+        document.getElementById("wrongAnswersText").innerText = wrongAnswers;
+
+        const medalText = !status.medal || status.medal === "NONE"
+            ? "IN PROGRESS"
+            : status.medal;
+
+        document.getElementById("roomStatusBadge").innerText =
+            `${medalText} (${roomPercent}%)`;
+
+        updateMedalCoin(status.medal);
+    }
+
+    function escapeHtml(value) {
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+    function animatePlayerEntrance() {
+        if (!playerCharacter) {
+            return;
+        }
+
+        playerCharacter.classList.remove("left-[140px]", "-translate-x-0");
+        playerCharacter.classList.add("left-1/2", "-translate-x-1/2", "bottom-[-170px]");
+
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                playerCharacter.classList.remove("left-1/2", "-translate-x-1/2", "bottom-[-170px]");
+                playerCharacter.classList.add("left-[180px]", "-translate-x-0", "bottom-[95px]");
+            });
+        });
+    }
+
+    async function loadRoom() {
+        try {
+            const response = await fetch(`/api/session/${sessionId}/room/${roomId}`);
+            const data = await response.json();
+
+            if (!response.ok) {
+                sessionStorage.removeItem("sessionId");
+                sessionStorage.removeItem("runId");
+                alert(data.message || "Raum konnte nicht geladen werden.");
+                window.location.href = "/dashboard";
+                return false;
+            }
+
+            currentQuestion = data.firstQuestion;
+            updateStatus(data.status);
+
+            if (!currentQuestion) {
+                welcomeContainer.classList.add("hidden");
+                gameContainer.classList.remove("hidden");
+                showRoomCompletedState();
+                return true;
+            }
+
+            renderQuestion(currentQuestion);
+
+            const answeredQuestions = data.status?.answeredQuestions ?? 0;
+
+            if (answeredQuestions > 0) {
+                welcomeContainer.classList.add("hidden");
+                gameContainer.classList.remove("hidden");
+                return true;
+            }
+
+            introDialog = data.introDialog || [];
+            dialogIndex = 0;
+
+            animatePlayerEntrance();
+
+            setTimeout(() => {
+                showCurrentDialogLine();
+            }, 1850);
+
+            return true;
+        } catch (error) {
+            console.error("Fehler beim Laden des Raums:", error);
+            alert("Raum konnte nicht geladen werden.");
+            return false;
+        }
+    }
+
+    async function initWelcomeRoom() {
+        const loaded = await loadRoom();
+        roomLoaded = loaded === true;
+    }
+
+    function showRoomCompletedState() {
+        currentQuestion = null;
+        applyQuestionLayout(null);
+        questionText.innerText = "Raum abgeschlossen.";
+        answerContainer.innerHTML = "";
+
+        feedbackBox.innerText = "Du hast alle Fragen dieses Raums beantwortet.";
+        feedbackBox.className = "mt-6 text-center text-lg font-black text-emerald-400";
+
+        submitAnswerBtn.classList.add("hidden");
+
+        const nextRoomId = roomId + 1;
+
+        if (nextRoomId <= 7) {
+            nextQuestionBtn.innerText = `Zu Raum ${nextRoomId}`;
+            nextQuestionBtn.classList.remove("hidden");
+        } else {
+            nextQuestionBtn.innerText = "Zurück zum Dashboard";
+            nextQuestionBtn.classList.remove("hidden");
+        }
+    }
+
+    window.addEventListener("resize", () => {
+        applyQuestionLayout(currentQuestion);
+        fitAnswerTexts();
+        fitGapOptionTexts();
+        fitGapQuestionText();
+    });
+
+    dialogNextBtn.addEventListener("click", nextDialogLine);
+    startQuizBtn.addEventListener("click", startQuiz);
+    submitAnswerBtn.addEventListener("click", submitAnswer);
+    nextQuestionBtn.addEventListener("click", loadNextQuestion);
+
+    initWelcomeRoom();
+
+</script>
 </body>
 </html>

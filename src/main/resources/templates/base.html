@@ -7,11 +7,24 @@
     <title th:text="${title} ?: 'Dummy2Pro'">Dummy2Pro</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
 </head>
 
 <body class="min-h-screen bg-slate-950 text-white">
-    <div class="mx-auto max-w-6xl p-6">
+    <div class="w-full">
         <th:block th:replace="${content}"></th:block>
     </div>
 </body>
+
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+    }
+</style>
+
 </html>

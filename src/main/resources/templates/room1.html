@@ -14,14 +14,13 @@
 <body class="bg-[#000010] text-white font-mono tracking-wider min-h-screen">
 
 <!-- HEADER FULL WIDTH -->
-<header class="w-full px-12 pt-10 pb-6 border-b border-white/20">
+<header class="w-full px-12 pt-10 pb-6 border-b border-white/20 bg-[#000010]">
     <h1 class="text-3xl font-black tracking-widest">
-        Raum 1
+        Raum <span th:text="${roomId}">1</span>
     </h1>
 
-    <!-- TODO: use actual Theme -->
     <p class="text-sm text-blue-200 mt-1">
-        Thema: Netzwerke
+        Thema: <span th:text="${themeName}">Netzwerke</span>
     </p>
 </header>
 
@@ -305,7 +304,7 @@
 
 <!-- GAME -->
 <div id="gameContainer" class="bg-slate-950 text-white font-mono tracking-wider hidden">
-    <div id="gameScene" class="w-[1200px] h-[680px] mx-auto relative bg-slate-950 overflow-hidden">
+    <div id="gameScene" class="w-[1200px] h-[680px] mx-auto relative bg-[#000010] overflow-visible">
 
         <!-- ROOM CHARACTER -->
         <div id="gameRoomCharacter" class="absolute left-[105px] top-[-5px] z-20 pointer-events-none">
@@ -318,10 +317,10 @@
         </div>
 
         <!-- PANDA -->
-        <div class="absolute left-[360px] top-[18px] flex flex-col items-center z-[5] pointer-events-none opacity-90">
-            <div class="w-[150px] h-[26px] bg-white/80 rounded-full blur-sm"></div>
+        <div id="gamePanda" class="absolute left-[390px] top-[-34px] flex flex-col items-center pointer-events-none animate-bounce [animation-duration:2s] z-50">
+            <div class="w-[130px] h-[22px] bg-white/80 rounded-full blur-sm"></div>
 
-            <svg class="w-[190px] mt-[-10px]" viewBox="0 0 24 24" shape-rendering="crispEdges">
+            <svg class="w-[160px] mt-[-8px]" viewBox="0 0 24 24" shape-rendering="crispEdges">
                 <rect x="19" y="4" width="2" height="16" fill="#8b5a2b"/>
                 <rect x="18" y="3" width="4" height="2" fill="#8b5a2b"/>
                 <rect x="18" y="2" width="4" height="1" fill="#6f4421"/>
@@ -499,28 +498,31 @@
 
                     <div class="space-y-2 text-sm">
                         <div>Punkte (Thema): <b id="earnedPoints">0/0</b></div>
-                        <div>Gesamtfragen: <b id="questionProgress">0/0</b></div>
+                        <div>Fragen im Raum: <b id="questionProgress">0/0</b></div>
                     </div>
 
                     <div class="mt-8">
                         <div class="text-xs text-gray-400 mb-1">Thema-Fortschritt</div>
 
-                        <div class="h-4 bg-white/10 border border-white relative">
+                        <div class="h-4 bg-white/10 border border-white relative overflow-hidden">
                             <div id="themeProgressBar" class="absolute left-0 top-0 h-full bg-emerald-500 w-0"></div>
                         </div>
 
                         <div id="themeProgressText" class="text-right text-xs text-gray-400 mt-1">0%</div>
                     </div>
 
-                    <!-- TODO das muss als Bestehensfortschritt mit den 3 Medaillien -->
                     <div class="mt-6">
                         <div class="text-xs text-gray-400 mb-1">Fragen-Fortschritt</div>
 
-                        <div class="h-4 bg-white/10 border border-white relative">
-                            <div id="questionProgressBar" class="absolute left-0 top-0 h-full bg-yellow-400 w-0"></div>
+                        <div class="h-4 bg-white/10 border border-white relative overflow-hidden">
+                            <div id="questionCorrectBar" class="absolute left-0 top-0 h-full bg-emerald-500 w-0"></div>
+                            <div id="questionWrongBar" class="absolute right-0 top-0 h-full bg-red-500 w-0"></div>
                         </div>
 
-                        <div id="questionProgressText" class="text-right text-xs text-gray-400 mt-1">0%</div>
+                        <div class="mt-2 flex justify-between text-xs text-gray-300">
+                            <span>Richtig: <b id="correctAnswersText">0</b></span>
+                            <span>Falsch: <b id="wrongAnswersText">0</b></span>
+                        </div>
                     </div>
 
                     <hr class="my-8 border-white/20">
@@ -528,6 +530,12 @@
                     <div class="mt-8">
                         <div id="roomStatusBadge" class="bg-yellow-400 text-black font-black text-xs text-center py-3 rounded-xl">
                             IN PROGRESS (0%)
+                        </div>
+
+                        <div id="medalContainer" class="mt-6 flex justify-center hidden">
+                            <div id="medalCoin" class="w-20 h-20 rounded-full border-4 flex items-center justify-center font-black text-xs tracking-wide shadow-lg">
+                                ---
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -537,8 +545,8 @@
 </div>
 
 <!-- TODO Sessionproblem beim Laden des Raumes. Der Raum kann oft nicht laden. -->
-<script>
-    const roomId = 1;
+<script th:inline="javascript">
+    const roomId = /*[[${roomId}]]*/ 1;
 
     const userId = sessionStorage.getItem("userId");
     const runId = sessionStorage.getItem("runId");
@@ -579,6 +587,7 @@
 
     const gameScene = document.getElementById("gameScene");
     const gameRoomCharacter = document.getElementById("gameRoomCharacter");
+    const gamePanda = document.getElementById("gamePanda");
     const questionPanel = document.getElementById("questionPanel");
     const statusPanel = document.getElementById("statusPanel");
 
@@ -631,12 +640,14 @@
     }
 
     function syncQuestionSideLayout() {
-        if (!questionPanel) {
+        if (!questionPanel || !gameScene) {
             return;
         }
 
         const panelBottom = 30;
         const panelHeight = questionPanel.offsetHeight || parseInt(questionPanel.style.height || "520", 10);
+        const sceneHeight = gameScene.offsetHeight || parseInt(gameScene.style.height || "680", 10);
+        const questionPanelTop = sceneHeight - panelHeight - panelBottom;
 
         if (statusPanel) {
             statusPanel.style.height = `${panelHeight}px`;
@@ -645,84 +656,15 @@
         }
 
         if (gameRoomCharacter) {
-            gameRoomCharacter.style.top = "auto";
-            gameRoomCharacter.style.bottom = `${panelHeight + panelBottom}px`;
-        }
-    }
-
-    function applyQuestionLayout(question) {
-        if (!gameScene || !questionPanel) {
-            return;
+            const roomCharacterTop = Math.max(10, questionPanelTop - 150);
+            gameRoomCharacter.style.bottom = "auto";
+            gameRoomCharacter.style.top = `${roomCharacterTop}px`;
         }
 
-        let sceneHeight = 680;
-        let panelHeight = 520;
-
-        questionText.style.maxHeight = "";
-
-        if (isGapQuestion(question)) {
-            const { gapCount, textLength, maxOptionCount, rowCount } = getGapMetrics(question);
-
-            panelHeight = 560;
-
-            if (gapCount >= 3) {
-                panelHeight += 25;
-            }
-            if (gapCount >= 4) {
-                panelHeight += 30;
-            }
-
-            if (textLength > 180) {
-                panelHeight += 30;
-            }
-            if (textLength > 260) {
-                panelHeight += 35;
-            }
-            if (textLength > 340) {
-                panelHeight += 25;
-            }
-
-            if (maxOptionCount >= 5) {
-                panelHeight += 20;
-            }
-            if (maxOptionCount >= 7) {
-                panelHeight += 35;
-            }
-            if (maxOptionCount >= 9) {
-                panelHeight += 35;
-            }
-
-            if (rowCount >= 3) {
-                panelHeight += 25;
-            }
-            if (rowCount >= 4) {
-                panelHeight += 25;
-            }
-
-            panelHeight = Math.min(panelHeight, 760);
-            sceneHeight = Math.max(680, panelHeight + 80);
-
-            let questionTextMaxHeight = 190;
-
-            if (textLength > 220) {
-                questionTextMaxHeight += 30;
-            }
-            if (textLength > 320) {
-                questionTextMaxHeight += 25;
-            }
-            if (gapCount >= 4) {
-                questionTextMaxHeight += 20;
-            }
-
-            questionText.style.maxHeight = `${Math.min(questionTextMaxHeight, 300)}px`;
+        if (gamePanda) {
+            const pandaTop = Math.max(-42, questionPanelTop - 185);
+            gamePanda.style.top = `${pandaTop}px`;
         }
-
-        gameScene.style.height = `${sceneHeight}px`;
-        questionPanel.style.height = `${panelHeight}px`;
-
-        requestAnimationFrame(() => {
-            syncQuestionSideLayout();
-        });
     }
 
     function applyQuestionLayout(question) {
@@ -731,13 +673,40 @@
         }
 
         if (!isGapQuestion(question)) {
-            gameScene.style.height = "680px";
-            questionPanel.style.height = "520px";
-            questionText.style.maxHeight = "";
+            const questionLength = (question?.startText || "").length;
+
+            let panelHeight = 520;
+            let sceneHeight = 680;
+            let questionTextMaxHeight = 250;
+
+            if (questionLength > 180) {
+                panelHeight += 30;
+                questionTextMaxHeight += 20;
+            }
+            if (questionLength > 260) {
+                panelHeight += 40;
+                questionTextMaxHeight += 30;
+            }
+            if (questionLength > 360) {
+                panelHeight += 35;
+                questionTextMaxHeight += 20;
+            }
+
+            panelHeight = Math.min(panelHeight, 625);
+            sceneHeight = Math.max(680, panelHeight + 80);
+            questionTextMaxHeight = Math.min(questionTextMaxHeight, 320);
+
+            gameScene.style.height = `${sceneHeight}px`;
+            questionPanel.style.height = `${panelHeight}px`;
+            questionText.style.maxHeight = `${questionTextMaxHeight}px`;
+
+            requestAnimationFrame(() => {
+                syncQuestionSideLayout();
+            });
             return;
         }
 
-        const { gapCount, textLength, maxOptionCount, maxRowCount } = getGapMetrics(question);
+        const { gapCount, textLength, maxOptionCount, rowCount } = getGapMetrics(question);
 
         let panelHeight = 520;
 
@@ -768,7 +737,10 @@
             panelHeight += 35;
         }
 
-        if (maxRowCount >= 3) {
+        if (rowCount >= 3) {
+            panelHeight += 20;
+        }
+        if (rowCount >= 4) {
             panelHeight += 20;
         }
 
@@ -790,6 +762,10 @@
 
         questionTextMaxHeight = Math.min(questionTextMaxHeight, 290);
         questionText.style.maxHeight = `${questionTextMaxHeight}px`;
+
+        requestAnimationFrame(() => {
+            syncQuestionSideLayout();
+        });
     }
 
     function showCurrentDialogLine() {
@@ -845,7 +821,7 @@
         applyQuestionLayout(question);
 
         if (isGapQuestion(question)) {
-            questionText.className = "text-center px-2 min-h-0 overflow-hidden text-[clamp(10px,0.95vw,16px)] leading-[1.15]";
+            questionText.className = "text-center px-2 min-h-0 overflow-hidden text-[clamp(9px,0.9vw,14px)] leading-[1.1]";
             renderGapQuestionText(question);
             renderGapQuestion(question);
 
@@ -857,8 +833,9 @@
             return;
         }
 
-        questionText.className = "text-center leading-8 px-8 shrink-0 min-h-[72px] text-[clamp(18px,2vw,32px)]";
+        questionText.className = "text-center px-6 shrink-0 min-h-[72px] max-h-[250px] overflow-hidden leading-[1.08] text-[clamp(10px,1.15vw,18px)]";
         questionText.innerText = question.startText || "Keine Frage vorhanden.";
+        questionText.style.wordBreak = "break-word";
 
         if (!question.answerOptions || question.answerOptions.length === 0) {
             answerContainer.innerHTML = `
@@ -908,6 +885,7 @@
         });
 
         requestAnimationFrame(() => {
+            fitQuestionText();
             fitAnswerTexts();
         });
     }
@@ -1239,6 +1217,23 @@
         }
     }
 
+    function fitQuestionText() {
+        if (!questionText) {
+            return;
+        }
+
+        let fontSize = 18;
+        const minFontSize = 8;
+
+        questionText.style.fontSize = fontSize + "px";
+        questionText.style.lineHeight = "1.08";
+
+        while (fontSize > minFontSize && questionText.scrollHeight > questionText.clientHeight) {
+            fontSize--;
+            questionText.style.fontSize = fontSize + "px";
+        }
+    }
+
     function fitAnswerTexts() {
         const buttons = answerContainer.querySelectorAll(".quiz-answer-btn");
 
@@ -1497,26 +1492,90 @@
         }
     }
 
+    function updateMedalCoin(medal) {
+        const medalContainer = document.getElementById("medalContainer");
+        const medalCoin = document.getElementById("medalCoin");
+
+        if (!medalContainer || !medalCoin) {
+            return;
+        }
+
+        medalContainer.classList.add("hidden");
+
+        medalCoin.className =
+            "w-20 h-20 rounded-full border-4 flex items-center justify-center font-black text-xs tracking-wide shadow-lg";
+
+        medalCoin.innerText = "---";
+
+        if (!medal || medal === "NONE") {
+            return;
+        }
+
+        medalContainer.classList.remove("hidden");
+
+        if (medal === "BRONZE") {
+            medalCoin.classList.add("bg-amber-700", "border-amber-300", "text-white");
+            medalCoin.innerText = "BRONZE";
+            return;
+        }
+
+        if (medal === "SILVER") {
+            medalCoin.classList.add("bg-slate-300", "border-white", "text-slate-900");
+            medalCoin.innerText = "SILBER";
+            return;
+        }
+
+        if (medal === "GOLD") {
+            medalCoin.classList.add("bg-yellow-400", "border-yellow-100", "text-slate-900");
+            medalCoin.innerText = "GOLD";
+        }
+    }
+
     function updateStatus(status) {
         document.getElementById("earnedPoints").innerText = `${status.earnedPoints}/${status.totalPoints}`;
         document.getElementById("questionProgress").innerText = `${status.answeredQuestions}/${status.totalQuestions}`;
 
-        document.getElementById("themeProgressBar").style.width = `${status.completionPercent}%`;
-        document.getElementById("themeProgressText").innerText = `${status.completionPercent}%`;
-
-        const questionPercent = status.totalQuestions > 0
+        // Thema-Fortschritt = Fortschritt innerhalb dieses Raums
+        const roomPercent = status.totalQuestions > 0
             ? Math.round((status.answeredQuestions / status.totalQuestions) * 1000) / 10
             : 0;
 
-        document.getElementById("questionProgressBar").style.width = `${questionPercent}%`;
-        document.getElementById("questionProgressText").innerText = `${questionPercent}%`;
+        document.getElementById("themeProgressBar").style.width = `${roomPercent}%`;
+        document.getElementById("themeProgressText").innerText = `${roomPercent}%`;
+
+        // Fragen-Fortschritt = richtig / falsch
+        const correctAnswers =
+            status.correctAnswers ??
+            0;
+
+        const wrongAnswers =
+            status.wrongAnswers ??
+            Math.max(0, (status.answeredQuestions ?? 0) - correctAnswers);
+
+        const totalQuestions = status.totalQuestions ?? 0;
+
+        const correctPercent = totalQuestions > 0
+            ? (correctAnswers / totalQuestions) * 100
+            : 0;
+
+        const wrongPercent = totalQuestions > 0
+            ? (wrongAnswers / totalQuestions) * 100
+            : 0;
+
+        document.getElementById("questionCorrectBar").style.width = `${correctPercent}%`;
+        document.getElementById("questionWrongBar").style.width = `${wrongPercent}%`;
+
+        document.getElementById("correctAnswersText").innerText = correctAnswers;
+        document.getElementById("wrongAnswersText").innerText = wrongAnswers;
 
         const medalText = !status.medal || status.medal === "NONE"
             ? "IN PROGRESS"
             : status.medal;
 
         document.getElementById("roomStatusBadge").innerText =
-            `${medalText} (${status.completionPercent}%)`;
+            `${medalText} (${roomPercent}%)`;
+
+        updateMedalCoin(status.medal);
     }
 
     function escapeHtml(value) {

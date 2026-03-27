@@ -43,18 +43,17 @@ public interface QuestionRepository extends JpaRepository<Question, Long>
     """)
 	List<Question> findByThemeIdWithAnswers(@Param("themeId") Long themeId);
 
-	/**
-	 * Alle Fragen zu einem Theme, mit GapFields und GapOptions vorgeladen. Wird für
-	 * GAP-Fragen genutzt.
-	 */
+    /**
+     * Alle Fragen zu einem Theme, mit GapFields vorgeladen.
+     * GapOptions werden anschließend geladen.
+     */
     @Query("""
-        SELECT DISTINCT q
-        FROM Question q
-        LEFT JOIN FETCH q.gapFields gf
-        LEFT JOIN FETCH gf.gapOptions go
-        JOIN q.themes t
-        WHERE t.themeId = :themeId
-        ORDER BY q.questionId
-        """)
+    SELECT DISTINCT q
+    FROM Question q
+    LEFT JOIN FETCH q.gapFields gf
+    JOIN q.themes t
+    WHERE t.themeId = :themeId
+    ORDER BY q.questionId
+    """)
     List<Question> findByThemeIdWithGaps(@Param("themeId") Long themeId);
 }

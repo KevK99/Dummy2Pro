@@ -12,7 +12,7 @@
 
         <header class="flex items-start justify-between gap-4">
             <div class="flex gap-6">
-                <img src="/src/main/resources/static/images/duck.jpg" alt="duck" class="w-20 h-20 rounded-full hover:cursor-pointer" />
+                <img id="currentProfileImage" src="/images/duck.jpg" alt="duck" class="w-20 h-20 rounded-full hover:cursor-pointer" />
 
                 <div>
                     <h1 class="text-3xl font-extrabold tracking-tight">Benutzerprofil</h1>
@@ -143,38 +143,37 @@
         </div>
 
         <div id="profilePicForm" class="hidden">
-            <div class="w-full gap-6 pt-6 grid grid-cols-5">
-                <img src="/src/main/resources/static/images/lama.png" onclick="setProfile(1)" alt="lama" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/src/main/resources/static/images/catBlack.PNG" onclick="setProfile(2)" alt="cat" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/src/main/resources/static/images/catWhiteShadow.PNG" onclick="setProfile(3)" alt="cat" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/src/main/resources/static/images/catRed.PNG" onclick="setProfile(4)" alt="Maike" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/src/main/resources/static/images/sunflower.PNG" onclick="setProfile(5)" alt="sunflower" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/src/main/resources/static/images/sunflowerCursed.PNG" onclick="setProfile(6)" alt="sunflower" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/src/main/resources/static/images/Herberg.PNG" onclick="setProfile(7)" alt="Herbert der Koala" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/src/main/resources/static/images/panda.PNG" onclick="setProfile(8)" alt="panda" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/src/main/resources/static/images/bee.jpg" onclick="setProfile(9)" alt="bee flying" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/src/main/resources/static/images/beee.jpg" onclick="setProfile(10)" alt="bee" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/src/main/resources/static/images/beesleep.jpg" onclick="setProfile(11)" alt="bee sleeping" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/src/main/resources/static/images/block.jpg" onclick="setProfile(12)" alt="colourful blocks" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/src/main/resources/static/images/duck.jpg" onclick="setProfile(13)" alt="duck" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/src/main/resources/static/images/flowers.jpg" onclick="setProfile(14)" alt="flowers" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/src/main/resources/static/images/hase.jpg" onclick="setProfile(15)" alt="hase" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/src/main/resources/static/images/hase.PNG" onclick="setProfile(16)" alt="hase2" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/src/main/resources/static/images/maus.jpg" onclick="setProfile(17)" alt="mouse" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/src/main/resources/static/images/mond.jpg" onclick="setProfile(18)" alt="mond" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/src/main/resources/static/images/pingwin.jpg" onclick="setProfile(20)" alt="penguin" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/src/main/resources/static/images/subi.PNG" onclick="setProfile(21)" alt="dog" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+            <div id="profilePicGrid" class="w-full gap-6 pt-6 grid grid-cols-5">
+                <img src="/images/lama.png" onclick="setProfile('lama.png', this)" alt="lama" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+                <img src="/images/catBlack.PNG" onclick="setProfile('catBlack.PNG', this)" alt="cat" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+                <img src="/images/catWhiteShadow.PNG" onclick="setProfile('catWhiteShadow.PNG', this)" alt="cat" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+                <img src="/images/catRed.PNG" onclick="setProfile('catRed.PNG', this)" alt="Maike" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+                <img src="/images/sunflower.PNG" onclick="setProfile('sunflower.PNG', this)" alt="sunflower" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+                <img src="/images/sunflowerCursed.PNG" onclick="setProfile('sunflowerCursed.PNG', this)" alt="sunflower" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+                <img src="/images/Herberg.PNG" onclick="setProfile('Herberg.PNG', this)" alt="Herbert der Koala" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+                <img src="/images/panda.PNG" onclick="setProfile('panda.PNG', this)" alt="panda" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+                <img src="/images/bee.jpg" onclick="setProfile('bee.jpg', this)" alt="bee flying" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+                <img src="/images/beee.jpg" onclick="setProfile('beee.jpg', this)" alt="bee" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+                <img src="/images/beesleep.jpg" onclick="setProfile('beesleep.jpg', this)" alt="bee sleeping" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+                <img src="/images/block.jpg" onclick="setProfile('block.jpg', this)" alt="colourful blocks" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+                <img src="/images/duck.jpg" onclick="setProfile('duck.jpg', this)" alt="duck" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+                <img src="/images/flowers.jpg" onclick="setProfile('flowers.jpg', this)" alt="flowers" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+                <img src="/images/hase.jpg" onclick="setProfile('hase.jpg', this)" alt="hase" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+                <img src="/images/hase.PNG" onclick="setProfile('hase.PNG', this)" alt="hase2" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+                <img src="/images/maus.jpg" onclick="setProfile('maus.jpg', this)" alt="mouse" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+                <img src="/images/mond.jpg" onclick="setProfile('mond.jpg', this)" alt="mond" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+                <img src="/images/pingwin.jpg" onclick="setProfile('pingwin.jpg', this)" alt="penguin" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+                <img src="/images/subi.PNG" onclick="setProfile('subi.PNG', this)" alt="dog" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
             </div>
 
             <button
                     type="button"
                     id="saveNewProfilePic"
                     class="w-1/2 justify-center mt-6 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20 disabled:bg-gray-700 disabled:shadow-none"
-                    onclick="saveProfilePic(id)"
+                    onclick="saveProfilePic()"
             >
                 Neues Profilbild speichern
             </button>
-
         </div>
 
 
@@ -226,9 +225,65 @@
 
         const profileButton = document.getElementById('profilePicBtn');
         const profileForm = document.getElementById('profilePicForm');
-        profileButton.addEventListener("click", () => {
+        const profilePicGrid = document.getElementById('profilePicGrid');
+        let selectedProfileImage = null;
+
+        function openProfilePicEdit() {
             profileForm.classList.remove("hidden");
-        })
+        }
+
+        function setProfile(imageName, clickedImage) {
+            selectedProfileImage = imageName;
+
+            document.querySelectorAll('#profilePicGrid img').forEach(img => {
+                img.classList.remove('outline', 'outline-offset-2', 'outline-4', 'outline-indigo-600');
+            });
+
+            clickedImage.classList.add('outline', 'outline-offset-2', 'outline-4', 'outline-indigo-600');
+        }
+
+        async function saveProfilePic() {
+            const userId = sessionStorage.getItem("userId");
+
+            if (!userId) {
+                alert("Kein Benutzer gefunden. Bitte neu einloggen.");
+                return;
+            }
+
+            if (!selectedProfileImage) {
+                alert("Bitte zuerst ein Profilbild auswählen.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/users/${userId}/avatar`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ avatar: selectedProfileImage })
+                });
+
+                let data = {};
+                try {
+                    data = await response.json();
+                } catch (e) {
+                    data = {};
+                }
+
+                if (!response.ok) {
+                    alert(data.message || "Profilbild konnte nicht gespeichert werden.");
+                    return;
+                }
+
+                document.getElementById("currentProfileImage").src = `/images/${selectedProfileImage}`;
+                alert(data.message || "Profilbild gespeichert.");
+                profileForm.classList.add("hidden");
+            } catch (error) {
+                console.error("Fehler beim Speichern des Profilbilds:", error);
+                alert("Verbindung zum Server fehlgeschlagen.");
+            }
+        }
+
+        profileButton.addEventListener("click", openProfilePicEdit);
 
     </script>
 </body>
