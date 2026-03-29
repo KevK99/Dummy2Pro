@@ -13,6 +13,14 @@ import me.daskabel.dummy2pro.model.QuestionProgressId;
 
 public interface QuestionProgressRepository extends JpaRepository<QuestionProgress, QuestionProgressId>
 {
+    interface RoomOverviewProjection
+    {
+        Integer getRoomId();
+        Long getTotalQuestions();
+        Long getAnsweredQuestions();
+        Long getCorrectAnswers();
+    }
+
     long countByRun_RunId(Long runId);
 
     long countByRun_RunIdAndStatus(Long runId, ProgressStatus status);
@@ -33,7 +41,7 @@ public interface QuestionProgressRepository extends JpaRepository<QuestionProgre
         ORDER BY qp.questionOrder
         """)
     List<QuestionProgress> findByRunIdAndRoomIdAndStatusOrderByQuestionOrder(@Param("runId") Long runId,
-        @Param("roomId") int roomId, @Param("status") ProgressStatus status);
+                                                                             @Param("roomId") int roomId, @Param("status") ProgressStatus status);
 
     @Query("""
         SELECT qp FROM QuestionProgress qp
@@ -42,6 +50,19 @@ public interface QuestionProgressRepository extends JpaRepository<QuestionProgre
         ORDER BY qp.questionOrder
         """)
     List<QuestionProgress> findByRunIdAndRoomIdOrderByQuestionOrder(@Param("runId") Long runId,
-        @Param("roomId") int roomId);
+                                                                    @Param("roomId") int roomId);
+
+    @Query(value = """
+        SELECT
+            qp.room_id AS roomId,
+            COUNT(*) AS totalQuestions,
+            SUM(CASE WHEN qp.status <> 'OPEN' THEN 1 ELSE 0 END) AS answeredQuestions,
+            SUM(CASE WHEN qp.status = 'CORRECT' THEN 1 ELSE 0 END) AS correctAnswers
+        FROM question_progress qp
+        WHERE qp.run_id = :runId
+        GROUP BY qp.room_id
+        ORDER BY qp.room_id
+        """, nativeQuery = true)
+    List<RoomOverviewProjection> summarizeByRunId(@Param("runId") Long runId);
 
 }

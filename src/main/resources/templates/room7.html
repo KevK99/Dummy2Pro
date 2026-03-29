@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="de"
       xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{base :: layout(~{::body})}">
+      th:replace="~{base :: layout(~{::body}, 'min-h-screen bg-[#FFF123] dark:bg-[#000010] text-white overflow-x-hidden')}">
 
 <!-- head wird überschrieben
 <head>
@@ -11,26 +11,35 @@
 </head>
 -->
 
-<body class="bg-[#000010] text-white font-mono tracking-wider min-h-screen">
+<body class="font-mono tracking-wider">
 
 <!-- HEADER FULL WIDTH -->
-<header class="w-full px-12 pt-10 pb-6 border-b border-white/20 bg-[#000010]">
-    <h1 class="text-3xl font-black tracking-widest">
-        Raum <span th:text="${roomId}">7</span>
-    </h1>
+<header class="w-full flex justify-between items-start px-12 pt-10 pb-6 border-b border-white/20 bg-[#FFF123] dark:bg-[#000010]">
+    <div>
+        <h1 class="text-3xl font-black tracking-widest">
+            Raum <span th:text="${roomId}">7</span>
+        </h1>
 
-    <p class="text-sm text-blue-200 mt-1">
-        Thema: <span th:text="${themeName}">Netzwerke</span>
-    </p>
+        <p class="text-sm text-blue-200 mt-1">
+            Thema: <span th:text="${themeName}">Netzwerke</span>
+        </p>
+    </div>
+
+    <button
+            type="button"
+            id="darkmodeBtn"
+            class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-1.5 px-2 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20"
+    >
+        Toggle Darkmode
+    </button>
 </header>
 
 <!-- WELCOME CONTAINER -->
 <main id="welcomeContainer" class="flex justify-center mt-10">
     <div class="w-full max-w-6xl px-6 relative">
         <section
-                class="relative border-[10px] border-[#050a14] shadow-2xl overflow-visible"
+                class="relative border-[10px] border-[#050a14] shadow-2xl overflow-visible bg-[#18FA70] dark:bg-[#222a66]"
                 style="
-                background-color: #222a66;
                 background-image:
                     radial-gradient(rgba(255,255,255,0.10) 1px, transparent 1px),
                     radial-gradient(rgba(140,170,255,0.10) 1px, transparent 1px),
@@ -173,7 +182,7 @@
                         <rect x="19" y="4" width="2" height="16" fill="#8b5a2b"/>
                         <rect x="18" y="3" width="4" height="2" fill="#8b5a2b"/>
                         <rect x="18" y="2" width="4" height="1" fill="#6f4421"/>
-                        <rect x="19" y="1" width="2" height="2" fill="#22c55e"/>
+                        <rect x="19" y="1" width="2" height="2" class="fill-yellow-500"/>
 
                         <rect x="7" y="3" width="10" height="8" fill="#050a14"/>
                         <rect x="8" y="4" width="8" height="6" fill="#e9f0ff"/>
@@ -197,8 +206,8 @@
                 <!-- Raum-CHARACTER -->
                 <div class="absolute right-[140px] bottom-[95px] z-10">
                     <img
-                            src="/room-characters/Krieger.png"
-                            alt="Raumcharakter Krieger"
+                            src="/room-characters/Frosch.png"
+                            alt="Raumcharakter Frosch"
                             class="w-[150px]"
                             style="image-rendering: pixelated;"
                     >
@@ -236,7 +245,7 @@
         <!-- CORRIDOR -->
         <div class="absolute left-1/2 -translate-x-1/2 top-[calc(100%-3rem)] w-28 h-[220px] z-0 pointer-events-none">
             <!-- linke Außenwand -->
-            <div class="absolute left-0 top-0 w-[10px] h-full bg-[#222a66]"></div>
+            <div class="absolute left-0 top-0 w-[10px] h-full bg-[#18FA70] dark:bg-[#222a66]"></div>
 
             <!-- linke graue Innenkante -->
             <div class="absolute left-[10px] top-0 w-[4px] h-full bg-[#8f9fa3]"></div>
@@ -248,7 +257,7 @@
             <div class="absolute left-[98px] top-0 w-[4px] h-full bg-[#8f9fa3]"></div>
 
             <!-- rechte Außenwand -->
-            <div class="absolute left-[102px] top-0 w-[10px] h-full bg-[#222a66]"></div>
+            <div class="absolute left-[102px] top-0 w-[10px] h-full bg-[#18FA70] dark:bg-[#222a66]"></div>
         </div>
     </div>
 
@@ -303,14 +312,14 @@
 </main>
 
 <!-- GAME -->
-<div id="gameContainer" class="bg-slate-950 text-white font-mono tracking-wider hidden">
-    <div id="gameScene" class="w-[1200px] h-[680px] mx-auto relative bg-[#000010] overflow-visible">
+<div id="gameContainer" class="bg-[#FFF123] dark:bg-slate-950 text-white font-mono tracking-wider hidden min-h-screen">
+    <div id="gameScene" class="w-[1200px] h-[680px] mx-auto relative bg-[#18FA70] dark:bg-slate-950 overflow-visible">
 
         <!-- ROOM CHARACTER -->
         <div id="gameRoomCharacter" class="absolute left-[105px] top-[-5px] z-20 pointer-events-none">
             <img
-                    src="/room-characters/Krieger.png"
-                    alt="Raumcharakter Krieger"
+                    src="/room-characters/Frosch.png"
+                    alt="Raumcharakter Frosch"
                     class="w-[110px]"
                     style="image-rendering: pixelated;"
             >
@@ -324,7 +333,7 @@
                 <rect x="19" y="4" width="2" height="16" fill="#8b5a2b"/>
                 <rect x="18" y="3" width="4" height="2" fill="#8b5a2b"/>
                 <rect x="18" y="2" width="4" height="1" fill="#6f4421"/>
-                <rect x="19" y="1" width="2" height="2" fill="#22c55e"/>
+                <rect x="19" y="1" width="2" height="2" class="fill-yellow-500"/>
 
                 <rect x="7" y="3" width="10" height="8" fill="#050a14"/>
                 <rect x="8" y="4" width="8" height="6" fill="#e9f0ff"/>
@@ -581,6 +590,47 @@
     let selectedGapAnswersMap = {};
     let currentGapStep = 0;
     let roomLoaded = false;
+
+    const darkmodeBtn = document.getElementById("darkmodeBtn");
+    const htmlElement = document.documentElement;
+
+    function updateDarkmodeButtonText() {
+        if (!darkmodeBtn) {
+            return;
+        }
+
+        if (htmlElement.classList.contains("dark")) {
+            darkmodeBtn.textContent = "Bunt edition ☀️";
+        } else {
+            darkmodeBtn.textContent = "Hello Darkmode, my old friend 🌙";
+        }
+    }
+
+    function initDarkmode() {
+        if (!darkmodeBtn) {
+            return;
+        }
+
+        if (localStorage.theme === "dark") {
+            htmlElement.classList.add("dark");
+        } else {
+            htmlElement.classList.remove("dark");
+        }
+
+        updateDarkmodeButtonText();
+
+        darkmodeBtn.addEventListener("click", () => {
+            if (htmlElement.classList.contains("dark")) {
+                htmlElement.classList.remove("dark");
+                localStorage.theme = "light";
+            } else {
+                htmlElement.classList.add("dark");
+                localStorage.theme = "dark";
+            }
+
+            updateDarkmodeButtonText();
+        });
+    }
 
     const welcomeContainer = document.getElementById("welcomeContainer");
     const gameContainer = document.getElementById("gameContainer");
@@ -1692,6 +1742,7 @@
     submitAnswerBtn.addEventListener("click", submitAnswer);
     nextQuestionBtn.addEventListener("click", loadNextQuestion);
 
+    initDarkmode();
     initWelcomeRoom();
 
 </script>

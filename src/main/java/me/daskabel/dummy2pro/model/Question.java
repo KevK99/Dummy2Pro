@@ -3,6 +3,7 @@ package me.daskabel.dummy2pro.model;
 import java.util.List;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Table(name = "question")
@@ -37,12 +38,15 @@ public class Question
     private int points;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    @BatchSize(size = 100)
     private List<AnswerOption> answerOptions;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    @BatchSize(size = 100)
     private List<GapField> gapFields;
 
     @ManyToMany
+    @BatchSize(size = 100)
     @JoinTable(
             name = "question_theme",
             joinColumns = @JoinColumn(name = "question_id"),

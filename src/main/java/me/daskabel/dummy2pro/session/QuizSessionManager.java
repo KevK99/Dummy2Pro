@@ -51,6 +51,7 @@ public class QuizSessionManager
     public static class SessionOverviewDto
     {
         private String sessionId;
+        private String username;
         private int totalEarnedPoints;
         private int totalMaxPoints;
         private int totalCorrect;
@@ -86,6 +87,11 @@ public class QuizSessionManager
         public int getTotalWrong()
         {
             return this.totalWrong;
+        }
+
+        public String getUsername()
+        {
+            return this.username;
         }
 
         public boolean isFullyCompleted()
@@ -126,6 +132,11 @@ public class QuizSessionManager
         public void setTotalWrong(int v)
         {
             this.totalWrong = v;
+        }
+
+        public void setUsername(String username)
+        {
+            this.username = username;
         }
     }
 
@@ -290,8 +301,13 @@ public class QuizSessionManager
             roomStatuses.add(buildRoomStatus(room));
         }
 
+        String username = this.userRepo.findById(session.getUserId())
+                .map(User::getUsername)
+                .orElse("Unbekannt");
+
         SessionOverviewDto overview = new SessionOverviewDto();
         overview.setSessionId(sessionId);
+        overview.setUsername(username);
         overview.setTotalEarnedPoints(session.getTotalEarnedPoints());
         overview.setTotalMaxPoints(session.getTotalMaxPoints());
         overview.setTotalCorrect(session.getTotalCorrect());
@@ -491,6 +507,8 @@ public class QuizSessionManager
 
     private void persistInitialQuestionProgress(GameRun run, QuizSession session)
     {
+        List<QuestionProgress> progressEntries = new ArrayList<>();
+
         for (RoomSession room : session.getRooms().values())
         {
             List<Long> sequence = room.getQuestionSequence();
@@ -499,9 +517,7 @@ public class QuizSessionManager
             {
                 Long questionId = sequence.get(i);
 
-                Question question = this.questionRepo.findById(questionId)
-                        .orElseThrow(() -> new NoSuchElementException(
-                                "Frage " + questionId + " nicht gefunden."));
+                Question question = this.questionRepo.getReferenceById(questionId);
 
                 QuestionProgress progress = new QuestionProgress(
                         run,
@@ -512,9 +528,11 @@ public class QuizSessionManager
                         null
                 );
 
-                this.questionProgressRepo.save(progress);
+                progressEntries.add(progress);
             }
         }
+
+        this.questionProgressRepo.saveAll(progressEntries);
     }
 
     private QuizSession restoreSessionFromRun(Long runId)

@@ -1,6 +1,7 @@
 package me.daskabel.dummy2pro.controller;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,12 @@ import me.daskabel.dummy2pro.dto.RoomDtos.QuestionDto;
 import me.daskabel.dummy2pro.dto.RoomDtos.RoomStartDto;
 import me.daskabel.dummy2pro.dto.RoomDtos.RoomStatusDto;
 import me.daskabel.dummy2pro.model.GameRun;
+import me.daskabel.dummy2pro.model.Theme;
 import me.daskabel.dummy2pro.repository.GameRunRepository;
+import me.daskabel.dummy2pro.repository.QuestionProgressRepository;
+import me.daskabel.dummy2pro.repository.QuestionRepository;
+import me.daskabel.dummy2pro.repository.ThemeRepository;
+import me.daskabel.dummy2pro.repository.UserRepository;
 import me.daskabel.dummy2pro.session.QuizSession;
 import me.daskabel.dummy2pro.session.QuizSessionManager;
 import me.daskabel.dummy2pro.session.QuizSessionManager.SessionOverviewDto;
@@ -150,14 +156,137 @@ public class RoomApiController
         }
     }
 
+    public static class DashboardRoomResponse
+    {
+        private int roomId;
+        private String themeName;
+        private int totalQuestions;
+        private int answeredQuestions;
+        private int correctAnswers;
+        private int completionPercent;
+
+        public int getAnsweredQuestions()
+        {
+            return this.answeredQuestions;
+        }
+
+        public int getCompletionPercent()
+        {
+            return this.completionPercent;
+        }
+
+        public int getCorrectAnswers()
+        {
+            return this.correctAnswers;
+        }
+
+        public int getRoomId()
+        {
+            return this.roomId;
+        }
+
+        public String getThemeName()
+        {
+            return this.themeName;
+        }
+
+        public int getTotalQuestions()
+        {
+            return this.totalQuestions;
+        }
+
+        public void setAnsweredQuestions(int answeredQuestions)
+        {
+            this.answeredQuestions = answeredQuestions;
+        }
+
+        public void setCompletionPercent(int completionPercent)
+        {
+            this.completionPercent = completionPercent;
+        }
+
+        public void setCorrectAnswers(int correctAnswers)
+        {
+            this.correctAnswers = correctAnswers;
+        }
+
+        public void setRoomId(int roomId)
+        {
+            this.roomId = roomId;
+        }
+
+        public void setThemeName(String themeName)
+        {
+            this.themeName = themeName;
+        }
+
+        public void setTotalQuestions(int totalQuestions)
+        {
+            this.totalQuestions = totalQuestions;
+        }
+    }
+
+    public static class DashboardOverviewResponse
+    {
+        private Long runId;
+        private String username;
+        private List<DashboardRoomResponse> rooms;
+
+        public List<DashboardRoomResponse> getRooms()
+        {
+            return this.rooms;
+        }
+
+        public Long getRunId()
+        {
+            return this.runId;
+        }
+
+        public String getUsername()
+        {
+            return this.username;
+        }
+
+        public void setRooms(List<DashboardRoomResponse> rooms)
+        {
+            this.rooms = rooms;
+        }
+
+        public void setRunId(Long runId)
+        {
+            this.runId = runId;
+        }
+
+        public void setUsername(String username)
+        {
+            this.username = username;
+        }
+    }
+
+    private static final int QUESTIONS_PER_ROOM = 40;
+
     private final QuizSessionManager sessionManager;
 
     private final GameRunRepository gameRunRepository;
+    private final ThemeRepository themeRepository;
+    private final QuestionRepository questionRepository;
+    private final QuestionProgressRepository questionProgressRepository;
+    private final UserRepository userRepository;
 
-    public RoomApiController(QuizSessionManager sessionManager, GameRunRepository gameRunRepository)
+    public RoomApiController(
+            QuizSessionManager sessionManager,
+            GameRunRepository gameRunRepository,
+            ThemeRepository themeRepository,
+            QuestionRepository questionRepository,
+            QuestionProgressRepository questionProgressRepository,
+            UserRepository userRepository)
     {
         this.sessionManager = sessionManager;
         this.gameRunRepository = gameRunRepository;
+        this.themeRepository = themeRepository;
+        this.questionRepository = questionRepository;
+        this.questionProgressRepository = questionProgressRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -225,6 +354,91 @@ public class RoomApiController
             dto.setFinished(run.getFinishedAt() != null);
             return dto;
         }).toList();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/dashboard")
+    public ResponseEntity<DashboardOverviewResponse> getDashboardOverview(@RequestParam Long userId)
+    {
+        List<GameRun> runs = this.gameRunRepository.findByUser_UserIdOrderByFinishedAtAscStartedAtDesc(userId);
+
+        GameRun selectedRun = null;
+        for (GameRun run : runs)
+        {
+            if (run.getFinishedAt() == null)
+            {
+                selectedRun = run;
+                break;
+            }
+        }
+
+        if (selectedRun == null && !runs.isEmpty())
+        {
+            selectedRun = runs.get(0);
+        }
+
+        Map<Integer, QuestionProgressRepository.RoomOverviewProjection> summaryByRoom = new HashMap<>();
+        if (selectedRun != null)
+        {
+            List<QuestionProgressRepository.RoomOverviewProjection> summaries =
+                    this.questionProgressRepository.summarizeByRunId(selectedRun.getRunId());
+
+            for (QuestionProgressRepository.RoomOverviewProjection summary : summaries)
+            {
+                summaryByRoom.put(summary.getRoomId(), summary);
+            }
+        }
+
+        List<Theme> themes = this.themeRepository.findAllByOrderByThemeIdAsc();
+        List<DashboardRoomResponse> rooms = new ArrayList<>();
+
+        for (int i = 0; i < themes.size(); i++)
+        {
+            int roomId = i + 1;
+            Theme theme = themes.get(i);
+
+            int totalQuestions;
+            int answeredQuestions = 0;
+            int correctAnswers = 0;
+
+            QuestionProgressRepository.RoomOverviewProjection summary = summaryByRoom.get(roomId);
+
+            if (summary != null)
+            {
+                totalQuestions = summary.getTotalQuestions().intValue();
+                answeredQuestions = summary.getAnsweredQuestions().intValue();
+                correctAnswers = summary.getCorrectAnswers().intValue();
+            }
+            else
+            {
+                long availableQuestions = this.questionRepository.countQuestionsByThemeId(theme.getThemeId());
+                totalQuestions = (int) Math.min(QUESTIONS_PER_ROOM, availableQuestions);
+            }
+
+            int completionPercent = totalQuestions > 0
+                    ? (int) Math.round((answeredQuestions * 100.0) / totalQuestions)
+                    : 0;
+
+            DashboardRoomResponse room = new DashboardRoomResponse();
+            room.setRoomId(roomId);
+            room.setThemeName(theme.getName());
+            room.setTotalQuestions(totalQuestions);
+            room.setAnsweredQuestions(answeredQuestions);
+            room.setCorrectAnswers(correctAnswers);
+            room.setCompletionPercent(completionPercent);
+
+            rooms.add(room);
+        }
+
+        DashboardOverviewResponse response = new DashboardOverviewResponse();
+        response.setRunId(selectedRun != null ? selectedRun.getRunId() : null);
+        response.setUsername(
+                this.userRepository.findById(userId)
+                        .map(user -> user.getUsername())
+                        .orElse("NutzerName")
+        );
+        response.setRooms(rooms);
 
         return ResponseEntity.ok(response);
     }

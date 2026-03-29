@@ -48,12 +48,21 @@ public interface QuestionRepository extends JpaRepository<Question, Long>
      * GapOptions werden anschließend geladen.
      */
     @Query("""
-    SELECT DISTINCT q
-    FROM Question q
-    LEFT JOIN FETCH q.gapFields gf
-    JOIN q.themes t
-    WHERE t.themeId = :themeId
-    ORDER BY q.questionId
-    """)
-    List<Question> findByThemeIdWithGaps(@Param("themeId") Long themeId);
+        SELECT DISTINCT q
+        FROM Question q
+        LEFT JOIN FETCH q.gapFields gf
+        LEFT JOIN FETCH gf.gapOptions go
+        JOIN q.themes t
+        WHERE t.themeId = :themeId
+        ORDER BY q.questionId
+        """)
+            List<Question> findByThemeIdWithGaps(@Param("themeId") Long themeId);
+
+    @Query("""
+        SELECT COUNT(DISTINCT q.questionId)
+        FROM Question q
+        JOIN q.themes t
+        WHERE t.themeId = :themeId
+        """)
+    long countQuestionsByThemeId(@Param("themeId") Long themeId);
 }
