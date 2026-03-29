@@ -2,6 +2,7 @@ package me.daskabel.dummy2pro.model;
 
 import jakarta.persistence.*;
 import java.util.List;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Table(name = "gap_field")
@@ -26,6 +27,7 @@ public class GapField {
     private String textAfter;
 
     @OneToMany(mappedBy = "gapField", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @BatchSize(size = 100)
     private List<GapOption> gapOptions;
 
     // Constructors
