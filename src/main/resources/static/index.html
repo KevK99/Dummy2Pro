@@ -10,14 +10,6 @@
     <body class="min-h-screen bg-slate-950 text-slate-100">
         <div class="mx-auto max-w-6xl px-6 py-10">
             <div id="login"></div>
-
-            <div class="text-center text-sm text-gray-500 mt-6">
-                Noch kein Konto?
-                <a href="/register.html"
-                   class="text-indigo-500 hover:underline cursor-pointer">
-                    Jetzt registrieren
-                </a>
-            </div>
         </div>
 
         <script>
@@ -55,6 +47,7 @@
                 sessionStorage.removeItem("runId");
                 sessionStorage.removeItem("userId");
                 sessionStorage.removeItem("username");
+                sessionStorage.removeItem("avatar");
 
                 const username = document.getElementById("username").value;
                 const password = document.getElementById("password").value;
@@ -75,6 +68,7 @@
 
                     sessionStorage.setItem("userId", String(data.userId));
                     sessionStorage.setItem("username", data.username);
+                    sessionStorage.setItem("avatar", data.avatar || "duck.jpg");
 
                     // Alte Session-/Run-Daten verwerfen.
                     // Das Dashboard lädt oder erstellt danach den AKTIVEN Spielstand.

@@ -39,7 +39,12 @@ public class AuthController {
     public LoginResponse login(@RequestBody LoginRequest request) {
         try {
             User user = userService.authenticate(request.getUsername(), request.getPassword());
-            return new LoginResponse(user.getUserId(), user.getUsername(), "Login erfolgreich");
+            return new LoginResponse(
+                    user.getUserId(),
+                    user.getUsername(),
+                    userService.resolveAvatarFilename(user),
+                    "Login erfolgreich"
+            );
         } catch (IllegalArgumentException ex) {
             throw new UnauthorizedException(ex.getMessage());
         }
@@ -119,16 +124,19 @@ public class AuthController {
     public static class LoginResponse {
         private Long userId;
         private String username;
+        private String avatar;
         private String message;
 
-        public LoginResponse(Long userId, String username, String message) {
+        public LoginResponse(Long userId, String username, String avatar, String message) {
             this.userId = userId;
             this.username = username;
+            this.avatar = avatar;
             this.message = message;
         }
 
         public Long getUserId() { return userId; }
         public String getUsername() { return username; }
+        public String getAvatar() { return avatar; }
         public String getMessage() { return message; }
     }
 }
