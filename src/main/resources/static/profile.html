@@ -8,283 +8,564 @@
 </head>
 
 <body class="min-h-screen bg-slate-950 text-slate-100">
-    <div class="mx-auto max-w-6xl px-6 py-10 space-y-8">
+<div class="mx-auto max-w-6xl px-6 py-10 space-y-8">
 
-        <header class="flex items-start justify-between gap-4">
-            <div class="flex gap-6">
-                <img id="currentProfileImage" src="/images/duck.jpg" alt="duck" class="w-20 h-20 rounded-full hover:cursor-pointer" />
+    <header class="flex items-start justify-between gap-4">
+        <div class="flex gap-6">
+            <img id="currentProfileImage" src="/images/duck.jpg" alt="Profilbild" class="w-20 h-20 rounded-full object-cover" />
 
-                <div>
-                    <h1 class="text-3xl font-extrabold tracking-tight">Benutzerprofil</h1>
-                    <p class="mt-2 text-slate-300">Hier kannst du deine Profil Einstellungen ändern</p>
-                </div>
+            <div>
+                <h1 class="text-3xl font-extrabold tracking-tight">Benutzerprofil</h1>
+                <p class="mt-2 text-slate-300">Hier kannst du dein Profil und deine Spielstände verwalten.</p>
             </div>
+        </div>
+
+        <div class="flex gap-3">
+            <a href="/dashboard"
+               class="bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200">
+                Zum Dashboard
+            </a>
             <button
-                type="button"
-                class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-1.5 p-1 px-2 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20 disabled:bg-gray-700 disabled:shadow-none"
-                onclick="deleteUser()"
+                    type="button"
+                    class="bg-red-600 hover:bg-red-500 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 shadow-lg shadow-red-600/20 disabled:bg-gray-700 disabled:shadow-none"
+                    onclick="deleteUser()"
             >
                 Account löschen
             </button>
-        </header>
+        </div>
+    </header>
 
-        <div class="bg-slate-800 border border-slate-700 shadow-xl rounded-2xl p-8" id="nameForm">
-            <form class="space-y-5">
-                <div>
-                    <label class="block text-sm font-medium text-slate-300">
-                        Ingame Name
-                    </label>
-                    <input
-                        type="text"
-                        class="mt-1 w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition"
-                        placeholder="Dein Ingame Name"
-                        disabled
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="space-y-8">
+            <div class="bg-slate-800 border border-slate-700 shadow-xl rounded-2xl p-8" id="nameForm">
+                <form class="space-y-5" onsubmit="return false;">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300">
+                            Ingame Name
+                        </label>
+                        <input
+                                type="text"
+                                id="currentNameInput"
+                                class="mt-1 w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition"
+                                placeholder="Dein Ingame Name"
+                                disabled
+                        >
+                    </div>
+                    <button
+                            type="button"
+                            class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20 disabled:bg-gray-700 disabled:shadow-none"
+                            id="button"
                     >
-                </div>
+                        Name ändern
+                    </button>
+                </form>
+            </div>
+
+            <div class="bg-slate-800 border border-slate-700 shadow-xl rounded-2xl p-8 hidden" id="newNameForm">
+                <form class="space-y-5" onsubmit="return false;">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300">
+                            Gib deinen neuen Ingame Namen ein
+                        </label>
+                        <input
+                                type="text"
+                                id="newNameInput"
+                                class="mt-1 w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition"
+                                placeholder="Dein neuer Ingame Name"
+                        >
+                    </div>
+                    <div class="flex gap-3">
+                        <button
+                                type="button"
+                                class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20 disabled:bg-gray-700 disabled:shadow-none"
+                                id="newNameButton"
+                        >
+                            Neuen Namen bestätigen
+                        </button>
+                        <button
+                                type="button"
+                                class="w-full bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2.5 rounded-lg transition duration-200"
+                                onclick="cancelNameEdit()"
+                        >
+                            Abbrechen
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="flex justify-between gap-6">
                 <button
-                    type="button"
-                    class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20 disabled:bg-gray-700 disabled:shadow-none"
-                    id="button"
+                        type="button"
+                        id="profilePicBtn"
+                        class="w-1/2 mt-6 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20 disabled:bg-gray-700 disabled:shadow-none"
+                        onclick="openProfilePicEdit()"
                 >
-                    Name ändern
+                    Profilbild ändern
                 </button>
-
-            </form>
-        </div>
-
-        <div class="bg-slate-800 border border-slate-700 shadow-xl rounded-2xl p-8 hidden" id="newNameForm">
-            <form class="space-y-5">
-                <div>
-                    <label class="block text-sm font-medium text-slate-300">
-                        Gebe deinen neuen Ingame Namen ein
-                    </label>
-                    <input
-                        type="text"
-                        id="newNameInput"
-                        class="mt-1 w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition"
-                        placeholder="Dein neuer Ingame Name"
-                    >
-                </div>
                 <button
-                    type="button"
-                    class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20 disabled:bg-gray-700 disabled:shadow-none"
-                    id="newNameButton"
-                >
-                    Neuen Namen bestätigen
-                </button>
-            </form>
-        </div>
-
-        <div class="flex justify-between gap-6">
-            <button
-                type="button"
-                id="profilePicBtn"
-                class="w-1/2 mt-6 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20 disabled:bg-gray-700 disabled:shadow-none"
-                onclick="openProfilePicEdit()"
-            >
-                Profilbild ändern
-            </button>
-            <button
-                type="button"
-                id="pwFormEnable"
-                class="w-1/2 mt-6 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20 disabled:bg-gray-700 disabled:shadow-none"
-                onclick="showPwForm()"
-            >
-                Passwort ändern
-            </button>
-        </div>
-
-        <div class="bg-slate-800 border border-slate-700 shadow-xl rounded-2xl p-8 space-y-5 hidden" id="passwordForm">
-            <form class="space-y-5">
-                <div>
-                    <label class="block text-sm font-medium text-slate-300">
-                        Aktuelles Passwort
-                    </label>
-                    <input
-                        type="text"
-                        class="mt-1 w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition"
-                        placeholder="Aktuelles Passwort"
-                        id="pw"
-                    >
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-slate-300">
-                        Neues Passwort
-                    </label>
-                    <input
-                        type="text"
-                        class="mt-1 w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition"
-                        placeholder="Neues Passwort"
-                        id="newPw"
-                    >
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-slate-300">
-                        Neues Passwort bestätigen
-                    </label>
-                    <input
-                        type="text"
-                        class="mt-1 w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition"
-                        placeholder="Neues Passwort bestätigen"
-                        id="newPwConfirm"
-                    >
-                </div>
-
-                <button
-                    type="button"
-                    class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20 disabled:bg-gray-700 disabled:shadow-none"
-                    onclick="saveNewPassword()"
+                        type="button"
+                        id="pwFormEnable"
+                        class="w-1/2 mt-6 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20 disabled:bg-gray-700 disabled:shadow-none"
+                        onclick="showPwForm()"
                 >
                     Passwort ändern
                 </button>
-            </form>
-        </div>
-
-        <div id="profilePicForm" class="hidden">
-            <div id="profilePicGrid" class="w-full gap-6 pt-6 grid grid-cols-5">
-                <img src="/images/lama.png" onclick="setProfile('lama.png', this)" alt="lama" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/images/catBlack.PNG" onclick="setProfile('catBlack.PNG', this)" alt="cat" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/images/catWhiteShadow.PNG" onclick="setProfile('catWhiteShadow.PNG', this)" alt="cat" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/images/catRed.PNG" onclick="setProfile('catRed.PNG', this)" alt="Maike" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/images/sunflower.PNG" onclick="setProfile('sunflower.PNG', this)" alt="sunflower" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/images/sunflowerCursed.PNG" onclick="setProfile('sunflowerCursed.PNG', this)" alt="sunflower" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/images/Herberg.PNG" onclick="setProfile('Herberg.PNG', this)" alt="Herbert der Koala" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/images/panda.PNG" onclick="setProfile('panda.PNG', this)" alt="panda" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/images/bee.jpg" onclick="setProfile('bee.jpg', this)" alt="bee flying" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/images/beee.jpg" onclick="setProfile('beee.jpg', this)" alt="bee" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/images/beesleep.jpg" onclick="setProfile('beesleep.jpg', this)" alt="bee sleeping" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/images/block.jpg" onclick="setProfile('block.jpg', this)" alt="colourful blocks" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/images/duck.jpg" onclick="setProfile('duck.jpg', this)" alt="duck" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/images/flowers.jpg" onclick="setProfile('flowers.jpg', this)" alt="flowers" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/images/hase.jpg" onclick="setProfile('hase.jpg', this)" alt="hase" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/images/hase.PNG" onclick="setProfile('hase.PNG', this)" alt="hase2" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/images/maus.jpg" onclick="setProfile('maus.jpg', this)" alt="mouse" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/images/mond.jpg" onclick="setProfile('mond.jpg', this)" alt="mond" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/images/pingwin.jpg" onclick="setProfile('pingwin.jpg', this)" alt="penguin" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
-                <img src="/images/subi.PNG" onclick="setProfile('subi.PNG', this)" alt="dog" class="hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
             </div>
 
+            <div class="bg-slate-800 border border-slate-700 shadow-xl rounded-2xl p-8 space-y-5 hidden" id="passwordForm">
+                <form class="space-y-5" onsubmit="return false;">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300">
+                            Aktuelles Passwort
+                        </label>
+                        <input
+                                type="password"
+                                class="mt-1 w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition"
+                                placeholder="Aktuelles Passwort"
+                                id="pw"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300">
+                            Neues Passwort
+                        </label>
+                        <input
+                                type="password"
+                                class="mt-1 w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition"
+                                placeholder="Neues Passwort"
+                                id="newPw"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300">
+                            Neues Passwort bestätigen
+                        </label>
+                        <input
+                                type="password"
+                                class="mt-1 w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition"
+                                placeholder="Neues Passwort bestätigen"
+                                id="newPwConfirm"
+                        >
+                    </div>
+
+                    <button
+                            type="button"
+                            class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20 disabled:bg-gray-700 disabled:shadow-none"
+                            onclick="saveNewPassword()"
+                    >
+                        Passwort ändern
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="bg-slate-800 border border-slate-700 shadow-xl rounded-2xl p-8">
+            <div class="flex items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold">Spielstände</h2>
+                    <p class="text-slate-300 mt-1">Hier kannst du Spielstände laden, neue anlegen oder löschen.</p>
+                </div>
+                <button
+                        type="button"
+                        class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
+                        onclick="createNewRun()"
+                >
+                    Neuen Spielstand anlegen
+                </button>
+            </div>
+
+            <div class="mt-6 space-y-4" id="runsContainer">
+                <div class="rounded-xl border border-slate-700 bg-slate-900 p-4 text-slate-300">
+                    Spielstände werden geladen...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="profilePicForm" class="hidden bg-slate-800 border border-slate-700 shadow-xl rounded-2xl p-8">
+        <div class="flex items-center justify-between gap-4">
+            <div>
+                <h2 class="text-2xl font-bold">Profilbild auswählen</h2>
+                <p class="text-slate-300 mt-1">Wähle eines der vorhandenen Profilbilder aus.</p>
+            </div>
             <button
                     type="button"
-                    id="saveNewProfilePic"
-                    class="w-1/2 justify-center mt-6 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20 disabled:bg-gray-700 disabled:shadow-none"
-                    onclick="saveProfilePic()"
+                    class="bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
+                    onclick="closeProfilePicEdit()"
             >
-                Neues Profilbild speichern
+                Schließen
             </button>
         </div>
 
+        <div id="profilePicGrid" class="w-full gap-6 pt-6 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
+            <img src="/images/Alf.png" onclick="setProfile('Alf.png', this)" alt="Alf" class="h-28 w-full object-cover rounded-lg hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+            <img src="/images/lama.png" onclick="setProfile('lama.png', this)" alt="lama" class="h-28 w-full object-cover rounded-lg hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+            <img src="/images/catBlack.PNG" onclick="setProfile('catBlack.PNG', this)" alt="cat" class="h-28 w-full object-cover rounded-lg hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+            <img src="/images/catWhiteShadow.PNG" onclick="setProfile('catWhiteShadow.PNG', this)" alt="cat" class="h-28 w-full object-cover rounded-lg hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+            <img src="/images/catRed.PNG" onclick="setProfile('catRed.PNG', this)" alt="Maike" class="h-28 w-full object-cover rounded-lg hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+            <img src="/images/sunflower.PNG" onclick="setProfile('sunflower.PNG', this)" alt="sunflower" class="h-28 w-full object-cover rounded-lg hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+            <img src="/images/sunflowerCursed.PNG" onclick="setProfile('sunflowerCursed.PNG', this)" alt="sunflower" class="h-28 w-full object-cover rounded-lg hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+            <img src="/images/Herberg.PNG" onclick="setProfile('Herberg.PNG', this)" alt="Herbert der Koala" class="h-28 w-full object-cover rounded-lg hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+            <img src="/images/panda.PNG" onclick="setProfile('panda.PNG', this)" alt="panda" class="h-28 w-full object-cover rounded-lg hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+            <img src="/images/bee.jpg" onclick="setProfile('bee.jpg', this)" alt="bee flying" class="h-28 w-full object-cover rounded-lg hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+            <img src="/images/beee.jpg" onclick="setProfile('beee.jpg', this)" alt="bee" class="h-28 w-full object-cover rounded-lg hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+            <img src="/images/beesleep.jpg" onclick="setProfile('beesleep.jpg', this)" alt="bee sleeping" class="h-28 w-full object-cover rounded-lg hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+            <img src="/images/block.jpg" onclick="setProfile('block.jpg', this)" alt="colourful blocks" class="h-28 w-full object-cover rounded-lg hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+            <img src="/images/duck.jpg" onclick="setProfile('duck.jpg', this)" alt="duck" class="h-28 w-full object-cover rounded-lg hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+            <img src="/images/flowers.jpg" onclick="setProfile('flowers.jpg', this)" alt="flowers" class="h-28 w-full object-cover rounded-lg hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+            <img src="/images/hase.jpg" onclick="setProfile('hase.jpg', this)" alt="hase" class="h-28 w-full object-cover rounded-lg hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+            <img src="/images/hase.PNG" onclick="setProfile('hase.PNG', this)" alt="hase2" class="h-28 w-full object-cover rounded-lg hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+            <img src="/images/maus.jpg" onclick="setProfile('maus.jpg', this)" alt="mouse" class="h-28 w-full object-cover rounded-lg hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+            <img src="/images/mond.jpg" onclick="setProfile('mond.jpg', this)" alt="mond" class="h-28 w-full object-cover rounded-lg hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+            <img src="/images/pingwin.jpg" onclick="setProfile('pingwin.jpg', this)" alt="penguin" class="h-28 w-full object-cover rounded-lg hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+            <img src="/images/subi.PNG" onclick="setProfile('subi.PNG', this)" alt="dog" class="h-28 w-full object-cover rounded-lg hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
+        </div>
 
+        <button
+                type="button"
+                id="saveNewProfilePic"
+                class="w-full md:w-1/2 justify-center mt-6 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20 disabled:bg-gray-700 disabled:shadow-none"
+                onclick="saveProfilePic()"
+        >
+            Neues Profilbild speichern
+        </button>
     </div>
+</div>
 
+<script>
+    const nameForm = document.getElementById('nameForm');
+    const button = document.getElementById('button');
+    const newNameForm = document.getElementById('newNameForm');
+    const newNameButton = document.getElementById('newNameButton');
+    const newNameInput = document.getElementById('newNameInput');
+    const currentNameInput = document.getElementById('currentNameInput');
+    const pwForm = document.getElementById('passwordForm');
+    const profileButton = document.getElementById('profilePicBtn');
+    const profileForm = document.getElementById('profilePicForm');
+    const profilePicGrid = document.getElementById('profilePicGrid');
+    const runsContainer = document.getElementById('runsContainer');
+    const currentProfileImage = document.getElementById('currentProfileImage');
 
-    <script>
-        const nameForm = document.getElementById('nameForm');
-        const button = document.getElementById('button');
-        const newNameForm = document.getElementById('newNameForm');
-        const newNameButton = document.getElementById('newNameButton');
-        const newNameInput = document.getElementById('newNameInput');
-        const enablePwForm = document.getElementById('enablePwForm');
-        const pwForm = document.getElementById('passwordForm');
+    const userId = sessionStorage.getItem("userId");
+    let selectedProfileImage = null;
+    let currentAvatar = sessionStorage.getItem("avatar") || "duck.jpg";
 
-        button.addEventListener("click", () => {
-            nameForm.classList.add("hidden");
-            newNameForm.classList.remove("hidden");
-        })
+    if (!userId) {
+        alert("Kein Benutzer gefunden. Bitte neu einloggen.");
+        window.location.href = "/";
+    }
 
-        newNameButton.addEventListener("click", () => {
-            alert(newNameInput.value + "-  ist dein neues Passwort");
-        })
+    button.addEventListener("click", () => {
+        nameForm.classList.add("hidden");
+        newNameForm.classList.remove("hidden");
+        newNameInput.value = currentNameInput.value || "";
+        newNameInput.focus();
+    });
 
-        function deleteAccount() {
-            alert("Dein Account wurde gelöscht");
-        }
+    newNameButton.addEventListener("click", saveNewName);
+    profileButton.addEventListener("click", openProfilePicEdit);
 
-        function showPwForm() {
-            pwForm.classList.remove("hidden");
-            document.getElementById("pwFormEnable").classList.add("hidden")
-        }
+    function cancelNameEdit() {
+        newNameForm.classList.add("hidden");
+        nameForm.classList.remove("hidden");
+        newNameInput.value = "";
+    }
 
-        function saveNewPassword() {
+    function showPwForm() {
+        pwForm.classList.remove("hidden");
+        document.getElementById("pwFormEnable").classList.add("hidden");
+    }
 
-            const pw = document.getElementById('pw');
-            const newPw = document.getElementById('newPw');
-            const newPwConfirm = document.getElementById('newPwConfirm');
+    function openProfilePicEdit() {
+        profileForm.classList.remove("hidden");
+        highlightSelectedAvatar(currentAvatar);
+    }
 
+    function closeProfilePicEdit() {
+        profileForm.classList.add("hidden");
+    }
 
-            if (newPw.value === newPwConfirm.value && newPw.value != '' && pw.value != '') {
-                alert('logik folgt..... das password soll hier geändert werden');
+    function setProfile(imageName, clickedImage) {
+        selectedProfileImage = imageName;
+
+        document.querySelectorAll('#profilePicGrid img').forEach(img => {
+            img.classList.remove('outline', 'outline-offset-2', 'outline-4', 'outline-indigo-600');
+        });
+
+        clickedImage.classList.add('outline', 'outline-offset-2', 'outline-4', 'outline-indigo-600');
+    }
+
+    function highlightSelectedAvatar(imageName) {
+        const images = document.querySelectorAll('#profilePicGrid img');
+
+        images.forEach(img => {
+            img.classList.remove('outline', 'outline-offset-2', 'outline-4', 'outline-indigo-600');
+
+            const onclickValue = img.getAttribute('onclick') || '';
+            if (onclickValue.includes(`'${imageName}'`)) {
+                img.classList.add('outline', 'outline-offset-2', 'outline-4', 'outline-indigo-600');
+                selectedProfileImage = imageName;
             }
+        });
+    }
+
+    async function apiRequest(url, options = {}) {
+        const response = await fetch(url, options);
+        let data = {};
+
+        try {
+            data = await response.json();
+        } catch (e) {
+            data = {};
         }
 
-        function deleteUser() {
-            alert('logik folgt..... user soll hier gelöscht werden');
+        if (!response.ok) {
+            throw new Error(data.message || 'Anfrage fehlgeschlagen.');
         }
 
-        const profileButton = document.getElementById('profilePicBtn');
-        const profileForm = document.getElementById('profilePicForm');
-        const profilePicGrid = document.getElementById('profilePicGrid');
-        let selectedProfileImage = null;
+        return data;
+    }
 
-        function openProfilePicEdit() {
-            profileForm.classList.remove("hidden");
+    function updateProfileUi(profile) {
+        const resolvedAvatar = profile.avatar || 'duck.jpg';
+
+        currentNameInput.value = profile.username || '';
+        currentProfileImage.src = `/images/${resolvedAvatar}`;
+        currentAvatar = resolvedAvatar;
+
+        sessionStorage.setItem('username', profile.username || '');
+        sessionStorage.setItem('avatar', resolvedAvatar);
+
+        highlightSelectedAvatar(resolvedAvatar);
+    }
+
+    async function loadUserProfile() {
+        const profile = await apiRequest(`/api/user/${userId}`);
+        updateProfileUi(profile);
+    }
+
+    async function saveNewName() {
+        const newName = newNameInput.value.trim();
+
+        if (!newName) {
+            alert('Bitte gib einen neuen Namen ein.');
+            return;
         }
 
-        function setProfile(imageName, clickedImage) {
-            selectedProfileImage = imageName;
-
-            document.querySelectorAll('#profilePicGrid img').forEach(img => {
-                img.classList.remove('outline', 'outline-offset-2', 'outline-4', 'outline-indigo-600');
+        try {
+            const data = await apiRequest(`/api/user/${userId}/username`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: newName })
             });
 
-            clickedImage.classList.add('outline', 'outline-offset-2', 'outline-4', 'outline-indigo-600');
+            updateProfileUi(data);
+            cancelNameEdit();
+            alert('Name erfolgreich geändert.');
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
+    async function saveNewPassword() {
+        const pw = document.getElementById('pw').value;
+        const newPw = document.getElementById('newPw').value;
+        const newPwConfirm = document.getElementById('newPwConfirm').value;
+
+        if (!pw || !newPw || !newPwConfirm) {
+            alert('Bitte fülle alle Passwortfelder aus.');
+            return;
         }
 
-        async function saveProfilePic() {
-            const userId = sessionStorage.getItem("userId");
+        try {
+            const data = await apiRequest(`/api/user/${userId}/password`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    currentPassword: pw,
+                    newPassword: newPw,
+                    newPasswordConfirm: newPwConfirm
+                })
+            });
 
-            if (!userId) {
-                alert("Kein Benutzer gefunden. Bitte neu einloggen.");
+            document.getElementById('pw').value = '';
+            document.getElementById('newPw').value = '';
+            document.getElementById('newPwConfirm').value = '';
+            alert(data.message || 'Passwort erfolgreich geändert.');
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
+    async function deleteUser() {
+        const confirmed = confirm('Willst du deinen Account wirklich endgültig löschen?');
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            const data = await apiRequest(`/api/user/${userId}?confirmation=CONFIRM`, {
+                method: 'DELETE'
+            });
+
+            sessionStorage.clear();
+            alert(data.message || 'Benutzer erfolgreich gelöscht.');
+            window.location.href = '/';
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
+    async function saveProfilePic() {
+        if (!selectedProfileImage) {
+            alert('Bitte zuerst ein Profilbild auswählen.');
+            return;
+        }
+
+        try {
+            const data = await apiRequest(`/api/user/${userId}/avatar`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ avatar: selectedProfileImage })
+            });
+
+            updateProfileUi(data);
+            profileForm.classList.add('hidden');
+            alert('Profilbild gespeichert.');
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
+    function formatDateTime(value) {
+        if (!value) {
+            return '—';
+        }
+
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) {
+            return value;
+        }
+
+        return date.toLocaleString('de-DE');
+    }
+
+    async function loadRuns() {
+        try {
+            const runs = await apiRequest(`/api/session/runs?userId=${userId}`);
+            const activeRunId = sessionStorage.getItem('runId');
+
+            if (!Array.isArray(runs) || runs.length === 0) {
+                runsContainer.innerHTML = `
+                        <div class="rounded-xl border border-slate-700 bg-slate-900 p-4 text-slate-300">
+                            Noch keine Spielstände vorhanden.
+                        </div>
+                    `;
                 return;
             }
 
-            if (!selectedProfileImage) {
-                alert("Bitte zuerst ein Profilbild auswählen.");
-                return;
-            }
+            runsContainer.innerHTML = runs.map(run => {
+                const isActive = activeRunId && String(run.runId) === String(activeRunId);
+                const statusText = run.finished ? 'Abgeschlossen' : 'Aktiv/In Bearbeitung';
+                const statusClass = run.finished ? 'bg-slate-600' : 'bg-emerald-600';
 
-            try {
-                const response = await fetch(`/api/users/${userId}/avatar`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ avatar: selectedProfileImage })
-                });
+                return `
+                        <div class="rounded-xl border border-slate-700 bg-slate-900 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                            <div>
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <h3 class="text-lg font-bold">Spielstand #${run.runId}</h3>
+                                    <span class="${statusClass} text-white text-xs font-semibold px-2 py-1 rounded-full">${statusText}</span>
+                                    ${isActive ? '<span class="bg-indigo-600 text-white text-xs font-semibold px-2 py-1 rounded-full">Ausgewählt</span>' : ''}
+                                </div>
+                                <p class="text-slate-300 mt-2">Erstellt: ${formatDateTime(run.startedAt)}</p>
+                                <p class="text-slate-400 text-sm mt-1">Beendet: ${formatDateTime(run.finishedAt)}</p>
+                            </div>
+                            <div class="flex gap-3 flex-wrap">
+                                <button type="button"
+                                        class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
+                                        onclick="loadRun(${run.runId})">
+                                    Auswählen
+                                </button>
+                                <button type="button"
+                                        class="bg-red-600 hover:bg-red-500 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
+                                        onclick="deleteRun(${run.runId})">
+                                    Löschen
+                                </button>
+                            </div>
+                        </div>
+                    `;
+            }).join('');
+        } catch (error) {
+            runsContainer.innerHTML = `
+                    <div class="rounded-xl border border-red-800 bg-red-950/40 p-4 text-red-200">
+                        ${error.message}
+                    </div>
+                `;
+        }
+    }
 
-                let data = {};
-                try {
-                    data = await response.json();
-                } catch (e) {
-                    data = {};
-                }
+    async function loadRun(runId) {
+        try {
+            const data = await apiRequest(`/api/session/load?userId=${userId}&runId=${runId}`, {
+                method: 'POST'
+            });
 
-                if (!response.ok) {
-                    alert(data.message || "Profilbild konnte nicht gespeichert werden.");
-                    return;
-                }
+            sessionStorage.setItem('sessionId', data.sessionId);
+            sessionStorage.setItem('runId', String(data.runId));
+            await loadRuns();
+            alert(`Spielstand #${runId} wurde geladen.`);
+        } catch (error) {
+            alert(error.message);
+        }
+    }
 
-                document.getElementById("currentProfileImage").src = `/images/${selectedProfileImage}`;
-                alert(data.message || "Profilbild gespeichert.");
-                profileForm.classList.add("hidden");
-            } catch (error) {
-                console.error("Fehler beim Speichern des Profilbilds:", error);
-                alert("Verbindung zum Server fehlgeschlagen.");
-            }
+    async function createNewRun() {
+        try {
+            const data = await apiRequest(`/api/session/new?userId=${userId}`, {
+                method: 'POST'
+            });
+
+            sessionStorage.setItem('sessionId', data.sessionId);
+            sessionStorage.setItem('runId', String(data.runId));
+            await loadRuns();
+            alert(`Neuer Spielstand #${data.runId} wurde angelegt.`);
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
+    async function deleteRun(runId) {
+        const activeRunId = sessionStorage.getItem('runId');
+        const confirmed = confirm(`Soll Spielstand #${runId} wirklich gelöscht werden?`);
+        if (!confirmed) {
+            return;
         }
 
-        profileButton.addEventListener("click", openProfilePicEdit);
+        try {
+            const data = await apiRequest(`/api/game/${runId}?userId=${userId}`, {
+                method: 'DELETE'
+            });
 
-    </script>
+            if (activeRunId && String(activeRunId) === String(runId)) {
+                sessionStorage.removeItem('runId');
+                sessionStorage.removeItem('sessionId');
+            }
+
+            await loadRuns();
+            alert(data.message || 'Spielstand erfolgreich gelöscht.');
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
+    async function initProfilePage() {
+        await loadUserProfile();
+        await loadRuns();
+    }
+
+    initProfilePage();
+</script>
 </body>
 </html>
