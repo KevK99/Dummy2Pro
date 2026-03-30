@@ -14,20 +14,60 @@
 
     async function fetchDashboardOverview() {
         const userId = sessionStorage.getItem("userId");
+        const storedSessionId = sessionStorage.getItem("sessionId");
+        const storedRunId = sessionStorage.getItem("runId");
 
         if (!userId) {
             window.location.href = "/";
             return null;
         }
 
-        const response = await fetch(`/api/session/dashboard?userId=${userId}`);
-        const data = await response.json();
+        if (storedSessionId) {
+            const overviewResponse = await fetch(`/api/session/${storedSessionId}/overview`);
+
+            if (overviewResponse.ok) {
+                const overview = await overviewResponse.json();
+                const data = {
+                    ...overview,
+                    runId: storedRunId ? Number(storedRunId) : null,
+                    username: sessionStorage.getItem("username") ?? "NutzerName"
+                };
+
+                currentDashboardOverview = data;
+                return data;
+            }
+
+            sessionStorage.removeItem("sessionId");
+        }
+
+        let response;
+
+        if (storedRunId) {
+            response = await fetch(`/api/session/load?userId=${userId}&runId=${storedRunId}`, {
+                method: "POST"
+            });
+        } else {
+            response = await fetch(`/api/session/new?userId=${userId}`, {
+                method: "POST"
+            });
+        }
+
+        const payload = await response.json();
 
         if (!response.ok) {
-            alert(data.message || "Dashboard konnte nicht geladen werden.");
+            alert(payload.message || "Dashboard konnte nicht geladen werden.");
             window.location.href = "/";
             return null;
         }
+
+        sessionStorage.setItem("sessionId", payload.sessionId);
+        sessionStorage.setItem("runId", String(payload.runId));
+
+        const data = {
+            ...(payload.overview ?? {}),
+            runId: payload.runId,
+            username: sessionStorage.getItem("username") ?? "NutzerName"
+        };
 
         currentDashboardOverview = data;
         return data;
