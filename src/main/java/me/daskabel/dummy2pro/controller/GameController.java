@@ -3,6 +3,7 @@ package me.daskabel.dummy2pro.controller;
 import java.util.NoSuchElementException;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +16,7 @@ import me.daskabel.dummy2pro.repository.GameRunRepository;
 import me.daskabel.dummy2pro.repository.QuestionProgressRepository;
 import me.daskabel.dummy2pro.repository.RunGapAnswerRepository;
 import me.daskabel.dummy2pro.repository.RunSelectedAnswerRepository;
+import me.daskabel.dummy2pro.session.QuizSessionManager;
 
 @RestController
 @RequestMapping("/api/game")
@@ -61,29 +63,33 @@ public class GameController
     private final QuestionProgressRepository questionProgressRepository;
     private final RunSelectedAnswerRepository runSelectedAnswerRepository;
     private final RunGapAnswerRepository runGapAnswerRepository;
+    private final QuizSessionManager sessionManager;
 
     public GameController(
             GameRunRepository gameRunRepository,
             QuestionProgressRepository questionProgressRepository,
             RunSelectedAnswerRepository runSelectedAnswerRepository,
-            RunGapAnswerRepository runGapAnswerRepository)
+            RunGapAnswerRepository runGapAnswerRepository,
+            QuizSessionManager sessionManager)
     {
         this.gameRunRepository = gameRunRepository;
         this.questionProgressRepository = questionProgressRepository;
         this.runSelectedAnswerRepository = runSelectedAnswerRepository;
         this.runGapAnswerRepository = runGapAnswerRepository;
+        this.sessionManager = sessionManager;
     }
 
+    @Transactional
     @DeleteMapping("/{runId}")
     public ResponseEntity<MessageResponse> deleteGameRun(@PathVariable Long runId, @RequestParam Long userId)
     {
         GameRun run = this.gameRunRepository.findByRunIdAndUser_UserId(runId, userId)
                 .orElseThrow(() -> new NoSuchElementException("Spielstand nicht gefunden"));
 
-        this.runSelectedAnswerRepository.deleteByRun_RunId(runId);
-        this.runGapAnswerRepository.deleteByRun_RunId(runId);
-        this.questionProgressRepository.deleteByRun_RunId(runId);
         this.gameRunRepository.delete(run);
+        this.gameRunRepository.flush();
+
+        this.sessionManager.removeRunSession(runId);
 
         return ResponseEntity.ok(new MessageResponse("Spielstand erfolgreich gelöscht."));
     }

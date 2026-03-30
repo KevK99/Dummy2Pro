@@ -417,6 +417,29 @@ public class QuizSessionManager
         return removed;
     }
 
+    public void removeRunSession(Long runId)
+    {
+        String sessionId = this.runSessionMap.remove(runId);
+
+        if (sessionId == null)
+        {
+            return;
+        }
+
+        QuizSession removedSession = this.sessions.remove(sessionId);
+
+        if (removedSession != null)
+        {
+            Long userId = removedSession.getUserId();
+            String mappedSessionId = this.userSessionMap.get(userId);
+
+            if (sessionId.equals(mappedSessionId))
+            {
+                this.userSessionMap.remove(userId);
+            }
+        }
+    }
+
     private void persistProgress(
             Long runId,
             Question question,
@@ -491,6 +514,16 @@ public class QuizSessionManager
 
     private void persistInitialQuestionProgress(GameRun run, QuizSession session)
     {
+        List<Long> allQuestionIds = session.getRooms().values().stream()
+                .flatMap(room -> room.getQuestionSequence().stream())
+                .distinct()
+                .toList();
+
+        Map<Long, Question> questionMap = this.questionRepo.findAllById(allQuestionIds).stream()
+                .collect(Collectors.toMap(Question::getQuestionId, q -> q));
+
+        List<QuestionProgress> progressEntries = new ArrayList<>();
+
         for (RoomSession room : session.getRooms().values())
         {
             List<Long> sequence = room.getQuestionSequence();
@@ -499,22 +532,24 @@ public class QuizSessionManager
             {
                 Long questionId = sequence.get(i);
 
-                Question question = this.questionRepo.findById(questionId)
-                        .orElseThrow(() -> new NoSuchElementException(
-                                "Frage " + questionId + " nicht gefunden."));
+                Question question = questionMap.get(questionId);
+                if (question == null)
+                {
+                    throw new NoSuchElementException("Frage " + questionId + " nicht gefunden.");
+                }
 
-                QuestionProgress progress = new QuestionProgress(
+                progressEntries.add(new QuestionProgress(
                         run,
                         question,
                         room.getRoomId(),
                         i + 1,
                         ProgressStatus.OPEN,
                         null
-                );
-
-                this.questionProgressRepo.save(progress);
+                ));
             }
         }
+
+        this.questionProgressRepo.saveAll(progressEntries);
     }
 
     private QuizSession restoreSessionFromRun(Long runId)

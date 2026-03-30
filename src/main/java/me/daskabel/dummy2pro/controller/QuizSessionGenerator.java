@@ -135,55 +135,40 @@ public class QuizSessionGenerator
 	 *
 	 * @param roomId 1..7
 	 */
-	@Transactional(readOnly = true)
-	public RoomSession buildRoomSession(int roomId)
-	{
-		// Theme laden
-        List<Theme> themes = themeRepo.findAllByOrderByThemeIdAsc();
-
-        if (roomId < 1 || roomId > themes.size()) {
-            throw new IllegalArgumentException("Ungültige roomId: " + roomId);
-        }
-
-        Theme theme = themes.get(roomId - 1);
-
-		// Alle Fragen des Themas laden (mit Answers und Gaps vorgeladen)
-		List<Question> questions = loadAllQuestionsForTheme(roomId);
+    @Transactional(readOnly = true)
+    public RoomSession buildRoomSession(Theme theme, int roomId)
+    {
+        List<Question> questions = loadAllQuestionsForTheme(theme.getThemeId());
 
         if (questions.isEmpty())
         {
             throw new IllegalStateException("Für Raum " + roomId + " sind keine Fragen in der Datenbank vorhanden.");
         }
 
-		// Reihenfolge mischen — pro Session anders
-		List<Question> shuffled = new ArrayList<>(questions);
-		Collections.shuffle(shuffled);
+        List<Question> shuffled = new ArrayList<>(questions);
+        Collections.shuffle(shuffled);
 
-        // pro Raum nur oben angegebene Anzahl an Fragen nehmen
         int questionCountForRun = Math.min(QUESTIONS_PER_ROOM, shuffled.size());
         List<Question> selectedQuestions = new ArrayList<>(shuffled.subList(0, questionCountForRun));
 
-		// IDs als Sequenz
-		List<Long> sequence = selectedQuestions.stream()
-                    .map(Question::getQuestionId)
-					.collect(Collectors.toList());
+        List<Long> sequence = selectedQuestions.stream()
+                .map(Question::getQuestionId)
+                .collect(Collectors.toList());
 
-		// QuestionDtos bauen und in Cache legen (ohne is_correct!)
-		Map<Long, QuestionDto> cache = new LinkedHashMap<>();
-		for (int i = 0; i < selectedQuestions.size(); i++)
-		{
-			Question q = selectedQuestions.get(i);
-			QuestionDto dto = toQuestionDto(q, i, selectedQuestions.size());
-			cache.put(q.getQuestionId(), dto);
-		}
+        Map<Long, QuestionDto> cache = new LinkedHashMap<>();
+        for (int i = 0; i < selectedQuestions.size(); i++)
+        {
+            Question q = selectedQuestions.get(i);
+            QuestionDto dto = toQuestionDto(q, i, selectedQuestions.size());
+            cache.put(q.getQuestionId(), dto);
+        }
 
-		// Maximale Punkte des Raums
         int maxPoints = selectedQuestions.stream()
                 .mapToInt(Question::getPoints)
                 .sum();
 
-		return new RoomSession(roomId, theme.getName(), sequence, cache, maxPoints);
-	}
+        return new RoomSession(roomId, theme.getName(), sequence, cache, maxPoints);
+    }
 
 	// ----------------------------------------------------------------
 	// Private Hilfsmethoden
@@ -196,21 +181,22 @@ public class QuizSessionGenerator
      * @param runId aktueller Spielstand
 	 * @return Fertige QuizSession, bereit zum Spielen
 	 */
-	@Transactional(readOnly = true)
-	public QuizSession generate(Long userId, Long runId)
-	{
-		QuizSession session = new QuizSession(userId, runId);
+    @Transactional(readOnly = true)
+    public QuizSession generate(Long userId, Long runId)
+    {
+        QuizSession session = new QuizSession(userId, runId);
 
         List<Theme> themes = themeRepo.findAllByOrderByThemeIdAsc();
-		for (int i = 0; i < themes.size(); i++)
-		{
+        for (int i = 0; i < themes.size(); i++)
+        {
             int roomId = i + 1;
-			RoomSession roomSession = buildRoomSession(roomId);
-			session.addRoom(roomSession);
-		}
+            Theme theme = themes.get(i);
+            RoomSession roomSession = buildRoomSession(theme, roomId);
+            session.addRoom(roomSession);
+        }
 
-		return session;
-	}
+        return session;
+    }
 
 	/**
 	 * Lädt begrenzte Anzahl an Fragen eines Themas mit MC-Antworten UND GAP-Feldern.
@@ -219,30 +205,26 @@ public class QuizSessionGenerator
 	 * (MultipleBagFetchException), werden zwei Queries gemacht und in-memory
 	 * zusammengeführt.
 	 */
-	private List<Question> loadAllQuestionsForTheme(int roomId)
-	{
-        List<Theme> themes = themeRepo.findAllByOrderByThemeIdAsc();
-		long themeId = themes.get(roomId - 1).getThemeId();
+    private List<Question> loadAllQuestionsForTheme(Long themeId)
+    {
+        List<Question> withAnswers = this.questionRepo.findByThemeIdWithAnswers(themeId);
+        List<Question> withGaps = this.questionRepo.findByThemeIdWithGaps(themeId);
 
-		List<Question> withAnswers = this.questionRepo.findByThemeIdWithAnswers(themeId);
-		List<Question> withGaps = this.questionRepo.findByThemeIdWithGaps(themeId);
+        Map<Long, Question> gapMap = withGaps.stream()
+                .collect(Collectors.toMap(Question::getQuestionId, q -> q));
 
-		// GAP-Daten in die withAnswers-Liste einbauen
-		Map<Long, Question> gapMap = withGaps.stream()
-					.collect(Collectors.toMap(Question::getQuestionId, q -> q));
-
-		for (Question q : withAnswers)
-		{
+        for (Question q : withAnswers)
+        {
             if (q.getQuestionType() == QuestionType.GAP)
-			{
-				Question gapVersion = gapMap.get(q.getQuestionId());
-				if (gapVersion != null)
-				{
-					q.setGapFields(gapVersion.getGapFields());
-				}
-			}
-		}
+            {
+                Question gapVersion = gapMap.get(q.getQuestionId());
+                if (gapVersion != null)
+                {
+                    q.setGapFields(gapVersion.getGapFields());
+                }
+            }
+        }
 
-		return withAnswers;
-	}
+        return withAnswers;
+    }
 }
