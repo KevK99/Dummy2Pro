@@ -4,7 +4,7 @@
       th:replace="~{base :: layout(~{::body}, 'min-h-screen bg-[linear-gradient(135deg,_#60a5fa_0%,_#a78bfa_35%,_#f87171_70%,_#f472b6_100%)] text-slate-950 dark:bg-none dark:bg-slate-950 dark:text-slate-100')}">
 <body class="min-h-screen text-slate-950 dark:text-slate-100">
 
-<div th:replace="~{fragments/headline :: headline(${username}, ${answeredQuestions}, ${totalQuestions}, ${avatarUrl})}"></div>
+<div th:replace="~{fragments/headline :: headline(${ 'Willkommen zurück, ' + username + '!'}, null, ${avatarUrl}, ${answeredQuestions}, ${totalQuestions})}"></div>
 
 <div id="roomsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 px-64 pt-6 pb-10"></div>
 
@@ -128,7 +128,7 @@
     }
 
     function updateHeadline(data) {
-        const usernameElement = document.getElementById("headlineUsername");
+        const titleElement = document.getElementById("headlineTitle");
         const answeredElement = document.getElementById("headlineAnsweredQuestions");
         const totalElement = document.getElementById("headlineTotalQuestions");
         const avatarElement = document.getElementById("headlineAvatar");
@@ -143,11 +143,13 @@
             return sum + Number(room.totalQuestions ?? 0);
         }, 0);
 
-        if (usernameElement) {
-            usernameElement.textContent =
+        if (titleElement) {
+            const username =
                 data.username ??
                 sessionStorage.getItem("username") ??
                 "NutzerName";
+
+            titleElement.textContent = `Willkommen zurück, ${username}!`;
         }
 
         if (answeredElement) {
