@@ -12,6 +12,63 @@
 <script>
     let currentDashboardOverview = null;
 
+    function toSortableTimestampDesc(value) {
+        const timestamp = new Date(value).getTime();
+        return Number.isNaN(timestamp) ? 0 : timestamp;
+    }
+
+    function pickPreferredRun(runs) {
+        if (!Array.isArray(runs) || runs.length === 0) {
+            return null;
+        }
+
+        return [...runs].sort((a, b) => {
+            const aFinished = Boolean(a.finished);
+            const bFinished = Boolean(b.finished);
+
+            if (aFinished !== bFinished) {
+                return aFinished ? 1 : -1;
+            }
+
+            const timeDiff = toSortableTimestampDesc(b.startedAt) - toSortableTimestampDesc(a.startedAt);
+            if (timeDiff !== 0) {
+                return timeDiff;
+            }
+
+            return Number(b.runId ?? 0) - Number(a.runId ?? 0);
+        })[0] ?? null;
+    }
+
+    async function loadPreferredRunSession(userId) {
+        const runsResponse = await fetch(`/api/session/runs?userId=${userId}`);
+
+        if (!runsResponse.ok) {
+            return {
+                ok: false,
+                payload: await runsResponse.json().catch(() => ({}))
+            };
+        }
+
+        const runs = await runsResponse.json();
+        const preferredRun = pickPreferredRun(runs);
+
+        let response;
+        if (preferredRun?.runId) {
+            response = await fetch(`/api/session/load?userId=${userId}&runId=${preferredRun.runId}`, {
+                method: "POST"
+            });
+        } else {
+            response = await fetch(`/api/session/new?userId=${userId}`, {
+                method: "POST"
+            });
+        }
+
+        return {
+            ok: response.ok,
+            payload: await response.json().catch(() => ({}))
+        };
+    }
+
     async function fetchDashboardOverview() {
         const userId = sessionStorage.getItem("userId");
         const storedSessionId = sessionStorage.getItem("sessionId");
@@ -40,24 +97,30 @@
             sessionStorage.removeItem("sessionId");
         }
 
-        let response;
+        let payload = null;
 
         if (storedRunId) {
-            response = await fetch(`/api/session/load?userId=${userId}&runId=${storedRunId}`, {
+            const storedRunResponse = await fetch(`/api/session/load?userId=${userId}&runId=${storedRunId}`, {
                 method: "POST"
             });
-        } else {
-            response = await fetch(`/api/session/new?userId=${userId}`, {
-                method: "POST"
-            });
+
+            if (storedRunResponse.ok) {
+                payload = await storedRunResponse.json();
+            } else {
+                sessionStorage.removeItem("runId");
+            }
         }
 
-        const payload = await response.json();
+        if (!payload) {
+            const preferredSessionResult = await loadPreferredRunSession(userId);
 
-        if (!response.ok) {
-            alert(payload.message || "Dashboard konnte nicht geladen werden.");
-            window.location.href = "/";
-            return null;
+            if (!preferredSessionResult.ok) {
+                alert(preferredSessionResult.payload.message || "Dashboard konnte nicht geladen werden.");
+                window.location.href = "/";
+                return null;
+            }
+
+            payload = preferredSessionResult.payload;
         }
 
         sessionStorage.setItem("sessionId", payload.sessionId);
@@ -99,22 +162,27 @@
         sessionStorage.removeItem("sessionId");
         sessionStorage.removeItem("runId");
 
-        let response;
+        let data = null;
+
         if (desiredRunId) {
-            response = await fetch(`/api/session/load?userId=${userId}&runId=${desiredRunId}`, {
+            const desiredRunResponse = await fetch(`/api/session/load?userId=${userId}&runId=${desiredRunId}`, {
                 method: "POST"
             });
-        } else {
-            response = await fetch(`/api/session/new?userId=${userId}`, {
-                method: "POST"
-            });
+
+            if (desiredRunResponse.ok) {
+                data = await desiredRunResponse.json();
+            }
         }
 
-        const data = await response.json();
+        if (!data) {
+            const preferredSessionResult = await loadPreferredRunSession(userId);
 
-        if (!response.ok) {
-            alert(data.message || "Session konnte nicht geladen werden.");
-            return null;
+            if (!preferredSessionResult.ok) {
+                alert(preferredSessionResult.payload.message || "Session konnte nicht geladen werden.");
+                return null;
+            }
+
+            data = preferredSessionResult.payload;
         }
 
         sessionStorage.setItem("userId", String(userId));

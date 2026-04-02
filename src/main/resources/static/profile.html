@@ -264,6 +264,13 @@
     const userId = sessionStorage.getItem("userId");
     let selectedProfileImage = null;
     let currentAvatar = sessionStorage.getItem("avatar") || "duck.jpg";
+    let currentRuns = [];
+
+    function escapeHtml(value) {
+        const div = document.createElement("div");
+        div.textContent = value ?? "";
+        return div.innerHTML;
+    }
 
     function openNameEdit() {
         nameForm.classList.add("hidden");
@@ -477,65 +484,134 @@
         return date.toLocaleString("de-DE");
     }
 
+    function getRunDisplayName(run, index) {
+        const customName = (run?.displayName ?? "").trim();
+
+        if (customName) {
+            return customName;
+        }
+
+        return `Spielstand ${index + 1}`;
+    }
+
+    function toSortableTimestamp(value) {
+        const timestamp = new Date(value).getTime();
+        return Number.isNaN(timestamp) ? Number.MAX_SAFE_INTEGER : timestamp;
+    }
+
     async function loadRuns() {
         try {
             const runs = await apiRequest(`/api/session/runs?userId=${userId}`);
             const activeRunId = sessionStorage.getItem("runId");
 
             if (!Array.isArray(runs) || runs.length === 0) {
+                currentRuns = [];
                 runsContainer.innerHTML = `
-                        <div class="bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-3">
-                            Noch keine Spielstände vorhanden.
-                        </div>
-                    `;
+                    <div class="bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-3">
+                        Noch keine Spielstände vorhanden.
+                    </div>
+                `;
                 return;
             }
 
-            runsContainer.innerHTML = runs.map((run, index) => {
-                const displayNumber = index + 1;
+            const sortedRuns = [...runs].sort((a, b) => {
+                const timeDiff = toSortableTimestamp(a.startedAt) - toSortableTimestamp(b.startedAt);
+
+                if (timeDiff !== 0) {
+                    return timeDiff;
+                }
+
+                return Number(a.runId ?? 0) - Number(b.runId ?? 0);
+            });
+
+            currentRuns = sortedRuns;
+
+            runsContainer.innerHTML = currentRuns.map((run, index) => {
+                const displayName = getRunDisplayName(run, index);
                 const isActive = activeRunId && String(run.runId) === String(activeRunId);
                 const statusText = run.finished ? "Abgeschlossen" : "In Bearbeitung";
                 const statusClass = run.finished ? "bg-slate-600" : "bg-emerald-600";
+                const deleteDisabled = currentRuns.length === 1;
 
                 return `
-                        <div class="bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                            <div>
-                                <div class="flex items-center gap-2 flex-wrap">
-                                    <span class="font-bold">Spielstand ${displayNumber}</span>
-                                    <span class="${statusClass} text-white text-xs font-semibold px-2 py-1 rounded-full">${statusText}</span>
-                                    ${isActive ? '<span class="bg-indigo-600 text-white text-xs font-semibold px-2 py-1 rounded-full">Ausgewählt</span>' : ''}
-                                </div>
-
-                                <p class="mt-2 text-slate-300">Erstellt: ${formatDateTime(run.startedAt)}</p>
-                                <p class="mt-1 text-slate-400">Beendet: ${formatDateTime(run.finishedAt)}</p>
+                    <div class="bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="font-bold">${displayName}</span>
+                                <span class="${statusClass} text-white text-xs font-semibold px-2 py-1 rounded-full">${statusText}</span>
+                                ${isActive ? '<span class="bg-indigo-600 text-white text-xs font-semibold px-2 py-1 rounded-full">Ausgewählt</span>' : ''}
                             </div>
 
-                            <div class="flex gap-3 flex-wrap">
-                                <button
-                                    type="button"
-                                    class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20 disabled:bg-gray-700 disabled:shadow-none"
-                                    onclick="loadRun(${run.runId})"
-                                >
-                                    Auswählen
-                                </button>
-
-                                <button
-                                    type="button"
-                                    class="bg-red-600 hover:bg-red-500 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 shadow-lg shadow-red-600/20 disabled:bg-gray-700 disabled:shadow-none"
-                                    onclick="deleteRun(${run.runId})"
-                                >
-                                    Löschen
-                                </button>
-                            </div>
+                            <p class="mt-2 text-slate-300">Erstellt: ${formatDateTime(run.startedAt)}</p>
+                            <p class="mt-1 text-slate-400">Beendet: ${formatDateTime(run.finishedAt)}</p>
                         </div>
-                    `;
+
+                        <div class="flex gap-3 flex-wrap">
+                            <button
+                                type="button"
+                                class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20 disabled:bg-gray-700 disabled:shadow-none"
+                                onclick="loadRun(${run.runId})"
+                            >
+                                Auswählen
+                            </button>
+
+                            <button
+                                type="button"
+                                class="bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
+                                onclick="renameRun(${run.runId})"
+                            >
+                                Umbenennen
+                            </button>
+
+                            <button
+                                type="button"
+                                class="bg-red-600 hover:bg-red-500 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 shadow-lg shadow-red-600/20 disabled:bg-gray-700 disabled:shadow-none"
+                                onclick="deleteRun(${run.runId})"
+                                ${deleteDisabled ? "disabled" : ""}
+                            >
+                                Löschen
+                            </button>
+                        </div>
+                    </div>
+                `;
             }).join("");
         } catch (error) {
             runsContainer.innerHTML = `
-                    <div class="bg-slate-900 border border-red-500 text-red-300 rounded-lg px-4 py-3">
-                        ${error.message}
-                    </div>
-                `;
+                <div class="bg-slate-900 border border-red-500 text-red-300 rounded-lg px-4 py-3">
+                    ${error.message}
+                </div>
+            `;
+        }
+    }
+
+    async function renameRun(runId) {
+        const run = currentRuns.find(entry => String(entry.runId) === String(runId));
+
+        if (!run) {
+            alert("Spielstand nicht gefunden.");
+            return;
+        }
+
+        const newName = prompt(
+            "Gib einen Namen für den Spielstand ein. Leer lassen = Standardname.",
+            run.displayName ?? ""
+        );
+
+        if (newName === null) {
+            return;
+        }
+
+        try {
+            await apiRequest(`/api/session/${runId}/name?userId=${userId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ displayName: newName })
+            });
+
+            await loadRuns();
+            alert("Spielstand wurde aktualisiert.");
+        } catch (error) {
+            alert(error.message);
         }
     }
 

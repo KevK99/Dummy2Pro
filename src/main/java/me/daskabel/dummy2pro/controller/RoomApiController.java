@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -82,6 +83,7 @@ public class RoomApiController
         private LocalDateTime startedAt;
         private LocalDateTime finishedAt;
         private boolean finished;
+        private String displayName;
 
         public LocalDateTime getFinishedAt()
         {
@@ -103,6 +105,11 @@ public class RoomApiController
             return this.finished;
         }
 
+        public String getDisplayName()
+        {
+            return this.displayName;
+        }
+
         public void setFinished(boolean finished)
         {
             this.finished = finished;
@@ -121,6 +128,26 @@ public class RoomApiController
         public void setStartedAt(LocalDateTime startedAt)
         {
             this.startedAt = startedAt;
+        }
+
+        public void setDisplayName(String displayName)
+        {
+            this.displayName = displayName;
+        }
+    }
+
+    public static class RenameRunRequest
+    {
+        private String displayName;
+
+        public String getDisplayName()
+        {
+            return this.displayName;
+        }
+
+        public void setDisplayName(String displayName)
+        {
+            this.displayName = displayName;
         }
     }
 
@@ -223,10 +250,26 @@ public class RoomApiController
             dto.setStartedAt(run.getStartedAt());
             dto.setFinishedAt(run.getFinishedAt());
             dto.setFinished(run.getFinishedAt() != null);
+            dto.setDisplayName(run.getDisplayName());
             return dto;
         }).toList();
 
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{runId}/name")
+    public ResponseEntity<RunListEntryResponse> renameRun(
+            @PathVariable Long runId,
+            @RequestParam Long userId,
+            @RequestBody RenameRunRequest request)
+    {
+        GameRun run = this.gameRunRepository.findByRunIdAndUser_UserId(runId, userId)
+                .orElseThrow(() -> new NoSuchElementException("Spielstand nicht gefunden"));
+
+        run.setDisplayName(normalizeDisplayName(request != null ? request.getDisplayName() : null));
+
+        GameRun savedRun = this.gameRunRepository.save(run);
+        return ResponseEntity.ok(toRunListEntryResponse(savedRun));
     }
 
     // Fehlerbehandlung
@@ -302,6 +345,39 @@ public class RoomApiController
     public ResponseEntity<RoomStatusDto> prepareRoom(@PathVariable String sessionId, @PathVariable int roomId)
     {
         return ResponseEntity.ok(this.sessionManager.prepareRoom(sessionId, roomId));
+    }
+
+    private String normalizeDisplayName(String displayName)
+    {
+        if (displayName == null)
+        {
+            return null;
+        }
+
+        String trimmed = displayName.trim();
+
+        if (trimmed.isEmpty())
+        {
+            return null;
+        }
+
+        if (trimmed.length() > 100)
+        {
+            throw new IllegalArgumentException("Der Spielstandname darf maximal 100 Zeichen lang sein.");
+        }
+
+        return trimmed;
+    }
+
+    private RunListEntryResponse toRunListEntryResponse(GameRun run)
+    {
+        RunListEntryResponse dto = new RunListEntryResponse();
+        dto.setRunId(run.getRunId());
+        dto.setStartedAt(run.getStartedAt());
+        dto.setFinishedAt(run.getFinishedAt());
+        dto.setFinished(run.getFinishedAt() != null);
+        dto.setDisplayName(run.getDisplayName());
+        return dto;
     }
 
 }

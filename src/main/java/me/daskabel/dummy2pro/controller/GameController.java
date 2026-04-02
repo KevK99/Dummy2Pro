@@ -86,6 +86,13 @@ public class GameController
         GameRun run = this.gameRunRepository.findByRunIdAndUser_UserId(runId, userId)
                 .orElseThrow(() -> new NoSuchElementException("Spielstand nicht gefunden"));
 
+        long runCount = this.gameRunRepository.countByUser_UserId(userId);
+        if (runCount <= 1)
+        {
+            return ResponseEntity.badRequest()
+                    .body(new MessageResponse("Der letzte Spielstand kann nicht gelöscht werden."));
+        }
+
         this.gameRunRepository.delete(run);
         this.gameRunRepository.flush();
 

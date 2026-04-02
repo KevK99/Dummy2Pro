@@ -27,6 +27,9 @@ public class GameRun {
     @Column(name = "finished_at")
     private LocalDateTime finishedAt;
 
+    @Column(name = "display_name")
+    private String displayName;
+
     public GameRun() {
     }
 
@@ -60,5 +63,13 @@ public class GameRun {
 
     public void setFinishedAt(LocalDateTime finishedAt) {
         this.finishedAt = finishedAt;
+    }
+
+    public String getDisplayName() {
+        return this.displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 }

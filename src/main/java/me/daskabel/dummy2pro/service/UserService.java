@@ -1,5 +1,6 @@
 package me.daskabel.dummy2pro.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -126,6 +127,7 @@ public class UserService
                 .orElse(false);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public User register(String username, String password)
     {
         validateUsername(username);
@@ -139,24 +141,17 @@ public class UserService
         String passwordHash = encoder.encode(password);
         User user = new User(username, passwordHash, DEFAULT_AVATAR);
 
-        return userRepository.save(user);
-    }
+        User savedUser = userRepository.save(user);
 
-    public User updateAvatar(Long userId, String avatar)
-    {
-        if (avatar == null || avatar.isBlank())
-        {
-            throw new IllegalArgumentException("Es wurde kein Avatar ausgewählt.");
-        }
+        GameRun initialRun = new GameRun();
+        initialRun.setUser(savedUser);
+        initialRun.setStartedAt(LocalDateTime.now());
+        initialRun.setFinishedAt(null);
+        initialRun.setDisplayName(null);
 
-        if (!ALLOWED_AVATARS.contains(avatar))
-        {
-            throw new IllegalArgumentException("Das ausgewählte Profilbild ist nicht erlaubt.");
-        }
+        this.gameRunRepository.save(initialRun);
 
-        User user = getUser(userId);
-        user.setAvatar(avatar);
-        return this.userRepository.save(user);
+        return savedUser;
     }
 
     public User updateUsername(Long userId, String newUsername)
@@ -172,6 +167,25 @@ public class UserService
         }
 
         user.setUsername(newUsername);
+        return this.userRepository.save(user);
+    }
+
+    public User updateAvatar(Long userId, String newAvatar)
+    {
+        User user = getUser(userId);
+
+        if (newAvatar == null || newAvatar.isBlank())
+        {
+            user.setAvatar(DEFAULT_AVATAR);
+            return this.userRepository.save(user);
+        }
+
+        if (!ALLOWED_AVATARS.contains(newAvatar))
+        {
+            throw new IllegalArgumentException("Ungültiger Avatar.");
+        }
+
+        user.setAvatar(newAvatar);
         return this.userRepository.save(user);
     }
 
