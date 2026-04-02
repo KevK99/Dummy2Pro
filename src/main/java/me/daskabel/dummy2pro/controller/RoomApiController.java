@@ -298,4 +298,10 @@ public class RoomApiController
         return ResponseEntity.ok(this.sessionManager.submitAnswer(sessionId, roomId, request));
     }
 
+    @PostMapping("/{sessionId}/room/{roomId}/prepare")
+    public ResponseEntity<RoomStatusDto> prepareRoom(@PathVariable String sessionId, @PathVariable int roomId)
+    {
+        return ResponseEntity.ok(this.sessionManager.prepareRoom(sessionId, roomId));
+    }
+
 }

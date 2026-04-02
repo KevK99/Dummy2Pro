@@ -254,6 +254,40 @@
 
         updateHeadline(data);
         renderRooms(data.rooms ?? []);
+
+        const sessionId = sessionStorage.getItem("sessionId");
+        if (!sessionId) {
+            return;
+        }
+
+        const rooms = (data.rooms ?? [])
+            .slice()
+            .sort((a, b) => Number(a.roomId) - Number(b.roomId));
+
+        for (const room of rooms) {
+            const response = await fetch(`/api/session/${sessionId}/room/${room.roomId}/prepare`, {
+                method: "POST"
+            });
+
+            if (!response.ok) {
+                continue;
+            }
+
+            const preparedRoom = await response.json();
+
+            const index = currentDashboardOverview.rooms.findIndex(
+                existingRoom => Number(existingRoom.roomId) === Number(preparedRoom.roomId)
+            );
+
+            if (index >= 0) {
+                currentDashboardOverview.rooms[index] = preparedRoom;
+            } else {
+                currentDashboardOverview.rooms.push(preparedRoom);
+            }
+
+            updateHeadline(currentDashboardOverview);
+            renderRooms(currentDashboardOverview.rooms);
+        }
     }
 
     async function openRoom(roomId) {

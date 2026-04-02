@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+import java.util.Objects;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -138,36 +139,92 @@ public class QuizSessionGenerator
     @Transactional(readOnly = true)
     public RoomSession buildRoomSession(Theme theme, int roomId)
     {
-        List<Question> questions = loadAllQuestionsForTheme(theme.getThemeId());
+        List<Long> availableQuestionIds = new ArrayList<>(
+                this.questionRepo.findQuestionIdsByThemeId(theme.getThemeId()));
 
-        if (questions.isEmpty())
+        if (availableQuestionIds.isEmpty())
         {
-            throw new IllegalStateException("Für Raum " + roomId + " sind keine Fragen in der Datenbank vorhanden.");
+            throw new IllegalStateException(
+                    "Für Raum " + roomId + " sind keine Fragen in der Datenbank vorhanden.");
         }
 
-        List<Question> shuffled = new ArrayList<>(questions);
-        Collections.shuffle(shuffled);
+        Collections.shuffle(availableQuestionIds);
 
-        int questionCountForRun = Math.min(QUESTIONS_PER_ROOM, shuffled.size());
-        List<Question> selectedQuestions = new ArrayList<>(shuffled.subList(0, questionCountForRun));
+        int questionCountForRun = Math.min(QUESTIONS_PER_ROOM, availableQuestionIds.size());
+        List<Long> selectedIds = new ArrayList<>(availableQuestionIds.subList(0, questionCountForRun));
 
-        List<Long> sequence = selectedQuestions.stream()
-                .map(Question::getQuestionId)
-                .collect(Collectors.toList());
+        List<Question> orderedSelectedQuestions = loadQuestionsByIdsOrdered(selectedIds);
 
         Map<Long, QuestionDto> cache = new LinkedHashMap<>();
-        for (int i = 0; i < selectedQuestions.size(); i++)
+        for (int i = 0; i < orderedSelectedQuestions.size(); i++)
         {
-            Question q = selectedQuestions.get(i);
-            QuestionDto dto = toQuestionDto(q, i, selectedQuestions.size());
+            Question q = orderedSelectedQuestions.get(i);
+            QuestionDto dto = toQuestionDto(q, i, orderedSelectedQuestions.size());
             cache.put(q.getQuestionId(), dto);
         }
 
-        int maxPoints = selectedQuestions.stream()
+        int maxPoints = orderedSelectedQuestions.stream()
                 .mapToInt(Question::getPoints)
                 .sum();
 
-        return new RoomSession(roomId, theme.getName(), sequence, cache, maxPoints);
+        return new RoomSession(roomId, theme.getName(), selectedIds, cache, maxPoints);
+    }
+
+    @Transactional(readOnly = true)
+    public QuizSession generateSkeleton(Long userId, Long runId)
+    {
+        QuizSession session = new QuizSession(userId, runId);
+
+        List<Theme> themes = this.themeRepo.findAllByOrderByThemeIdAsc();
+        for (int i = 0; i < themes.size(); i++)
+        {
+            int roomId = i + 1;
+            Theme theme = themes.get(i);
+
+            RoomSession placeholderRoom = new RoomSession(
+                    roomId,
+                    theme.getName(),
+                    List.of(),
+                    Map.of(),
+                    0
+            );
+
+            session.addRoom(placeholderRoom);
+        }
+
+        return session;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Theme> getThemesOrdered()
+    {
+        return this.themeRepo.findAllByOrderByThemeIdAsc();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Question> loadQuestionsByIdsOrdered(List<Long> questionIds)
+    {
+        if (questionIds == null || questionIds.isEmpty())
+        {
+            return List.of();
+        }
+
+        List<Question> selectedQuestions = loadSelectedQuestions(questionIds);
+
+        Map<Long, Question> questionMap = selectedQuestions.stream()
+                .collect(Collectors.toMap(Question::getQuestionId, q -> q));
+
+        List<Question> orderedSelectedQuestions = questionIds.stream()
+                .map(questionMap::get)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        if (orderedSelectedQuestions.size() != questionIds.size())
+        {
+            throw new IllegalStateException("Nicht alle ausgewählten Fragen konnten geladen werden.");
+        }
+
+        return orderedSelectedQuestions;
     }
 
 	// ----------------------------------------------------------------
@@ -205,26 +262,34 @@ public class QuizSessionGenerator
 	 * (MultipleBagFetchException), werden zwei Queries gemacht und in-memory
 	 * zusammengeführt.
 	 */
-    private List<Question> loadAllQuestionsForTheme(Long themeId)
+    private List<Question> loadSelectedQuestions(List<Long> questionIds)
     {
-        List<Question> withAnswers = this.questionRepo.findByThemeIdWithAnswers(themeId);
-        List<Question> withGaps = this.questionRepo.findByThemeIdWithGaps(themeId);
+        List<Question> withAnswers = this.questionRepo.findByQuestionIdsWithAnswers(questionIds);
+        List<Question> withGaps = this.questionRepo.findByQuestionIdsWithGaps(questionIds);
 
-        Map<Long, Question> gapMap = withGaps.stream()
-                .collect(Collectors.toMap(Question::getQuestionId, q -> q));
+        Map<Long, Question> mergedMap = new LinkedHashMap<>();
 
         for (Question q : withAnswers)
         {
-            if (q.getQuestionType() == QuestionType.GAP)
+            mergedMap.put(q.getQuestionId(), q);
+        }
+
+        for (Question gapQuestion : withGaps)
+        {
+            Question existing = mergedMap.get(gapQuestion.getQuestionId());
+
+            if (existing == null)
             {
-                Question gapVersion = gapMap.get(q.getQuestionId());
-                if (gapVersion != null)
-                {
-                    q.setGapFields(gapVersion.getGapFields());
-                }
+                mergedMap.put(gapQuestion.getQuestionId(), gapQuestion);
+                continue;
+            }
+
+            if (gapQuestion.getGapFields() != null && !gapQuestion.getGapFields().isEmpty())
+            {
+                existing.setGapFields(gapQuestion.getGapFields());
             }
         }
 
-        return withAnswers;
+        return new ArrayList<>(mergedMap.values());
     }
 }

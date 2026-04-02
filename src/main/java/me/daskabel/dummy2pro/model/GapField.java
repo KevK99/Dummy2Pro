@@ -1,7 +1,8 @@
 package me.daskabel.dummy2pro.model;
 
 import jakarta.persistence.*;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "gap_field")
@@ -26,7 +27,8 @@ public class GapField {
     private String textAfter;
 
     @OneToMany(mappedBy = "gapField", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<GapOption> gapOptions;
+    @OrderBy("optionOrder ASC")
+    private Set<GapOption> gapOptions = new LinkedHashSet<>();
 
     // Constructors
     public GapField() {}
@@ -52,6 +54,6 @@ public class GapField {
     public String getTextAfter() { return textAfter; }
     public void setTextAfter(String textAfter) { this.textAfter = textAfter; }
 
-    public List<GapOption> getGapOptions() { return gapOptions; }
-    public void setGapOptions(List<GapOption> gapOptions) { this.gapOptions = gapOptions; }
+    public Set<GapOption> getGapOptions() { return gapOptions; }
+    public void setGapOptions(Set<GapOption> gapOptions) { this.gapOptions = gapOptions; }
 }

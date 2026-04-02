@@ -1,6 +1,8 @@
 package me.daskabel.dummy2pro.model;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.*;
 
@@ -40,7 +42,8 @@ public class Question
     private List<AnswerOption> answerOptions;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<GapField> gapFields;
+    @OrderBy("gapIndex ASC")
+    private Set<GapField> gapFields = new LinkedHashSet<>();
 
     @ManyToMany
     @JoinTable(
@@ -162,12 +165,12 @@ public class Question
         this.answerOptions = answerOptions;
     }
 
-    public List<GapField> getGapFields()
+    public Set<GapField> getGapFields()
     {
         return gapFields;
     }
 
-    public void setGapFields(List<GapField> gapFields)
+    public void setGapFields(Set<GapField> gapFields)
     {
         this.gapFields = gapFields;
     }
