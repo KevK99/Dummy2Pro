@@ -308,7 +308,7 @@
         </div>
 
         <!-- PANDA -->
-        <div id="gamePanda" class="absolute left-[390px] top-[-34px] flex flex-col items-center pointer-events-none animate-bounce [animation-duration:2s] z-50">
+        <div id="gamePanda" class="absolute left-[390px] top-[-34px] flex flex-col items-center pointer-events-none z-50">
             <div class="w-[130px] h-[22px] bg-white/80 rounded-full blur-sm"></div>
 
             <svg class="w-[160px] mt-[-8px]" viewBox="0 0 24 24" shape-rendering="crispEdges">
@@ -1692,7 +1692,6 @@
 
             if (!response.ok) {
                 sessionStorage.removeItem("sessionId");
-                sessionStorage.removeItem("runId");
                 alert(data.message || "Raum konnte nicht geladen werden.");
                 window.location.href = "/dashboard";
                 return false;

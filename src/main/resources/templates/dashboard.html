@@ -11,6 +11,7 @@
 <script th:src="@{/js/darkmode.js}"></script>
 <script>
     let currentDashboardOverview = null;
+    let isOpeningRoom = false;
 
     function toSortableTimestampDesc(value) {
         const timestamp = new Date(value).getTime();
@@ -67,6 +68,22 @@
             ok: response.ok,
             payload: await response.json().catch(() => ({}))
         };
+    }
+
+    function setRoomOpeningState(roomId, isLoading) {
+        const roomLinks = document.querySelectorAll(".room-link");
+
+        roomLinks.forEach(link => {
+            const isTarget = String(link.dataset.roomId) === String(roomId);
+            const loadingText = link.querySelector("[data-room-loading-text]");
+
+            link.classList.toggle("pointer-events-none", isLoading);
+            link.classList.toggle("opacity-70", isLoading && isTarget);
+
+            if (loadingText) {
+                loadingText.classList.toggle("hidden", !(isLoading && isTarget));
+            }
+        });
     }
 
     async function fetchDashboardOverview() {
@@ -149,18 +166,11 @@
         const storedRunId = sessionStorage.getItem("runId");
 
         if (storedSessionId && storedRunId && desiredRunId && storedRunId === String(desiredRunId)) {
-            const probeResponse = await fetch(`/api/session/${storedSessionId}/overview`);
-
-            if (probeResponse.ok) {
-                return {
-                    sessionId: storedSessionId,
-                    runId: storedRunId
-                };
-            }
+            return {
+                sessionId: storedSessionId,
+                runId: storedRunId
+            };
         }
-
-        sessionStorage.removeItem("sessionId");
-        sessionStorage.removeItem("runId");
 
         let data = null;
 
@@ -307,6 +317,10 @@
                             <span class="rounded-full ${badgeClass} px-3 py-1 text-xs font-bold text-slate-950">
                                 ${statusText} (${completionPercent}%)
                             </span>
+
+                            <p class="mt-4 hidden text-sm font-bold text-slate-700 dark:text-slate-300" data-room-loading-text>
+                                Raum wird geöffnet...
+                            </p>
                         </div>
                     </a>
                 `;
@@ -322,43 +336,13 @@
 
         updateHeadline(data);
         renderRooms(data.rooms ?? []);
-
-        const sessionId = sessionStorage.getItem("sessionId");
-        if (!sessionId) {
-            return;
-        }
-
-        const rooms = (data.rooms ?? [])
-            .slice()
-            .sort((a, b) => Number(a.roomId) - Number(b.roomId));
-
-        for (const room of rooms) {
-            const response = await fetch(`/api/session/${sessionId}/room/${room.roomId}/prepare`, {
-                method: "POST"
-            });
-
-            if (!response.ok) {
-                continue;
-            }
-
-            const preparedRoom = await response.json();
-
-            const index = currentDashboardOverview.rooms.findIndex(
-                existingRoom => Number(existingRoom.roomId) === Number(preparedRoom.roomId)
-            );
-
-            if (index >= 0) {
-                currentDashboardOverview.rooms[index] = preparedRoom;
-            } else {
-                currentDashboardOverview.rooms.push(preparedRoom);
-            }
-
-            updateHeadline(currentDashboardOverview);
-            renderRooms(currentDashboardOverview.rooms);
-        }
     }
 
     async function openRoom(roomId) {
+        if (isOpeningRoom) {
+            return;
+        }
+
         if (!currentDashboardOverview) {
             const data = await fetchDashboardOverview();
             if (!data) {
@@ -366,8 +350,13 @@
             }
         }
 
+        isOpeningRoom = true;
+        setRoomOpeningState(roomId, true);
+
         const activeSession = await ensureSessionForRoom();
         if (!activeSession) {
+            isOpeningRoom = false;
+            setRoomOpeningState(roomId, false);
             return;
         }
 

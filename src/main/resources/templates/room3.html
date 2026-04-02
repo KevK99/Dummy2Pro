@@ -1,43 +1,26 @@
 <!DOCTYPE html>
 <html lang="de"
       xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{base :: layout(~{::body}, 'bg-[#000010] text-white font-mono tracking-wider min-h-screen')}">
+      th:replace="~{base :: layout(~{::body}, 'bg-indigo-700 dark:bg-[#000010] text-white font-mono tracking-wider min-h-screen')}">
 
-<!-- head wird überschrieben
-<head>
-    <meta charset="UTF-8">
-    <title>Dummy2Pro - Raum 1</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
--->
-
-<body class="bg-[#000010] text-white font-mono tracking-wider min-h-screen">
+<body class="bg-indigo-700 dark:bg-[#000010] text-white font-mono tracking-wider min-h-screen">
 
 <!-- HEADER FULL WIDTH -->
-<header class="w-full px-12 pt-10 pb-6 border-b border-white/20 bg-[#000010]">
-    <h1 class="text-3xl font-black tracking-widest">
-        Raum <span th:text="${roomId}">3</span>
-    </h1>
-
-    <p class="text-sm text-blue-200 mt-1">
-        Thema: <span th:text="${themeName}">Netzwerke</span>
-    </p>
-</header>
+<div th:replace="~{fragments/headline :: headline(${ 'Raum ' + roomId}, ${'Thema: ' + themeName}, ${avatarUrl}, null, null)}"></div>
 
 <!-- WELCOME CONTAINER -->
 <main id="welcomeContainer" class="flex justify-center mt-10">
     <div class="w-full max-w-6xl px-6 relative">
         <section
-                class="relative border-[10px] border-[#050a14] shadow-2xl overflow-visible"
-                style="
-                background-color: #222a66;
-                background-image:
-                    radial-gradient(rgba(255,255,255,0.10) 1px, transparent 1px),
-                    radial-gradient(rgba(140,170,255,0.10) 1px, transparent 1px),
-                    radial-gradient(rgba(20,30,90,0.18) 1px, transparent 1px);
-                background-size: 18px 18px, 18px 18px, 18px 18px;
-                background-position: 0 0, 9px 9px, 4px 4px;
-            ">
+            class="relative border-[10px] border-[#050a14] shadow-2xl overflow-visible bg-[#daa61b] dark:bg-[#222a66]"
+            style="
+            background-image:
+                radial-gradient(rgba(255,255,255,0.10) 1px, transparent 1px),
+                radial-gradient(rgba(140,170,255,0.10) 1px, transparent 1px),
+                radial-gradient(rgba(20,30,90,0.18) 1px, transparent 1px);
+            background-size: 18px 18px, 18px 18px, 18px 18px;
+            background-position: 0 0, 9px 9px, 4px 4px;
+        ">
 
             <!-- FLOOR -->
             <div
@@ -57,56 +40,56 @@
             <div class="relative h-[560px] flex items-center justify-center">
 
                 <!-- SPEECH PANEL -->
-                <div class="absolute top-8 left-1/2 -translate-x-[42%] w-[62%] z-20">
+                <div id="speechPanel" class="absolute top-8 left-1/2 -translate-x-[42%] w-[62%] z-20 transition-all duration-300">
                     <div class="relative min-h-[150px]">
                         <!-- outer bubble -->
                         <div
-                                class="absolute inset-0 bg-[#f5f8ff]"
-                                style="
-                                clip-path: polygon(
-                                    20px 0,
-                                    calc(100% - 20px) 0,
-                                    100% 20px,
-                                    100% calc(100% - 20px),
-                                    calc(100% - 20px) 100%,
-                                    20px 100%,
-                                    0 calc(100% - 20px),
-                                    0 20px
-                                );
-                            ">
+                            class="absolute inset-0 bg-[#e9f0ff]"
+                            style="
+                            clip-path: polygon(
+                                20px 0,
+                                calc(100% - 20px) 0,
+                                100% 20px,
+                                100% calc(100% - 20px),
+                                calc(100% - 20px) 100%,
+                                20px 100%,
+                                0 calc(100% - 20px),
+                                0 20px
+                            );
+                        ">
                         </div>
 
                         <!-- bubble fill -->
                         <div
-                                class="absolute inset-[5px] bg-[#0a1022]"
-                                style="
-                                clip-path: polygon(
-                                    18px 0,
-                                    calc(100% - 18px) 0,
-                                    100% 18px,
-                                    100% calc(100% - 18px),
-                                    calc(100% - 18px) 100%,
-                                    18px 100%,
-                                    0 calc(100% - 18px),
-                                    0 18px
-                                );
+                            class="absolute inset-[5px] bg-[#0a1022]"
+                            style="
+                            clip-path: polygon(
+                                18px 0,
+                                calc(100% - 18px) 0,
+                                100% 18px,
+                                100% calc(100% - 18px),
+                                calc(100% - 18px) 100%,
+                                18px 100%,
+                                0 calc(100% - 18px),
+                                0 18px
+                            );
                             ">
                         </div>
 
                         <!-- inner stroke -->
                         <div
-                                class="absolute inset-[14px] border border-[#1a2a52]"
-                                style="
-                                clip-path: polygon(
-                                    14px 0,
-                                    calc(100% - 14px) 0,
-                                    100% 14px,
-                                    100% calc(100% - 14px),
-                                    calc(100% - 14px) 100%,
-                                    14px 100%,
-                                    0 calc(100% - 14px),
-                                    0 14px
-                                );
+                            class="absolute inset-[14px] border border-[#1a2a52]"
+                            style="
+                            clip-path: polygon(
+                                14px 0,
+                                calc(100% - 14px) 0,
+                                100% 14px,
+                                100% calc(100% - 14px),
+                                calc(100% - 14px) 100%,
+                                14px 100%,
+                                0 calc(100% - 14px),
+                                0 14px
+                            );
                             ">
                         </div>
 
@@ -119,10 +102,23 @@
                     </div>
 
                     <!-- speech tail -->
-                    <div class="absolute left-[72%] -translate-x-1/2 top-full -translate-y-[1px]">
+                    <div id="speechTail" class="absolute left-[72%] -translate-x-1/2 top-full -translate-y-[1px] transition-all duration-300">
                         <!-- tail outer -->
                         <div
-                                class="relative w-[40px] h-[34px] bg-[#f5f8ff]"
+                            class="relative w-[40px] h-[34px] bg-[#e9f0ff]"
+                            style="
+                            clip-path: polygon(
+                                0 0,
+                                100% 0,
+                                100% 55%,
+                                68% 100%,
+                                32% 100%,
+                                0 55%
+                            );
+                        ">
+                            <!-- tail fill -->
+                            <div
+                                class="absolute inset-[4px] bg-[#0a1022]"
                                 style="
                                 clip-path: polygon(
                                     0 0,
@@ -133,38 +129,26 @@
                                     0 55%
                                 );
                             ">
-                            <!-- tail fill -->
-                            <div
-                                    class="absolute inset-[4px] bg-[#0a1022]"
-                                    style="
-                                    clip-path: polygon(
-                                        0 0,
-                                        100% 0,
-                                        100% 55%,
-                                        68% 100%,
-                                        32% 100%,
-                                        0 55%
-                                    );
-                                ">
                             </div>
 
                             <!-- tail inner stroke -->
                             <div
-                                    class="absolute inset-[10px] border border-[#1a2a52]"
-                                    style="
-                                    clip-path: polygon(
-                                        0 0,
-                                        100% 0,
-                                        100% 55%,
-                                        68% 100%,
-                                        32% 100%,
-                                        0 55%
-                                    );
-                                ">
+                                class="absolute inset-[10px] border border-[#1a2a52]"
+                                style="
+                                clip-path: polygon(
+                                    0 0,
+                                    100% 0,
+                                    100% 55%,
+                                    68% 100%,
+                                    32% 100%,
+                                    0 55%
+                                );
+                            ">
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <!-- Troll-CHARACTER  PANDA ÒwÓ bleibt -->
                 <div class="absolute left-1/2 -translate-x-1/2 bottom-[70px] flex flex-col items-center z-10">
                     <div class="w-[170px] h-[30px] bg-white/50 rounded-full blur-sm"></div>
@@ -173,7 +157,7 @@
                         <rect x="19" y="4" width="2" height="16" fill="#8b5a2b"/>
                         <rect x="18" y="3" width="4" height="2" fill="#8b5a2b"/>
                         <rect x="18" y="2" width="4" height="1" fill="#6f4421"/>
-                        <rect x="19" y="1" width="2" height="2" fill="#22c55e"/>
+                        <rect x="19" y="1" width="2" height="2" class="fill-green-500 dark:fill-cyan-200"/>
 
                         <rect x="7" y="3" width="10" height="8" fill="#050a14"/>
                         <rect x="8" y="4" width="8" height="6" fill="#e9f0ff"/>
@@ -197,8 +181,8 @@
                 <!-- Raum-CHARACTER -->
                 <div class="absolute right-[140px] bottom-[95px] z-10">
                     <img
-                            src="/room-characters/Krieger.png"
-                            alt="Raumcharakter Krieger"
+                            src="/room-characters/Magier.png"
+                            alt="Raumcharakter Magier"
                             class="w-[150px]"
                             style="image-rendering: pixelated;"
                     >
@@ -236,7 +220,7 @@
         <!-- CORRIDOR -->
         <div class="absolute left-1/2 -translate-x-1/2 top-[calc(100%-3rem)] w-28 h-[220px] z-0 pointer-events-none">
             <!-- linke Außenwand -->
-            <div class="absolute left-0 top-0 w-[10px] h-full bg-[#222a66]"></div>
+            <div class="absolute left-0 top-0 w-[10px] h-full bg-[#daa61b] dark:bg-[#222a66]"></div>
 
             <!-- linke graue Innenkante -->
             <div class="absolute left-[10px] top-0 w-[4px] h-full bg-[#8f9fa3]"></div>
@@ -248,7 +232,7 @@
             <div class="absolute left-[98px] top-0 w-[4px] h-full bg-[#8f9fa3]"></div>
 
             <!-- rechte Außenwand -->
-            <div class="absolute left-[102px] top-0 w-[10px] h-full bg-[#222a66]"></div>
+            <div class="absolute left-[102px] top-0 w-[10px] h-full bg-[#daa61b] dark:bg-[#222a66]"></div>
         </div>
     </div>
 
@@ -303,24 +287,24 @@
 </main>
 
 <!-- GAME -->
-<div id="gameContainer" class="bg-slate-950 text-white font-mono tracking-wider hidden">
-    <div id="gameScene" class="w-[1200px] h-[680px] mx-auto relative bg-[#000010] overflow-visible">
+<div id="gameContainer" class="bg-indigo-700 dark:bg-slate-950 text-white font-mono tracking-wider hidden min-h-screen">
+    <div id="gameScene" class="w-[1200px] h-[680px] mx-auto relative bg-yellow-500/90 dark:bg-slate-950 overflow-visible">
 
         <!-- ROOM CHARACTER -->
         <div id="gameRoomCharacter" class="absolute left-[105px] top-[-5px] z-20 pointer-events-none">
             <img
-                    src="/room-characters/Krieger.png"
-                    alt="Raumcharakter Krieger"
+                    src="/room-characters/Magier.png"
+                    alt="Raumcharakter Magier"
                     class="w-[110px]"
-                    style="image-rendering: pixelated;"
+                    style="image-rendering: pixelated; transform: scaleX(-1);"
             >
         </div>
 
         <!-- PANDA -->
-        <div id="gamePanda" class="absolute left-[390px] top-[-34px] flex flex-col items-center pointer-events-none animate-bounce [animation-duration:2s] z-50">
-            <div class="w-[130px] h-[22px] bg-white/80 rounded-full blur-sm"></div>
+        <div id="gamePanda" class="absolute left-[390px] top-[-34px] flex flex-col items-center pointer-events-none animate-pulse [animation-duration:2s] z-50">
+            <div class="w-[150px] h-[26px] bg-white/80 rounded-full blur-sm"></div>
 
-            <svg class="w-[160px] mt-[-8px]" viewBox="0 0 24 24" shape-rendering="crispEdges">
+            <svg class="w-[190px] mt-[-10px]" viewBox="0 0 24 24" shape-rendering="crispEdges">
                 <rect x="19" y="4" width="2" height="16" fill="#8b5a2b"/>
                 <rect x="18" y="3" width="4" height="2" fill="#8b5a2b"/>
                 <rect x="18" y="2" width="4" height="1" fill="#6f4421"/>
@@ -351,34 +335,34 @@
 
                 <!-- outer frame -->
                 <div
-                        class="absolute inset-0 bg-[#f5f8ff]"
+                        class="absolute inset-0 bg-[#f5f8ff] shadow-[0_0_0_2px_rgba(245,248,255,0.85)]"
                         style="
-                    clip-path: polygon(
-                        22px 0,
-                        calc(100% - 22px) 0,
-                        100% 22px,
-                        100% calc(100% - 22px),
-                        calc(100% - 22px) 100%,
-                        22px 100%,
-                        0 calc(100% - 22px),
-                        0 22px
-                    );
-                ">
+                        clip-path: polygon(
+                            18px 0,
+                            calc(100% - 18px) 0,
+                            100% 18px,
+                            100% calc(100% - 18px),
+                            calc(100% - 18px) 100%,
+                            18px 100%,
+                            0 calc(100% - 18px),
+                            0 18px
+                        );
+                    ">
                 </div>
 
                 <!-- fill -->
                 <div
-                        class="absolute inset-[5px] bg-[#0a1022]"
-                        style="
+                    class="absolute inset-[5px] bg-emerald-600 dark:bg-[#0a1022]"
+                    style="
                     clip-path: polygon(
-                        18px 0,
-                        calc(100% - 18px) 0,
-                        100% 18px,
-                        100% calc(100% - 18px),
-                        calc(100% - 18px) 100%,
-                        18px 100%,
-                        0 calc(100% - 18px),
-                        0 18px
+                        14px 0,
+                        calc(100% - 14px) 0,
+                        100% 14px,
+                        100% calc(100% - 14px),
+                        calc(100% - 14px) 100%,
+                        14px 100%,
+                        0 calc(100% - 14px),
+                        0 14px
                     );
                 ">
                 </div>
@@ -411,7 +395,7 @@
                         Frage wird geladen...
                     </div>
 
-                    <div class="text-sm text-gray-400 mt-6 mb-3 shrink-0">
+                    <div class="text-sm text-yellow-200 mt-6 mb-3 shrink-0">
                         ANTWORTEN
                     </div>
 
@@ -444,53 +428,53 @@
 
                 <!-- outer frame -->
                 <div
-                        class="absolute inset-0 bg-[#f5f8ff]"
+                        class="absolute inset-0 bg-[#f5f8ff] shadow-[0_0_0_2px_rgba(245,248,255,0.85)]"
                         style="
-                    clip-path: polygon(
-                        18px 0,
-                        calc(100% - 18px) 0,
-                        100% 18px,
-                        100% calc(100% - 18px),
-                        calc(100% - 18px) 100%,
-                        18px 100%,
-                        0 calc(100% - 18px),
-                        0 18px
-                    );
-                ">
+                        clip-path: polygon(
+                            18px 0,
+                            calc(100% - 18px) 0,
+                            100% 18px,
+                            100% calc(100% - 18px),
+                            calc(100% - 18px) 100%,
+                            18px 100%,
+                            0 calc(100% - 18px),
+                            0 18px
+                        );
+                    ">
                 </div>
 
                 <!-- fill -->
                 <div
-                        class="absolute inset-[5px] bg-[#0b1327]"
+                        class="absolute inset-[5px] bg-emerald-600 dark:bg-[#0a1022]"
                         style="
-                    clip-path: polygon(
-                        14px 0,
-                        calc(100% - 14px) 0,
-                        100% 14px,
-                        100% calc(100% - 14px),
-                        calc(100% - 14px) 100%,
-                        14px 100%,
-                        0 calc(100% - 14px),
-                        0 14px
-                    );
-                ">
+                        clip-path: polygon(
+                            14px 0,
+                            calc(100% - 14px) 0,
+                            100% 14px,
+                            100% calc(100% - 14px),
+                            calc(100% - 14px) 100%,
+                            14px 100%,
+                            0 calc(100% - 14px),
+                            0 14px
+                        );
+                    ">
                 </div>
 
                 <!-- inner line -->
                 <div
                         class="absolute inset-[16px] border border-[#1a2a52]"
                         style="
-                    clip-path: polygon(
-                        10px 0,
-                        calc(100% - 10px) 0,
-                        100% 10px,
-                        100% calc(100% - 10px),
-                        calc(100% - 10px) 100%,
-                        10px 100%,
-                        0 calc(100% - 10px),
-                        0 10px
-                    );
-                ">
+                        clip-path: polygon(
+                            10px 0,
+                            calc(100% - 10px) 0,
+                            100% 10px,
+                            100% calc(100% - 10px),
+                            calc(100% - 10px) 100%,
+                            10px 100%,
+                            0 calc(100% - 10px),
+                            0 10px
+                        );
+                    ">
                 </div>
 
                 <div class="relative h-full p-8">
@@ -502,17 +486,17 @@
                     </div>
 
                     <div class="mt-8">
-                        <div class="text-xs text-gray-400 mb-1">Thema-Fortschritt</div>
+                        <div class="text-xs text-gray-200 mb-1">Thema-Fortschritt</div>
 
                         <div class="h-4 bg-white/10 border border-white relative overflow-hidden">
-                            <div id="themeProgressBar" class="absolute left-0 top-0 h-full bg-emerald-500 w-0"></div>
+                            <div id="themeProgressBar" class="absolute left-0 top-0 h-full bg-emerald-600 w-0"></div>
                         </div>
 
-                        <div id="themeProgressText" class="text-right text-xs text-gray-400 mt-1">0%</div>
+                        <div id="themeProgressText" class="text-right text-xs text-gray-200 mt-1">0%</div>
                     </div>
 
                     <div class="mt-6">
-                        <div class="text-xs text-gray-400 mb-1">Fragen-Fortschritt</div>
+                        <div class="text-xs text-gray-200 mb-1">Fragen-Fortschritt</div>
 
                         <div class="h-4 bg-white/10 border border-white relative overflow-hidden">
                             <div id="questionCorrectBar" class="absolute left-0 top-0 h-full bg-emerald-500 w-0"></div>
@@ -545,6 +529,8 @@
 </div>
 
 <!-- TODO Sessionproblem beim Laden des Raumes. Der Raum kann oft nicht laden. -->
+<script th:src="@{/js/darkmode.js}"></script>
+
 <script th:inline="javascript">
     const roomId = /*[[${roomId}]]*/ 3;
 
@@ -582,6 +568,68 @@
     let currentGapStep = 0;
     let roomLoaded = false;
 
+    function updateHeadlineOverview(overview = null) {
+        const usernameElement = document.getElementById("headlineUsername");
+        const answeredElement = document.getElementById("headlineAnsweredQuestions");
+        const totalElement = document.getElementById("headlineTotalQuestions");
+        const avatarElement = document.getElementById("headlineAvatar");
+
+        if (usernameElement) {
+            usernameElement.textContent = sessionStorage.getItem("username") ?? "NutzerName";
+        }
+
+        if (avatarElement) {
+            const avatarFromStorage = sessionStorage.getItem("avatar");
+            if (avatarFromStorage) {
+                avatarElement.src = `/images/${avatarFromStorage}`;
+            }
+        }
+
+        if (!overview) {
+            return;
+        }
+
+        const rooms = Array.isArray(overview.rooms) ? overview.rooms : [];
+
+        const totalAnsweredQuestions = rooms.reduce((sum, room) => {
+            return sum + Number(room.answeredQuestions ?? 0);
+        }, 0);
+
+        const totalQuestions = rooms.reduce((sum, room) => {
+            return sum + Number(room.totalQuestions ?? 0);
+        }, 0);
+
+        if (answeredElement) {
+            answeredElement.textContent = totalAnsweredQuestions;
+        }
+
+        if (totalElement) {
+            totalElement.textContent = totalQuestions;
+        }
+    }
+
+    async function refreshHeadlineOverview() {
+        if (!sessionId) {
+            updateHeadlineOverview();
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/session/${sessionId}/overview`);
+
+            if (!response.ok) {
+                updateHeadlineOverview();
+                return;
+            }
+
+            const overview = await response.json();
+            updateHeadlineOverview(overview);
+        } catch (error) {
+            console.error("Fehler beim Aktualisieren des Headline-Headers:", error);
+            updateHeadlineOverview();
+        }
+    }
+
     const welcomeContainer = document.getElementById("welcomeContainer");
     const gameContainer = document.getElementById("gameContainer");
 
@@ -594,6 +642,8 @@
     const dialogText = document.getElementById("dialogText");
     const dialogNextBtn = document.getElementById("dialogNextBtn");
     const startQuizBtn = document.getElementById("startQuizBtn");
+    const speechTail = document.getElementById("speechTail");
+    const speechPanel = document.getElementById("speechPanel");
 
     const questionText = document.getElementById("questionText");
     const answerContainer = document.getElementById("answerContainer");
@@ -768,17 +818,41 @@
         });
     }
 
+    function updateSpeechTailPosition(speaker) {
+        if (speechTail) {
+            speechTail.classList.remove("left-[82%]", "left-[18%]");
+
+            if (speaker === "player") {
+                speechTail.classList.add("left-[18%]");
+            } else {
+                speechTail.classList.add("left-[82%]");
+            }
+        }
+
+        if (speechPanel) {
+            speechPanel.classList.remove("-translate-x-[42%]", "-translate-x-[50%]", "-translate-x-[34%]");
+
+            if (speaker === "player") {
+                speechPanel.classList.add("-translate-x-[50%]");
+            } else {
+                speechPanel.classList.add("-translate-x-[34%]");
+            }
+        }
+    }
+
     function showCurrentDialogLine() {
         if (!introDialog || introDialog.length === 0) {
             dialogText.innerText = "...";
             dialogNextBtn.classList.add("hidden");
             startQuizBtn.classList.remove("hidden");
+            updateSpeechTailPosition("room");
             return;
         }
 
         const line = introDialog[dialogIndex];
-        const speakerLabel = line.speaker === "player" ? "Du" : "Krieger";
+        const speakerLabel = line.speaker === "player" ? "Du" : "Magier";
 
+        updateSpeechTailPosition(line.speaker);
         dialogText.innerText = `${speakerLabel}: ${line.text}`;
 
         if (dialogIndex >= introDialog.length - 1) {
@@ -1176,7 +1250,7 @@
             if (isLastGap) {
                 stepBtn.innerText = "Antwort prüfen";
                 stepBtn.classList.remove("bg-indigo-600", "hover:bg-indigo-500");
-                stepBtn.classList.add("bg-emerald-600", "hover:bg-emerald-500");
+                stepBtn.classList.add("bg-emerald-800", "hover:bg-emerald-700");
             } else {
                 stepBtn.innerText = "Weiter";
                 stepBtn.classList.remove("bg-emerald-600", "hover:bg-emerald-500");
@@ -1366,7 +1440,7 @@
 
                     if (data.correctAnswerIds && data.correctAnswerIds.includes(answerId)) {
                         btn.classList.remove("border-yellow-400", "text-yellow-400");
-                        btn.classList.add("border-emerald-500", "text-emerald-400");
+                        btn.classList.add("border-emerald-400", "text-emerald-300");
                     } else if (selectedAnswerIds.includes(answerId)) {
                         btn.classList.remove("border-yellow-400", "text-yellow-400", "bg-yellow-400", "text-black");
                         btn.classList.add("border-red-500", "text-red-400");
@@ -1386,7 +1460,7 @@
                         if (entry.correct) {
                             if (preview) {
                                 preview.classList.remove("border-yellow-400", "text-white", "bg-yellow-400/10");
-                                preview.classList.add("border-emerald-500", "text-emerald-300", "bg-emerald-500/10");
+                                preview.classList.add("border-emerald-500", "text-emerald-300", "bg-emerald-700/10");
                             }
                         } else {
                             if (preview) {
@@ -1401,7 +1475,7 @@
 
                             if (btnOptionId === entry.correctGapOptionId) {
                                 btn.classList.remove("border-yellow-400", "text-yellow-400");
-                                btn.classList.add("border-emerald-500", "text-emerald-400");
+                                btn.classList.add("border-emerald-400", "text-emerald-400");
                             } else if (btn.classList.contains("bg-yellow-400")) {
                                 btn.classList.remove("border-yellow-400", "text-yellow-400", "bg-yellow-400", "text-black");
                                 btn.classList.add("border-red-500", "text-red-400");
@@ -1487,6 +1561,7 @@
             }
 
             updateStatus(status);
+            await refreshHeadlineOverview();
         } catch (error) {
             console.error("Fehler beim Aktualisieren des Status:", error);
         }
@@ -1610,7 +1685,6 @@
 
             if (!response.ok) {
                 sessionStorage.removeItem("sessionId");
-                sessionStorage.removeItem("runId");
                 alert(data.message || "Raum konnte nicht geladen werden.");
                 window.location.href = "/dashboard";
                 return false;
@@ -1618,6 +1692,7 @@
 
             currentQuestion = data.firstQuestion;
             updateStatus(data.status);
+            await refreshHeadlineOverview();
 
             if (!currentQuestion) {
                 welcomeContainer.classList.add("hidden");
@@ -1692,6 +1767,7 @@
     submitAnswerBtn.addEventListener("click", submitAnswer);
     nextQuestionBtn.addEventListener("click", loadNextQuestion);
 
+    updateHeadlineOverview();
     initWelcomeRoom();
 
 </script>

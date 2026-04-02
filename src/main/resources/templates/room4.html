@@ -1610,7 +1610,6 @@
 
             if (!response.ok) {
                 sessionStorage.removeItem("sessionId");
-                sessionStorage.removeItem("runId");
                 alert(data.message || "Raum konnte nicht geladen werden.");
                 window.location.href = "/dashboard";
                 return false;
