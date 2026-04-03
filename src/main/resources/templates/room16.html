@@ -1,44 +1,18 @@
 <!DOCTYPE html>
 <html lang="de"
       xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{base :: layout(~{::body}, 'm-0 p-0 bg-[#7C7C7C] dark:bg-[#000010] text-white min-h-screen overflow-x-hidden')}">
+      th:replace="~{base :: layout(~{::body}, 'min-h-screen bg-[#695800] text-white font-mono tracking-wider dark:bg-[#000010] overflow-x-hidden')}">
 
-<!-- head wird überschrieben
-<head>
-    <meta charset="UTF-8">
-    <title>Dummy2Pro - Raum 1</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
--->
+<body class="min-h-screen bg-[#695800] text-white font-mono tracking-wider dark:bg-[#000010] overflow-x-hidden">
 
-<body class="m-0 p-0 bg-[#7C7C7C] dark:bg-[#000010] text-white min-h-screen overflow-x-hidden">
-
-<header class="w-full flex justify-between items-start px-12 pt-10 pb-6 border-b border-white/20 bg-[#7C7C7C] dark:bg-[#000010]">
-    <div>
-        <h1 class="text-3xl font-black tracking-widest">
-            Raum <span th:text="${roomId}">2</span>
-        </h1>
-
-        <p class="text-sm text-blue-200 mt-1">
-            Thema: <span th:text="${themeName}">Wirtschaft</span>
-        </p>
-    </div>
-
-    <button
-            type="button"
-            id="darkmodeBtn"
-            class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-1.5 px-2 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20"
-    >
-        Toggle Darkmode
-    </button>
-</header>
+<div th:replace="~{fragments/headline :: headline(${ 'Raum ' + roomId}, ${'Thema: ' + themeName}, ${avatarUrl}, null, null)}"></div>
 
 <!-- WELCOME CONTAINER -->
 <main id="welcomeContainer" class="flex justify-center mt-10">
     <div class="w-full max-w-6xl px-6 relative">
         <section
-            class="relative border-[10px] border-[#050a14] shadow-2xl overflow-visible bg-[#EA0A8F] dark:bg-[#222a66]"
-            style="
+                class="relative border-[10px] border-[#050a14] shadow-2xl overflow-visible bg-[#12FF93] dark:bg-[#222a66]"
+                style="
             background-image:
                 radial-gradient(rgba(255,255,255,0.10) 1px, transparent 1px),
                 radial-gradient(rgba(140,170,255,0.10) 1px, transparent 1px),
@@ -65,7 +39,7 @@
             <div class="relative h-[560px] flex items-center justify-center">
 
                 <!-- SPEECH PANEL -->
-                <div class="absolute top-8 left-1/2 -translate-x-[42%] w-[62%] z-20">
+                <div id="speechPanel" class="absolute top-8 left-1/2 -translate-x-[42%] w-[62%] z-20 transition-all duration-300">
                     <div class="relative min-h-[150px]">
                         <!-- outer bubble -->
                         <div
@@ -127,7 +101,7 @@
                     </div>
 
                     <!-- speech tail -->
-                    <div class="absolute left-[72%] -translate-x-1/2 top-full -translate-y-[1px]">
+                    <div id="speechTail" class="absolute left-[72%] -translate-x-1/2 top-full -translate-y-[1px] transition-all duration-300">
                         <!-- tail outer -->
                         <div
                                 class="relative w-[40px] h-[34px] bg-[#f5f8ff]"
@@ -173,6 +147,7 @@
                         </div>
                     </div>
                 </div>
+
                 <!-- Troll-CHARACTER  PANDA ÒwÓ bleibt -->
                 <div class="absolute left-1/2 -translate-x-1/2 bottom-[70px] flex flex-col items-center z-10">
                     <div class="w-[170px] h-[30px] bg-white/50 rounded-full blur-sm"></div>
@@ -205,8 +180,8 @@
                 <!-- Raum-CHARACTER -->
                 <div class="absolute right-[140px] bottom-[95px] z-10">
                     <img
-                            src="/room-characters/Krieger.png"
-                            alt="Raumcharakter Krieger"
+                            src="/room-characters/Prinzessin.png"
+                            alt="Raumcharakter Prinzessin"
                             class="w-[150px]"
                             style="image-rendering: pixelated;"
                     >
@@ -241,10 +216,11 @@
             </div>
 
         </section>
+
         <!-- CORRIDOR -->
         <div class="absolute left-1/2 -translate-x-1/2 top-[calc(100%-3rem)] w-28 h-[220px] z-0 pointer-events-none">
             <!-- linke Außenwand -->
-            <div class="absolute left-0 top-0 w-[10px] h-full bg-[#EA0A8F] dark:bg-[#222a66]"></div>
+            <div class="absolute left-0 top-0 w-[10px] h-full bg-[#12FF93] dark:bg-[#222a66]"></div>
 
             <!-- linke graue Innenkante -->
             <div class="absolute left-[10px] top-0 w-[4px] h-full bg-[#8f9fa3]"></div>
@@ -256,7 +232,7 @@
             <div class="absolute left-[98px] top-0 w-[4px] h-full bg-[#8f9fa3]"></div>
 
             <!-- rechte Außenwand -->
-            <div class="absolute left-[102px] top-0 w-[10px] h-full bg-[#EA0A8F] dark:bg-[#222a66]"></div>
+            <div class="absolute left-[102px] top-0 w-[10px] h-full bg-[#12FF93] dark:bg-[#222a66]"></div>
         </div>
     </div>
 
@@ -307,25 +283,24 @@
             pointer-events: none;
         }
     </style>
-
 </main>
 
 <!-- GAME -->
-<div id="gameContainer" class="bg-[#7C7C7C] dark:bg-[#000010] text-white font-mono tracking-wider hidden min-h-screen">
-    <div id="gameScene" class="w-[1200px] h-[680px] mx-auto relative bg-[#EA0A8F] dark:bg-slate-950 overflow-visible">
+<div id="gameContainer" class="bg-[#695800] dark:bg-slate-950 text-white font-mono tracking-wider hidden min-h-screen">
+    <div id="gameScene" class="w-[1200px] h-[680px] mx-auto relative bg-[#12FF93] dark:bg-slate-950 overflow-visible">
 
         <!-- ROOM CHARACTER -->
         <div id="gameRoomCharacter" class="absolute left-[105px] top-[-5px] z-20 pointer-events-none">
             <img
-                    src="/room-characters/Krieger.png"
-                    alt="Raumcharakter Krieger"
+                    src="/room-characters/Prinzessin.png"
+                    alt="Raumcharakter Prinzessin"
                     class="w-[110px]"
-                    style="image-rendering: pixelated;"
+                    style="image-rendering: pixelated; transform: scaleX(-1);"
             >
         </div>
 
         <!-- PANDA -->
-        <div id="gamePanda" class="absolute left-[390px] top-[-34px] flex flex-col items-center pointer-events-none animate-spin [animation-duration:6s] z-50">
+        <div id="gamePanda" class="absolute left-[390px] top-[-34px] flex flex-col items-center pointer-events-none animate-spin [animation-duration:4s] [animation-direction:reverse] z-50">
             <div class="w-[130px] h-[22px] bg-white/80 rounded-full blur-sm"></div>
 
             <svg class="w-[160px] mt-[-8px]" viewBox="0 0 24 24" shape-rendering="crispEdges">
@@ -361,51 +336,51 @@
                 <div
                         class="absolute inset-0 bg-[#f5f8ff]"
                         style="
-                    clip-path: polygon(
-                        22px 0,
-                        calc(100% - 22px) 0,
-                        100% 22px,
-                        100% calc(100% - 22px),
-                        calc(100% - 22px) 100%,
-                        22px 100%,
-                        0 calc(100% - 22px),
-                        0 22px
-                    );
-                ">
+                        clip-path: polygon(
+                            22px 0,
+                            calc(100% - 22px) 0,
+                            100% 22px,
+                            100% calc(100% - 22px),
+                            calc(100% - 22px) 100%,
+                            22px 100%,
+                            0 calc(100% - 22px),
+                            0 22px
+                        );
+                    ">
                 </div>
 
                 <!-- fill -->
                 <div
                         class="absolute inset-[5px] bg-[#0a1022]"
                         style="
-                    clip-path: polygon(
-                        18px 0,
-                        calc(100% - 18px) 0,
-                        100% 18px,
-                        100% calc(100% - 18px),
-                        calc(100% - 18px) 100%,
-                        18px 100%,
-                        0 calc(100% - 18px),
-                        0 18px
-                    );
-                ">
+                        clip-path: polygon(
+                            18px 0,
+                            calc(100% - 18px) 0,
+                            100% 18px,
+                            100% calc(100% - 18px),
+                            calc(100% - 18px) 100%,
+                            18px 100%,
+                            0 calc(100% - 18px),
+                            0 18px
+                        );
+                    ">
                 </div>
 
                 <!-- inner line -->
                 <div
                         class="absolute inset-[16px] border border-[#1a2a52]"
                         style="
-                    clip-path: polygon(
-                        12px 0,
-                        calc(100% - 12px) 0,
-                        100% 12px,
-                        100% calc(100% - 12px),
-                        calc(100% - 12px) 100%,
-                        12px 100%,
-                        0 calc(100% - 12px),
-                        0 12px
-                    );
-                ">
+                        clip-path: polygon(
+                            12px 0,
+                            calc(100% - 12px) 0,
+                            100% 12px,
+                            100% calc(100% - 12px),
+                            calc(100% - 12px) 100%,
+                            12px 100%,
+                            0 calc(100% - 12px),
+                            0 12px
+                        );
+                    ">
                 </div>
 
                 <!-- content -->
@@ -454,51 +429,51 @@
                 <div
                         class="absolute inset-0 bg-[#f5f8ff]"
                         style="
-                    clip-path: polygon(
-                        18px 0,
-                        calc(100% - 18px) 0,
-                        100% 18px,
-                        100% calc(100% - 18px),
-                        calc(100% - 18px) 100%,
-                        18px 100%,
-                        0 calc(100% - 18px),
-                        0 18px
-                    );
-                ">
+                        clip-path: polygon(
+                            18px 0,
+                            calc(100% - 18px) 0,
+                            100% 18px,
+                            100% calc(100% - 18px),
+                            calc(100% - 18px) 100%,
+                            18px 100%,
+                            0 calc(100% - 18px),
+                            0 18px
+                        );
+                    ">
                 </div>
 
                 <!-- fill -->
                 <div
                         class="absolute inset-[5px] bg-[#0b1327]"
                         style="
-                    clip-path: polygon(
-                        14px 0,
-                        calc(100% - 14px) 0,
-                        100% 14px,
-                        100% calc(100% - 14px),
-                        calc(100% - 14px) 100%,
-                        14px 100%,
-                        0 calc(100% - 14px),
-                        0 14px
-                    );
-                ">
+                        clip-path: polygon(
+                            14px 0,
+                            calc(100% - 14px) 0,
+                            100% 14px,
+                            100% calc(100% - 14px),
+                            calc(100% - 14px) 100%,
+                            14px 100%,
+                            0 calc(100% - 14px),
+                            0 14px
+                        );
+                    ">
                 </div>
 
                 <!-- inner line -->
                 <div
                         class="absolute inset-[16px] border border-[#1a2a52]"
                         style="
-                    clip-path: polygon(
-                        10px 0,
-                        calc(100% - 10px) 0,
-                        100% 10px,
-                        100% calc(100% - 10px),
-                        calc(100% - 10px) 100%,
-                        10px 100%,
-                        0 calc(100% - 10px),
-                        0 10px
-                    );
-                ">
+                        clip-path: polygon(
+                            10px 0,
+                            calc(100% - 10px) 0,
+                            100% 10px,
+                            100% calc(100% - 10px),
+                            calc(100% - 10px) 100%,
+                            10px 100%,
+                            0 calc(100% - 10px),
+                            0 10px
+                        );
+                    ">
                 </div>
 
                 <div class="relative h-full p-8">
@@ -552,7 +527,8 @@
     </div>
 </div>
 
-<!-- TODO Sessionproblem beim Laden des Raumes. Der Raum kann oft nicht laden. -->
+<script th:src="@{/js/darkmode.js}"></script>
+
 <script th:inline="javascript">
     const roomId = /*[[${roomId}]]*/ 2;
 
@@ -590,47 +566,67 @@
     let currentGapStep = 0;
     let roomLoaded = false;
 
-    const darkmodeBtn = document.getElementById("darkmodeBtn");
-    const htmlElement = document.documentElement;
+    function updateHeadlineOverview(overview = null) {
+        const usernameElement = document.getElementById("headlineUsername");
+        const answeredElement = document.getElementById("headlineAnsweredQuestions");
+        const totalElement = document.getElementById("headlineTotalQuestions");
+        const avatarElement = document.getElementById("headlineAvatar");
 
-    function updateDarkmodeButtonText() {
-        if (!darkmodeBtn) {
+        if (usernameElement) {
+            usernameElement.textContent = sessionStorage.getItem("username") ?? "NutzerName";
+        }
+
+        if (avatarElement) {
+            const avatarFromStorage = sessionStorage.getItem("avatar");
+            if (avatarFromStorage) {
+                avatarElement.src = `/images/${avatarFromStorage}`;
+            }
+        }
+
+        if (!overview) {
             return;
         }
 
-        if (htmlElement.classList.contains("dark")) {
-            darkmodeBtn.textContent = "Bunt edition ☀️";
-        } else {
-            darkmodeBtn.textContent = "Hello Darkmode, my old friend 🌙";
+        const rooms = Array.isArray(overview.rooms) ? overview.rooms : [];
+
+        const totalAnsweredQuestions = rooms.reduce((sum, room) => {
+            return sum + Number(room.answeredQuestions ?? 0);
+        }, 0);
+
+        const totalQuestions = rooms.reduce((sum, room) => {
+            return sum + Number(room.totalQuestions ?? 0);
+        }, 0);
+
+        if (answeredElement) {
+            answeredElement.textContent = totalAnsweredQuestions;
+        }
+
+        if (totalElement) {
+            totalElement.textContent = totalQuestions;
         }
     }
 
-    function initDarkmode() {
-        if (!darkmodeBtn) {
+    async function refreshHeadlineOverview() {
+        if (!sessionId) {
+            updateHeadlineOverview();
             return;
         }
 
-        if (localStorage.theme === "dark") {
-            htmlElement.classList.add("dark");
-        } else {
-            htmlElement.classList.remove("dark");
-        }
+        try {
+            const response = await fetch(`/api/session/${sessionId}/overview`);
 
-        updateDarkmodeButtonText();
-
-        darkmodeBtn.addEventListener("click", () => {
-            if (htmlElement.classList.contains("dark")) {
-                htmlElement.classList.remove("dark");
-                localStorage.theme = "light";
-            } else {
-                htmlElement.classList.add("dark");
-                localStorage.theme = "dark";
+            if (!response.ok) {
+                updateHeadlineOverview();
+                return;
             }
 
-            updateDarkmodeButtonText();
-        });
+            const overview = await response.json();
+            updateHeadlineOverview(overview);
+        } catch (error) {
+            console.error("Fehler beim Aktualisieren des Headline-Headers:", error);
+            updateHeadlineOverview();
+        }
     }
-
 
     const welcomeContainer = document.getElementById("welcomeContainer");
     const gameContainer = document.getElementById("gameContainer");
@@ -644,6 +640,8 @@
     const dialogText = document.getElementById("dialogText");
     const dialogNextBtn = document.getElementById("dialogNextBtn");
     const startQuizBtn = document.getElementById("startQuizBtn");
+    const speechTail = document.getElementById("speechTail");
+    const speechPanel = document.getElementById("speechPanel");
 
     const questionText = document.getElementById("questionText");
     const answerContainer = document.getElementById("answerContainer");
@@ -818,17 +816,41 @@
         });
     }
 
+    function updateSpeechTailPosition(speaker) {
+        if (speechTail) {
+            speechTail.classList.remove("left-[82%]", "left-[18%]");
+
+            if (speaker === "player") {
+                speechTail.classList.add("left-[18%]");
+            } else {
+                speechTail.classList.add("left-[82%]");
+            }
+        }
+
+        if (speechPanel) {
+            speechPanel.classList.remove("-translate-x-[42%]", "-translate-x-[50%]", "-translate-x-[34%]");
+
+            if (speaker === "player") {
+                speechPanel.classList.add("-translate-x-[50%]");
+            } else {
+                speechPanel.classList.add("-translate-x-[34%]");
+            }
+        }
+    }
+
     function showCurrentDialogLine() {
         if (!introDialog || introDialog.length === 0) {
             dialogText.innerText = "...";
             dialogNextBtn.classList.add("hidden");
             startQuizBtn.classList.remove("hidden");
+            updateSpeechTailPosition("room");
             return;
         }
 
         const line = introDialog[dialogIndex];
-        const speakerLabel = line.speaker === "player" ? "Du" : "Krieger";
+        const speakerLabel = line.speaker === "player" ? "Du" : "Schülerin";
 
+        updateSpeechTailPosition(line.speaker);
         dialogText.innerText = `${speakerLabel}: ${line.text}`;
 
         if (dialogIndex >= introDialog.length - 1) {
@@ -889,10 +911,10 @@
 
         if (!question.answerOptions || question.answerOptions.length === 0) {
             answerContainer.innerHTML = `
-            <div class="col-span-2 text-center text-red-300">
-                Dieser Fragetyp wird hier noch nicht unterstützt.
-            </div>
-        `;
+                <div class="col-span-2 text-center text-red-300">
+                    Dieser Fragetyp wird hier noch nicht unterstützt.
+                </div>
+            `;
             return;
         }
 
@@ -912,9 +934,9 @@
             button.className = `
                 quiz-answer-btn
                 relative w-full h-full
-                border-4 border-[#EA0A8F] dark:border-yellow-400
+                border-4 border-yellow-400
                 px-6 py-4
-                font-black text-[#EA0A8F] dark:text-yellow-400 text-left
+                font-black text-yellow-400 text-left
                 bg-[#09122a]
                 flex items-center
             `;
@@ -973,8 +995,8 @@
                 relative inline-flex items-center justify-center
                 min-w-[88px] max-w-full
                 px-2.5 py-1
-                border-2 border-dashed border-[#EA0A8F] dark:border-white/40
-                text-center font-black text-[#EA0A8F] dark:text-yellow-300
+                border-2 border-dashed border-white/40
+                text-center font-black text-yellow-300
                 bg-[#0a1022] transition
             `;
             preview.textContent = `[ Lücke ${gapIndex + 1} ]`;
@@ -1006,10 +1028,10 @@
 
         if (!question.gapFields || question.gapFields.length === 0) {
             answerContainer.innerHTML = `
-        <div class="text-center text-red-300">
-            GAP-Frage enthält keine Lückenfelder.
-        </div>
-    `;
+                <div class="text-center text-red-300">
+                    GAP-Frage enthält keine Lückenfelder.
+                </div>
+            `;
             return;
         }
 
@@ -1057,9 +1079,9 @@
                 button.className = `
                     gap-option-btn
                     relative w-full
-                    border-4 border-[#EA0A8F] dark:border-yellow-400
+                    border-4 border-yellow-400
                     px-3 py-2
-                    font-black text-[#EA0A8F] dark:text-yellow-400 text-left
+                    font-black text-yellow-400 text-left
                     bg-[#0a1022]
                     flex items-center
                 `;
@@ -1134,10 +1156,10 @@
         }));
 
         document.querySelectorAll(`[data-gap-id="${gapId}"][data-gap-option-id]`).forEach(btn => {
-            btn.classList.remove("bg-[#EA0A8F]", "dark:bg-yellow-400", "text-white", "dark:text-black", "ring-4", "ring-white/30");
+            btn.classList.remove("bg-yellow-400", "text-black", "ring-4", "ring-white/30");
         });
 
-        buttonElement.classList.add("bg-[#EA0A8F]", "dark:bg-yellow-400", "text-white", "dark:text-black", "ring-4", "ring-white/30");
+        buttonElement.classList.add("bg-yellow-400", "text-black", "ring-4", "ring-white/30");
 
         const preview = document.getElementById(`gapPreview-${gapId}`);
         if (preview) {
@@ -1153,7 +1175,7 @@
             return;
         }
 
-        const maxStep = currentQuestion.gapFields.length - 1;
+        const maxStep = currentQuestion.gapFields.length - 6;
         currentGapStep = Math.max(0, Math.min(stepIndex, maxStep));
 
         updateGapStepUI();
@@ -1179,34 +1201,20 @@
 
             preview.classList.remove(
                 "border-dashed",
-                "border-[#EA0A8F]",
-                "dark:border-white/40",
-                "text-[#EA0A8F]",
-                "dark:text-yellow-300",
+                "border-white/40",
+                "text-yellow-300",
+                "border-yellow-400",
                 "text-white",
-                "bg-[#EA0A8F]/10",
-                "dark:bg-yellow-400/10",
+                "bg-yellow-400/10",
                 "bg-indigo-500/20",
                 "ring-2",
                 "ring-white/40"
             );
 
             if (hasAnswer) {
-                preview.classList.add(
-                    "border-[#EA0A8F]",
-                    "dark:border-yellow-400",
-                    "text-white",
-                    "bg-[#EA0A8F]/10",
-                    "dark:bg-yellow-400/10"
-                );
+                preview.classList.add("border-yellow-400", "text-white", "bg-yellow-400/10");
             } else {
-                preview.classList.add(
-                    "border-dashed",
-                    "border-[#EA0A8F]",
-                    "dark:border-white/40",
-                    "text-[#EA0A8F]",
-                    "dark:text-yellow-300"
-                );
+                preview.classList.add("border-dashed", "border-white/40", "text-yellow-300");
             }
 
             if (previewStep === currentGapStep) {
@@ -1254,14 +1262,7 @@
     }
 
     function toggleAnswer(answerId, buttonElement, allowsMultiple) {
-        const selectedClasses = [
-            "bg-[#EA0A8F]",
-            "dark:bg-yellow-400",
-            "text-white",
-            "dark:text-black",
-            "ring-4",
-            "ring-white/30"
-        ];
+        const selectedClasses = ["bg-yellow-400", "text-black", "ring-4", "ring-white/30"];
 
         if (!allowsMultiple) {
             selectedAnswerIds = [answerId];
@@ -1436,24 +1437,10 @@
                     const answerId = Number(btn.dataset.answerId);
 
                     if (data.correctAnswerIds && data.correctAnswerIds.includes(answerId)) {
-                        btn.classList.remove(
-                            "border-[#EA0A8F]",
-                            "dark:border-yellow-400",
-                            "text-[#EA0A8F]",
-                            "dark:text-yellow-400"
-                        );
+                        btn.classList.remove("border-yellow-400", "text-yellow-400");
                         btn.classList.add("border-emerald-500", "text-emerald-400");
                     } else if (selectedAnswerIds.includes(answerId)) {
-                        btn.classList.remove(
-                            "border-[#EA0A8F]",
-                            "dark:border-yellow-400",
-                            "text-[#EA0A8F]",
-                            "dark:text-yellow-400",
-                            "bg-[#EA0A8F]",
-                            "dark:bg-yellow-400",
-                            "text-white",
-                            "dark:text-black"
-                        );
+                        btn.classList.remove("border-yellow-400", "text-yellow-400", "bg-yellow-400", "text-black");
                         btn.classList.add("border-red-500", "text-red-400");
                     }
                 });
@@ -1470,24 +1457,12 @@
 
                         if (entry.correct) {
                             if (preview) {
-                                preview.classList.remove(
-                                    "border-[#EA0A8F]",
-                                    "dark:border-yellow-400",
-                                    "text-white",
-                                    "bg-[#EA0A8F]/10",
-                                    "dark:bg-yellow-400/10"
-                                );
+                                preview.classList.remove("border-yellow-400", "text-white", "bg-yellow-400/10");
                                 preview.classList.add("border-emerald-500", "text-emerald-300", "bg-emerald-500/10");
                             }
                         } else {
                             if (preview) {
-                                preview.classList.remove(
-                                    "border-[#EA0A8F]",
-                                    "dark:border-yellow-400",
-                                    "text-white",
-                                    "bg-[#EA0A8F]/10",
-                                    "dark:bg-yellow-400/10"
-                                );
+                                preview.classList.remove("border-yellow-400", "text-white", "bg-yellow-400/10");
                                 preview.classList.add("border-red-500", "text-red-300", "bg-red-500/10");
                                 preview.innerText = `${preview.innerText} → richtig: ${entry.correctOptionText}`;
                             }
@@ -1497,27 +1472,10 @@
                             const btnOptionId = Number(btn.dataset.gapOptionId);
 
                             if (btnOptionId === entry.correctGapOptionId) {
-                                btn.classList.remove(
-                                    "border-[#EA0A8F]",
-                                    "dark:border-yellow-400",
-                                    "text-[#EA0A8F]",
-                                    "dark:text-yellow-400"
-                                );
+                                btn.classList.remove("border-yellow-400", "text-yellow-400");
                                 btn.classList.add("border-emerald-500", "text-emerald-400");
-                            } else if (
-                                btn.classList.contains("bg-[#EA0A8F]") ||
-                                btn.classList.contains("dark:bg-yellow-400")
-                            ) {
-                                btn.classList.remove(
-                                    "border-[#EA0A8F]",
-                                    "dark:border-yellow-400",
-                                    "text-[#EA0A8F]",
-                                    "dark:text-yellow-400",
-                                    "bg-[#EA0A8F]",
-                                    "dark:bg-yellow-400",
-                                    "text-white",
-                                    "dark:text-black"
-                                );
+                            } else if (btn.classList.contains("bg-yellow-400")) {
+                                btn.classList.remove("border-yellow-400", "text-yellow-400", "bg-yellow-400", "text-black");
                                 btn.classList.add("border-red-500", "text-red-400");
                             }
                         });
@@ -1601,6 +1559,7 @@
             }
 
             updateStatus(status);
+            await refreshHeadlineOverview();
         } catch (error) {
             console.error("Fehler beim Aktualisieren des Status:", error);
         }
@@ -1731,6 +1690,7 @@
 
             currentQuestion = data.firstQuestion;
             updateStatus(data.status);
+            await refreshHeadlineOverview();
 
             if (!currentQuestion) {
                 welcomeContainer.classList.add("hidden");
@@ -1805,9 +1765,8 @@
     submitAnswerBtn.addEventListener("click", submitAnswer);
     nextQuestionBtn.addEventListener("click", loadNextQuestion);
 
-    initDarkmode();
+    updateHeadlineOverview();
     initWelcomeRoom();
-
 </script>
 </body>
 </html>
