@@ -333,13 +333,19 @@
 
     const playerCharacter = document.getElementById("playerCharacter");
     const playerAvatar = document.getElementById("playerAvatar");
+    const roomHeaderAvatar = document.getElementById("roomHeaderAvatar");
 
     const storedAvatar = sessionStorage.getItem("avatar");
+    const resolvedAvatarSrc = storedAvatar
+        ? `/images/${storedAvatar}`
+        : "/images/Informatiker.png";
 
     if (playerAvatar) {
-        playerAvatar.src = storedAvatar
-            ? `/images/${storedAvatar}`
-            : "/images/Informatiker.png";
+        playerAvatar.src = resolvedAvatarSrc;
+    }
+
+    if (roomHeaderAvatar) {
+        roomHeaderAvatar.src = resolvedAvatarSrc;
     }
 
     if (!userId) {

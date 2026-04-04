@@ -786,6 +786,47 @@
     let currentGapStep = 0;
     let roomLoaded = false;
 
+    const darkmodeBtn = document.getElementById("darkmodeBtn");
+    const htmlElement = document.documentElement;
+
+    function updateDarkmodeButtonText() {
+        if (!darkmodeBtn) {
+            return;
+        }
+
+        if (htmlElement.classList.contains("dark")) {
+            darkmodeBtn.textContent = "Bunt edition ☀️";
+        } else {
+            darkmodeBtn.textContent = "Hello Darkmode, my old friend 🌙";
+        }
+    }
+
+    function initDarkmode() {
+        if (!darkmodeBtn) {
+            return;
+        }
+
+        if (localStorage.theme === "dark") {
+            htmlElement.classList.add("dark");
+        } else {
+            htmlElement.classList.remove("dark");
+        }
+
+        updateDarkmodeButtonText();
+
+        darkmodeBtn.addEventListener("click", () => {
+            if (htmlElement.classList.contains("dark")) {
+                htmlElement.classList.remove("dark");
+                localStorage.theme = "light";
+            } else {
+                htmlElement.classList.add("dark");
+                localStorage.theme = "dark";
+            }
+
+            updateDarkmodeButtonText();
+        });
+    }
+
     const welcomeContainer = document.getElementById("welcomeContainer");
     const gameContainer = document.getElementById("gameContainer");
 

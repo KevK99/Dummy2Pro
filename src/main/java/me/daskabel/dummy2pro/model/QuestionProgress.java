@@ -2,6 +2,7 @@ package me.daskabel.dummy2pro.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Table(name = "question_progress")

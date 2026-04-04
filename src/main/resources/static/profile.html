@@ -25,10 +25,9 @@
             <div class="flex gap-6">
                 <img id="currentProfileImage" src="/images/duck.jpg" alt="duck" class="w-20 h-20 rounded-full hover:cursor-pointer object-cover" />
 
-                <div>
-                    <h1 class="text-3xl font-extrabold tracking-tight">Benutzerprofil</h1>
-                    <p class="mt-2 text-slate-300">Hier kannst du deine Profil Einstellungen ändern</p>
-                </div>
+            <div>
+                <h1 class="text-3xl font-extrabold tracking-tight">Benutzerprofil</h1>
+                <p class="mt-2 text-slate-300">Hier kannst du dein Profil und deine Spielstände verwalten.</p>
             </div>
         </div>
 
@@ -84,7 +83,7 @@
                         class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20 disabled:bg-gray-700 disabled:shadow-none"
                         id="newNameButton"
                 >
-                    Neuen Namen bestätigen
+                    Passwort ändern
                 </button>
 
                 <button
@@ -161,7 +160,7 @@
                         class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20 disabled:bg-gray-700 disabled:shadow-none"
                         onclick="saveNewPassword()"
                 >
-                    Passwort ändern
+                    Neuen Spielstand anlegen
                 </button>
 
                 <button
@@ -207,7 +206,7 @@
                     class="w-1/2 justify-center bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20 disabled:bg-gray-700 disabled:shadow-none"
                     onclick="saveProfilePic()"
             >
-                Neues Profilbild speichern
+                Schließen
             </button>
 
             <button
@@ -243,6 +242,84 @@
             </div>
         </div>
     </div>
+</div>
+
+<script>
+    const nameForm = document.getElementById('nameForm');
+    const button = document.getElementById('button');
+    const newNameForm = document.getElementById('newNameForm');
+    const newNameButton = document.getElementById('newNameButton');
+    const newNameInput = document.getElementById('newNameInput');
+    const currentNameInput = document.getElementById('currentNameInput');
+    const pwForm = document.getElementById('passwordForm');
+    const profileButton = document.getElementById('profilePicBtn');
+    const profileForm = document.getElementById('profilePicForm');
+    const profilePicGrid = document.getElementById('profilePicGrid');
+    const runsContainer = document.getElementById('runsContainer');
+    const currentProfileImage = document.getElementById('currentProfileImage');
+
+    const userId = sessionStorage.getItem("userId");
+    let selectedProfileImage = null;
+    let currentAvatar = sessionStorage.getItem("avatar") || "duck.jpg";
+
+    if (!userId) {
+        alert("Kein Benutzer gefunden. Bitte neu einloggen.");
+        window.location.href = "/";
+    }
+
+    button.addEventListener("click", () => {
+        nameForm.classList.add("hidden");
+        newNameForm.classList.remove("hidden");
+        newNameInput.value = currentNameInput.value || "";
+        newNameInput.focus();
+    });
+
+    newNameButton.addEventListener("click", saveNewName);
+    profileButton.addEventListener("click", openProfilePicEdit);
+
+    function cancelNameEdit() {
+        newNameForm.classList.add("hidden");
+        nameForm.classList.remove("hidden");
+        newNameInput.value = "";
+    }
+
+    function showPwForm() {
+        pwForm.classList.remove("hidden");
+        document.getElementById("pwFormEnable").classList.add("hidden");
+    }
+
+    function openProfilePicEdit() {
+        profileForm.classList.remove("hidden");
+        highlightSelectedAvatar(currentAvatar);
+    }
+
+    function closeProfilePicEdit() {
+        profileForm.classList.add("hidden");
+    }
+
+    function setProfile(imageName, clickedImage) {
+        selectedProfileImage = imageName;
+
+        document.querySelectorAll('#profilePicGrid img').forEach(img => {
+            img.classList.remove('outline', 'outline-offset-2', 'outline-4', 'outline-indigo-600');
+        });
+
+        clickedImage.classList.add('outline', 'outline-offset-2', 'outline-4', 'outline-indigo-600');
+    }
+
+    function highlightSelectedAvatar(imageName) {
+        const images = document.querySelectorAll('#profilePicGrid img');
+
+        images.forEach(img => {
+            img.classList.remove('outline', 'outline-offset-2', 'outline-4', 'outline-indigo-600');
+
+            const onclickValue = img.getAttribute('onclick') || '';
+            if (onclickValue.includes(`'${imageName}'`)) {
+                img.classList.add('outline', 'outline-offset-2', 'outline-4', 'outline-indigo-600');
+                selectedProfileImage = imageName;
+            }
+        });
+    }
 
 </div>
 
@@ -686,6 +763,7 @@
             window.location.href = "/";
             return;
         }
+    }
 
         await loadUserProfile();
         await loadRuns();

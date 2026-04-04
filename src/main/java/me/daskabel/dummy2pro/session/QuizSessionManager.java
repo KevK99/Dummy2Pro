@@ -51,6 +51,7 @@ public class QuizSessionManager
     public static class SessionOverviewDto
     {
         private String sessionId;
+        private String username;
         private int totalEarnedPoints;
         private int totalMaxPoints;
         private int totalCorrect;
@@ -86,6 +87,11 @@ public class QuizSessionManager
         public int getTotalWrong()
         {
             return this.totalWrong;
+        }
+
+        public String getUsername()
+        {
+            return this.username;
         }
 
         public boolean isFullyCompleted()
@@ -126,6 +132,11 @@ public class QuizSessionManager
         public void setTotalWrong(int v)
         {
             this.totalWrong = v;
+        }
+
+        public void setUsername(String username)
+        {
+            this.username = username;
         }
     }
 
@@ -515,6 +526,10 @@ public class QuizSessionManager
                 .allMatch(room -> room.getTotalQuestions() > 0
                         && room.getAnsweredQuestions() >= room.getTotalQuestions());
 
+        String username = this.userRepo.findById(session.getUserId())
+                .map(User::getUsername)
+                .orElse("Unbekannt");
+
         SessionOverviewDto overview = new SessionOverviewDto();
         overview.setSessionId(sessionId);
         overview.setTotalEarnedPoints(totalEarnedPoints);
@@ -769,6 +784,8 @@ public class QuizSessionManager
                 this.runSelectedAnswerRepo.saveAll(selectedAnswersToSave);
             }
         }
+
+        this.questionProgressRepo.saveAll(progressEntries);
     }
 
     private RoomSession buildRoomSessionFromProgressEntries(
