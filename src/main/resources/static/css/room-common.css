@@ -1,0 +1,99 @@
+:root {
+    --room-home-btn-bg: #1e293b;
+    --room-home-btn-hover-bg: #334155;
+    --room-home-btn-text: #ffffff;
+    --room-home-btn-hover-text: #ffffff;
+    --room-home-btn-border: #475569;
+    --room-home-btn-hover-border: #64748b;
+
+    --panda-tip-fill: #22c55e;
+}
+
+.panda-leaf-fill {
+    fill: var(--panda-tip-fill);
+}
+
+.quiz-answer-btn .answer-label {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
+    width: 100%;
+}
+
+.gap-option-btn .gap-option-label {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    width: 100%;
+}
+
+.has-answer-tooltip:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(100% - 24px);
+    max-width: 520px;
+    padding: 16px 18px;
+    background: #09122a;
+    color: #ffd60a;
+    border: 4px solid #facc15;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.08);
+    z-index: 50;
+    white-space: normal;
+    line-height: 1.4;
+    font-size: 18px;
+    text-align: left;
+    pointer-events: none;
+}
+
+.has-answer-tooltip:hover::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(5, 10, 20, 0.25);
+    z-index: 40;
+    pointer-events: none;
+}
+
+.room-home-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 0.75rem;
+    border: 1px solid var(--room-home-btn-border, #475569);
+    background-color: var(--room-home-btn-bg, #1e293b);
+    color: var(--room-home-btn-text, #ffffff);
+    box-shadow: 0 10px 18px rgba(0, 0, 0, 0.28);
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.room-home-button:hover {
+    background-color: var(--room-home-btn-hover-bg, #334155);
+    color: var(--room-home-btn-hover-text, var(--room-home-btn-text, #ffffff));
+    border-color: var(--room-home-btn-hover-border, var(--room-home-btn-border, #475569));
+    transform: translateY(-1px);
+}
+
+html.dark .room-home-button {
+    background-color: #1e293b;
+    color: #f8fafc;
+    border-color: #475569;
+}
+
+html.dark .room-home-button:hover {
+    background-color: #334155;
+    color: #ffffff;
+    border-color: #64748b;
+}
+
+.room-home-button svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}

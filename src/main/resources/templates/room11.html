@@ -4,7 +4,26 @@
       th:replace="~{base :: layout(~{::body}, 'min-h-screen bg-[#B45309] text-white font-mono tracking-wider dark:bg-[#000010] overflow-x-hidden')}">
 
 <body class="min-h-screen bg-[#B45309] text-white font-mono tracking-wider dark:bg-[#000010] overflow-x-hidden">
+
 <div th:replace="~{fragments/headline :: headline(${ 'Raum ' + roomId}, ${'Thema: ' + themeName}, ${avatarUrl}, null, null)}"></div>
+
+<style>
+    :root {
+        --room-home-btn-bg: #EA580C;
+        --room-home-btn-hover-bg: #C2410C;
+        --room-home-btn-text: #ffffff;
+        --room-home-btn-border: #FFEDD5;
+        --panda-tip-fill: #15A7F3;
+    }
+
+    html.dark {
+        --room-home-btn-bg: #1e293b;
+        --room-home-btn-hover-bg: #334155;
+        --room-home-btn-text: #f8fafc;
+        --room-home-btn-border: #475569;
+        --panda-tip-fill: #15A7F3;
+    }
+</style>
 
 <!-- WELCOME CONTAINER -->
 <main id="welcomeContainer" class="flex justify-center mt-10">
@@ -156,7 +175,7 @@
                             <rect x="19" y="4" width="2" height="16" fill="#8b5a2b"/>
                             <rect x="18" y="3" width="4" height="2" fill="#8b5a2b"/>
                             <rect x="18" y="2" width="4" height="1" fill="#6f4421"/>
-                            <rect x="19" y="1" width="2" height="2" class="fill-green-500 dark:fill-white"/>
+                            <rect x="19" y="1" width="2" height="2" class="panda-leaf-fill"/>
 
                             <rect x="7" y="3" width="10" height="8" fill="#050a14"/>
                             <rect x="8" y="4" width="8" height="6" fill="#e9f0ff"/>
@@ -236,54 +255,6 @@
             <div class="absolute left-[102px] top-0 w-[10px] h-full bg-[#FB923C] dark:bg-[#222a66]"></div>
         </div>
     </div>
-
-    <style>
-        .quiz-answer-btn .answer-label {
-            display: -webkit-box;
-            -webkit-box-orient: vertical;
-            -webkit-line-clamp: 4;
-            overflow: hidden;
-            width: 100%;
-        }
-
-        .gap-option-btn .gap-option-label {
-            display: -webkit-box;
-            -webkit-box-orient: vertical;
-            -webkit-line-clamp: 2;
-            overflow: hidden;
-            width: 100%;
-        }
-
-        .has-answer-tooltip:hover::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            width: calc(100% - 24px);
-            max-width: 520px;
-            padding: 16px 18px;
-            background: #4A1D0A;
-            color: #FFEDD5;
-            border: 4px solid #FB923C;
-            box-shadow: 0 0 0 3px rgba(255, 237, 213, 0.10);
-            z-index: 50;
-            white-space: normal;
-            line-height: 1.4;
-            font-size: 18px;
-            text-align: left;
-            pointer-events: none;
-        }
-
-        .has-answer-tooltip:hover::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: rgba(35, 12, 0, 0.25);
-            z-index: 40;
-            pointer-events: none;
-        }
-    </style>
 </main>
 
 <!-- GAME -->
@@ -309,7 +280,7 @@
                     <rect x="19" y="4" width="2" height="16" fill="#8b5a2b"/>
                     <rect x="18" y="3" width="4" height="2" fill="#8b5a2b"/>
                     <rect x="18" y="2" width="4" height="1" fill="#6f4421"/>
-                    <rect x="19" y="1" width="2" height="2" class="fill-green-500 dark:fill-white"/>
+                    <rect x="19" y="1" width="2" height="2" class="panda-leaf-fill"/>
 
                     <rect x="7" y="3" width="10" height="8" fill="#050a14"/>
                     <rect x="8" y="4" width="8" height="6" fill="#e9f0ff"/>
@@ -332,197 +303,21 @@
         </div>
 
         <!-- QUESTION PANEL -->
-        <div id="questionPanel" class="absolute left-[30px] bottom-[30px] w-[830px] h-[520px] z-10">
-            <div class="relative w-full h-full">
-
-                <!-- outer frame -->
-                <div
-                        class="absolute inset-0 bg-[#FFEDD5] dark:bg-[#f5f8ff]"
-                        style="
-                        clip-path: polygon(
-                            22px 0,
-                            calc(100% - 22px) 0,
-                            100% 22px,
-                            100% calc(100% - 22px),
-                            calc(100% - 22px) 100%,
-                            22px 100%,
-                            0 calc(100% - 22px),
-                            0 22px
-                        );
-                    ">
-                </div>
-
-                <!-- fill -->
-                <div
-                        class="absolute inset-[5px] bg-[#4A1D0A] dark:bg-[#0a1022]"
-                        style="
-                        clip-path: polygon(
-                            18px 0,
-                            calc(100% - 18px) 0,
-                            100% 18px,
-                            100% calc(100% - 18px),
-                            calc(100% - 18px) 100%,
-                            18px 100%,
-                            0 calc(100% - 18px),
-                            0 18px
-                        );
-                    ">
-                </div>
-
-                <!-- inner line -->
-                <div
-                        class="absolute inset-[16px] border border-[#C2410C] dark:border-[#1a2a52]"
-                        style="
-                        clip-path: polygon(
-                            12px 0,
-                            calc(100% - 12px) 0,
-                            100% 12px,
-                            100% calc(100% - 12px),
-                            calc(100% - 12px) 100%,
-                            12px 100%,
-                            0 calc(100% - 12px),
-                            0 12px
-                        );
-                    ">
-                </div>
-
-                <!-- content -->
-                <div class="relative h-full px-8 py-8 flex flex-col min-h-0">
-                    <h2 class="text-lg font-black tracking-widest shrink-0">FRAGE</h2>
-
-                    <div class="border-t border-white/20 mt-2 mb-5 shrink-0"></div>
-
-                    <div id="questionText"
-                         class="text-center leading-8 px-8 shrink-0 min-h-[72px] text-[clamp(18px,2vw,32px)]">
-                        Frage wird geladen...
-                    </div>
-
-                    <div class="text-sm text-gray-300 mt-6 mb-3 shrink-0">
-                        ANTWORTEN
-                    </div>
-
-                    <div id="answerContainer"
-                         class="grid grid-cols-2 gap-4 flex-1 min-h-0 content-stretch">
-                    </div>
-
-                    <div id="feedbackBox"
-                         class="mt-4 text-center text-lg font-black min-h-[32px] shrink-0">
-                    </div>
-
-                    <div class="mt-4 flex justify-center gap-4 relative z-20 shrink-0">
-                        <button id="submitAnswerBtn"
-                                class="hidden bg-[#EA580C] text-white px-6 py-3 rounded-lg font-black hover:bg-[#C2410C]">
-                            Antwort prüfen
-                        </button>
-
-                        <button id="nextQuestionBtn"
-                                class="hidden bg-[#F97316] text-white px-6 py-3 rounded-lg font-black hover:bg-[#EA580C]">
-                            Nächste Frage
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div th:replace="~{fragments/question-panel :: questionPanel(
+            'bg-[#FFEDD5] dark:bg-[#f5f8ff]',
+            'bg-[#4A1D0A] dark:bg-[#0a1022]',
+            'border-[#C2410C] dark:border-[#1a2a52]',
+            'bg-[#EA580C] text-white px-6 py-3 rounded-lg font-black hover:bg-[#C2410C]',
+            'bg-[#F97316] text-white px-6 py-3 rounded-lg font-black hover:bg-[#EA580C]'
+        )}"></div>
 
         <!-- STATUS PANEL -->
-        <div id="statusPanel" class="absolute right-[30px] top-[30px] w-[260px] h-[600px] z-10">
-            <div class="relative w-full h-full">
-
-                <!-- outer frame -->
-                <div
-                        class="absolute inset-0 bg-[#FFEDD5] dark:bg-[#f5f8ff]"
-                        style="
-                        clip-path: polygon(
-                            18px 0,
-                            calc(100% - 18px) 0,
-                            100% 18px,
-                            100% calc(100% - 18px),
-                            calc(100% - 18px) 100%,
-                            18px 100%,
-                            0 calc(100% - 18px),
-                            0 18px
-                        );
-                    ">
-                </div>
-
-                <!-- fill -->
-                <div
-                        class="absolute inset-[5px] bg-[#4A1D0A] dark:bg-[#0b1327]"
-                        style="
-                        clip-path: polygon(
-                            14px 0,
-                            calc(100% - 14px) 0,
-                            100% 14px,
-                            100% calc(100% - 14px),
-                            calc(100% - 14px) 100%,
-                            14px 100%,
-                            0 calc(100% - 14px),
-                            0 14px
-                        );
-                    ">
-                </div>
-
-                <!-- inner line -->
-                <div
-                        class="absolute inset-[16px] border border-[#C2410C] dark:border-[#1a2a52]"
-                        style="
-                        clip-path: polygon(
-                            10px 0,
-                            calc(100% - 10px) 0,
-                            100% 10px,
-                            100% calc(100% - 10px),
-                            calc(100% - 10px) 100%,
-                            10px 100%,
-                            0 calc(100% - 10px),
-                            0 10px
-                        );
-                    ">
-                </div>
-
-                <div class="relative h-full p-8">
-                    <h2 class="text-xl font-black mb-6">STATUS</h2>
-
-                    <div class="space-y-2 text-sm">
-                        <div>Punkte (Thema): <b id="earnedPoints">0/0</b></div>
-                        <div>Fragen im Raum: <b id="questionProgress">0/0</b></div>
-                    </div>
-
-                    <div class="mt-8">
-                        <div class="text-xs text-gray-300 mb-1">Thema-Fortschritt</div>
-
-                        <div class="h-4 bg-white/10 border border-white relative overflow-hidden">
-                            <div id="themeProgressBar" class="absolute left-0 top-0 h-full bg-emerald-500 w-0"></div>
-                        </div>
-
-                        <div id="themeProgressText" class="text-right text-xs text-gray-300 mt-1">0%</div>
-                    </div>
-
-                    <div class="mt-6">
-                        <div class="text-xs text-gray-300 mb-1">Fragen-Fortschritt</div>
-
-                        <div class="h-4 bg-white/10 border border-white relative overflow-hidden">
-                            <div id="questionCorrectBar" class="absolute left-0 top-0 h-full bg-emerald-500 w-0"></div>
-                            <div id="questionWrongBar" class="absolute right-0 top-0 h-full bg-red-500 w-0"></div>
-                        </div>
-
-                        <div class="mt-2 flex justify-between text-xs text-gray-200">
-                            <span>Richtig: <b id="correctAnswersText">0</b></span>
-                            <span>Falsch: <b id="wrongAnswersText">0</b></span>
-                        </div>
-                    </div>
-
-                    <hr class="my-8 border-white/20">
-
-                    <div class="mt-8">
-                        <div id="roomStatusBadge" class="bg-[#FED7AA] text-[#7C2D12] dark:bg-yellow-400 dark:text-black font-black text-xs text-center py-3 rounded-xl">
-                            IN PROGRESS (0%)
-                        </div>
-
-                        <div th:replace="~{fragments/medal :: medal}"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div th:replace="~{fragments/status-panel :: statusPanel(
+            'bg-[#FFEDD5] dark:bg-[#f5f8ff]',
+            'bg-[#4A1D0A] dark:bg-[#0b1327]',
+            'border-[#C2410C] dark:border-[#1a2a52]',
+            'bg-[#FED7AA] text-[#7C2D12] dark:bg-yellow-400 dark:text-black font-black text-xs text-center py-3 rounded-xl'
+        )}"></div>
     </div>
 </div>
 
@@ -601,68 +396,6 @@
         setInterval(moveGamePandaRandom, 5000);
     }
 
-    function updateHeadlineOverview(overview = null) {
-        const usernameElement = document.getElementById("headlineUsername");
-        const answeredElement = document.getElementById("headlineAnsweredQuestions");
-        const totalElement = document.getElementById("headlineTotalQuestions");
-        const avatarElement = document.getElementById("headlineAvatar");
-
-        if (usernameElement) {
-            usernameElement.textContent = sessionStorage.getItem("username") ?? "NutzerName";
-        }
-
-        if (avatarElement) {
-            const avatarFromStorage = sessionStorage.getItem("avatar");
-            if (avatarFromStorage) {
-                avatarElement.src = `/images/${avatarFromStorage}`;
-            }
-        }
-
-        if (!overview) {
-            return;
-        }
-
-        const rooms = Array.isArray(overview.rooms) ? overview.rooms : [];
-
-        const totalAnsweredQuestions = rooms.reduce((sum, room) => {
-            return sum + Number(room.answeredQuestions ?? 0);
-        }, 0);
-
-        const totalQuestions = rooms.reduce((sum, room) => {
-            return sum + Number(room.totalQuestions ?? 0);
-        }, 0);
-
-        if (answeredElement) {
-            answeredElement.textContent = totalAnsweredQuestions;
-        }
-
-        if (totalElement) {
-            totalElement.textContent = totalQuestions;
-        }
-    }
-
-    async function refreshHeadlineOverview() {
-        if (!sessionId) {
-            updateHeadlineOverview();
-            return;
-        }
-
-        try {
-            const response = await fetch(`/api/session/${sessionId}/overview`);
-
-            if (!response.ok) {
-                updateHeadlineOverview();
-                return;
-            }
-
-            const overview = await response.json();
-            updateHeadlineOverview(overview);
-        } catch (error) {
-            console.error("Fehler beim Aktualisieren des Headline-Headers:", error);
-            updateHeadlineOverview();
-        }
-    }
-
     const welcomeContainer = document.getElementById("welcomeContainer");
     const gameContainer = document.getElementById("gameContainer");
 
@@ -688,191 +421,6 @@
 
     let dialogIndex = 0;
 
-    function isGapQuestion(question) {
-        return question &&
-            (question.questionType === "GAP" ||
-                (question.gapFields && question.gapFields.length > 0));
-    }
-
-    function getGapMetrics(question) {
-        const gapFields = [...(question?.gapFields || [])];
-
-        const textLength = [
-            question?.startText,
-            question?.endText,
-            ...gapFields.flatMap(gapField => [gapField.textBefore, gapField.textAfter])
-        ]
-            .filter(Boolean)
-            .join(" ")
-            .length;
-
-        const maxOptionCount = Math.max(
-            0,
-            ...gapFields.map(gapField => (gapField.gapOptions || []).length)
-        );
-
-        const columnCount = maxOptionCount >= 7 ? 3 : 2;
-        const rowCount = Math.max(1, Math.ceil(maxOptionCount / columnCount));
-
-        return {
-            gapCount: gapFields.length,
-            textLength,
-            maxOptionCount,
-            rowCount
-        };
-    }
-
-    function syncQuestionSideLayout() {
-        if (!questionPanel || !gameScene) {
-            return;
-        }
-
-        const panelBottom = 30;
-        const panelHeight = questionPanel.offsetHeight || parseInt(questionPanel.style.height || "520", 10);
-        const sceneHeight = gameScene.offsetHeight || parseInt(gameScene.style.height || "680", 10);
-        const questionPanelTop = sceneHeight - panelHeight - panelBottom;
-
-        if (statusPanel) {
-            statusPanel.style.height = `${panelHeight}px`;
-            statusPanel.style.top = "auto";
-            statusPanel.style.bottom = `${panelBottom}px`;
-        }
-
-        if (gameRoomCharacter) {
-            const roomCharacterTop = Math.max(10, questionPanelTop - 150);
-            gameRoomCharacter.style.bottom = "auto";
-            gameRoomCharacter.style.top = `${roomCharacterTop}px`;
-        }
-
-        if (gamePanda) {
-            const pandaTop = Math.max(-42, questionPanelTop - 185);
-            gamePanda.style.top = `${pandaTop}px`;
-        }
-    }
-
-    function applyQuestionLayout(question) {
-        if (!gameScene || !questionPanel) {
-            return;
-        }
-
-        if (!isGapQuestion(question)) {
-            const questionLength = (question?.startText || "").length;
-
-            let panelHeight = 520;
-            let sceneHeight = 680;
-            let questionTextMaxHeight = 250;
-
-            if (questionLength > 180) {
-                panelHeight += 30;
-                questionTextMaxHeight += 20;
-            }
-            if (questionLength > 260) {
-                panelHeight += 40;
-                questionTextMaxHeight += 30;
-            }
-            if (questionLength > 360) {
-                panelHeight += 35;
-                questionTextMaxHeight += 20;
-            }
-
-            panelHeight = Math.min(panelHeight, 625);
-            sceneHeight = Math.max(680, panelHeight + 80);
-            questionTextMaxHeight = Math.min(questionTextMaxHeight, 320);
-
-            gameScene.style.height = `${sceneHeight}px`;
-            questionPanel.style.height = `${panelHeight}px`;
-            questionText.style.maxHeight = `${questionTextMaxHeight}px`;
-
-            requestAnimationFrame(() => {
-                syncQuestionSideLayout();
-            });
-            return;
-        }
-
-        const { gapCount, textLength, maxOptionCount, rowCount } = getGapMetrics(question);
-
-        let panelHeight = 520;
-
-        if (gapCount >= 3) {
-            panelHeight += 25;
-        }
-        if (gapCount >= 4) {
-            panelHeight += 25;
-        }
-
-        if (textLength > 140) {
-            panelHeight += 35;
-        }
-        if (textLength > 220) {
-            panelHeight += 35;
-        }
-        if (textLength > 320) {
-            panelHeight += 25;
-        }
-
-        if (maxOptionCount >= 5) {
-            panelHeight += 35;
-        }
-        if (maxOptionCount >= 7) {
-            panelHeight += 35;
-        }
-        if (maxOptionCount >= 9) {
-            panelHeight += 35;
-        }
-
-        if (rowCount >= 3) {
-            panelHeight += 20;
-        }
-        if (rowCount >= 4) {
-            panelHeight += 20;
-        }
-
-        panelHeight = Math.min(panelHeight, 690);
-
-        const sceneHeight = Math.max(680, panelHeight + 80);
-
-        questionPanel.style.height = `${panelHeight}px`;
-        gameScene.style.height = `${sceneHeight}px`;
-
-        let questionTextMaxHeight = 180;
-
-        if (textLength > 220) {
-            questionTextMaxHeight += 30;
-        }
-        if (gapCount >= 4) {
-            questionTextMaxHeight += 20;
-        }
-
-        questionTextMaxHeight = Math.min(questionTextMaxHeight, 290);
-        questionText.style.maxHeight = `${questionTextMaxHeight}px`;
-
-        requestAnimationFrame(() => {
-            syncQuestionSideLayout();
-        });
-    }
-
-    function updateSpeechTailPosition(speaker) {
-        if (speechTail) {
-            speechTail.classList.remove("left-[82%]", "left-[18%]");
-
-            if (speaker === "player") {
-                speechTail.classList.add("left-[18%]");
-            } else {
-                speechTail.classList.add("left-[82%]");
-            }
-        }
-
-        if (speechPanel) {
-            speechPanel.classList.remove("-translate-x-[42%]", "-translate-x-[50%]", "-translate-x-[34%]");
-
-            if (speaker === "player") {
-                speechPanel.classList.add("-translate-x-[50%]");
-            } else {
-                speechPanel.classList.add("-translate-x-[34%]");
-            }
-        }
-    }
-
     function showCurrentDialogLine() {
         if (!introDialog || introDialog.length === 0) {
             dialogText.innerText = "...";
@@ -895,18 +443,6 @@
             dialogNextBtn.classList.remove("hidden");
             startQuizBtn.classList.add("hidden");
         }
-    }
-
-    function nextDialogLine() {
-        if (dialogIndex < introDialog.length - 1) {
-            dialogIndex++;
-            showCurrentDialogLine();
-        }
-    }
-
-    function startQuiz() {
-        welcomeContainer.classList.add("hidden");
-        gameContainer.classList.remove("hidden");
     }
 
     function renderQuestion(question) {
@@ -1364,106 +900,6 @@
         }
     }
 
-    function fitQuestionText() {
-        if (!questionText) {
-            return;
-        }
-
-        let fontSize = 18;
-        const minFontSize = 8;
-
-        questionText.style.fontSize = fontSize + "px";
-        questionText.style.lineHeight = "1.08";
-
-        while (fontSize > minFontSize && questionText.scrollHeight > questionText.clientHeight) {
-            fontSize--;
-            questionText.style.fontSize = fontSize + "px";
-        }
-    }
-
-    function fitAnswerTexts() {
-        const buttons = answerContainer.querySelectorAll(".quiz-answer-btn");
-
-        buttons.forEach(button => {
-            const label = button.querySelector(".answer-label");
-            if (!label) {
-                return;
-            }
-
-            let fontSize = 22;
-            const minFontSize = 14;
-
-            label.style.fontSize = fontSize + "px";
-
-            while (fontSize > minFontSize && label.scrollHeight > label.clientHeight) {
-                fontSize--;
-                label.style.fontSize = fontSize + "px";
-            }
-
-            const isLong =
-                label.scrollHeight > label.clientHeight ||
-                (button.dataset.fullText && button.dataset.fullText.length > 55);
-
-            if (isLong) {
-                button.classList.add("has-answer-tooltip");
-                button.setAttribute("data-tooltip", button.dataset.fullText);
-            } else {
-                button.classList.remove("has-answer-tooltip");
-                button.removeAttribute("data-tooltip");
-            }
-        });
-    }
-
-    function fitGapQuestionText() {
-        const textFlow = questionText.firstElementChild;
-        if (!textFlow) {
-            return;
-        }
-
-        let fontSize = 14;
-        const minFontSize = 8;
-
-        textFlow.style.fontSize = fontSize + "px";
-
-        while (fontSize > minFontSize && questionText.scrollHeight > questionText.clientHeight) {
-            fontSize--;
-            textFlow.style.fontSize = fontSize + "px";
-        }
-    }
-
-    function fitGapOptionTexts() {
-        const buttons = answerContainer.querySelectorAll(".gap-option-btn");
-
-        buttons.forEach(button => {
-            const label = button.querySelector(".gap-option-label");
-            if (!label) {
-                return;
-            }
-
-            let fontSize = 16;
-            const minFontSize = 9;
-
-            label.style.fontSize = fontSize + "px";
-
-            while (fontSize > minFontSize && label.scrollHeight > label.clientHeight) {
-                fontSize--;
-                label.style.fontSize = fontSize + "px";
-            }
-
-            const isLong =
-                label.scrollHeight > label.clientHeight ||
-                (button.dataset.optionText && button.dataset.optionText.length > 36);
-
-            if (isLong) {
-                button.classList.add("has-answer-tooltip");
-                button.setAttribute("data-tooltip", button.dataset.optionText);
-            } else {
-                button.classList.remove("has-answer-tooltip");
-                button.removeAttribute("data-tooltip");
-            }
-        });
-    }
-
     async function submitAnswer() {
         const gapQuestion = isGapQuestion(currentQuestion);
 
@@ -1624,150 +1060,6 @@
         }
     }
 
-    async function refreshRoomStatus() {
-        try {
-            const response = await fetch(`/api/session/${sessionId}/room/${roomId}/status`);
-            const status = await response.json();
-
-            if (!response.ok) {
-                return;
-            }
-
-            updateStatus(status);
-            await refreshHeadlineOverview();
-        } catch (error) {
-            console.error("Fehler beim Aktualisieren des Status:", error);
-        }
-    }
-
-    function updateStatus(status) {
-        document.getElementById("earnedPoints").innerText = `${status.earnedPoints}/${status.totalPoints}`;
-        document.getElementById("questionProgress").innerText = `${status.answeredQuestions}/${status.totalQuestions}`;
-
-        // Thema-Fortschritt = Fortschritt innerhalb dieses Raums
-        const roomPercent = status.totalQuestions > 0
-            ? Math.round((status.answeredQuestions / status.totalQuestions) * 1000) / 10
-            : 0;
-
-        document.getElementById("themeProgressBar").style.width = `${roomPercent}%`;
-        document.getElementById("themeProgressText").innerText = `${roomPercent}%`;
-
-        // Fragen-Fortschritt = richtig / falsch
-        const correctAnswers =
-            status.correctAnswers ??
-            0;
-
-        const wrongAnswers =
-            status.wrongAnswers ??
-            Math.max(0, (status.answeredQuestions ?? 0) - correctAnswers);
-
-        const totalQuestions = status.totalQuestions ?? 0;
-
-        const correctPercent = totalQuestions > 0
-            ? (correctAnswers / totalQuestions) * 100
-            : 0;
-
-        const wrongPercent = totalQuestions > 0
-            ? (wrongAnswers / totalQuestions) * 100
-            : 0;
-
-        document.getElementById("questionCorrectBar").style.width = `${correctPercent}%`;
-        document.getElementById("questionWrongBar").style.width = `${wrongPercent}%`;
-
-        document.getElementById("correctAnswersText").innerText = correctAnswers;
-        document.getElementById("wrongAnswersText").innerText = wrongAnswers;
-
-        const medalText = !status.medal || status.medal === "NONE"
-            ? "IN PROGRESS"
-            : status.medal;
-
-        document.getElementById("roomStatusBadge").innerText =
-            `${medalText} (${roomPercent}%)`;
-
-        updateMedalCoin(status.medal);
-    }
-
-    function escapeHtml(value) {
-        return String(value)
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;")
-            .replaceAll("'", "&#039;");
-    }
-
-    function animatePlayerEntrance() {
-        if (!playerCharacter) {
-            return;
-        }
-
-        playerCharacter.classList.remove("left-[140px]", "-translate-x-0");
-        playerCharacter.classList.add("left-1/2", "-translate-x-1/2", "bottom-[-170px]");
-
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                playerCharacter.classList.remove("left-1/2", "-translate-x-1/2", "bottom-[-170px]");
-                playerCharacter.classList.add("left-[180px]", "-translate-x-0", "bottom-[95px]");
-            });
-        });
-    }
-
-    async function loadRoom() {
-        try {
-            const response = await fetch(`/api/session/${sessionId}/room/${roomId}`);
-            const data = await response.json();
-
-            if (!response.ok) {
-                sessionStorage.removeItem("sessionId");
-                alert(data.message || "Raum konnte nicht geladen werden.");
-                window.location.href = "/dashboard";
-                return false;
-            }
-
-            currentQuestion = data.firstQuestion;
-            updateStatus(data.status);
-            await refreshHeadlineOverview();
-
-            if (!currentQuestion) {
-                welcomeContainer.classList.add("hidden");
-                gameContainer.classList.remove("hidden");
-                showRoomCompletedState();
-                return true;
-            }
-
-            renderQuestion(currentQuestion);
-
-            const answeredQuestions = data.status?.answeredQuestions ?? 0;
-
-            if (answeredQuestions > 0) {
-                welcomeContainer.classList.add("hidden");
-                gameContainer.classList.remove("hidden");
-                return true;
-            }
-
-            introDialog = data.introDialog || [];
-            dialogIndex = 0;
-
-            animatePlayerEntrance();
-
-            setTimeout(() => {
-                showCurrentDialogLine();
-            }, 1850);
-
-            return true;
-        } catch (error) {
-            console.error("Fehler beim Laden des Raums:", error);
-            alert("Raum konnte nicht geladen werden.");
-            return false;
-        }
-    }
-
-    async function initWelcomeRoom() {
-        const loaded = await loadRoom();
-        roomLoaded = loaded === true;
-        initRandomPandas();
-    }
-
     function showRoomCompletedState() {
         currentQuestion = null;
         applyQuestionLayout(null);
@@ -1803,6 +1095,7 @@
     nextQuestionBtn.addEventListener("click", loadNextQuestion);
 
     updateHeadlineOverview();
+    initRandomPandas();
     initWelcomeRoom();
 </script>
 </body>

@@ -10,6 +10,10 @@
 <style>
     :root,
     html.theme-colorful {
+        --room-home-btn-bg: #18FA70;
+        --room-home-btn-hover-bg: #12d360;
+        --room-home-btn-text: #0a1022;
+        --room-home-btn-border: #0a1022;
         --room7-page-bg: #FFF123;
         --room7-welcome-bg: #18FA70;
         --room7-game-bg: #18FA70;
@@ -30,6 +34,10 @@
     }
 
     html.dark {
+        --room-home-btn-bg: #4254b8;
+        --room-home-btn-hover-bg: #5368e0;
+        --room-home-btn-text: #f5f8ff;
+        --room-home-btn-border: #f5f8ff;
         --room7-page-bg: #000010;
         --room7-welcome-bg: #222a66;
         --room7-game-bg: #000010;
@@ -50,6 +58,10 @@
     }
 
     html.theme-blackout {
+        --room-home-btn-bg: #111827;
+        --room-home-btn-hover-bg: #1f2937;
+        --room-home-btn-text: #ffffff;
+        --room-home-btn-border: #4b5563;
         --room7-page-bg: #000000;
         --room7-welcome-bg: #000000;
         --room7-game-bg: #000000;
@@ -122,6 +134,21 @@
         text-shadow: none !important;
     }
 
+    html.theme-blackout .room-home-button,
+    html.theme-blackout .room-home-button:hover {
+        background: #000000 !important;
+        background-color: #000000 !important;
+        background-image: none !important;
+        color: #000000 !important;
+        border-color: #000000 !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    html.theme-blackout .room-home-button svg {
+        fill: #000000 !important;
+    }
+
     /* Panda darf sichtbar bleiben */
     html.theme-blackout .room7-panda,
     html.theme-blackout .room7-panda * {
@@ -190,53 +217,7 @@
     }
 
     .panda-leaf {
-        fill: var(--room7-panda-leaf);
-    }
-
-    .quiz-answer-btn .answer-label {
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 4;
-        overflow: hidden;
-        width: 100%;
-    }
-
-    .gap-option-btn .gap-option-label {
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
-        overflow: hidden;
-        width: 100%;
-    }
-
-    .has-answer-tooltip:hover::after {
-        content: attr(data-tooltip);
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        width: calc(100% - 24px);
-        max-width: 520px;
-        padding: 16px 18px;
-        background: #09122a;
-        color: #ffd60a;
-        border: 4px solid #facc15;
-        box-shadow: 0 0 0 3px rgba(255,255,255,0.08);
-        z-index: 50;
-        white-space: normal;
-        line-height: 1.4;
-        font-size: 18px;
-        text-align: left;
-        pointer-events: none;
-    }
-
-    .has-answer-tooltip:hover::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: rgba(5, 10, 20, 0.25);
-        z-index: 40;
-        pointer-events: none;
+        fill: #facc15;
     }
 </style>
 
@@ -805,68 +786,6 @@
     let currentGapStep = 0;
     let roomLoaded = false;
 
-    function updateHeadlineOverview(overview = null) {
-        const usernameElement = document.getElementById("headlineUsername");
-        const answeredElement = document.getElementById("headlineAnsweredQuestions");
-        const totalElement = document.getElementById("headlineTotalQuestions");
-        const avatarElement = document.getElementById("headlineAvatar");
-
-        if (usernameElement) {
-            usernameElement.textContent = sessionStorage.getItem("username") ?? "NutzerName";
-        }
-
-        if (avatarElement) {
-            const avatarFromStorage = sessionStorage.getItem("avatar");
-            if (avatarFromStorage) {
-                avatarElement.src = `/images/${avatarFromStorage}`;
-            }
-        }
-
-        if (!overview) {
-            return;
-        }
-
-        const rooms = Array.isArray(overview.rooms) ? overview.rooms : [];
-
-        const totalAnsweredQuestions = rooms.reduce((sum, room) => {
-            return sum + Number(room.answeredQuestions ?? 0);
-        }, 0);
-
-        const totalQuestions = rooms.reduce((sum, room) => {
-            return sum + Number(room.totalQuestions ?? 0);
-        }, 0);
-
-        if (answeredElement) {
-            answeredElement.textContent = totalAnsweredQuestions;
-        }
-
-        if (totalElement) {
-            totalElement.textContent = totalQuestions;
-        }
-    }
-
-    async function refreshHeadlineOverview() {
-        if (!sessionId) {
-            updateHeadlineOverview();
-            return;
-        }
-
-        try {
-            const response = await fetch(`/api/session/${sessionId}/overview`);
-
-            if (!response.ok) {
-                updateHeadlineOverview();
-                return;
-            }
-
-            const overview = await response.json();
-            updateHeadlineOverview(overview);
-        } catch (error) {
-            console.error("Fehler beim Aktualisieren des Headline-Headers:", error);
-            updateHeadlineOverview();
-        }
-    }
-
     const welcomeContainer = document.getElementById("welcomeContainer");
     const gameContainer = document.getElementById("gameContainer");
 
@@ -892,191 +811,6 @@
 
     let dialogIndex = 0;
 
-    function isGapQuestion(question) {
-        return question &&
-            (question.questionType === "GAP" ||
-                (question.gapFields && question.gapFields.length > 0));
-    }
-
-    function getGapMetrics(question) {
-        const gapFields = [...(question?.gapFields || [])];
-
-        const textLength = [
-            question?.startText,
-            question?.endText,
-            ...gapFields.flatMap(gapField => [gapField.textBefore, gapField.textAfter])
-        ]
-            .filter(Boolean)
-            .join(" ")
-            .length;
-
-        const maxOptionCount = Math.max(
-            0,
-            ...gapFields.map(gapField => (gapField.gapOptions || []).length)
-        );
-
-        const columnCount = maxOptionCount >= 7 ? 3 : 2;
-        const rowCount = Math.max(1, Math.ceil(maxOptionCount / columnCount));
-
-        return {
-            gapCount: gapFields.length,
-            textLength,
-            maxOptionCount,
-            rowCount
-        };
-    }
-
-    function syncQuestionSideLayout() {
-        if (!questionPanel || !gameScene) {
-            return;
-        }
-
-        const panelBottom = 30;
-        const panelHeight = questionPanel.offsetHeight || parseInt(questionPanel.style.height || "520", 10);
-        const sceneHeight = gameScene.offsetHeight || parseInt(gameScene.style.height || "680", 10);
-        const questionPanelTop = sceneHeight - panelHeight - panelBottom;
-
-        if (statusPanel) {
-            statusPanel.style.height = `${panelHeight}px`;
-            statusPanel.style.top = "auto";
-            statusPanel.style.bottom = `${panelBottom}px`;
-        }
-
-        if (gameRoomCharacter) {
-            const roomCharacterTop = Math.max(10, questionPanelTop - 150);
-            gameRoomCharacter.style.bottom = "auto";
-            gameRoomCharacter.style.top = `${roomCharacterTop}px`;
-        }
-
-        if (gamePanda) {
-            const pandaTop = Math.max(-42, questionPanelTop - 185);
-            gamePanda.style.top = `${pandaTop}px`;
-        }
-    }
-
-    function applyQuestionLayout(question) {
-        if (!gameScene || !questionPanel) {
-            return;
-        }
-
-        if (!isGapQuestion(question)) {
-            const questionLength = (question?.startText || "").length;
-
-            let panelHeight = 520;
-            let sceneHeight = 680;
-            let questionTextMaxHeight = 250;
-
-            if (questionLength > 180) {
-                panelHeight += 30;
-                questionTextMaxHeight += 20;
-            }
-            if (questionLength > 260) {
-                panelHeight += 40;
-                questionTextMaxHeight += 30;
-            }
-            if (questionLength > 360) {
-                panelHeight += 35;
-                questionTextMaxHeight += 20;
-            }
-
-            panelHeight = Math.min(panelHeight, 625);
-            sceneHeight = Math.max(680, panelHeight + 80);
-            questionTextMaxHeight = Math.min(questionTextMaxHeight, 320);
-
-            gameScene.style.height = `${sceneHeight}px`;
-            questionPanel.style.height = `${panelHeight}px`;
-            questionText.style.maxHeight = `${questionTextMaxHeight}px`;
-
-            requestAnimationFrame(() => {
-                syncQuestionSideLayout();
-            });
-            return;
-        }
-
-        const { gapCount, textLength, maxOptionCount, rowCount } = getGapMetrics(question);
-
-        let panelHeight = 520;
-
-        if (gapCount >= 3) {
-            panelHeight += 25;
-        }
-        if (gapCount >= 4) {
-            panelHeight += 25;
-        }
-
-        if (textLength > 140) {
-            panelHeight += 35;
-        }
-        if (textLength > 220) {
-            panelHeight += 35;
-        }
-        if (textLength > 320) {
-            panelHeight += 25;
-        }
-
-        if (maxOptionCount >= 5) {
-            panelHeight += 35;
-        }
-        if (maxOptionCount >= 7) {
-            panelHeight += 35;
-        }
-        if (maxOptionCount >= 9) {
-            panelHeight += 35;
-        }
-
-        if (rowCount >= 3) {
-            panelHeight += 20;
-        }
-        if (rowCount >= 4) {
-            panelHeight += 20;
-        }
-
-        panelHeight = Math.min(panelHeight, 690);
-
-        const sceneHeight = Math.max(680, panelHeight + 80);
-
-        questionPanel.style.height = `${panelHeight}px`;
-        gameScene.style.height = `${sceneHeight}px`;
-
-        let questionTextMaxHeight = 180;
-
-        if (textLength > 220) {
-            questionTextMaxHeight += 30;
-        }
-        if (gapCount >= 4) {
-            questionTextMaxHeight += 20;
-        }
-
-        questionTextMaxHeight = Math.min(questionTextMaxHeight, 290);
-        questionText.style.maxHeight = `${questionTextMaxHeight}px`;
-
-        requestAnimationFrame(() => {
-            syncQuestionSideLayout();
-        });
-    }
-
-    function updateSpeechTailPosition(speaker) {
-        if (speechTail) {
-            speechTail.classList.remove("left-[82%]", "left-[18%]");
-
-            if (speaker === "player") {
-                speechTail.classList.add("left-[18%]");
-            } else {
-                speechTail.classList.add("left-[82%]");
-            }
-        }
-
-        if (speechPanel) {
-            speechPanel.classList.remove("-translate-x-[42%]", "-translate-x-[50%]", "-translate-x-[34%]");
-
-            if (speaker === "player") {
-                speechPanel.classList.add("-translate-x-[50%]");
-            } else {
-                speechPanel.classList.add("-translate-x-[34%]");
-            }
-        }
-    }
-
     function showCurrentDialogLine() {
         if (!introDialog || introDialog.length === 0) {
             dialogText.innerText = "...";
@@ -1099,18 +833,6 @@
             dialogNextBtn.classList.remove("hidden");
             startQuizBtn.classList.add("hidden");
         }
-    }
-
-    function nextDialogLine() {
-        if (dialogIndex < introDialog.length - 1) {
-            dialogIndex++;
-            showCurrentDialogLine();
-        }
-    }
-
-    function startQuiz() {
-        welcomeContainer.classList.add("hidden");
-        gameContainer.classList.remove("hidden");
     }
 
     function renderQuestion(question) {
@@ -1528,106 +1250,6 @@
         }
     }
 
-    function fitQuestionText() {
-        if (!questionText) {
-            return;
-        }
-
-        let fontSize = 18;
-        const minFontSize = 8;
-
-        questionText.style.fontSize = fontSize + "px";
-        questionText.style.lineHeight = "1.08";
-
-        while (fontSize > minFontSize && questionText.scrollHeight > questionText.clientHeight) {
-            fontSize--;
-            questionText.style.fontSize = fontSize + "px";
-        }
-    }
-
-    function fitAnswerTexts() {
-        const buttons = answerContainer.querySelectorAll(".quiz-answer-btn");
-
-        buttons.forEach(button => {
-            const label = button.querySelector(".answer-label");
-            if (!label) {
-                return;
-            }
-
-            let fontSize = 22;
-            const minFontSize = 14;
-
-            label.style.fontSize = fontSize + "px";
-
-            while (fontSize > minFontSize && label.scrollHeight > label.clientHeight) {
-                fontSize--;
-                label.style.fontSize = fontSize + "px";
-            }
-
-            const isLong =
-                label.scrollHeight > label.clientHeight ||
-                (button.dataset.fullText && button.dataset.fullText.length > 55);
-
-            if (isLong) {
-                button.classList.add("has-answer-tooltip");
-                button.setAttribute("data-tooltip", button.dataset.fullText);
-            } else {
-                button.classList.remove("has-answer-tooltip");
-                button.removeAttribute("data-tooltip");
-            }
-        });
-    }
-
-    function fitGapQuestionText() {
-        const textFlow = questionText.firstElementChild;
-        if (!textFlow) {
-            return;
-        }
-
-        let fontSize = 14;
-        const minFontSize = 8;
-
-        textFlow.style.fontSize = fontSize + "px";
-
-        while (fontSize > minFontSize && questionText.scrollHeight > questionText.clientHeight) {
-            fontSize--;
-            textFlow.style.fontSize = fontSize + "px";
-        }
-    }
-
-    function fitGapOptionTexts() {
-        const buttons = answerContainer.querySelectorAll(".gap-option-btn");
-
-        buttons.forEach(button => {
-            const label = button.querySelector(".gap-option-label");
-            if (!label) {
-                return;
-            }
-
-            let fontSize = 16;
-            const minFontSize = 9;
-
-            label.style.fontSize = fontSize + "px";
-
-            while (fontSize > minFontSize && label.scrollHeight > label.clientHeight) {
-                fontSize--;
-                label.style.fontSize = fontSize + "px";
-            }
-
-            const isLong =
-                label.scrollHeight > label.clientHeight ||
-                (button.dataset.optionText && button.dataset.optionText.length > 36);
-
-            if (isLong) {
-                button.classList.add("has-answer-tooltip");
-                button.setAttribute("data-tooltip", button.dataset.optionText);
-            } else {
-                button.classList.remove("has-answer-tooltip");
-                button.removeAttribute("data-tooltip");
-            }
-        });
-    }
-
     async function submitAnswer() {
         const gapQuestion = isGapQuestion(currentQuestion);
 
@@ -1786,149 +1408,6 @@
             console.error("Fehler beim Laden der nächsten Frage:", error);
             alert("Nächste Frage konnte nicht geladen werden.");
         }
-    }
-
-    async function refreshRoomStatus() {
-        try {
-            const response = await fetch(`/api/session/${sessionId}/room/${roomId}/status`);
-            const status = await response.json();
-
-            if (!response.ok) {
-                return;
-            }
-
-            updateStatus(status);
-            await refreshHeadlineOverview();
-        } catch (error) {
-            console.error("Fehler beim Aktualisieren des Status:", error);
-        }
-    }
-
-    function updateStatus(status) {
-        document.getElementById("earnedPoints").innerText = `${status.earnedPoints}/${status.totalPoints}`;
-        document.getElementById("questionProgress").innerText = `${status.answeredQuestions}/${status.totalQuestions}`;
-
-        // Thema-Fortschritt = Fortschritt innerhalb dieses Raums
-        const roomPercent = status.totalQuestions > 0
-            ? Math.round((status.answeredQuestions / status.totalQuestions) * 1000) / 10
-            : 0;
-
-        document.getElementById("themeProgressBar").style.width = `${roomPercent}%`;
-        document.getElementById("themeProgressText").innerText = `${roomPercent}%`;
-
-        // Fragen-Fortschritt = richtig / falsch
-        const correctAnswers =
-            status.correctAnswers ??
-            0;
-
-        const wrongAnswers =
-            status.wrongAnswers ??
-            Math.max(0, (status.answeredQuestions ?? 0) - correctAnswers);
-
-        const totalQuestions = status.totalQuestions ?? 0;
-
-        const correctPercent = totalQuestions > 0
-            ? (correctAnswers / totalQuestions) * 100
-            : 0;
-
-        const wrongPercent = totalQuestions > 0
-            ? (wrongAnswers / totalQuestions) * 100
-            : 0;
-
-        document.getElementById("questionCorrectBar").style.width = `${correctPercent}%`;
-        document.getElementById("questionWrongBar").style.width = `${wrongPercent}%`;
-
-        document.getElementById("correctAnswersText").innerText = correctAnswers;
-        document.getElementById("wrongAnswersText").innerText = wrongAnswers;
-
-        const medalText = !status.medal || status.medal === "NONE"
-            ? "IN PROGRESS"
-            : status.medal;
-
-        document.getElementById("roomStatusBadge").innerText =
-            `${medalText} (${roomPercent}%)`;
-
-        updateMedalCoin(status.medal);
-    }
-
-    function escapeHtml(value) {
-        return String(value)
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;")
-            .replaceAll("'", "&#039;");
-    }
-
-    function animatePlayerEntrance() {
-        if (!playerCharacter) {
-            return;
-        }
-
-        playerCharacter.classList.remove("left-[140px]", "-translate-x-0");
-        playerCharacter.classList.add("left-1/2", "-translate-x-1/2", "bottom-[-170px]");
-
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                playerCharacter.classList.remove("left-1/2", "-translate-x-1/2", "bottom-[-170px]");
-                playerCharacter.classList.add("left-[180px]", "-translate-x-0", "bottom-[95px]");
-            });
-        });
-    }
-
-    async function loadRoom() {
-        try {
-            const response = await fetch(`/api/session/${sessionId}/room/${roomId}`);
-            const data = await response.json();
-
-            if (!response.ok) {
-                sessionStorage.removeItem("sessionId");
-                alert(data.message || "Raum konnte nicht geladen werden.");
-                window.location.href = "/dashboard";
-                return false;
-            }
-
-            currentQuestion = data.firstQuestion;
-            updateStatus(data.status);
-            await refreshHeadlineOverview();
-
-            if (!currentQuestion) {
-                welcomeContainer.classList.add("hidden");
-                gameContainer.classList.remove("hidden");
-                showRoomCompletedState();
-                return true;
-            }
-
-            renderQuestion(currentQuestion);
-
-            const answeredQuestions = data.status?.answeredQuestions ?? 0;
-
-            if (answeredQuestions > 0) {
-                welcomeContainer.classList.add("hidden");
-                gameContainer.classList.remove("hidden");
-                return true;
-            }
-
-            introDialog = data.introDialog || [];
-            dialogIndex = 0;
-
-            animatePlayerEntrance();
-
-            setTimeout(() => {
-                showCurrentDialogLine();
-            }, 1850);
-
-            return true;
-        } catch (error) {
-            console.error("Fehler beim Laden des Raums:", error);
-            alert("Raum konnte nicht geladen werden.");
-            return false;
-        }
-    }
-
-    async function initWelcomeRoom() {
-        const loaded = await loadRoom();
-        roomLoaded = loaded === true;
     }
 
     function showRoomCompletedState() {

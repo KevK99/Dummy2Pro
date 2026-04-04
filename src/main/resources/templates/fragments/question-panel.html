@@ -1,0 +1,93 @@
+<div th:fragment="questionPanel(outerClass, fillClass, lineClass, submitClass, nextClass)"
+     id="questionPanel"
+     class="absolute left-[30px] bottom-[30px] w-[830px] h-[520px] z-10">
+    <div class="relative w-full h-full">
+
+        <!-- outer frame -->
+        <div
+                th:class="'absolute inset-0 ' + ${outerClass}"
+                style="
+                    clip-path: polygon(
+                        22px 0,
+                        calc(100% - 22px) 0,
+                        100% 22px,
+                        100% calc(100% - 22px),
+                        calc(100% - 22px) 100%,
+                        22px 100%,
+                        0 calc(100% - 22px),
+                        0 22px
+                    );
+                ">
+        </div>
+
+        <!-- fill -->
+        <div
+                th:class="'absolute inset-[5px] ' + ${fillClass}"
+                style="
+                    clip-path: polygon(
+                        18px 0,
+                        calc(100% - 18px) 0,
+                        100% 18px,
+                        100% calc(100% - 18px),
+                        calc(100% - 18px) 100%,
+                        18px 100%,
+                        0 calc(100% - 18px),
+                        0 18px
+                    );
+                ">
+        </div>
+
+        <!-- inner line -->
+        <div
+                th:class="'absolute inset-[16px] border ' + ${lineClass}"
+                style="
+                    clip-path: polygon(
+                        12px 0,
+                        calc(100% - 12px) 0,
+                        100% 12px,
+                        100% calc(100% - 12px),
+                        calc(100% - 12px) 100%,
+                        12px 100%,
+                        0 calc(100% - 12px),
+                        0 12px
+                    );
+                ">
+        </div>
+
+        <!-- content -->
+        <div class="relative h-full px-8 py-8 flex flex-col min-h-0">
+            <h2 class="text-lg font-black tracking-widest shrink-0">FRAGE</h2>
+
+            <div class="border-t border-white/20 mt-2 mb-5 shrink-0"></div>
+
+            <div id="questionText"
+                 class="text-center leading-8 px-8 shrink-0 min-h-[72px] text-[clamp(18px,2vw,32px)]">
+                Frage wird geladen...
+            </div>
+
+            <div class="text-sm text-gray-400 mt-6 mb-3 shrink-0">
+                ANTWORTEN
+            </div>
+
+            <div id="answerContainer"
+                 class="grid grid-cols-2 gap-4 flex-1 min-h-0 content-stretch">
+            </div>
+
+            <div id="feedbackBox"
+                 class="mt-4 text-center text-lg font-black min-h-[32px] shrink-0">
+            </div>
+
+            <div class="mt-4 flex justify-center gap-4 relative z-20 shrink-0">
+                <button id="submitAnswerBtn"
+                        th:class="'hidden ' + ${submitClass}">
+                    Antwort prüfen
+                </button>
+
+                <button id="nextQuestionBtn"
+                        th:class="'hidden ' + ${nextClass}">
+                    Nächste Frage
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

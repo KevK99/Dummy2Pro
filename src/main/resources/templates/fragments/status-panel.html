@@ -1,0 +1,100 @@
+<div th:fragment="statusPanel(outerClass, fillClass, lineClass, badgeClass)"
+     id="statusPanel"
+     class="absolute right-[30px] top-[30px] w-[260px] h-[600px] z-10">
+    <div class="relative w-full h-full">
+
+        <!-- outer frame -->
+        <div
+                th:class="'absolute inset-0 ' + ${outerClass}"
+                style="
+                    clip-path: polygon(
+                        18px 0,
+                        calc(100% - 18px) 0,
+                        100% 18px,
+                        100% calc(100% - 18px),
+                        calc(100% - 18px) 100%,
+                        18px 100%,
+                        0 calc(100% - 18px),
+                        0 18px
+                    );
+                ">
+        </div>
+
+        <!-- fill -->
+        <div
+                th:class="'absolute inset-[5px] ' + ${fillClass}"
+                style="
+                    clip-path: polygon(
+                        14px 0,
+                        calc(100% - 14px) 0,
+                        100% 14px,
+                        100% calc(100% - 14px),
+                        calc(100% - 14px) 100%,
+                        14px 100%,
+                        0 calc(100% - 14px),
+                        0 14px
+                    );
+                ">
+        </div>
+
+        <!-- inner line -->
+        <div
+                th:class="'absolute inset-[16px] border ' + ${lineClass}"
+                style="
+                    clip-path: polygon(
+                        10px 0,
+                        calc(100% - 10px) 0,
+                        100% 10px,
+                        100% calc(100% - 10px),
+                        calc(100% - 10px) 100%,
+                        10px 100%,
+                        0 calc(100% - 10px),
+                        0 10px
+                    );
+                ">
+        </div>
+
+        <div class="relative h-full p-8">
+            <h2 class="text-xl font-black mb-6">STATUS</h2>
+
+            <div class="space-y-2 text-sm">
+                <div>Punkte (Thema): <b id="earnedPoints">0/0</b></div>
+                <div>Fragen im Raum: <b id="questionProgress">0/0</b></div>
+            </div>
+
+            <div class="mt-8">
+                <div class="text-xs text-gray-400 mb-1">Thema-Fortschritt</div>
+
+                <div class="h-4 bg-white/10 border border-white relative overflow-hidden">
+                    <div id="themeProgressBar" class="absolute left-0 top-0 h-full bg-emerald-500 w-0"></div>
+                </div>
+
+                <div id="themeProgressText" class="text-right text-xs text-gray-400 mt-1">0%</div>
+            </div>
+
+            <div class="mt-6">
+                <div class="text-xs text-gray-400 mb-1">Fragen-Fortschritt</div>
+
+                <div class="h-4 bg-white/10 border border-white relative overflow-hidden">
+                    <div id="questionCorrectBar" class="absolute left-0 top-0 h-full bg-emerald-500 w-0"></div>
+                    <div id="questionWrongBar" class="absolute right-0 top-0 h-full bg-red-500 w-0"></div>
+                </div>
+
+                <div class="mt-2 flex justify-between text-xs text-gray-300">
+                    <span>Richtig: <b id="correctAnswersText">0</b></span>
+                    <span>Falsch: <b id="wrongAnswersText">0</b></span>
+                </div>
+            </div>
+
+            <hr class="my-8 border-white/20">
+
+            <div class="mt-8">
+                <div id="roomStatusBadge" th:class="${badgeClass}">
+                    IN PROGRESS (0%)
+                </div>
+
+                <div th:replace="~{fragments/medal :: medal}"></div>
+            </div>
+        </div>
+    </div>
+</div>
