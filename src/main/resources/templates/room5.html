@@ -515,11 +515,7 @@
                             IN PROGRESS (0%)
                         </div>
 
-                        <div id="medalContainer" class="mt-6 flex justify-center hidden">
-                            <div id="medalCoin" class="w-20 h-20 rounded-full border-4 flex items-center justify-center font-black text-xs tracking-wide shadow-lg">
-                                ---
-                            </div>
-                        </div>
+                        <div th:replace="~{fragments/medal :: medal}"></div>
                     </div>
                 </div>
             </div>
@@ -1563,7 +1559,7 @@
         if (!currentQuestion) {
             const nextRoomId = roomId + 1;
 
-            if (nextRoomId <= 7) {
+            if (nextRoomId <= 15) {
                 window.location.href = `/room/${nextRoomId}`;
             } else {
                 window.location.href = "/dashboard";
@@ -1620,45 +1616,6 @@
             await refreshHeadlineOverview();
         } catch (error) {
             console.error("Fehler beim Aktualisieren des Status:", error);
-        }
-    }
-
-    function updateMedalCoin(medal) {
-        const medalContainer = document.getElementById("medalContainer");
-        const medalCoin = document.getElementById("medalCoin");
-
-        if (!medalContainer || !medalCoin) {
-            return;
-        }
-
-        medalContainer.classList.add("hidden");
-
-        medalCoin.className =
-            "w-20 h-20 rounded-full border-4 flex items-center justify-center font-black text-xs tracking-wide shadow-lg";
-
-        medalCoin.innerText = "---";
-
-        if (!medal || medal === "NONE") {
-            return;
-        }
-
-        medalContainer.classList.remove("hidden");
-
-        if (medal === "BRONZE") {
-            medalCoin.classList.add("bg-amber-700", "border-amber-300", "text-white");
-            medalCoin.innerText = "BRONZE";
-            return;
-        }
-
-        if (medal === "SILVER") {
-            medalCoin.classList.add("bg-slate-300", "border-white", "text-slate-900");
-            medalCoin.innerText = "SILBER";
-            return;
-        }
-
-        if (medal === "GOLD") {
-            medalCoin.classList.add("bg-yellow-400", "border-yellow-100", "text-slate-900");
-            medalCoin.innerText = "GOLD";
         }
     }
 
@@ -1802,7 +1759,7 @@
 
         const nextRoomId = roomId + 1;
 
-        if (nextRoomId <= 7) {
+        if (nextRoomId <= 15) {
             nextQuestionBtn.innerText = `Zu Raum ${nextRoomId}`;
             nextQuestionBtn.classList.remove("hidden");
         } else {

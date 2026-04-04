@@ -1,22 +1,21 @@
 <!DOCTYPE html>
 <html lang="de"
       xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{base :: layout(~{::body}, 'min-h-screen bg-[#695800] text-white font-mono tracking-wider dark:bg-[#000010] overflow-x-hidden')}">
+      th:replace="~{base :: layout(~{::body}, 'min-h-screen bg-[#8F1111] text-white font-mono tracking-wider dark:bg-[#000010] overflow-x-hidden')}">
 
-<body class="min-h-screen bg-[#695800] text-white font-mono tracking-wider dark:bg-[#000010] overflow-x-hidden">
-
+<body class="min-h-screen bg-[#8F1111] text-white font-mono tracking-wider dark:bg-[#000010] overflow-x-hidden">
 <div th:replace="~{fragments/headline :: headline(${ 'Raum ' + roomId}, ${'Thema: ' + themeName}, ${avatarUrl}, null, null)}"></div>
 
 <!-- WELCOME CONTAINER -->
 <main id="welcomeContainer" class="flex justify-center mt-10">
     <div class="w-full max-w-6xl px-6 relative">
         <section
-                class="relative border-[10px] border-[#050a14] shadow-2xl overflow-visible bg-[#12FF93] dark:bg-[#222a66]"
+                class="relative border-[10px] border-[#050a14] shadow-2xl overflow-visible bg-[#F87171] dark:bg-[#222a66]"
                 style="
             background-image:
                 radial-gradient(rgba(255,255,255,0.10) 1px, transparent 1px),
-                radial-gradient(rgba(140,170,255,0.10) 1px, transparent 1px),
-                radial-gradient(rgba(20,30,90,0.18) 1px, transparent 1px);
+                radial-gradient(rgba(255,220,220,0.14) 1px, transparent 1px),
+                radial-gradient(rgba(130,10,10,0.18) 1px, transparent 1px);
             background-size: 18px 18px, 18px 18px, 18px 18px;
             background-position: 0 0, 9px 9px, 4px 4px;
         ">
@@ -25,14 +24,14 @@
             <div
                     class="absolute inset-12 border-4 border-white/30"
                     style="
-                    background-color: #0a2a3a;
-                    background-image:
-                        radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
-                        radial-gradient(rgba(120,170,190,0.10) 1px, transparent 1px),
-                        radial-gradient(rgba(5,20,30,0.22) 1px, transparent 1px);
-                    background-size: 20px 20px, 20px 20px, 20px 20px;
-                    background-position: 0 0, 10px 10px, 5px 5px;
-                ">
+                background-color: #3F0B0B;
+                background-image:
+                    radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+                    radial-gradient(rgba(255,210,210,0.10) 1px, transparent 1px),
+                    radial-gradient(rgba(30,0,0,0.24) 1px, transparent 1px);
+                background-size: 20px 20px, 20px 20px, 20px 20px;
+                background-position: 0 0, 10px 10px, 5px 5px;
+            ">
             </div>
 
             <!-- ROOM CONTENT -->
@@ -43,7 +42,7 @@
                     <div class="relative min-h-[150px]">
                         <!-- outer bubble -->
                         <div
-                                class="absolute inset-0 bg-[#f5f8ff]"
+                                class="absolute inset-0 bg-[#FEE2E2] dark:bg-[#f5f8ff]"
                                 style="
                                 clip-path: polygon(
                                     20px 0,
@@ -60,7 +59,7 @@
 
                         <!-- bubble fill -->
                         <div
-                                class="absolute inset-[5px] bg-[#0a1022]"
+                                class="absolute inset-[5px] bg-[#3F0B0B] dark:bg-[#0a1022]"
                                 style="
                                 clip-path: polygon(
                                     18px 0,
@@ -77,7 +76,7 @@
 
                         <!-- inner stroke -->
                         <div
-                                class="absolute inset-[14px] border border-[#1a2a52]"
+                                class="absolute inset-[14px] border border-[#B91C1C] dark:border-[#1a2a52]"
                                 style="
                                 clip-path: polygon(
                                     14px 0,
@@ -104,7 +103,7 @@
                     <div id="speechTail" class="absolute left-[72%] -translate-x-1/2 top-full -translate-y-[1px] transition-all duration-300">
                         <!-- tail outer -->
                         <div
-                                class="relative w-[40px] h-[34px] bg-[#f5f8ff]"
+                                class="relative w-[40px] h-[34px] bg-[#FEE2E2] dark:bg-[#f5f8ff]"
                                 style="
                                 clip-path: polygon(
                                     0 0,
@@ -117,7 +116,7 @@
                             ">
                             <!-- tail fill -->
                             <div
-                                    class="absolute inset-[4px] bg-[#0a1022]"
+                                    class="absolute inset-[4px] bg-[#3F0B0B] dark:bg-[#0a1022]"
                                     style="
                                     clip-path: polygon(
                                         0 0,
@@ -132,7 +131,7 @@
 
                             <!-- tail inner stroke -->
                             <div
-                                    class="absolute inset-[10px] border border-[#1a2a52]"
+                                    class="absolute inset-[10px] border border-[#B91C1C] dark:border-[#1a2a52]"
                                     style="
                                     clip-path: polygon(
                                         0 0,
@@ -148,11 +147,11 @@
                     </div>
                 </div>
 
-                <!-- Troll-CHARACTER  PANDA ÒwÓ bleibt -->
-                <div class="absolute left-1/2 -translate-x-1/2 bottom-[70px] flex flex-col items-center z-10">
-                    <div class="w-[170px] h-[30px] bg-white/50 rounded-full blur-sm"></div>
+                <!-- Troll-CHARACTER PANDA läuft langsam um den Raum -->
+                <div class="absolute left-[190px] bottom-[180px] flex flex-col items-center z-10 room10-panda-walk-welcome">
+                    <div class="w-[170px] h-[30px] bg-white/40 rounded-full blur-sm"></div>
 
-                    <svg class="w-[230px] mt-[-10px]" viewBox="0 0 24 24" shape-rendering="crispEdges">
+                    <svg class="w-[230px] mt-[-10px] room10-panda-sprite-welcome" viewBox="0 0 24 24" shape-rendering="crispEdges">
                         <rect x="19" y="4" width="2" height="16" fill="#8b5a2b"/>
                         <rect x="18" y="3" width="4" height="2" fill="#8b5a2b"/>
                         <rect x="18" y="2" width="4" height="1" fill="#6f4421"/>
@@ -180,8 +179,8 @@
                 <!-- Raum-CHARACTER -->
                 <div class="absolute right-[140px] bottom-[95px] z-10">
                     <img
-                            src="/room-characters/Prinzessin.png"
-                            alt="Raumcharakter Prinzessin"
+                            src="/room-characters/Schmied.png"
+                            alt="Raumcharakter Schmied"
                             class="w-[150px]"
                             style="image-rendering: pixelated;"
                     >
@@ -202,14 +201,14 @@
                 </div>
 
                 <!-- CONTROLS -->
-                <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-4">
+                <div class="absolute bottom-6 left-[calc(50%_-_120px)] z-20 flex gap-4">
                     <button id="dialogNextBtn"
-                            class="bg-violet-700 text-white px-6 py-3 rounded-lg font-black hover:bg-violet-600">
+                            class="bg-[#DC2626] text-white px-6 py-3 rounded-lg font-black hover:bg-[#B91C1C]">
                         Weiter
                     </button>
 
                     <button id="startQuizBtn"
-                            class="hidden bg-emerald-600 text-white px-6 py-3 rounded-lg font-black hover:bg-emerald-500">
+                            class="hidden bg-[#EF4444] text-white px-6 py-3 rounded-lg font-black hover:bg-[#DC2626]">
                         Prüfung beginnen
                     </button>
                 </div>
@@ -218,25 +217,93 @@
         </section>
 
         <!-- CORRIDOR -->
-        <div class="absolute left-1/2 -translate-x-1/2 top-[calc(100%-3rem)] w-28 h-[220px] z-0 pointer-events-none">
+        <div class="absolute left-[calc(50%_-_120px)] top-[calc(100%_-_3rem)] w-28 h-[220px] z-0 pointer-events-none">
             <!-- linke Außenwand -->
-            <div class="absolute left-0 top-0 w-[10px] h-full bg-[#12FF93] dark:bg-[#222a66]"></div>
+            <div class="absolute left-0 top-0 w-[10px] h-full bg-[#F87171] dark:bg-[#222a66]"></div>
 
-            <!-- linke graue Innenkante -->
-            <div class="absolute left-[10px] top-0 w-[4px] h-full bg-[#8f9fa3]"></div>
+            <!-- linke Innenkante -->
+            <div class="absolute left-[10px] top-0 w-[4px] h-full bg-[#DC2626] dark:bg-[#8f9fa3]"></div>
 
             <!-- Mitte / Flurboden -->
-            <div class="absolute left-[14px] top-0 w-[84px] h-full bg-[#0a2a3a]"></div>
+            <div class="absolute left-[14px] top-0 w-[84px] h-full bg-[#3F0B0B] dark:bg-[#0a2a3a]"></div>
 
-            <!-- rechte graue Innenkante -->
-            <div class="absolute left-[98px] top-0 w-[4px] h-full bg-[#8f9fa3]"></div>
+            <!-- rechte Innenkante -->
+            <div class="absolute left-[98px] top-0 w-[4px] h-full bg-[#DC2626] dark:bg-[#8f9fa3]"></div>
 
             <!-- rechte Außenwand -->
-            <div class="absolute left-[102px] top-0 w-[10px] h-full bg-[#12FF93] dark:bg-[#222a66]"></div>
+            <div class="absolute left-[102px] top-0 w-[10px] h-full bg-[#F87171] dark:bg-[#222a66]"></div>
         </div>
     </div>
 
     <style>
+        @keyframes room10PandaWalkWelcome {
+            0% {
+                transform: translate(0, 0);
+            }
+            25% {
+                transform: translate(340px, 0);
+            }
+            50% {
+                transform: translate(340px, 120px);
+            }
+            75% {
+                transform: translate(0, 120px);
+            }
+            100% {
+                transform: translate(0, 0);
+            }
+        }
+
+        @keyframes room10PandaWalkGame {
+            0% {
+                transform: translate(0, 0);
+            }
+            25% {
+                transform: translate(830px, 0);
+            }
+            50% {
+                transform: translate(830px, 525px);
+            }
+            75% {
+                transform: translate(0, 525px);
+            }
+            100% {
+                transform: translate(0, 0);
+            }
+        }
+
+        @keyframes room10PandaFacing {
+            0%,
+            49.999% {
+                transform: scaleX(1);
+            }
+            50%,
+            99.999% {
+                transform: scaleX(-1);
+            }
+            100% {
+                transform: scaleX(1);
+            }
+        }
+
+        .room10-panda-walk-welcome {
+            animation: room10PandaWalkWelcome 18s linear infinite;
+        }
+
+        .room10-panda-walk-game {
+            animation: room10PandaWalkGame 26s linear infinite;
+        }
+
+        .room10-panda-sprite-welcome,
+        .room10-panda-sprite-game {
+            animation: room10PandaFacing 18s step-end infinite;
+            transform-origin: center;
+        }
+
+        .room10-panda-sprite-game {
+            animation-duration: 26s;
+        }
+
         .quiz-answer-btn .answer-label {
             display: -webkit-box;
             -webkit-box-orient: vertical;
@@ -262,10 +329,10 @@
             width: calc(100% - 24px);
             max-width: 520px;
             padding: 16px 18px;
-            background: #09122a;
-            color: #ffd60a;
-            border: 4px solid #facc15;
-            box-shadow: 0 0 0 3px rgba(255,255,255,0.08);
+            background: #3F0B0B;
+            color: #FEE2E2;
+            border: 4px solid #F87171;
+            box-shadow: 0 0 0 3px rgba(254, 226, 226, 0.10);
             z-index: 50;
             white-space: normal;
             line-height: 1.4;
@@ -278,7 +345,7 @@
             content: "";
             position: absolute;
             inset: 0;
-            background: rgba(5, 10, 20, 0.25);
+            background: rgba(35, 5, 5, 0.25);
             z-index: 40;
             pointer-events: none;
         }
@@ -286,24 +353,24 @@
 </main>
 
 <!-- GAME -->
-<div id="gameContainer" class="bg-[#695800] dark:bg-slate-950 text-white font-mono tracking-wider hidden min-h-screen">
-    <div id="gameScene" class="w-[1200px] h-[680px] mx-auto relative bg-[#12FF93] dark:bg-slate-950 overflow-visible">
+<div id="gameContainer" class="bg-[#8F1111] dark:bg-[#000010] text-white font-mono tracking-wider hidden min-h-screen">
+    <div id="gameScene" class="w-[1200px] h-[680px] mx-auto relative bg-[#F87171] dark:bg-[#000010] overflow-visible">
 
         <!-- ROOM CHARACTER -->
         <div id="gameRoomCharacter" class="absolute left-[105px] top-[-5px] z-20 pointer-events-none">
             <img
-                    src="/room-characters/Prinzessin.png"
-                    alt="Raumcharakter Prinzessin"
+                    src="/room-characters/Schmied.png"
+                    alt="Raumcharakter Schmied"
                     class="w-[110px]"
                     style="image-rendering: pixelated; transform: scaleX(-1);"
             >
         </div>
 
         <!-- PANDA -->
-        <div id="gamePanda" class="absolute left-[390px] top-[-34px] flex flex-col items-center pointer-events-none animate-spin [animation-duration:4s] [animation-direction:reverse] z-50">
-            <div class="w-[130px] h-[22px] bg-white/80 rounded-full blur-sm"></div>
+        <div id="gamePanda" class="absolute left-[18px] top-[-24px] flex flex-col items-center pointer-events-none z-50 room10-panda-walk-game">
+            <div class="w-[130px] h-[22px] bg-white/60 rounded-full blur-sm"></div>
 
-            <svg class="w-[160px] mt-[-8px]" viewBox="0 0 24 24" shape-rendering="crispEdges">
+            <svg class="w-[160px] mt-[-8px] room10-panda-sprite-game" viewBox="0 0 24 24" shape-rendering="crispEdges">
                 <rect x="19" y="4" width="2" height="16" fill="#8b5a2b"/>
                 <rect x="18" y="3" width="4" height="2" fill="#8b5a2b"/>
                 <rect x="18" y="2" width="4" height="1" fill="#6f4421"/>
@@ -334,7 +401,7 @@
 
                 <!-- outer frame -->
                 <div
-                        class="absolute inset-0 bg-[#f5f8ff]"
+                        class="absolute inset-0 bg-[#FEE2E2] dark:bg-[#f5f8ff]"
                         style="
                         clip-path: polygon(
                             22px 0,
@@ -351,7 +418,7 @@
 
                 <!-- fill -->
                 <div
-                        class="absolute inset-[5px] bg-[#0a1022]"
+                        class="absolute inset-[5px] bg-[#3F0B0B] dark:bg-[#0a1022]"
                         style="
                         clip-path: polygon(
                             18px 0,
@@ -368,7 +435,7 @@
 
                 <!-- inner line -->
                 <div
-                        class="absolute inset-[16px] border border-[#1a2a52]"
+                        class="absolute inset-[16px] border border-[#B91C1C] dark:border-[#1a2a52]"
                         style="
                         clip-path: polygon(
                             12px 0,
@@ -394,7 +461,7 @@
                         Frage wird geladen...
                     </div>
 
-                    <div class="text-sm text-gray-400 mt-6 mb-3 shrink-0">
+                    <div class="text-sm text-gray-300 mt-6 mb-3 shrink-0">
                         ANTWORTEN
                     </div>
 
@@ -408,12 +475,12 @@
 
                     <div class="mt-4 flex justify-center gap-4 relative z-20 shrink-0">
                         <button id="submitAnswerBtn"
-                                class="hidden bg-indigo-600 text-white px-6 py-3 rounded-lg font-black hover:bg-indigo-500">
+                                class="hidden bg-[#DC2626] text-white px-6 py-3 rounded-lg font-black hover:bg-[#B91C1C]">
                             Antwort prüfen
                         </button>
 
                         <button id="nextQuestionBtn"
-                                class="hidden bg-emerald-600 text-white px-6 py-3 rounded-lg font-black hover:bg-emerald-500">
+                                class="hidden bg-[#EF4444] text-white px-6 py-3 rounded-lg font-black hover:bg-[#DC2626]">
                             Nächste Frage
                         </button>
                     </div>
@@ -427,7 +494,7 @@
 
                 <!-- outer frame -->
                 <div
-                        class="absolute inset-0 bg-[#f5f8ff]"
+                        class="absolute inset-0 bg-[#FEE2E2] dark:bg-[#f5f8ff]"
                         style="
                         clip-path: polygon(
                             18px 0,
@@ -444,7 +511,7 @@
 
                 <!-- fill -->
                 <div
-                        class="absolute inset-[5px] bg-[#0b1327]"
+                        class="absolute inset-[5px] bg-[#3F0B0B] dark:bg-[#0b1327]"
                         style="
                         clip-path: polygon(
                             14px 0,
@@ -461,7 +528,7 @@
 
                 <!-- inner line -->
                 <div
-                        class="absolute inset-[16px] border border-[#1a2a52]"
+                        class="absolute inset-[16px] border border-[#B91C1C] dark:border-[#1a2a52]"
                         style="
                         clip-path: polygon(
                             10px 0,
@@ -485,24 +552,24 @@
                     </div>
 
                     <div class="mt-8">
-                        <div class="text-xs text-gray-400 mb-1">Thema-Fortschritt</div>
+                        <div class="text-xs text-gray-300 mb-1">Thema-Fortschritt</div>
 
                         <div class="h-4 bg-white/10 border border-white relative overflow-hidden">
                             <div id="themeProgressBar" class="absolute left-0 top-0 h-full bg-emerald-500 w-0"></div>
                         </div>
 
-                        <div id="themeProgressText" class="text-right text-xs text-gray-400 mt-1">0%</div>
+                        <div id="themeProgressText" class="text-right text-xs text-gray-300 mt-1">0%</div>
                     </div>
 
                     <div class="mt-6">
-                        <div class="text-xs text-gray-400 mb-1">Fragen-Fortschritt</div>
+                        <div class="text-xs text-gray-300 mb-1">Fragen-Fortschritt</div>
 
                         <div class="h-4 bg-white/10 border border-white relative overflow-hidden">
                             <div id="questionCorrectBar" class="absolute left-0 top-0 h-full bg-emerald-500 w-0"></div>
                             <div id="questionWrongBar" class="absolute right-0 top-0 h-full bg-red-500 w-0"></div>
                         </div>
 
-                        <div class="mt-2 flex justify-between text-xs text-gray-300">
+                        <div class="mt-2 flex justify-between text-xs text-gray-200">
                             <span>Richtig: <b id="correctAnswersText">0</b></span>
                             <span>Falsch: <b id="wrongAnswersText">0</b></span>
                         </div>
@@ -511,15 +578,11 @@
                     <hr class="my-8 border-white/20">
 
                     <div class="mt-8">
-                        <div id="roomStatusBadge" class="bg-yellow-400 text-black font-black text-xs text-center py-3 rounded-xl">
+                        <div id="roomStatusBadge" class="bg-[#FCA5A5] text-[#450A0A] dark:bg-yellow-400 dark:text-black font-black text-xs text-center py-3 rounded-xl">
                             IN PROGRESS (0%)
                         </div>
 
-                        <div id="medalContainer" class="mt-6 flex justify-center hidden">
-                            <div id="medalCoin" class="w-20 h-20 rounded-full border-4 flex items-center justify-center font-black text-xs tracking-wide shadow-lg">
-                                ---
-                            </div>
-                        </div>
+                        <div th:replace="~{fragments/medal :: medal}"></div>
                     </div>
                 </div>
             </div>
@@ -530,7 +593,7 @@
 <script th:src="@{/js/darkmode.js}"></script>
 
 <script th:inline="javascript">
-    const roomId = /*[[${roomId}]]*/ 2;
+    const roomId = /*[[${roomId}]]*/ 10;
 
     const userId = sessionStorage.getItem("userId");
     const runId = sessionStorage.getItem("runId");
@@ -848,7 +911,7 @@
         }
 
         const line = introDialog[dialogIndex];
-        const speakerLabel = line.speaker === "player" ? "Du" : "Schülerin";
+        const speakerLabel = line.speaker === "player" ? "Du" : "Schmied";
 
         updateSpeechTailPosition(line.speaker);
         dialogText.innerText = `${speakerLabel}: ${line.text}`;
@@ -934,10 +997,13 @@
             button.className = `
                 quiz-answer-btn
                 relative w-full h-full
-                border-4 border-yellow-400
+                border-4 border-[#FEE2E2]
                 px-6 py-4
-                font-black text-yellow-400 text-left
-                bg-[#09122a]
+                font-black text-[#FEE2E2] text-left
+                bg-[#3F0B0B]
+                dark:border-yellow-400
+                dark:text-yellow-400
+                dark:bg-[#09122a]
                 flex items-center
             `;
 
@@ -995,9 +1061,13 @@
                 relative inline-flex items-center justify-center
                 min-w-[88px] max-w-full
                 px-2.5 py-1
-                border-2 border-dashed border-white/40
-                text-center font-black text-yellow-300
-                bg-[#0a1022] transition
+                border-2 border-dashed border-[#FCA5A5]
+                text-center font-black text-[#FEE2E2]
+                bg-[#3F0B0B]
+                dark:border-white/40
+                dark:text-yellow-300
+                dark:bg-[#0a1022]
+                transition
             `;
             preview.textContent = `[ Lücke ${gapIndex + 1} ]`;
 
@@ -1039,7 +1109,7 @@
 
         const currentGapLabel = document.createElement("div");
         currentGapLabel.id = "gapCurrentLabel";
-        currentGapLabel.className = "text-xs text-gray-300 font-black tracking-wide shrink-0";
+        currentGapLabel.className = "text-xs text-gray-200 font-black tracking-wide shrink-0";
         answerContainer.appendChild(currentGapLabel);
 
         gapFields.forEach((gapField, gapIndex) => {
@@ -1079,10 +1149,13 @@
                 button.className = `
                     gap-option-btn
                     relative w-full
-                    border-4 border-yellow-400
+                    border-4 border-[#FEE2E2]
                     px-3 py-2
-                    font-black text-yellow-400 text-left
-                    bg-[#0a1022]
+                    font-black text-[#FEE2E2] text-left
+                    bg-[#3F0B0B]
+                    dark:border-yellow-400
+                    dark:text-yellow-400
+                    dark:bg-[#0a1022]
                     flex items-center
                 `;
                 button.style.minHeight = `${minHeight}px`;
@@ -1110,7 +1183,7 @@
         const prevBtn = document.createElement("button");
         prevBtn.type = "button";
         prevBtn.id = "gapPrevBtn";
-        prevBtn.className = "bg-slate-700 text-white px-5 py-2.5 rounded-lg font-black hover:bg-slate-600";
+        prevBtn.className = "bg-[#5F1515] text-white px-5 py-2.5 rounded-lg font-black hover:bg-[#7F1D1D]";
         prevBtn.innerText = "Zurück";
 
         prevBtn.addEventListener("click", () => {
@@ -1120,7 +1193,7 @@
         const stepBtn = document.createElement("button");
         stepBtn.type = "button";
         stepBtn.id = "gapStepBtn";
-        stepBtn.className = "bg-indigo-600 text-white px-5 py-2.5 rounded-lg font-black hover:bg-indigo-500";
+        stepBtn.className = "bg-[#DC2626] text-white px-5 py-2.5 rounded-lg font-black hover:bg-[#B91C1C]";
         stepBtn.innerText = "Weiter";
 
         stepBtn.addEventListener("click", () => {
@@ -1175,7 +1248,7 @@
             return;
         }
 
-        const maxStep = currentQuestion.gapFields.length - 6;
+        const maxStep = currentQuestion.gapFields.length - 1;
         currentGapStep = Math.max(0, Math.min(stepIndex, maxStep));
 
         updateGapStepUI();
@@ -1202,23 +1275,53 @@
             preview.classList.remove(
                 "border-dashed",
                 "border-white/40",
+                "dark:border-white/40",
+                "border-[#FCA5A5]",
+                "border-[#FEE2E2]",
+                "dark:border-yellow-400",
                 "text-yellow-300",
-                "border-yellow-400",
+                "dark:text-yellow-300",
+                "text-[#FEE2E2]",
+                "dark:text-white",
                 "text-white",
-                "bg-yellow-400/10",
-                "bg-indigo-500/20",
+                "bg-[#3F0B0B]",
+                "bg-[#B91C1C]/20",
+                "bg-[#F87171]/20",
+                "dark:bg-[#0a1022]",
+                "dark:bg-yellow-400/10",
+                "dark:bg-indigo-500/20",
                 "ring-2",
                 "ring-white/40"
             );
 
             if (hasAnswer) {
-                preview.classList.add("border-yellow-400", "text-white", "bg-yellow-400/10");
+                preview.classList.add(
+                    "border-[#FEE2E2]",
+                    "text-white",
+                    "bg-[#B91C1C]/20",
+                    "dark:border-yellow-400",
+                    "dark:text-white",
+                    "dark:bg-yellow-400/10"
+                );
             } else {
-                preview.classList.add("border-dashed", "border-white/40", "text-yellow-300");
+                preview.classList.add(
+                    "border-dashed",
+                    "border-[#FCA5A5]",
+                    "text-[#FEE2E2]",
+                    "bg-[#3F0B0B]",
+                    "dark:border-white/40",
+                    "dark:text-yellow-300",
+                    "dark:bg-[#0a1022]"
+                );
             }
 
             if (previewStep === currentGapStep) {
-                preview.classList.add("bg-indigo-500/20", "ring-2", "ring-white/40");
+                preview.classList.add(
+                    "bg-[#F87171]/20",
+                    "ring-2",
+                    "ring-white/40",
+                    "dark:bg-indigo-500/20"
+                );
             }
         });
 
@@ -1247,12 +1350,12 @@
 
             if (isLastGap) {
                 stepBtn.innerText = "Antwort prüfen";
-                stepBtn.classList.remove("bg-indigo-600", "hover:bg-indigo-500");
-                stepBtn.classList.add("bg-emerald-600", "hover:bg-emerald-500");
+                stepBtn.classList.remove("bg-[#DC2626]", "hover:bg-[#B91C1C]");
+                stepBtn.classList.add("bg-[#EF4444]", "hover:bg-[#DC2626]");
             } else {
                 stepBtn.innerText = "Weiter";
-                stepBtn.classList.remove("bg-emerald-600", "hover:bg-emerald-500");
-                stepBtn.classList.add("bg-indigo-600", "hover:bg-indigo-500");
+                stepBtn.classList.remove("bg-[#EF4444]", "hover:bg-[#DC2626]");
+                stepBtn.classList.add("bg-[#DC2626]", "hover:bg-[#B91C1C]");
             }
         }
 
@@ -1505,7 +1608,7 @@
         if (!currentQuestion) {
             const nextRoomId = roomId + 1;
 
-            if (nextRoomId <= 7) {
+            if (nextRoomId <= 15) {
                 window.location.href = `/room/${nextRoomId}`;
             } else {
                 window.location.href = "/dashboard";
@@ -1562,45 +1665,6 @@
             await refreshHeadlineOverview();
         } catch (error) {
             console.error("Fehler beim Aktualisieren des Status:", error);
-        }
-    }
-
-    function updateMedalCoin(medal) {
-        const medalContainer = document.getElementById("medalContainer");
-        const medalCoin = document.getElementById("medalCoin");
-
-        if (!medalContainer || !medalCoin) {
-            return;
-        }
-
-        medalContainer.classList.add("hidden");
-
-        medalCoin.className =
-            "w-20 h-20 rounded-full border-4 flex items-center justify-center font-black text-xs tracking-wide shadow-lg";
-
-        medalCoin.innerText = "---";
-
-        if (!medal || medal === "NONE") {
-            return;
-        }
-
-        medalContainer.classList.remove("hidden");
-
-        if (medal === "BRONZE") {
-            medalCoin.classList.add("bg-amber-700", "border-amber-300", "text-white");
-            medalCoin.innerText = "BRONZE";
-            return;
-        }
-
-        if (medal === "SILVER") {
-            medalCoin.classList.add("bg-slate-300", "border-white", "text-slate-900");
-            medalCoin.innerText = "SILBER";
-            return;
-        }
-
-        if (medal === "GOLD") {
-            medalCoin.classList.add("bg-yellow-400", "border-yellow-100", "text-slate-900");
-            medalCoin.innerText = "GOLD";
         }
     }
 
@@ -1744,7 +1808,7 @@
 
         const nextRoomId = roomId + 1;
 
-        if (nextRoomId <= 7) {
+        if (nextRoomId <= 15) {
             nextQuestionBtn.innerText = `Zu Raum ${nextRoomId}`;
             nextQuestionBtn.classList.remove("hidden");
         } else {
