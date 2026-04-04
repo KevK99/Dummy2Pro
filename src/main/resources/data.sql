@@ -1,0 +1,1669 @@
+SET FOREIGN_KEY_CHECKS = 0;
+
+TRUNCATE TABLE run_gap_answer;
+TRUNCATE TABLE question_progress;
+TRUNCATE TABLE game_run;
+
+TRUNCATE TABLE gap_option;
+TRUNCATE TABLE gap_field;
+TRUNCATE TABLE answer_option;
+TRUNCATE TABLE question_theme;
+TRUNCATE TABLE question;
+TRUNCATE TABLE question_set;
+TRUNCATE TABLE theme;
+TRUNCATE TABLE team;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+
+-- =========================================================
+-- Import Script (angepasst auf neue Analysten-DB aber mit gruppenrelevanten Änderungen)
+-- =========================================================
+
+-- =========================
+-- Teams
+-- =========================
+INSERT INTO `team` (`team_id`, `name`) VALUES
+                                           (1, 'Dummy2Pro'),
+                                           (2, 'ByteBuddies'),
+                                           (3, 'CodeCrew');
+
+-- =========================
+-- Themes (7 Räume / Themenbereiche)
+-- =========================
+INSERT INTO `theme` (`theme_id`, `name`, `description`) VALUES
+                                                            (1, 'Datenbanken', 'SQL, Relationen, Normalisierung, Transaktionen'),
+                                                            (2, 'Programmierung', 'Grundlagen, Algorithmen, Tests'),
+                                                            (3, 'Wirtschaft', 'WUB/GVI, Prozesse, Projektkalkulation'),
+                                                            (4, 'Netzwerke', 'EVP, Protokolle, Routing, Switching, Ports'),
+                                                            (5, 'IT-Sicherheit', 'Grundschutz, Konzepte, TOMs, Malware'),
+                                                            (6, 'Projektmanagement', 'Planung, Risiken, Aufwand, Dokumentation'),
+                                                            (7, 'Versionsverwaltung', 'Git, Branching, Workflow');
+
+-- =========================
+-- 1 Fragenkatalog
+-- =========================
+INSERT INTO `question_set` (`question_set_id`, `team_id`, `title`)
+VALUES (1, 1, 'Datenbanken – Testfragen');
+
+-- =========================================================
+-- Fragen Datenbanken (TF + MC + GAP)
+-- =========================================================
+
+START TRANSACTION;
+
+-- -------------------------
+-- TRUE/FALSE Fragen
+-- question_type='TF'
+-- answer_option: option_order 1=Wahr, 2=Falsch
+-- question.points: Default 1
+-- -------------------------
+
+-- 1
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'TF','Darf ein Primärschlüssel NULL enthalten.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wahr',0,1),
+                                                                                   (@qid,'Falsch',1,2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- 2
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'TF','Normalisierung kann Abfragen manchmal langsamer machen.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wahr',1,1),
+                                                                                   (@qid,'Falsch',0,2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- 3
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'TF','LEFT JOIN liefert auch Zeilen der linken Tabelle ohne entsprechenden Match.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wahr',1,1),
+                                                                                   (@qid,'Falsch',0,2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- 4
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'TF','WHERE filtert vor GROUP BY.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wahr',1,1),
+                                                                                   (@qid,'Falsch',0,2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- 5
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'TF','HAVING ohne GROUP BY ist möglich.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wahr',1,1),
+                                                                                   (@qid,'Falsch',0,2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- 6
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'TF','COUNT(*) zählt auch Zeilen, in denen alles NULL ist.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wahr',1,1),
+                                                                                   (@qid,'Falsch',0,2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- 7
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'TF','COUNT(spalte) zählt Zeilen, in denen alles NULL ist, mit.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wahr',0,1),
+                                                                                   (@qid,'Falsch',1,2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- 8
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'TF','INNER JOIN und JOIN sind gleichbedeutend.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wahr',1,1),
+                                                                                   (@qid,'Falsch',0,2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- 9
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'TF','Transaktionen verhindern automatisch parallele Änderungen in derselben Zeile.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wahr',0,1),
+                                                                                   (@qid,'Falsch',1,2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- 10
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'TF','DELETE FROM t; und TRUNCATE t; sind immer gleich.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wahr',0,1),
+                                                                                   (@qid,'Falsch',1,2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- 11
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'TF','Rollback kann Änderungen rückgängig machen.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wahr',1,1),
+                                                                                   (@qid,'Falsch',0,2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- 12
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'TF','Ein Primärschlüssel muss eindeutig sein.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wahr',1,1),
+                                                                                   (@qid,'Falsch',0,2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- 13
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'TF','Ein Fremdschlüssel verhindert automatisch doppelte Werte in der Fremdschlüssel-Spalte.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wahr',0,1),
+                                                                                   (@qid,'Falsch',1,2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- 14
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'TF','In einer 1:n-Beziehung liegt der Fremdschlüssel auf der n-Seite.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wahr',1,1),
+                                                                                   (@qid,'Falsch',0,2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- 15
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'TF','Normalisierung reduziert Datenredundanz.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wahr',1,1),
+                                                                                   (@qid,'Falsch',0,2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- 16
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'TF','Indizes machen Schreibvorgänge (Insert/Update/Delete) grundsätzlich schneller.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wahr',0,1),
+                                                                                   (@qid,'Falsch',1,2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- 17
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'TF','Ein Default-Wert wird genutzt, wenn beim Insert kein Wert geliefert wird.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wahr',1,1),
+                                                                                   (@qid,'Falsch',0,2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- 18
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'TF','Ein Audit-Log ist dasselbe wie ein Backup.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wahr',0,1),
+                                                                                   (@qid,'Falsch',1,2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- 19
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'TF','Ein Backup schützt vor Datenverlust durch „DROP TABLE“ oder versehentliches Löschen.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wahr',1,1),
+                                                                                   (@qid,'Falsch',0,2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- 20
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'TF','Datenbank-Migrationen sind nur bei großen Firmen sinnvoll.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wahr',0,1),
+                                                                                   (@qid,'Falsch',1,2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- 21
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'TF','In der Anwendung sollte man Eingaben validieren.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wahr',1,1),
+                                                                                   (@qid,'Falsch',0,2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- 22
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'TF','1NF verbietet mehrere Werte in einer Spalte (z. B. Listen in einer Zelle).',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wahr',1,1),
+                                                                                   (@qid,'Falsch',0,2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- 23
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'TF','2NF ist nur bei zusammengesetzten Primärschlüsseln relevant.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wahr',1,1),
+                                                                                   (@qid,'Falsch',0,2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- 24
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'TF','3NF bedeutet „keine Abhängigkeit von Nicht-Schlüsselattributen“.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wahr',1,1),
+                                                                                   (@qid,'Falsch',0,2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- 25
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'TF','Denormalisierung reduziert Redundanz.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wahr',0,1),
+                                                                                   (@qid,'Falsch',1,2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- 26
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'TF','SELECT gehört zu DQL.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wahr',1,1),
+                                                                                   (@qid,'Falsch',0,2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- 27
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'TF','Eine Transaktion kann mehrere DML-Operationen zusammenfassen.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wahr',1,1),
+                                                                                   (@qid,'Falsch',0,2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- =========================================================
+-- MULTIPLE CHOICE Fragen (4 Optionen, 1 korrekt)
+-- question_type='MC'
+-- =========================================================
+
+-- MC1
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Welche Aggregation zählt nur nicht-NULL (gefüllte) Werte in email?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'COUNT(*)',0,1),
+                                                                                   (@qid,'COUNT(email)',1,2),
+                                                                                   (@qid,'SUM(email)',0,3),
+                                                                                   (@qid,'AVG(email)',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- MC2
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Welche Klausel filtert nach dem Gruppieren?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'WHERE',0,1),
+                                                                                   (@qid,'ORDER BY',0,2),
+                                                                                   (@qid,'HAVING',1,3),
+                                                                                   (@qid,'LIMIT',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- MC3
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Welche Abfrage ist korrekt, um nach Datum absteigend zu sortieren?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'ORDER BY datum DESC',1,1),
+                                                                                   (@qid,'SORT BY datum DESC',0,2),
+                                                                                   (@qid,'GROUP BY datum DESC',0,3),
+                                                                                   (@qid,'ORDER BY DESC(datum)',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- MC4
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was liefert DISTINCT?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Nur eindeutige Zeilen im Ergebnis',1,1),
+                                                                                   (@qid,'Entfernt NULL aus Ergebnissen',0,2),
+                                                                                   (@qid,'Sortiert automatisch',0,3),
+                                                                                   (@qid,'Verhindert Duplikate in der Tabelle',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- MC5
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was beschreibt eine n:m-Beziehung korrekt?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Foreign Key in einer Tabelle reicht',0,1),
+                                                                                   (@qid,'Es wird eine Zwischentabelle gebraucht',1,2),
+                                                                                   (@qid,'Nur möglich ohne Primärschlüssel',0,3),
+                                                                                   (@qid,'Solche Beziehungen sind nicht möglich',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- MC6
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Welche Eigenschaft ist typisch für einen Primary Key?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Er darf NULL enthalten',0,1),
+                                                                                   (@qid,'Er muss eindeutig sein',1,2),
+                                                                                   (@qid,'Er muss eine Zeichenkette sein',0,3),
+                                                                                   (@qid,'Er muss automatisch hoch zählen',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- MC7
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was stellt ein Foreign Key sicher?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Dass Abfragen schneller laufen',0,1),
+                                                                                   (@qid,'Dass referenzierte Werte existieren',1,2),
+                                                                                   (@qid,'Die Tabelle wird automatisch normalisiert',0,3),
+                                                                                   (@qid,'Es verhindert doppelte Werte in der Tabelle',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- MC8
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was ist ein typisches Ziel von Normalisierung?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Mehr Speicherverbrauch',0,1),
+                                                                                   (@qid,'Weniger Redundanz und Anomalien',1,2),
+                                                                                   (@qid,'Mehr Duplikate',0,3),
+                                                                                   (@qid,'Weniger Tabellen',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- MC9
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Hauptziel der Normalisierung ist…',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Weniger Tabellen',0,1),
+                                                                                   (@qid,'Redundanz reduzieren und Anomalien vermeiden',1,2),
+                                                                                   (@qid,'Mehr Duplikate zulassen',0,3),
+                                                                                   (@qid,'Schnellere Schreibzugriffe erzwingen',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- MC10
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was ist ein Beispiel für eine Änderungsanomalie?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Beim Einfügen fehlen Daten',0,1),
+                                                                                   (@qid,'Beim Löschen gehen Informationen verloren',0,2),
+                                                                                   (@qid,'Ein Wert muss an mehreren Stellen geändert werden',0,3),
+                                                                                   (@qid,'Alle oben',1,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- MC11
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Denormalisierung macht man oft, wenn…',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Schreibzugriffe wichtiger sind als Lesezugriffe',0,1),
+                                                                                   (@qid,'Leseperformance wichtiger ist und Redundanz akzeptiert wird',1,2),
+                                                                                   (@qid,'Man 3NF unbedingt vermeiden muss',0,3),
+                                                                                   (@qid,'Man keine Indizes nutzen darf',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- MC12
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was ist eine typische Nebenwirkung vieler Indizes?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'SELECT wird langsamer',0,1),
+                                                                                   (@qid,'UPDATE/INSERT wird langsamer',1,2),
+                                                                                   (@qid,'DELETE wird unmöglich',0,3),
+                                                                                   (@qid,'GROUP BY funktioniert nicht mehr',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- MC13
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Welche Spalte ist häufig ein guter Index-Kandidat?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Spalte mit nur 2 möglichen Werten (z. B. true/false)',0,1),
+                                                                                   (@qid,'Spalte, die nie in WHERE/JOIN vorkommt',0,2),
+                                                                                   (@qid,'Spalte, die oft gefiltert oder gejoint wird',1,3),
+                                                                                   (@qid,'Spalte, die nur NULL enthält',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- MC14
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Wie schützt man sich am zuverlässigsten gegen SQL-Injection?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'LIKE statt =',0,1),
+                                                                                   (@qid,'Prepared Statements / Parameterbindung',1,2),
+                                                                                   (@qid,'DISTINCT nutzen',0,3),
+                                                                                   (@qid,'ORDER BY entfernen',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- MC15
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was ist bei Passwörtern korrekt?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Hash + Salt verwenden',1,1),
+                                                                                   (@qid,'Klartext speichern ist ok, wenn DB intern ist',0,2),
+                                                                                   (@qid,'Base64 nutzen',0,3),
+                                                                                   (@qid,'Verschlüsseln',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- MC16
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Welche Beziehung wird typischerweise durch eine Zwischentabelle modelliert?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'1:1',0,1),
+                                                                                   (@qid,'1:n',0,2),
+                                                                                   (@qid,'n:m',1,3),
+                                                                                   (@qid,'0:1',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- MC17
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was beschreibt Kardinalität?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Datenverschlüsselung',0,1),
+                                                                                   (@qid,'Speicherformat der DB',0,2),
+                                                                                   (@qid,'Reihenfolge von Attributen',0,3),
+                                                                                   (@qid,'Anzahl möglicher Zuordnungen zwischen Entitäten',1,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- MC18
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was ist ein Attribut in einem ER-Modell?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Tabelle',0,1),
+                                                                                   (@qid,'Beziehung',0,2),
+                                                                                   (@qid,'Eigenschaft einer Entität',1,3),
+                                                                                   (@qid,'Index',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- MC19
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was ist eine Entität?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'SQL-Abfrage',0,1),
+                                                                                   (@qid,'Objekt mit ggf. Eigenschaften',1,2),
+                                                                                   (@qid,'Backup-Datei',0,3),
+                                                                                   (@qid,'Transaktion',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- MC20
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Welche Option ist ein Beispiel für eine schwache Entität?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Entität ohne Attribute',0,1),
+                                                                                   (@qid,'Entität, die ohne übergeordnete Entität nicht eindeutig identifizierbar ist',1,2),
+                                                                                   (@qid,'Entität mit sehr vielen Attributen',0,3),
+                                                                                   (@qid,'Entität mit UUID',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- MC21
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was ist ein zusammengesetzter Primärschlüssel?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Primärschlüssel ist jeder Schlüssel in einer Datenbank',0,1),
+                                                                                   (@qid,'Primärschlüssel ist verschlüsselt',0,2),
+                                                                                   (@qid,'Primärschlüssel steht in einer anderen Tabelle',0,3),
+                                                                                   (@qid,'Primärschlüssel besteht aus mehreren Spalten/Attributen',1,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- MC22
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Warum ist 1:1 selten als eigene Tabelle nötig?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Ist halt verboten in relationalen DBs',0,1),
+                                                                                   (@qid,'Kann oft in einer Tabelle mit aufgenommen werden',1,2),
+                                                                                   (@qid,'Macht Indizes unmöglich',0,3),
+                                                                                   (@qid,'Funktioniert nur in NoSQL',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- MC23
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was bedeutet „optional“ in einer Beziehung?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Beziehung muss immer existieren',0,1),
+                                                                                   (@qid,'Beziehung ist verschlüsselt',0,2),
+                                                                                   (@qid,'Beziehung ist materialisiert',0,3),
+                                                                                   (@qid,'Beziehung kann fehlen',1,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+-- --- Weitere MC aus dem unteren Teil der Datei ---
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Ein typisches Symptom schlechter Normalisierung ist…',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Zu viele Indizes',0,1),
+                                                                                   (@qid,'Mehrfach gespeicherte gleiche Information',1,2),
+                                                                                   (@qid,'Keine Backups',0,3),
+                                                                                   (@qid,'Zu große CPU',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was ist eine „Löschanomalie“?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Beim Einfügen fehlen Werte',0,1),
+                                                                                   (@qid,'Beim Löschen gehen ungewollt Infos verloren',1,2),
+                                                                                   (@qid,'Beim Lesen fehlen Rechte',0,3),
+                                                                                   (@qid,'Beim Backup fehlen Dateien',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was ist eine „Einfügeanomalie“?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Daten werden doppelt gespeichert',0,1),
+                                                                                   (@qid,'Man kann Daten nicht speichern, ohne Zusatzdaten zu erfinden',1,2),
+                                                                                   (@qid,'Man kann nicht löschen',0,3),
+                                                                                   (@qid,'Man kann nicht indizieren',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Wofür ist ein Index primär da?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Schnelleres Finden von Datensätzen',1,1),
+                                                                                   (@qid,'Daten verschlüsseln',0,2),
+                                                                                   (@qid,'Tabellen verkleinern',0,3),
+                                                                                   (@qid,'Backups ersetzen',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Warum können viele Indizes Schreibzugriffe verlangsamen?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Indizes blockieren RAM dauerhaft',0,1),
+                                                                                   (@qid,'Jeder Schreibvorgang muss Indexstrukturen mit aktualisieren',1,2),
+                                                                                   (@qid,'Indizes sind nur für Lesen erlaubt',0,3),
+                                                                                   (@qid,'Indizes löschen Daten',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was bedeutet „Selektivität“ einer Spalte?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Wie lang der Spaltenname ist',0,1),
+                                                                                   (@qid,'Wie einzigartig die Werte sind (wenig Wiederholungen)',1,2),
+                                                                                   (@qid,'Ob NULL erlaubt ist',0,3),
+                                                                                   (@qid,'Ob die Spalte verschlüsselt ist',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Welche Spalte ist meistens ein schlechter Index-Kandidat?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Boolean',1,1),
+                                                                                   (@qid,'E-Mail',0,2),
+                                                                                   (@qid,'Kundennummer',0,3),
+                                                                                   (@qid,'UUID',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Wo gehört der Fremdschlüssel bei 1:n normalerweise hin?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'In die 1-Tabelle',0,1),
+                                                                                   (@qid,'In beide Tabellen',0,2),
+                                                                                   (@qid,'In keine, das macht die DB automatisch',0,3),
+                                                                                   (@qid,'In die n-Tabelle',1,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Ein zusammengesetzter Primary Key besteht aus:',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Nur Auto-Increment',0,1),
+                                                                                   (@qid,'Mehreren Attributen zusammen',1,2),
+                                                                                   (@qid,'Immer einer UUID',0,3),
+                                                                                   (@qid,'Immer Text',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Welche Aussage passt zu „Datenintegrität“ am besten?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Daten sind komprimiert',0,1),
+                                                                                   (@qid,'Daten sind schnell abrufbar',0,2),
+                                                                                   (@qid,'Daten sind korrekt, konsistent und passen zu Regeln',1,3),
+                                                                                   (@qid,'Daten sind nur lesbar',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Ein Beispiel für „Redundanz“ ist:',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Adresse des Kunden wird in 5 Tabellen kopiert',1,1),
+                                                                                   (@qid,'Index auf einer Spalte',0,2),
+                                                                                   (@qid,'Eine Tabelle pro Entität',0,3),
+                                                                                   (@qid,'Fremdschlüssel in der n-Tabelle',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Wofür nutzt man NOT NULL?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Spalte darf keinen NULL-Wert enthalten',1,1),
+                                                                                   (@qid,'Werte müssen eindeutig sein',0,2),
+                                                                                   (@qid,'Spalte darf keine Duplikate enthalten',0,3),
+                                                                                   (@qid,'Spalte wird automatisch indiziert',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was ist bei „leer“ vs. „NULL“ korrekt?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'NULL = „kein Wert“, leerer String = „Wert ist leer“',1,1),
+                                                                                   (@qid,'Ist immer dasselbe',0,2),
+                                                                                   (@qid,'NULL ist ein Text',0,3),
+                                                                                   (@qid,'Leer ist immer verboten',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Wo sollte Validierung stattfinden?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Nur in der DB',0,1),
+                                                                                   (@qid,'Nur im Frontend',0,2),
+                                                                                   (@qid,'In der Anwendung + in der DB',1,3),
+                                                                                   (@qid,'Gar nicht, Nutzer passt schon auf',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Wann brauchst du typischerweise eine Transaktion?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Bei jedem Select',0,1),
+                                                                                   (@qid,'Nur beim Login',0,2),
+                                                                                   (@qid,'Nie, DB macht alles automatisch',0,3),
+                                                                                   (@qid,'Wenn mehrere Änderungen zusammen gehören',1,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was ist das Ziel einer Transaktion?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Tabellen zusammenführen',0,1),
+                                                                                   (@qid,'Indizes erstellen',0,2),
+                                                                                   (@qid,'Daten exportieren',0,3),
+                                                                                   (@qid,'Mehrere Schritte zuverlässig aufeinanderfolgend ausführen',1,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was ist ein typisches Problem ohne Transaktion?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Zu viele Tabellen',0,1),
+                                                                                   (@qid,'Teilweise gespeicherte Daten, falsche Daten (Inkonsistenz)',1,2),
+                                                                                   (@qid,'Mehr RAM',0,3),
+                                                                                   (@qid,'Zu viele Benutzer',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was bedeutet „Rollback“?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Änderungen der Transaktion zurücknehmen',1,1),
+                                                                                   (@qid,'Änderungen endgültig machen',0,2),
+                                                                                   (@qid,'Index neu bauen',0,3),
+                                                                                   (@qid,'Backup erstellen',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Warum ist „alles in eine große Transaktion“ nicht immer gut?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Transaktionen sind verboten',0,1),
+                                                                                   (@qid,'Längere Sperren → Konflikte und langsamer',1,2),
+                                                                                   (@qid,'Datenbank wird automatisch gelöscht',0,3),
+                                                                                   (@qid,'Indizes verschwinden',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was ist ein Index am ehesten?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Zusätzliche Suchstruktur für schnelleres Finden',1,1),
+                                                                                   (@qid,'Verschlüsselung',0,2),
+                                                                                   (@qid,'Backup',0,3),
+                                                                                   (@qid,'Tabellenkopie',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Wann bringen Indizes besonders viel?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Bei kleinen Tabellen immer',0,1),
+                                                                                   (@qid,'Nur bei Textfeldern',0,2),
+                                                                                   (@qid,'Wenn häufig nach der gleichen Spalte gefiltert/zugeordnet wird',1,3),
+                                                                                   (@qid,'Nur bei Boolean-Feldern',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Warum können viele Indizes schaden?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'DB stürzt ab',0,1),
+                                                                                   (@qid,'Lesen wird unmöglich',0,2),
+                                                                                   (@qid,'Abhängigkeiten werden gelöscht',0,3),
+                                                                                   (@qid,'Schreibzugriffe werden langsamer / hoher Aufwand',1,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was ist „Performance“ bei DB?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Antwortzeiten + Stabilität',1,1),
+                                                                                   (@qid,'Nur schöner Code',0,2),
+                                                                                   (@qid,'Nur UI-Design',0,3),
+                                                                                   (@qid,'Nur Server-Kauf',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was schützt am besten vor Datenbank-Zugriff durch gestohlene App-Credentials?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Größere Monitore',0,1),
+                                                                                   (@qid,'Rollen trennen + Secrets sicher speichern',1,2),
+                                                                                   (@qid,'Mehr Tabellen',0,3),
+                                                                                   (@qid,'Keine Indizes',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was ist ein häufiger Sinn von Test-/Staging-Umgebungen für DB?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Damit niemand committen kann',0,1),
+                                                                                   (@qid,'Migrationen/Änderungen testen ohne Produktionsdaten zu riskieren',1,2),
+                                                                                   (@qid,'Damit Backups unnötig sind',0,3),
+                                                                                   (@qid,'Damit man keine Rechte braucht',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was ist bezüglich Sichern richtig?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Backup reicht, nie testen',0,1),
+                                                                                   (@qid,'Nur Logs sichern',0,2),
+                                                                                   (@qid,'Backups + Restore-Tests',1,3),
+                                                                                   (@qid,'Nur Screenshots machen',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was ist typisch für relationale Datenbanken?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Speicherung nur als JSON-Dokumente',0,1),
+                                                                                   (@qid,'Daten nur als Schlüssel/Wert',0,2),
+                                                                                   (@qid,'Tabellen mit Beziehungen (Relationen) und festen Regeln',1,3),
+                                                                                   (@qid,'Nur für Graphen geeignet',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Ein Vorteil relationaler DBs ist oft:',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Kein Schema nötig',0,1),
+                                                                                   (@qid,'Hohe Datenintegrität',1,2),
+                                                                                   (@qid,'Keine Indizes möglich',0,3),
+                                                                                   (@qid,'Keine Transaktionen',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Normalform (1NF) verlangt vor allem:',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Keine Fremdschlüssel',0,1),
+                                                                                   (@qid,'Atomare Werte: keine Listen/Mehrfachwerte in einem Feld',1,2),
+                                                                                   (@qid,'Keine Duplikate in der Tabelle',0,3),
+                                                                                   (@qid,'Nur numerische Spalten',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was ist ein klassischer Verstoß gegen 1NF?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Eine ID-Spalte (ID: „231531“)',0,1),
+                                                                                   (@qid,'Spalte „Telefonnummern“ enthält „02437, 02162, 0241“',1,2),
+                                                                                   (@qid,'Eine UNIQUE-Constraint',0,3),
+                                                                                   (@qid,'Eine Tabelle „Kunde“',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','2NF ist relevant, wenn…',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Ein zusammengesetzter Primärschlüssel existiert',1,1),
+                                                                                   (@qid,'Es keine Primärschlüssel gibt',0,2),
+                                                                                   (@qid,'Nur eine Spalte in der Tabelle ist',0,3),
+                                                                                   (@qid,'Man JSON speichert',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Ein typischer Verstoß gegen 2NF ist:',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Attribut hängt nur von einem Teil eines zusammengesetzten Schlüssels ab',1,1),
+                                                                                   (@qid,'Attribut hängt vom ganzen Schlüssel ab',0,2),
+                                                                                   (@qid,'Es gibt keine Indizes',0,3),
+                                                                                   (@qid,'Es gibt NULL-Werte',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','3NF zielt besonders darauf ab, zu vermeiden:',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Primärschlüssel',0,1),
+                                                                                   (@qid,'Fremdschlüssel',0,2),
+                                                                                   (@qid,'Transitive Abhängigkeiten (A hängt von B, B hängt von C)',1,3),
+                                                                                   (@qid,'Tabellen',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Beispiel: In Tabelle „Bestellung“ stehen kunden_plz und kunden_ort. Der Ort hängt von der PLZ ab. Das ist typischerweise ein Problem für:',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'1NF',0,1),
+                                                                                   (@qid,'2NF',0,2),
+                                                                                   (@qid,'3NF',1,3),
+                                                                                   (@qid,'Keine Normalform',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','DDL steht für…',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Data Query Language',0,1),
+                                                                                   (@qid,'Data Delete Language',0,2),
+                                                                                   (@qid,'Domain Definition Logic',0,3),
+                                                                                   (@qid,'Data Definition Language',1,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was gehört zu DDL?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'SELECT',0,1),
+                                                                                   (@qid,'INSERT',0,2),
+                                                                                   (@qid,'CREATE / ALTER / DROP',1,3),
+                                                                                   (@qid,'COMMIT',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was gehört zu DQL?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'UPDATE',0,1),
+                                                                                   (@qid,'GRANT',0,2),
+                                                                                   (@qid,'ROLLBACK',0,3),
+                                                                                   (@qid,'SELECT',1,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was gehört zu DML?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'CREATE TABLE',0,1),
+                                                                                   (@qid,'GRANT',0,2),
+                                                                                   (@qid,'INSERT / UPDATE / DELETE',1,3),
+                                                                                   (@qid,'COMMIT',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','„Referenzielle Integrität“ bedeutet:',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Tabellen sind sortiert',0,1),
+                                                                                   (@qid,'Jede Tabelle hat einen Index',0,2),
+                                                                                   (@qid,'Jede Spalte ist NOT NULL',0,3),
+                                                                                   (@qid,'Fremdschlüssel zeigen nur auf existierende Datensätze',1,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Wozu dient ein Foreign Key primär?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Performance',0,1),
+                                                                                   (@qid,'Beziehungen absichern und ungültige Referenzen verhindern',1,2),
+                                                                                   (@qid,'Automatische Backups',0,3),
+                                                                                   (@qid,'Automatische Normalisierung',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Ein UNIQUE-Constraint sorgt für:',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Keine doppelten Werte',1,1),
+                                                                                   (@qid,'Keine NULLs',0,2),
+                                                                                   (@qid,'Immer Auto-Increment',0,3),
+                                                                                   (@qid,'Immer zusammengesetzte Keys',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was ist KEIN Merkmal einer relationalen Datenbank?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Feste Struktur (Schema)',0,1),
+                                                                                   (@qid,'Abfrage mit SQL',0,2),
+                                                                                   (@qid,'Beziehungen über Primär- und Fremdschlüssel',0,3),
+                                                                                   (@qid,'Überall lose Daten',1,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was ist KEIN Beispiel für eine relationale Datenbank?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'KatzenSQL',1,1),
+                                                                                   (@qid,'MySQL',0,2),
+                                                                                   (@qid,'PostgreSQL',0,3),
+                                                                                   (@qid,'Oracle Database',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was sind Bestandteile einer relationalen Datenbank?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Attribute und Entitäten',1,1),
+                                                                                   (@qid,'Häuser und Autos',0,2),
+                                                                                   (@qid,'Kreise und Quadrate',0,3),
+                                                                                   (@qid,'Objekte',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was ist KEIN Vorteil einer relationalen Datenbank?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Klare Struktur',0,1),
+                                                                                   (@qid,'Integrität',0,2),
+                                                                                   (@qid,'mehr Redundanz',1,3),
+                                                                                   (@qid,'viele Standards',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was ist ein Nachteil von relationalen Datenbanken?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'mehr doppelte Daten',0,1),
+                                                                                   (@qid,'keine Möglichkeit sicher zu arbeiten',0,2),
+                                                                                   (@qid,'Performance bei großen Datenmengen',1,3),
+                                                                                   (@qid,'man muss selber Linien zeichnen',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was ist ein natürlicher Schlüssel?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Ein zufällig erzeugter technischer Schlüssel',0,1),
+                                                                                   (@qid,'Ein Schlüssel, der aus mehreren Spalten besteht',0,2),
+                                                                                   (@qid,'Ein Schlüssel, der nur intern in der DB gilt',0,3),
+                                                                                   (@qid,'Ein Schlüssel aus fachlichen Daten mit Bedeutung (z. B. ISBN)',1,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Was ist ein künstlicher Schlüssel?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Ein Schlüssel aus fachlichen Daten',0,1),
+                                                                                   (@qid,'Ein technisch erzeugter Schlüssel ohne fachliche Bedeutung (z. B. ID)',1,2),
+                                                                                   (@qid,'Ein Schlüssel, bestehend aus Text',0,3),
+                                                                                   (@qid,'Ein Schlüssel, der mehrere Tabellen verbindet',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Welcher dieser Schlüssel ist ein natürlicher Schlüssel?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Auto-ID 12345',0,1),
+                                                                                   (@qid,'UUID 550e8400-e29b-41d4-a716-446655440000',0,2),
+                                                                                   (@qid,'ISBN 978-3-16-148410-0',1,3),
+                                                                                   (@qid,'Ticket-ID T-0000123',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Welcher dieser Schlüssel ist ein künstlicher Schlüssel?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Steuernummer',0,1),
+                                                                                   (@qid,'E-Mail-Adresse',0,2),
+                                                                                   (@qid,'IBAN',0,3),
+                                                                                   (@qid,'Interne Datenbank-ID z. B. ID = 4711',1,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Welcher dieser Schlüssel ist ein anonymer Schlüssel?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Zufällig generierte UUID',1,1),
+                                                                                   (@qid,'ISBN eines Buches',0,2),
+                                                                                   (@qid,'E-Mail-Adresse',0,3),
+                                                                                   (@qid,'Sozialversicherungsnummer',0,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'MC','Welcher dieser Schlüssel ist ein bedeutender Schlüssel?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO answer_option (question_id, option_text, is_correct, option_order) VALUES
+                                                                                   (@qid,'Zufällige UUID',0,1),
+                                                                                   (@qid,'Hashwert ohne Bezug',0,2),
+                                                                                   (@qid,'Auto-ID in deiner Datenbank',0,3),
+                                                                                   (@qid,'ISBN',1,4);
+INSERT INTO question_theme (question_id, theme_id) VALUES (@qid,1);
+
+
+COMMIT;
+
+-- =========================================================
+-- =========================================================
+
+START TRANSACTION;
+
+-- =========================================================
+-- QuestionSet für Programmierung (ByteBuddies)
+-- =========================================================
+INSERT INTO `question_set` (`team_id`, `title`)
+VALUES (2, 'Programmierung – Testfragen (ByteBuddies)');
+SET @qs_prog := LAST_INSERT_ID();
+
+-- =========================================================
+-- TF (Wahr/Falsch) – über answer_option (2 Optionen)
+-- =========================================================
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'TF','Unit-Tests prüfen einzelne Funktionen/Methoden isoliert.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Wahr',1,1),
+                                                                                          (@qid,'Falsch',0,2);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,2);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'TF','Ein Integrationstest testet das Zusammenspiel mehrerer Komponenten.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Wahr',1,1),
+                                                                                          (@qid,'Falsch',0,2);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,2);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'TF','„Refactoring“ bedeutet: Funktionalität ändern, um neue Features einzubauen.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Wahr',0,1),
+                                                                                          (@qid,'Falsch',1,2);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,2);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'TF','Sprechende Namen und kleine Funktionen sind Teil von Clean Code.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Wahr',1,1),
+                                                                                          (@qid,'Falsch',0,2);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,2);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'TF','Ein Interface beschreibt ein „Was“, nicht das „Wie“.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Wahr',1,1),
+                                                                                          (@qid,'Falsch',0,2);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,2);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'TF','Polymorphie bedeutet, dass derselbe Methodenaufruf je nach Objekt unterschiedlich reagieren kann.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Wahr',1,1),
+                                                                                          (@qid,'Falsch',0,2);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,2);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'TF','Kapselung bedeutet, dass Attribute private gemacht werden und nur über Methoden zugänglich sind.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Wahr',1,1),
+                                                                                          (@qid,'Falsch',0,2);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,2);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'TF','Vererbung ist immer besser als Komposition.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Wahr',0,1),
+                                                                                          (@qid,'Falsch',1,2);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,2);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'TF','Exceptions sollten immer ignoriert werden, damit das Programm weiterläuft.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Wahr',0,1),
+                                                                                          (@qid,'Falsch',1,2);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,2);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'TF','Logging ersetzt Tests.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Wahr',0,1),
+                                                                                          (@qid,'Falsch',1,2);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,2);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'TF','Git-Branches sind Kopien des gesamten Repositorys.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Wahr',0,1),
+                                                                                          (@qid,'Falsch',1,2);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,7);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'TF','Merge-Konflikte können entstehen, wenn zwei Branches dieselbe Stelle geändert haben.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Wahr',1,1),
+                                                                                          (@qid,'Falsch',0,2);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,7);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'TF','CI bedeutet, dass Code automatisch gebaut und getestet werden kann.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Wahr',1,1),
+                                                                                          (@qid,'Falsch',0,2);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,6);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'TF','Input-Validierung gehört auch ins Backend.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Wahr',1,1),
+                                                                                          (@qid,'Falsch',0,2);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,5);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'TF','„Idempotent“ bedeutet: Mehrfach ausführen führt zum gleichen Ergebniszustand.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Wahr',1,1),
+                                                                                          (@qid,'Falsch',0,2);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,2);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'TF','Ein Stack arbeitet nach dem Prinzip FIFO.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Wahr',0,1),
+                                                                                          (@qid,'Falsch',1,2);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,2);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'TF','Ein Queue arbeitet nach dem Prinzip FIFO.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Wahr',1,1),
+                                                                                          (@qid,'Falsch',0,2);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,2);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'TF','Ein Compilerfehler tritt erst zur Laufzeit auf.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Wahr',0,1),
+                                                                                          (@qid,'Falsch',1,2);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,2);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'TF','Ein Linter ersetzt keine Tests, kann aber typische Fehler früh finden.',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Wahr',1,1),
+                                                                                          (@qid,'Falsch',0,2);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,2);
+
+-- =========================================================
+-- MC (Multiple Choice) – 4 Antworten, genau 1 korrekt
+-- =========================================================
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'MC','Was beschreibt „Kapselung“ am besten?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Globale Variablen nutzen',0,1),
+                                                                                          (@qid,'Daten öffentlich machen',0,2),
+                                                                                          (@qid,'Details verbergen, Zugriff über Methoden',1,3),
+                                                                                          (@qid,'Alles in eine Klasse packen',0,4);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,2);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'MC','Was ist ein typisches Ziel von Refactoring?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Mehr Features',0,1),
+                                                                                          (@qid,'Besserer Code ohne Funktionsänderung',1,2),
+                                                                                          (@qid,'Mehr Bugs',0,3),
+                                                                                          (@qid,'Weniger Tests',0,4);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,2);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'MC','„Single Responsibility“ bedeutet:',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Eine Klasse hat viele Aufgaben',0,1),
+                                                                                          (@qid,'Eine Methode ist nie länger als 3 Zeilen',0,2),
+                                                                                          (@qid,'Eine Klasse hat genau eine Verantwortlichkeit',1,3),
+                                                                                          (@qid,'Eine Klasse darf keine Attribute haben',0,4);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,2);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'MC','„Dependency Injection“ hilft vor allem bei:',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'UI-Design',0,1),
+                                                                                          (@qid,'Testbarkeit und Austauschbarkeit',1,2),
+                                                                                          (@qid,'Daten komprimieren',0,3),
+                                                                                          (@qid,'Logs löschen',0,4);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,2);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'MC','Was ist Polymorphie?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Gleiche Klasse überall',0,1),
+                                                                                          (@qid,'Gleiche Methode kann je nach Objekt anders wirken',1,2),
+                                                                                          (@qid,'Nur Vererbung ohne Methoden',0,3),
+                                                                                          (@qid,'Keine Interfaces nutzen',0,4);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,2);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'MC','Was ist ein Interface (allgemein)?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Implementierung einer Klasse',0,1),
+                                                                                          (@qid,'Vertrag: welche Methoden vorhanden sein müssen',1,2),
+                                                                                          (@qid,'Datenbanktabelle',0,3),
+                                                                                          (@qid,'JSON-Datei',0,4);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,2);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'MC','Was ist ein Constructor?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Ein Destruktor',0,1),
+                                                                                          (@qid,'Methode zum Erzeugen/Initialisieren eines Objekts',1,2),
+                                                                                          (@qid,'Eine Schleife',0,3),
+                                                                                          (@qid,'Eine Bibliothek',0,4);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,2);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'MC','Welche Fehlerart fängt man oft mit Try/Catch ab?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Kompilierfehler',0,1),
+                                                                                          (@qid,'Laufzeitfehler/Exceptions',1,2),
+                                                                                          (@qid,'Tippfehler im Kommentar',0,3),
+                                                                                          (@qid,'CSS-Fehler',0,4);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,2);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'MC','Was ist der Vorteil von Unit-Tests?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Testen UI-Layouts',0,1),
+                                                                                          (@qid,'Schnell, isoliert, früh Fehler finden',1,2),
+                                                                                          (@qid,'Ersetzen Code Reviews',0,3),
+                                                                                          (@qid,'Erhöhen immer Performance',0,4);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,2);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'MC','Ein Mock ist…',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Ein echter Server',0,1),
+                                                                                          (@qid,'Ein Test-Dummy für Abhängigkeiten',1,2),
+                                                                                          (@qid,'Eine Datenbankmigration',0,3),
+                                                                                          (@qid,'Ein Compilerflag',0,4);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,2);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'MC','Was ist „CI“?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Manuelle Tests',0,1),
+                                                                                          (@qid,'Automatisches Bauen/Testen bei Änderungen',1,2),
+                                                                                          (@qid,'Datenbank-Index',0,3),
+                                                                                          (@qid,'Container-Name',0,4);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,6);
+
+INSERT INTO `question` (`question_set_id`,`question_type`,`start_text`,`image_url`,`end_text`,`allows_multiple`,`points`)
+VALUES (@qs_prog,'MC','Was ist „CD“ (typisch)?',NULL,NULL,0,1);
+SET @qid := LAST_INSERT_ID();
+INSERT INTO `answer_option` (`question_id`,`option_text`,`is_correct`,`option_order`) VALUES
+                                                                                          (@qid,'Code Delete',0,1),
+                                                                                          (@qid,'Automatisches Deployen (je nach Prozess)',1,2),
+                                                                                          (@qid,'Compiler Debug',0,3),
+                                                                                          (@qid,'Cache Driver',0,4);
+INSERT INTO `question_theme` (`question_id`,`theme_id`) VALUES (@qid,6);
+
+COMMIT;
+
+-- =========================
+-- Ende Fragen Programmierung
+-- =========================
+
+START TRANSACTION;
+
+-- =========================================================
+-- DATENBANKEN – GAP 1 (7 Lücken)
+-- =========================================================
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'GAP','Fülle die folgenden 7 Lücken zum Thema Datenbanken aus.',NULL,NULL,0,1);
+SET @db_gap1 := LAST_INSERT_ID();
+INSERT INTO question_theme (question_id, theme_id) VALUES (@db_gap1,1);
+
+INSERT INTO gap_field (question_id, gap_index, text_before, text_after) VALUES
+                                                                            (@db_gap1,1,'Eine Datenbank ist eine ',NULL),
+                                                                            (@db_gap1,2,' Sammlung von Daten. Sie wird genutzt, damit Daten ',NULL),
+                                                                            (@db_gap1,3,' gespeichert und später schnell wiedergefunden werden können. Im Vergleich zu einer einfachen Datei (z. B. Excel/CSV) kann eine Datenbank besser mit ',NULL),
+                                                                            (@db_gap1,4,' Benutzern gleichzeitig umgehen und hilft dabei, Daten ',NULL),
+                                                                            (@db_gap1,5,' zu halten. Damit Daten korrekt bleiben, kann man Regeln festlegen. Solche Regeln heißen ',NULL),
+                                                                            (@db_gap1,6,'. Wenn man Daten aus mehreren Tabellen miteinander verbindet, nutzt man dafür ',NULL),
+                                                                            (@db_gap1,7,' (Verknüpfungen). Das nennt man ','.');
+
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order)
+SELECT gap_id,'zufällige',0,1 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=1;
+INSERT INTO gap_option SELECT gap_id,'strukturierte',1,2 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=1;
+INSERT INTO gap_option SELECT gap_id,'verschlüsselte',0,3 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=1;
+INSERT INTO gap_option SELECT gap_id,'temporäre',0,4 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=1;
+
+INSERT INTO gap_option SELECT gap_id,'nur einmalig',0,1 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=2;
+INSERT INTO gap_option SELECT gap_id,'dauerhaft',1,2 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=2;
+INSERT INTO gap_option SELECT gap_id,'ausschließlich offline',0,3 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=2;
+INSERT INTO gap_option SELECT gap_id,'nur im Arbeitsspeicher',0,4 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=2;
+
+INSERT INTO gap_option SELECT gap_id,'keinen',0,1 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=3;
+INSERT INTO gap_option SELECT gap_id,'mehreren',1,2 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=3;
+INSERT INTO gap_option SELECT gap_id,'maximal zwei',0,3 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=3;
+INSERT INTO gap_option SELECT gap_id,'immer genau einem',0,4 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=3;
+
+INSERT INTO gap_option SELECT gap_id,'unsicher',0,1 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=4;
+INSERT INTO gap_option SELECT gap_id,'konsistent',1,2 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=4;
+INSERT INTO gap_option SELECT gap_id,'unsortiert',0,3 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=4;
+INSERT INTO gap_option SELECT gap_id,'unvollständig',0,4 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=4;
+
+INSERT INTO gap_option SELECT gap_id,'Backups',0,1 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=5;
+INSERT INTO gap_option SELECT gap_id,'Constraints',1,2 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=5;
+INSERT INTO gap_option SELECT gap_id,'Templates',0,3 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=5;
+INSERT INTO gap_option SELECT gap_id,'Themes',0,4 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=5;
+
+INSERT INTO gap_option SELECT gap_id,'Dateien',0,1 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=6;
+INSERT INTO gap_option SELECT gap_id,'Beziehungen',1,2 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=6;
+INSERT INTO gap_option SELECT gap_id,'Passwörter',0,3 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=6;
+INSERT INTO gap_option SELECT gap_id,'Cookies',0,4 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=6;
+
+INSERT INTO gap_option SELECT gap_id,'Caching',0,1 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=7;
+INSERT INTO gap_option SELECT gap_id,'Defense in Depth',1,2 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=7;
+INSERT INTO gap_option SELECT gap_id,'Denormalisierung',0,3 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=7;
+INSERT INTO gap_option SELECT gap_id,'Saving',0,4 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=7;
+
+
+-- =========================================================
+-- DATENBANKEN – GAP 2 (6 Lücken)
+-- =========================================================
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'GAP','Fülle die folgenden 6 Lücken zum Thema Datenbanken/Grundlagen aus.',NULL,NULL,0,1);
+SET @db_gap2 := LAST_INSERT_ID();
+INSERT INTO question_theme (question_id, theme_id) VALUES (@db_gap2,1);
+
+INSERT INTO gap_field (question_id, gap_index, text_before, text_after) VALUES
+                                                                            (@db_gap2,1,'Eine Datenbank ist sinnvoll, wenn man Daten ',NULL),
+                                                                            (@db_gap2,2,' verwalten muss, z. B. Kunden, Bestellungen oder Tickets. Wenn Daten doppelt gespeichert werden, kann das zu ',NULL),
+                                                                            (@db_gap2,3,' führen. „Ein Kunde kann mehrere Bestellungen haben“. Das nennt man ',NULL),
+                                                                            (@db_gap2,4,'. Damit mehrere Änderungen zusammen zuverlässig klappen, nutzt man ',NULL),
+                                                                            (@db_gap2,5,'. Damit Daten nicht verloren gehen, braucht man regelmäßige ',NULL),
+                                                                            (@db_gap2,6,'. Nutzer sollten nur die ',' bekommen, die sie wirklich benötigen (Least Privilege).');
+
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order)
+SELECT gap_id,'gar nicht',0,1 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=1;
+INSERT INTO gap_option SELECT gap_id,'zentral',1,2 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=1;
+INSERT INTO gap_option SELECT gap_id,'nur einmal',0,3 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=1;
+INSERT INTO gap_option SELECT gap_id,'zufällig',0,4 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=1;
+
+INSERT INTO gap_option SELECT gap_id,'Inkonsistenzen',1,1 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=2;
+INSERT INTO gap_option SELECT gap_id,'Designs',0,2 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=2;
+INSERT INTO gap_option SELECT gap_id,'Updates',0,3 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=2;
+INSERT INTO gap_option SELECT gap_id,'Indizes',0,4 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=2;
+
+INSERT INTO gap_option SELECT gap_id,'1:1',0,1 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=3;
+INSERT INTO gap_option SELECT gap_id,'n:m',0,2 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=3;
+INSERT INTO gap_option SELECT gap_id,'1:n',1,3 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=3;
+INSERT INTO gap_option SELECT gap_id,'0:1',0,4 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=3;
+
+INSERT INTO gap_option SELECT gap_id,'Indizes',0,1 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=4;
+INSERT INTO gap_option SELECT gap_id,'Themes',0,2 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=4;
+INSERT INTO gap_option SELECT gap_id,'Tabellenfarben',0,3 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=4;
+INSERT INTO gap_option SELECT gap_id,'Transaktionen',1,4 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=4;
+
+INSERT INTO gap_option SELECT gap_id,'Backups',1,1 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=5;
+INSERT INTO gap_option SELECT gap_id,'Views',0,2 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=5;
+INSERT INTO gap_option SELECT gap_id,'Joins',0,3 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=5;
+INSERT INTO gap_option SELECT gap_id,'Schedules',0,4 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=5;
+
+INSERT INTO gap_option SELECT gap_id,'Türen',0,1 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=6;
+INSERT INTO gap_option SELECT gap_id,'Rechte',1,2 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=6;
+INSERT INTO gap_option SELECT gap_id,'Schulen',0,3 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=6;
+INSERT INTO gap_option SELECT gap_id,'Geldscheine',0,4 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=6;
+
+
+-- =========================================================
+-- DATENBANKEN – GAP 3 (7 Lücken)
+-- =========================================================
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (1,'GAP','Fülle die folgenden 7 Lücken zum Thema Datenbanktypen aus.',NULL,NULL,0,1);
+SET @db_gap3 := LAST_INSERT_ID();
+INSERT INTO question_theme (question_id, theme_id) VALUES (@db_gap3,1);
+
+INSERT INTO gap_field (question_id, gap_index, text_before, text_after) VALUES
+                                                                            (@db_gap3,1,'Welche Datenbanktypen gibt es? Die Merkmale einer ',NULL),
+                                                                            (@db_gap3,2,' sind eine feste Struktur mit Primär- und Fremdschlüsseln und man kann durch SQL abfragen. Dagegen stehen die ',NULL),
+                                                                            (@db_gap3,3,'. Sie sind nicht-rational. ',NULL),
+                                                                            (@db_gap3,4,' beinhalten ihre Daten meist als JSON- oder XML-Dokumente (z. B. MongoDB). ',NULL),
+                                                                            (@db_gap3,5,' speichern Daten als Schlüssel-Wert-Paare (z. B. Redis). ',NULL),
+                                                                            (@db_gap3,6,' speichern Daten spaltenweise und sind gut für Analysen. ',NULL),
+                                                                            (@db_gap3,7,' speichern Daten als Knoten und Kanten (Graph). ', ' speichern Daten als Objekte inkl. Attributen und Referenzen.');
+
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order)
+SELECT gap_id,'Kühlschrank-Datenbank',0,1 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=1;
+INSERT INTO gap_option SELECT gap_id,'Cloud-Datenbank',0,2 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=1;
+INSERT INTO gap_option SELECT gap_id,'Turbo-Tabellen-Speicher',0,3 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=1;
+INSERT INTO gap_option SELECT gap_id,'Relationalen Datenbank',1,4 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=1;
+
+INSERT INTO gap_option SELECT gap_id,'NoSQL-Datenbanken',1,1 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=2;
+INSERT INTO gap_option SELECT gap_id,'NoSleep-Datenbanken',0,2 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=2;
+INSERT INTO gap_option SELECT gap_id,'NoSound-Datenbanken',0,3 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=2;
+INSERT INTO gap_option SELECT gap_id,'NoSpace-Datenbanken',0,4 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=2;
+
+INSERT INTO gap_option SELECT gap_id,'Dokumentenvernichter-Datenbanken',0,1 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=3;
+INSERT INTO gap_option SELECT gap_id,'Domino-Datenbanken',0,2 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=3;
+INSERT INTO gap_option SELECT gap_id,'Dokumentenorientierte Datenbank',1,3 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=3;
+INSERT INTO gap_option SELECT gap_id,'DORA-Datenbanken',0,4 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=3;
+
+INSERT INTO gap_option SELECT gap_id,'Key-Voice-Datenbanken',0,1 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=4;
+INSERT INTO gap_option SELECT gap_id,'Key-Value-Datenbanken',1,2 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=4;
+INSERT INTO gap_option SELECT gap_id,'Key-Vault-Datenbanken',0,3 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=4;
+INSERT INTO gap_option SELECT gap_id,'Key-Video-Datenbanken',0,4 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=4;
+
+INSERT INTO gap_option SELECT gap_id,'Spaltenorientierte Datenbanken',1,1 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=5;
+INSERT INTO gap_option SELECT gap_id,'Spalten-Urlaubs-Datenbanken',0,2 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=5;
+INSERT INTO gap_option SELECT gap_id,'Spaltenlose Datenbanken',0,3 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=5;
+INSERT INTO gap_option SELECT gap_id,'Spaltpilz-Datenbanken',0,4 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=5;
+
+INSERT INTO gap_option SELECT gap_id,'Grafikkarten-Datenbanken',0,1 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=6;
+INSERT INTO gap_option SELECT gap_id,'Graffiti-Datenbanken',0,2 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=6;
+INSERT INTO gap_option SELECT gap_id,'Graphdatenbanken',1,3 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=6;
+INSERT INTO gap_option SELECT gap_id,'Gras-Datenbanken',0,4 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=6;
+
+INSERT INTO gap_option SELECT gap_id,'Objektive Datenbanken',0,1 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=7;
+INSERT INTO gap_option SELECT gap_id,'Objektorientierte Datenbanken',1,2 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=7;
+INSERT INTO gap_option SELECT gap_id,'Objektlager-Datenbanken',0,3 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=7;
+INSERT INTO gap_option SELECT gap_id,'Objektivitäts-Datenbanken',0,4 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=7;
+
+
+-- =========================================================
+-- PROGRAMMIERUNG – GAP 1..4 (wie bei dir, nur Variablen sauber)
+-- =========================================================
+
+-- GAP 1
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (@qs_prog,'GAP','Fülle die folgenden 3 Lücken zum Thema Programmiergrundlagen aus.',NULL,NULL,0,1);
+SET @pr_gap1 := LAST_INSERT_ID();
+INSERT INTO question_theme (question_id, theme_id) VALUES (@pr_gap1,2);
+
+INSERT INTO gap_field (question_id, gap_index, text_before, text_after) VALUES
+                                                                            (@pr_gap1,1,'Programmierung bedeutet, dass man einem Computer ',NULL),
+                                                                            (@pr_gap1,2,' gibt, um ein Problem zu lösen. Gute Programme sind nicht nur „funktional“, sondern auch ',NULL),
+                                                                            (@pr_gap1,3,' und leicht zu ändern. Um Fehler früh zu finden, schreibt man oft ','.');
+
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order)
+SELECT gap_id,'Farben',0,1 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=1;
+INSERT INTO gap_option SELECT gap_id,'Anweisungen',1,2 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=1;
+INSERT INTO gap_option SELECT gap_id,'Bilder',0,3 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=1;
+INSERT INTO gap_option SELECT gap_id,'Tabellen',0,4 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=1;
+
+INSERT INTO gap_option SELECT gap_id,'unlesbar',0,1 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=2;
+INSERT INTO gap_option SELECT gap_id,'wartbar',1,2 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=2;
+INSERT INTO gap_option SELECT gap_id,'zufällig',0,3 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=2;
+INSERT INTO gap_option SELECT gap_id,'geheim',0,4 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=2;
+
+INSERT INTO gap_option SELECT gap_id,'Backups',0,1 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=3;
+INSERT INTO gap_option SELECT gap_id,'Verschlüsselung',0,2 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=3;
+INSERT INTO gap_option SELECT gap_id,'Tests',1,3 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=3;
+INSERT INTO gap_option SELECT gap_id,'Dokumentationen',0,4 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=3;
+
+-- GAP 2
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (@qs_prog,'GAP','Fülle die folgenden 3 Lücken zum Thema Projektstruktur und Versionsverwaltung aus.',NULL,NULL,0,1);
+SET @pr_gap2 := LAST_INSERT_ID();
+INSERT INTO question_theme (question_id, theme_id) VALUES (@pr_gap2,2);
+
+INSERT INTO gap_field (question_id, gap_index, text_before, text_after) VALUES
+                                                                            (@pr_gap2,1,'Bei größeren Projekten teilt man Code in ',NULL),
+                                                                            (@pr_gap2,2,' auf, damit jeder Part eine eindeutige Aufgabe hat. Das erreicht man zum Beispiel durch ',NULL),
+                                                                            (@pr_gap2,3,'. Änderungen werden mit Versionsverwaltung wie ', ' nachvollziehbar gespeichert.');
+
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order)
+SELECT gap_id,'Module/Schichten',1,1 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=1;
+INSERT INTO gap_option SELECT gap_id,'zufällige Dateien',0,2 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=1;
+INSERT INTO gap_option SELECT gap_id,'4 Teile',0,3 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=1;
+INSERT INTO gap_option SELECT gap_id,'Tabellen',0,4 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=1;
+
+INSERT INTO gap_option SELECT gap_id,'globale Variablen',0,1 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=2;
+INSERT INTO gap_option SELECT gap_id,'Interfaces/Abstraktionen',1,2 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=2;
+INSERT INTO gap_option SELECT gap_id,'Copy-Paste',0,3 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=2;
+INSERT INTO gap_option SELECT gap_id,'Hardcoding',0,4 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=2;
+
+INSERT INTO gap_option SELECT gap_id,'Excel',0,1 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=3;
+INSERT INTO gap_option SELECT gap_id,'Paint',0,2 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=3;
+INSERT INTO gap_option SELECT gap_id,'Word',0,3 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=3;
+INSERT INTO gap_option SELECT gap_id,'Git',1,4 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=3;
+
+-- GAP 3
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (@qs_prog,'GAP','Fülle die folgenden 4 Lücken zum Thema objektorientierte Programmierung aus.',NULL,NULL,0,1);
+SET @pr_gap3 := LAST_INSERT_ID();
+INSERT INTO question_theme (question_id, theme_id) VALUES (@pr_gap3,2);
+
+INSERT INTO gap_field (question_id, gap_index, text_before, text_after) VALUES
+                                                                            (@pr_gap3,1,'In objektorientierter Programmierung modelliert man die Welt mit ',NULL),
+                                                                            (@pr_gap3,2,'. Diese besitzen ',NULL),
+                                                                            (@pr_gap3,3,' (Daten) und ',NULL),
+                                                                            (@pr_gap3,4,' (Verhalten). Eine Instanz einer Klasse nennt man ','.');
+
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order)
+SELECT gap_id,'Farben',0,1 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=1;
+INSERT INTO gap_option SELECT gap_id,'Tabellen',0,2 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=1;
+INSERT INTO gap_option SELECT gap_id,'Klassen',1,3 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=1;
+INSERT INTO gap_option SELECT gap_id,'Pixel',0,4 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=1;
+
+INSERT INTO gap_option SELECT gap_id,'Kommentare',0,1 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=2;
+INSERT INTO gap_option SELECT gap_id,'Attribute',1,2 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=2;
+INSERT INTO gap_option SELECT gap_id,'Icons',0,3 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=2;
+INSERT INTO gap_option SELECT gap_id,'CSS',0,4 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=2;
+
+INSERT INTO gap_option SELECT gap_id,'Methoden',1,1 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=3;
+INSERT INTO gap_option SELECT gap_id,'Dateiendungen',0,2 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=3;
+INSERT INTO gap_option SELECT gap_id,'Spalten',0,3 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=3;
+INSERT INTO gap_option SELECT gap_id,'Schriftarten',0,4 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=3;
+
+INSERT INTO gap_option SELECT gap_id,'Commit',0,1 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=4;
+INSERT INTO gap_option SELECT gap_id,'Objekt',1,2 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=4;
+INSERT INTO gap_option SELECT gap_id,'Router',0,3 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=4;
+INSERT INTO gap_option SELECT gap_id,'Repository',0,4 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=4;
+
+-- GAP 4
+INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (@qs_prog,'GAP','Fülle die folgenden 4 Lücken zum Thema Versionsverwaltung/Git aus.',NULL,NULL,0,1);
+SET @pr_gap4 := LAST_INSERT_ID();
+INSERT INTO question_theme (question_id, theme_id) VALUES (@pr_gap4,7);
+
+INSERT INTO gap_field (question_id, gap_index, text_before, text_after) VALUES
+                                                                            (@pr_gap4,1,'Bei Versionsverwaltung speichert man Änderungen als ',NULL),
+                                                                            (@pr_gap4,2,'. In Git arbeitet man oft mit ',NULL),
+                                                                            (@pr_gap4,3,', um unabhängig neue Features zu entwickeln. Zum Zusammenführen nutzt man häufig ',NULL),
+                                                                            (@pr_gap4,4,' oder ','.');
+
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order)
+SELECT gap_id,'Tabs',0,1 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=1;
+INSERT INTO gap_option SELECT gap_id,'Cookies',0,2 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=1;
+INSERT INTO gap_option SELECT gap_id,'Screenshots',0,3 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=1;
+INSERT INTO gap_option SELECT gap_id,'Commits',1,4 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=1;
+
+INSERT INTO gap_option SELECT gap_id,'Prozesse',0,1 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=2;
+INSERT INTO gap_option SELECT gap_id,'Passwörter',0,2 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=2;
+INSERT INTO gap_option SELECT gap_id,'Treiber',0,3 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=2;
+INSERT INTO gap_option SELECT gap_id,'Branches',1,4 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=2;
+
+INSERT INTO gap_option SELECT gap_id,'Render',0,1 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=3;
+INSERT INTO gap_option SELECT gap_id,'Ping',0,2 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=3;
+INSERT INTO gap_option SELECT gap_id,'Merge',1,3 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=3;
+INSERT INTO gap_option SELECT gap_id,'Encrypt',0,4 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=3;
+
+INSERT INTO gap_option SELECT gap_id,'Reset Windows',0,1 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=4;
+INSERT INTO gap_option SELECT gap_id,'Reboot',0,2 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=4;
+INSERT INTO gap_option SELECT gap_id,'Rebase',1,3 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=4;
+INSERT INTO gap_option SELECT gap_id,'Repaint',0,4 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=4;
+
+COMMIT;
+
