@@ -230,7 +230,7 @@ public class QuizSessionManager
             return existingRoom;
         }
 
-        String lockKey = session.getSessionId() + ":" + roomId;
+        String lockKey = session.getRunId() + ":" + roomId;
         Object lock = this.roomPreparationLocks.computeIfAbsent(lockKey, key -> new Object());
 
         synchronized (lock)
@@ -306,7 +306,10 @@ public class QuizSessionManager
             ));
         }
 
-        this.questionProgressRepo.saveAll(progressEntries);
+        if (!progressEntries.isEmpty())
+        {
+            this.questionProgressRepo.saveAll(progressEntries);
+        }
     }
 
     private static String calculateMedal(int correctAnswers, int totalQuestions)
@@ -532,6 +535,7 @@ public class QuizSessionManager
 
         SessionOverviewDto overview = new SessionOverviewDto();
         overview.setSessionId(sessionId);
+        overview.setUsername(username);
         overview.setTotalEarnedPoints(totalEarnedPoints);
         overview.setTotalMaxPoints(totalMaxPoints);
         overview.setTotalCorrect(totalCorrect);
@@ -784,8 +788,6 @@ public class QuizSessionManager
                 this.runSelectedAnswerRepo.saveAll(selectedAnswersToSave);
             }
         }
-
-        this.questionProgressRepo.saveAll(progressEntries);
     }
 
     private RoomSession buildRoomSessionFromProgressEntries(

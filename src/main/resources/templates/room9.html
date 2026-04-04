@@ -197,8 +197,8 @@
                 <!-- Raum-CHARACTER -->
                 <div class="absolute right-[140px] bottom-[95px] z-10">
                     <img
-                            src="/room-characters/Schmied.png"
-                            alt="Raumcharakter Schmied"
+                            src="/room-characters/AssasinHalb.png"
+                            alt="Raumcharakter AssasinHalb"
                             class="w-[150px]"
                             style="image-rendering: pixelated;"
                     >
@@ -261,8 +261,8 @@
         <!-- ROOM CHARACTER -->
         <div id="gameRoomCharacter" class="absolute left-[105px] top-[-5px] z-20 pointer-events-none">
             <img
-                    src="/room-characters/Schmied.png"
-                    alt="Raumcharakter Schmied"
+                    src="/room-characters/AssasinHalb.png"
+                    alt="Raumcharakter AssasinHalb"
                     class="w-[110px]"
                     style="image-rendering: pixelated; transform: scaleX(-1);"
             >
@@ -389,7 +389,7 @@
         }
 
         const line = introDialog[dialogIndex];
-        const speakerLabel = line.speaker === "player" ? "Du" : "Schmied";
+        const speakerLabel = line.speaker === "player" ? "Du" : "Assasine";
 
         updateSpeechTailPosition(line.speaker);
         dialogText.innerText = `${speakerLabel}: ${line.text}`;
