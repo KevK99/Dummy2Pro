@@ -17,16 +17,17 @@ CREATE TABLE `users` (
 
 # mit mehreren Speicherständen
 CREATE TABLE `game_run` (
-  `run_id` INT NOT NULL AUTO_INCREMENT,
-  `user_id` INT NOT NULL,
-  `started_at` DATETIME NOT NULL,
-  `finished_at` DATETIME NULL,
-  PRIMARY KEY (`run_id`),
-  KEY `idx_run_users` (`user_id`),
-  CONSTRAINT `fk_run_users`
-    FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE
+    `run_id` INT NOT NULL AUTO_INCREMENT,
+    `user_id` INT NOT NULL,
+    `started_at` DATETIME NOT NULL,
+    `finished_at` DATETIME NULL,
+    `display_name` VARCHAR(100) NULL,
+    PRIMARY KEY (`run_id`),
+    KEY `idx_run_user` (`user_id`),
+    CONSTRAINT `fk_run_user`
+        FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE `question_progress` (
@@ -113,4 +114,200 @@ CREATE TABLE `run_gap_answer` (
     ON DELETE CASCADE
     ON UPDATE CASCADE
 ) ENGINE=InnoDB;
+
+-------------------------------------------
+Inhaltsmanipulation:
+
+-- -> Recht (2)
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 1 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 2 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 3 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 4 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 5 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 6 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 7 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 8 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 9 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 10 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 11 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 12 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 22 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 23 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 24 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 27 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 28 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 29 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 30 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 31 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 32 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 33 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 34 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 36 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 37 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 46 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 49 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 110 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 116 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 117 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 121 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 122 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 125 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 137 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 138 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 2 WHERE question_id = 139 AND theme_id = 3;
+
+-- -> Datenbanken Modellierung (4)
+UPDATE question_theme SET theme_id = 4 WHERE question_id = 197 AND theme_id = 5;
+UPDATE question_theme SET theme_id = 4 WHERE question_id = 206 AND theme_id = 5;
+UPDATE question_theme SET theme_id = 4 WHERE question_id = 411 AND theme_id = 5;
+UPDATE question_theme SET theme_id = 4 WHERE question_id = 412 AND theme_id = 5;
+UPDATE question_theme SET theme_id = 4 WHERE question_id = 425 AND theme_id = 5;
+UPDATE question_theme SET theme_id = 4 WHERE question_id = 432 AND theme_id = 5;
+
+-- -> Datenbank - SQL (5)
+UPDATE question_theme SET theme_id = 5 WHERE question_id = 371 AND theme_id = 8;
+
+-- -> UML (6)
+UPDATE question_theme SET theme_id = 6 WHERE question_id = 288 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 6 WHERE question_id = 302 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 6 WHERE question_id = 309 AND theme_id = 8;
+
+-- -> Programmierung (9)
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 286 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 287 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 290 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 291 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 296 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 299 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 300 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 301 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 303 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 304 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 305 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 307 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 308 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 310 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 311 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 312 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 313 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 314 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 316 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 318 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 319 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 320 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 321 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 322 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 323 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 324 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 328 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 331 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 341 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 357 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 358 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 360 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 361 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 363 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 364 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 365 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 366 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 367 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 369 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 373 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 559 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 567 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 570 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 572 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 573 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 574 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 577 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 581 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 583 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 584 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 586 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 588 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 589 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 590 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 591 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 9 WHERE question_id = 592 AND theme_id = 8;
+
+-- -> Netzwerke (10)
+UPDATE question_theme SET theme_id = 10 WHERE question_id = 372 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 10 WHERE question_id = 563 AND theme_id = 8;
+
+-- -> IT-Sicherheit (11)
+UPDATE question_theme SET theme_id = 11 WHERE question_id = 392 AND theme_id = 5;
+UPDATE question_theme SET theme_id = 11 WHERE question_id = 393 AND theme_id = 5;
+UPDATE question_theme SET theme_id = 11 WHERE question_id = 415 AND theme_id = 4;
+UPDATE question_theme SET theme_id = 11 WHERE question_id = 416 AND theme_id = 4;
+UPDATE question_theme SET theme_id = 11 WHERE question_id = 448 AND theme_id = 5;
+UPDATE question_theme SET theme_id = 11 WHERE question_id = 450 AND theme_id = 5;
+
+-- -> Softwareentwicklung (12)
+UPDATE question_theme SET theme_id = 12 WHERE question_id = 285 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 12 WHERE question_id = 289 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 12 WHERE question_id = 294 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 12 WHERE question_id = 297 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 12 WHERE question_id = 306 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 12 WHERE question_id = 355 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 12 WHERE question_id = 356 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 12 WHERE question_id = 359 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 12 WHERE question_id = 370 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 12 WHERE question_id = 394 AND theme_id = 5;
+UPDATE question_theme SET theme_id = 12 WHERE question_id = 449 AND theme_id = 5;
+
+-- -> Projektmanagement (13)
+UPDATE question_theme SET theme_id = 13 WHERE question_id = 60 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 13 WHERE question_id = 61 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 13 WHERE question_id = 62 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 13 WHERE question_id = 63 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 13 WHERE question_id = 64 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 13 WHERE question_id = 65 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 13 WHERE question_id = 66 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 13 WHERE question_id = 67 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 13 WHERE question_id = 68 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 13 WHERE question_id = 69 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 13 WHERE question_id = 537 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 13 WHERE question_id = 542 AND theme_id = 3;
+UPDATE question_theme SET theme_id = 13 WHERE question_id = 544 AND theme_id = 3;
+
+-- -> Betriebssysteme (14)
+UPDATE question_theme SET theme_id = 14 WHERE question_id = 347 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 14 WHERE question_id = 368 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 14 WHERE question_id = 374 AND theme_id = 8;
+
+-- -> Sonstiges (16)
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 293 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 295 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 298 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 315 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 317 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 325 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 326 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 327 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 329 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 330 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 332 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 333 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 334 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 335 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 336 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 337 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 338 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 339 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 340 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 342 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 343 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 344 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 345 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 346 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 348 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 349 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 350 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 351 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 352 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 353 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 354 AND theme_id = 8;
+UPDATE question_theme SET theme_id = 16 WHERE question_id = 362 AND theme_id = 8;
+
+
 

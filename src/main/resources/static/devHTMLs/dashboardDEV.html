@@ -2,154 +2,34 @@
 <html lang="de"
       xmlns:th="http://www.thymeleaf.org"
       th:replace="~{base :: layout(~{::body}, 'min-h-screen bg-[linear-gradient(135deg,_#60a5fa_0%,_#a78bfa_35%,_#f87171_70%,_#f472b6_100%)] text-slate-950 dark:bg-none dark:bg-slate-950 dark:text-slate-100')}">
-<body class="min-h-screen text-slate-950 dark:text-slate-100">
+<body>
 
-<div th:replace="~{fragments/headline :: headline(${ 'Willkommen zurück, ' + username + '!'}, null, ${avatarUrl}, ${answeredQuestions}, ${totalQuestions})}"></div>
-
-<div id="roomsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 px-64 pt-6 pb-10"></div>
+<div class="bg-transparent text-slate-950 dark:bg-transparent dark:text-inherit">
+    <div th:replace="~{fragments/headline :: headline(${username}, ${answeredQuestions}, ${totalQuestions}, ${avatarUrl})}"></div>
+</div>
 
 <div id="roomsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 px-64 pt-6 pb-10"></div>
 
 <script th:src="@{/js/darkmode.js}"></script>
 <script>
     let currentDashboardOverview = null;
-    let isOpeningRoom = false;
-
-    function toSortableTimestampDesc(value) {
-        const timestamp = new Date(value).getTime();
-        return Number.isNaN(timestamp) ? 0 : timestamp;
-    }
-
-    function pickPreferredRun(runs) {
-        if (!Array.isArray(runs) || runs.length === 0) {
-            return null;
-        }
-
-        return [...runs].sort((a, b) => {
-            const aFinished = Boolean(a.finished);
-            const bFinished = Boolean(b.finished);
-
-            if (aFinished !== bFinished) {
-                return aFinished ? 1 : -1;
-            }
-
-            const timeDiff = toSortableTimestampDesc(b.startedAt) - toSortableTimestampDesc(a.startedAt);
-            if (timeDiff !== 0) {
-                return timeDiff;
-            }
-
-            return Number(b.runId ?? 0) - Number(a.runId ?? 0);
-        })[0] ?? null;
-    }
-
-    async function loadPreferredRunSession(userId) {
-        const runsResponse = await fetch(`/api/session/runs?userId=${userId}`);
-
-        if (!runsResponse.ok) {
-            return {
-                ok: false,
-                payload: await runsResponse.json().catch(() => ({}))
-            };
-        }
-
-        const runs = await runsResponse.json();
-        const preferredRun = pickPreferredRun(runs);
-
-        let response;
-        if (preferredRun?.runId) {
-            response = await fetch(`/api/session/load?userId=${userId}&runId=${preferredRun.runId}`, {
-                method: "POST"
-            });
-        } else {
-            response = await fetch(`/api/session/new?userId=${userId}`, {
-                method: "POST"
-            });
-        }
-
-        return {
-            ok: response.ok,
-            payload: await response.json().catch(() => ({}))
-        };
-    }
-
-    function setRoomOpeningState(roomId, isLoading) {
-        const roomLinks = document.querySelectorAll(".room-link");
-
-        roomLinks.forEach(link => {
-            const isTarget = String(link.dataset.roomId) === String(roomId);
-            const loadingText = link.querySelector("[data-room-loading-text]");
-
-            link.classList.toggle("pointer-events-none", isLoading);
-            link.classList.toggle("opacity-70", isLoading && isTarget);
-
-            if (loadingText) {
-                loadingText.classList.toggle("hidden", !(isLoading && isTarget));
-            }
-        });
-    }
 
     async function fetchDashboardOverview() {
         const userId = sessionStorage.getItem("userId");
-        const storedSessionId = sessionStorage.getItem("sessionId");
-        const storedRunId = sessionStorage.getItem("runId");
 
         if (!userId) {
             window.location.href = "/";
             return null;
         }
 
-        if (storedSessionId) {
-            const overviewResponse = await fetch(`/api/session/${storedSessionId}/overview`);
+        const response = await fetch(`/api/session/dashboard?userId=${userId}`);
+        const data = await response.json();
 
-            if (overviewResponse.ok) {
-                const overview = await overviewResponse.json();
-                const data = {
-                    ...overview,
-                    runId: storedRunId ? Number(storedRunId) : null,
-                    username: sessionStorage.getItem("username") ?? "NutzerName"
-                };
-
-                currentDashboardOverview = data;
-                return data;
-            }
-
-            sessionStorage.removeItem("sessionId");
+        if (!response.ok) {
+            alert(data.message || "Dashboard konnte nicht geladen werden.");
+            window.location.href = "/";
+            return null;
         }
-
-        let payload = null;
-
-        if (storedRunId) {
-            const storedRunResponse = await fetch(`/api/session/load?userId=${userId}&runId=${storedRunId}`, {
-                method: "POST"
-            });
-
-            if (storedRunResponse.ok) {
-                payload = await storedRunResponse.json();
-            } else {
-                sessionStorage.removeItem("runId");
-            }
-        }
-
-        if (!payload) {
-            const preferredSessionResult = await loadPreferredRunSession(userId);
-
-            if (!preferredSessionResult.ok) {
-                alert(preferredSessionResult.payload.message || "Dashboard konnte nicht geladen werden.");
-                window.location.href = "/";
-                return null;
-            }
-
-            payload = preferredSessionResult.payload;
-        }
-
-        sessionStorage.setItem("sessionId", payload.sessionId);
-        sessionStorage.setItem("runId", String(payload.runId));
-
-        const data = {
-            ...(payload.overview ?? {}),
-            runId: payload.runId,
-            username: sessionStorage.getItem("username") ?? "NutzerName"
-        };
 
         currentDashboardOverview = data;
         return data;
@@ -168,34 +48,35 @@
         const storedRunId = sessionStorage.getItem("runId");
 
         if (storedSessionId && storedRunId && desiredRunId && storedRunId === String(desiredRunId)) {
-            return {
-                sessionId: storedSessionId,
-                runId: storedRunId
-            };
+            const probeResponse = await fetch(`/api/session/${storedSessionId}/overview`);
+
+            if (probeResponse.ok) {
+                return {
+                    sessionId: storedSessionId,
+                    runId: storedRunId
+                };
+            }
         }
 
-        let data = null;
+        sessionStorage.removeItem("sessionId");
+        sessionStorage.removeItem("runId");
 
+        let response;
         if (desiredRunId) {
-            const desiredRunResponse = await fetch(`/api/session/load?userId=${userId}&runId=${desiredRunId}`, {
+            response = await fetch(`/api/session/load?userId=${userId}&runId=${desiredRunId}`, {
+                method: "POST"
+            });
+        } else {
+            response = await fetch(`/api/session/new?userId=${userId}`, {
                 method: "POST"
             });
         }
 
-            if (desiredRunResponse.ok) {
-                data = await desiredRunResponse.json();
-            }
-        }
+        const data = await response.json();
 
-        if (!data) {
-            const preferredSessionResult = await loadPreferredRunSession(userId);
-
-            if (!preferredSessionResult.ok) {
-                alert(preferredSessionResult.payload.message || "Session konnte nicht geladen werden.");
-                return null;
-            }
-
-            data = preferredSessionResult.payload;
+        if (!response.ok) {
+            alert(data.message || "Session konnte nicht geladen werden.");
+            return null;
         }
 
         sessionStorage.setItem("userId", String(userId));
@@ -209,7 +90,7 @@
     }
 
     function updateHeadline(data) {
-        const titleElement = document.getElementById("headlineTitle");
+        const usernameElement = document.getElementById("headlineUsername");
         const answeredElement = document.getElementById("headlineAnsweredQuestions");
         const totalElement = document.getElementById("headlineTotalQuestions");
         const avatarElement = document.getElementById("headlineAvatar");
@@ -224,13 +105,11 @@
             return sum + Number(room.totalQuestions ?? 0);
         }, 0);
 
-        if (titleElement) {
-            const username =
+        if (usernameElement) {
+            usernameElement.textContent =
                 data.username ??
                 sessionStorage.getItem("username") ??
                 "NutzerName";
-
-            titleElement.textContent = `Willkommen zurück, ${username}!`;
         }
 
         if (answeredElement) {
@@ -244,7 +123,7 @@
         if (avatarElement) {
             const avatarFromStorage = sessionStorage.getItem("avatar");
             if (avatarFromStorage) {
-                avatarElement.src = `/images/${avatarFromStorage}`;
+                avatarElement.src = avatarFromStorage;
             }
         }
     }
@@ -282,6 +161,10 @@
                 const correctAnswers = Number(room.correctAnswers ?? 0);
                 const completionPercent = Number(room.completionPercent ?? 0);
 
+                const cardBgClass = index % 2 === 0
+                    ? "bg-yellow-400"
+                    : "bg-orange-400";
+
                 const passThreshold = totalQuestions > 0
                     ? Math.ceil(totalQuestions * 0.5)
                     : 0;
@@ -289,7 +172,6 @@
                 const finished = totalQuestions > 0 && answeredQuestions >= totalQuestions;
                 const statusText = finished ? "Abgeschlossen" : "In Progress";
                 const badgeClass = finished ? "bg-green-400" : "bg-teal-400";
-                const cardBgClass = index % 2 === 0 ? "bg-yellow-400" : "bg-orange-400";
 
                 const passReached = passThreshold > 0 && correctAnswers >= passThreshold;
                 const passTextClass = passReached
@@ -320,10 +202,6 @@
                             <span class="rounded-full ${badgeClass} px-3 py-1 text-xs font-bold text-slate-950">
                                 ${statusText} (${completionPercent}%)
                             </span>
-
-                            <p class="mt-4 hidden text-sm font-bold text-slate-700 dark:text-slate-300" data-room-loading-text>
-                                Raum wird geöffnet...
-                            </p>
                         </div>
                     </a>
                 `;
@@ -339,13 +217,10 @@
 
         updateHeadline(data);
         renderRooms(data.rooms ?? []);
+        console.log(data);
     }
 
     async function openRoom(roomId) {
-        if (isOpeningRoom) {
-            return;
-        }
-
         if (!currentDashboardOverview) {
             const data = await fetchDashboardOverview();
             if (!data) {
@@ -353,13 +228,8 @@
             }
         }
 
-        isOpeningRoom = true;
-        setRoomOpeningState(roomId, true);
-
         const activeSession = await ensureSessionForRoom();
         if (!activeSession) {
-            isOpeningRoom = false;
-            setRoomOpeningState(roomId, false);
             return;
         }
 

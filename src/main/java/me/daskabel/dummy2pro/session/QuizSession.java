@@ -360,6 +360,22 @@ public class QuizSession
         return Collections.unmodifiableMap(this.rooms);
     }
 
+    public RoomSession getRoom(int roomId)
+    {
+        return this.rooms.get(roomId);
+    }
+
+    public void replaceRoom(RoomSession roomSession)
+    {
+        this.rooms.put(roomSession.getRoomId(), roomSession);
+        touch();
+    }
+
+    public void touchSession()
+    {
+        touch();
+    }
+
     public String getSessionId()
     {
         return this.sessionId;

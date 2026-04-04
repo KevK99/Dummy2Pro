@@ -3,25 +3,505 @@
 -- =========================
 
 -- =========================
--- Tabelle Theme
+-- Erweiterung Theme
 -- =========================
 
-INSERT INTO theme (theme_id, name, description) VALUES (2, 'Recht', 'Alles was mit Gesetzesgrundlagen zu tun hat');
-INSERT INTO theme (theme_id, name, description) VALUES (3, 'Wirtschaft', 'Alles, was NICHT mit Recht, aber mit Wirtschaft zu tun hat (Kalkulation, Prozesse,...)');
-INSERT INTO theme (theme_id, name, description) VALUES (4, 'Datenbanken Modellierung', 'ERD, relationales Tabellenmodell');
-INSERT INTO theme (theme_id, name, description) VALUES (5, 'Datenbank - SQL', NULL);
-INSERT INTO theme (theme_id, name, description) VALUES (6, 'UML', 'Klassendiagramm, Sequenzdiagramm, Zustandsdiagramm, Use-Case Diagramm, Aktivitätsdiagramm');
-INSERT INTO theme (theme_id, name, description) VALUES (7, 'Maschinelles Lernen', NULL);
-INSERT INTO theme (theme_id, name, description) VALUES (8, 'Programmierung Pseudocode', NULL);
-
--- =========================
--- mögliche Erweiterung Theme
--- =========================
-
-INSERT INTO theme (theme_id, name, description) VALUES (9, 'Programmierung', 'Grundlagen der Programmierung, OOP, Kontrollstrukturen, Datentypen, Algorithmen, Pseudocode, Git und Codequalität');
+INSERT INTO theme (theme_id, name, description) VALUES (9, 'Programmierung', 'Grundlagen der Programmierung, OOP, Kontrollstrukturen, Datentypen, Algorithmen, Git und Codequalität');
 INSERT INTO theme (theme_id, name, description) VALUES (10, 'Netzwerke', 'OSI-Modell, TCP/IP, IPv4/IPv6, DNS, Routing, Subnetting, Protokolle');
 INSERT INTO theme (theme_id, name, description) VALUES (11, 'IT-Sicherheit', 'Schutzziele, Authentifizierung, Autorisierung, Verschlüsselung, Hashing, Backup, Sicherheitsmaßnahmen');
 INSERT INTO theme (theme_id, name, description) VALUES (12, 'Softwareentwicklung', 'Softwarelebenszyklus, Anforderungsanalyse, Architektur, Entwurf, Wartbarkeit und Entwicklungsprozesse');
 INSERT INTO theme (theme_id, name, description) VALUES (13, 'Projektmanagement', 'Projektphasen, Aufwandsschätzung, Risiken, Meilensteine, Scrum und andere Vorgehensmodelle');
 INSERT INTO theme (theme_id, name, description) VALUES (14, 'Betriebssysteme', 'Prozesse, Threads, Speicherverwaltung, Dateisysteme, Benutzer- und Rechteverwaltung');
 INSERT INTO theme (theme_id, name, description) VALUES (15, 'Cloud und Infrastruktur', 'Virtualisierung, Container, Server, Hosting, Deployment, Verfügbarkeit und Skalierung');
+INSERT INTO theme (theme_id, name, description) VALUES (16, 'Sonstiges', 'irrelevant für die AP2, Java');
+
+-- =========================
+-- Erweiterung Fragen Block 1
+-- =========================
+
+INSERT INTO team (team_id, name) VALUES (12, 'Streber');
+
+INSERT INTO question_set (question_set_id, team_id, title)
+VALUES (24, 12, 'Ergänzungen');
+
+-- Frage 1: Programmierung bedeutet, dass man einem Computer ____ gibt, um ein Problem zu lö
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (700, 24, 'GAP', 'Programmierung bedeutet, dass man einem Computer ____ gibt, um ein Problem zu lösen. Gute Programme sind nicht nur „funktional“, sondern auch ____ und leicht zu ändern. Um Fehler früh zu finden, schreibt man oft ____.', NULL, NULL, FALSE, 3);
+INSERT INTO question_theme (question_id, theme_id) VALUES (700, 9);
+INSERT INTO gap_field (gap_id, question_id, gap_index, text_before, text_after) VALUES (171, 700, 0, 'Programmierung bedeutet, dass man einem Computer', 'gibt, um ein Problem zu lösen.');
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (516, 171, 'Farben', FALSE, 1);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (517, 171, 'Anweisungen', TRUE, 2);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (518, 171, 'Bilder', FALSE, 3);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (519, 171, 'Tabellen', FALSE, 4);
+INSERT INTO gap_field (gap_id, question_id, gap_index, text_before, text_after) VALUES (172, 700, 1, 'Gute Programme sind nicht nur „funktional“, sondern auch', 'und leicht zu ändern.');
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (520, 172, 'unlesbar', FALSE, 1);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (521, 172, 'wartbar', TRUE, 2);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (522, 172, 'zufällig', FALSE, 3);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (523, 172, 'geheim', FALSE, 4);
+INSERT INTO gap_field (gap_id, question_id, gap_index, text_before, text_after) VALUES (173, 700, 2, 'Um Fehler früh zu finden, schreibt man oft', '.');
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (524, 173, 'Backups', FALSE, 1);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (525, 173, 'Tests', TRUE, 2);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (526, 173, 'Dokumentationen', FALSE, 3);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (527, 173, 'Verschlüsselung', FALSE, 4);
+
+-- Frage 2: Bei größeren Projekten teilt man Code in ____ auf, damit jeder Part eine eindeut
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (701, 24, 'GAP', 'Bei größeren Projekten teilt man Code in ____ auf, damit jeder Part eine eindeutige Aufgabe hat. Wenn mehrere Teile zusammenarbeiten, sollte man die Abhängigkeiten untereinander gering halten. Das erreicht man zum Beispiel durch ____. Änderungen werden mit Versionsverwaltung wie ____ nachvollziehbar gespeichert.', NULL, NULL, FALSE, 3);
+INSERT INTO question_theme (question_id, theme_id) VALUES (701, 12);
+INSERT INTO gap_field (gap_id, question_id, gap_index, text_before, text_after) VALUES (174, 701, 0, 'Bei größeren Projekten teilt man Code in', 'auf, damit jeder Part eine eindeutige Aufgabe hat.');
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (528, 174, 'Module/Schichten', TRUE, 1);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (529, 174, 'zufällige Dateien', FALSE, 2);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (530, 174, '4 Teile', FALSE, 3);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (531, 174, 'Tabellen', FALSE, 4);
+INSERT INTO gap_field (gap_id, question_id, gap_index, text_before, text_after) VALUES (175, 701, 1, 'Das erreicht man zum Beispiel durch', '.');
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (532, 175, 'globale Variablen', FALSE, 1);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (533, 175, 'Interfaces/Abstraktionen', TRUE, 2);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (534, 175, 'Copy-Paste', FALSE, 3);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (535, 175, 'Hardcoding', FALSE, 4);
+INSERT INTO gap_field (gap_id, question_id, gap_index, text_before, text_after) VALUES (176, 701, 2, 'Änderungen werden mit Versionsverwaltung wie', 'nachvollziehbar gespeichert.');
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (536, 176, 'Excel', FALSE, 1);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (537, 176, 'Paint', FALSE, 2);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (538, 176, 'Word', FALSE, 3);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (539, 176, 'Git', TRUE, 4);
+
+-- Frage 3: Unit-Tests prüfen einzelne Funktionen/Methoden isoliert.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (702, 24, 'TF', 'Unit-Tests prüfen einzelne Funktionen/Methoden isoliert.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (702, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1896, 702, 'Ja', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1897, 702, 'Nein', FALSE, 2);
+
+-- Frage 4: Ein Integrationstest testet das Zusammenspiel mehrerer Komponenten.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (703, 24, 'TF', 'Ein Integrationstest testet das Zusammenspiel mehrerer Komponenten.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (703, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1898, 703, 'Ja', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1899, 703, 'Nein', FALSE, 2);
+
+-- Frage 5: „Refactoring“ bedeutet: Funktionalität ändern, um neue Features einzubauen.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (704, 24, 'TF', '„Refactoring“ bedeutet: Funktionalität ändern, um neue Features einzubauen.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (704, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1900, 704, 'Ja', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1901, 704, 'Nein', TRUE, 2);
+
+-- Frage 6: Sprechende Namen und kleine Funktionen sind Teil von Clean Code.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (705, 24, 'TF', 'Sprechende Namen und kleine Funktionen sind Teil von Clean Code.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (705, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1902, 705, 'Ja', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1903, 705, 'Nein', FALSE, 2);
+
+-- Frage 7: Ein Interface beschreibt ein „Was“, nicht das „Wie“.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (706, 24, 'TF', 'Ein Interface beschreibt ein „Was“, nicht das „Wie“.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (706, 9);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1904, 706, 'Ja', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1905, 706, 'Nein', FALSE, 2);
+
+-- Frage 8: Polymorphie bedeutet, dass derselbe Methodenaufruf je nach Objekt unterschiedlic
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (707, 24, 'TF', 'Polymorphie bedeutet, dass derselbe Methodenaufruf je nach Objekt unterschiedlich reagieren kann.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (707, 9);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1906, 707, 'Ja', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1907, 707, 'Nein', FALSE, 2);
+
+-- Frage 9: Kapselung bedeutet, dass Attribute private gemacht werden und nur über Methoden
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (708, 24, 'TF', 'Kapselung bedeutet, dass Attribute private gemacht werden und nur über Methoden zugänglich sind.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (708, 9);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1908, 708, 'Ja', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1909, 708, 'Nein', FALSE, 2);
+
+-- Frage 10: Vererbung ist immer besser als Komposition.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (709, 24, 'TF', 'Vererbung ist immer besser als Komposition.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (709, 9);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1910, 709, 'Ja', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1911, 709, 'Nein', TRUE, 2);
+
+-- Frage 11: Exceptions sollten immer ignoriert werden, damit das Programm weiterläuft.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (710, 24, 'TF', 'Exceptions sollten immer ignoriert werden, damit das Programm weiterläuft.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (710, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1912, 710, 'Ja', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1913, 710, 'Nein', TRUE, 2);
+
+-- Frage 12: Logging ersetzt Tests.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (711, 24, 'TF', 'Logging ersetzt Tests.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (711, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1914, 711, 'Ja', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1915, 711, 'Nein', TRUE, 2);
+
+-- Frage 13: Git-Branches sind Kopien des gesamten Repositorys.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (712, 24, 'TF', 'Git-Branches sind Kopien des gesamten Repositorys.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (712, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1916, 712, 'Ja', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1917, 712, 'Nein', TRUE, 2);
+
+-- Frage 14: Merge-Konflikte können entstehen, wenn zwei Branches dieselbe Stelle geändert ha
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (713, 24, 'TF', 'Merge-Konflikte können entstehen, wenn zwei Branches dieselbe Stelle geändert haben.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (713, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1918, 713, 'Ja', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1919, 713, 'Nein', FALSE, 2);
+
+-- Frage 15: CI bedeutet, dass Code automatisch gebaut und getestet werden kann.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (714, 24, 'TF', 'CI bedeutet, dass Code automatisch gebaut und getestet werden kann.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (714, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1920, 714, 'Ja', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1921, 714, 'Nein', FALSE, 2);
+
+-- Frage 16: Input-Validierung gehört auch ins Backend.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (715, 24, 'TF', 'Input-Validierung gehört auch ins Backend.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (715, 11);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1922, 715, 'Ja', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1923, 715, 'Nein', FALSE, 2);
+
+-- Frage 17: „Idempotent“ bedeutet: Mehrfach ausführen führt zum gleichen Ergebniszustand.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (716, 24, 'TF', '„Idempotent“ bedeutet: Mehrfach ausführen führt zum gleichen Ergebniszustand.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (716, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1924, 716, 'Ja', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1925, 716, 'Nein', FALSE, 2);
+
+-- Frage 18: Eine Variable ist ein benannter Speicherplatz für einen Wert.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (717, 24, 'TF', 'Eine Variable ist ein benannter Speicherplatz für einen Wert.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (717, 9);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1926, 717, 'Ja', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1927, 717, 'Nein', FALSE, 2);
+
+-- Frage 19: Eine Variable kann in jeder Programmiersprache jederzeit ihren Datentyp wechseln
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (718, 24, 'TF', 'Eine Variable kann in jeder Programmiersprache jederzeit ihren Datentyp wechseln, ohne Konsequenzen.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (718, 9);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1928, 718, 'Ja', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1929, 718, 'Nein', TRUE, 2);
+
+-- Frage 20: Eine Schleife ist sinnvoll, wenn derselbe Code mehrfach ausgeführt werden soll.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (719, 24, 'TF', 'Eine Schleife ist sinnvoll, wenn derselbe Code mehrfach ausgeführt werden soll.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (719, 9);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1930, 719, 'Ja', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1931, 719, 'Nein', FALSE, 2);
+
+-- Frage 21: Eine if-Verzweigung ist dafür da, Code abhängig von einer Bedingung auszuführen.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (720, 24, 'TF', 'Eine if-Verzweigung ist dafür da, Code abhängig von einer Bedingung auszuführen.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (720, 9);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1932, 720, 'Ja', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1933, 720, 'Nein', FALSE, 2);
+
+-- Frage 22: Der Begriff „Scope“ oder die Sichtbarkeit von etwas beschreibt, wo dieses gültig
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (721, 24, 'TF', 'Der Begriff „Scope“ oder die Sichtbarkeit von etwas beschreibt, wo dieses gültig ist.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (721, 9);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1934, 721, 'Ja', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1935, 721, 'Nein', FALSE, 2);
+
+-- Frage 23: Man sollte immer möglichst globale Variablen nutzen.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (722, 24, 'TF', 'Man sollte immer möglichst globale Variablen nutzen.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (722, 9);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1936, 722, 'Ja', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1937, 722, 'Nein', TRUE, 2);
+
+-- Frage 24: Unit-Tests testen kleine Einheiten (Funktionen/Methoden).
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (723, 24, 'TF', 'Unit-Tests testen kleine Einheiten (Funktionen/Methoden).', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (723, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1938, 723, 'Ja', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1939, 723, 'Nein', FALSE, 2);
+
+-- Frage 25: Integrationstests prüfen das Zusammenspiel mehrerer Komponenten.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (724, 24, 'TF', 'Integrationstests prüfen das Zusammenspiel mehrerer Komponenten.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (724, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1940, 724, 'Ja', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1941, 724, 'Nein', FALSE, 2);
+
+-- Frage 26: Hohe Testabdeckung bedeutet automatisch „fehlerfrei“.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (725, 24, 'TF', 'Hohe Testabdeckung bedeutet automatisch „fehlerfrei“.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (725, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1942, 725, 'Ja', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1943, 725, 'Nein', TRUE, 2);
+
+-- Frage 27: Bubble Sort hat im Worst Case typischerweise eine quadratische Laufzeit.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (726, 24, 'TF', 'Bubble Sort hat im Worst Case typischerweise eine quadratische Laufzeit.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (726, 9);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1944, 726, 'Ja', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1945, 726, 'Nein', FALSE, 2);
+
+-- Frage 28: Kapselung bedeutet, interne Details zu verstecken und das Zugreifen nur durch de
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (727, 24, 'TF', 'Kapselung bedeutet, interne Details zu verstecken und das Zugreifen nur durch definierte Methoden zu erlauben.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (727, 9);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1946, 727, 'Ja', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1947, 727, 'Nein', FALSE, 2);
+
+-- Frage 29: Das Observer-Pattern ist sinnvoll, wenn mehrere Teile/Personen über Änderungen i
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (728, 24, 'TF', 'Das Observer-Pattern ist sinnvoll, wenn mehrere Teile/Personen über Änderungen informiert werden sollen.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (728, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1948, 728, 'Ja', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1949, 728, 'Nein', FALSE, 2);
+
+-- Frage 30: Strategy Pattern bedeutet, man hat austauschbares Verhalten über eine austauschb
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (729, 24, 'TF', 'Strategy Pattern bedeutet, man hat austauschbares Verhalten über eine austauschbare Strategie.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (729, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1950, 729, 'Ja', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1951, 729, 'Nein', FALSE, 2);
+
+-- Frage 31: Template Method Pattern bedeutet, dass der Ablauf fest ist, einzelne Schritte si
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (730, 24, 'TF', 'Template Method Pattern bedeutet, dass der Ablauf fest ist, einzelne Schritte sind aber überschreibbar.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (730, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1952, 730, 'Ja', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1953, 730, 'Nein', FALSE, 2);
+
+-- Frage 32: State Pattern benutzt man, wenn sich das Verhalten je nach internem Zustand ände
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (731, 24, 'TF', 'State Pattern benutzt man, wenn sich das Verhalten je nach internem Zustand ändert.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (731, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1954, 731, 'Ja', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1955, 731, 'Nein', FALSE, 2);
+
+-- Frage 33: Decorator Pattern erweitert Verhalten zur Laufzeit durch Anhängen an ein Objekt.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (732, 24, 'TF', 'Decorator Pattern erweitert Verhalten zur Laufzeit durch Anhängen an ein Objekt.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (732, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1956, 732, 'Ja', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1957, 732, 'Nein', FALSE, 2);
+
+-- Frage 34: Was beschreibt „Kapselung“ am besten?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (733, 24, 'MC', 'Was beschreibt „Kapselung“ am besten?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (733, 9);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1958, 733, 'Globale Variablen nutzen', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1959, 733, 'Daten öffentlich machen', FALSE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1960, 733, 'Details verbergen, Zugriff über Methoden', TRUE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1961, 733, 'Alles in eine Klasse packen', FALSE, 4);
+
+-- Frage 35: Was ist ein typisches Ziel von Refactoring?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (734, 24, 'MC', 'Was ist ein typisches Ziel von Refactoring?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (734, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1962, 734, 'Mehr Features', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1963, 734, 'Besserer Code ohne Funktionsänderung', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1964, 734, 'Mehr Bugs', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1965, 734, 'Weniger Tests', FALSE, 4);
+
+-- Frage 36: „Single Responsibility“ bedeutet:
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (735, 24, 'MC', '„Single Responsibility“ bedeutet:', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (735, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1966, 735, 'Eine Klasse hat viele Aufgaben', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1967, 735, 'Eine Methode ist nie länger als 3 Zeilen', FALSE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1968, 735, 'Eine Klasse hat genau eine Verantwortlichkeit', TRUE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1969, 735, 'Eine Klasse darf keine Attribute haben', FALSE, 4);
+
+-- Frage 37: „Dependency Injection“ hilft vor allem bei:
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (736, 24, 'MC', '„Dependency Injection“ hilft vor allem bei:', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (736, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1970, 736, 'UI-Design', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1971, 736, 'Testbarkeit und Austauschbarkeit', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1972, 736, 'Daten komprimieren', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1973, 736, 'Logs löschen', FALSE, 4);
+
+-- Frage 38: Was ist Polymorphie?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (737, 24, 'MC', 'Was ist Polymorphie?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (737, 9);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1974, 737, 'Gleiche Klasse überall', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1975, 737, 'Gleiche Methode kann je nach Objekt anders wirken', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1976, 737, 'Nur Vererbung ohne Methoden', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1977, 737, 'Keine Interfaces nutzen', FALSE, 4);
+
+-- Frage 39: Was ist ein Interface (allgemein)?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (738, 24, 'MC', 'Was ist ein Interface (allgemein)?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (738, 9);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1978, 738, 'Implementierung einer Klasse', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1979, 738, 'Vertrag: welche Methoden vorhanden sein müssen', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1980, 738, 'Datenbanktabelle', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1981, 738, 'JSON-Datei', FALSE, 4);
+
+-- Frage 40: Was ist ein Constructor?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (739, 24, 'MC', 'Was ist ein Constructor?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (739, 9);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1982, 739, 'Ein Destruktor', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1983, 739, 'Methode zum Erzeugen/Initialisieren eines Objekts', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1984, 739, 'Eine Schleife', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1985, 739, 'Eine Bibliothek', FALSE, 4);
+
+-- Frage 41: Welche Fehlerart fängt man oft mit Try/Catch ab?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (740, 24, 'MC', 'Welche Fehlerart fängt man oft mit Try/Catch ab?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (740, 9);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1986, 740, 'Kompilierfehler', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1987, 740, 'Laufzeitfehler/Exceptions', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1988, 740, 'Tippfehler im Kommentar', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1989, 740, 'CSS-Fehler', FALSE, 4);
+
+-- Frage 42: Was ist der Vorteil von Unit-Tests?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (741, 24, 'MC', 'Was ist der Vorteil von Unit-Tests?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (741, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1990, 741, 'Testen UI-Layouts', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1991, 741, 'Schnell, isoliert, früh Fehler finden', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1992, 741, 'Ersetzen Code Reviews', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1993, 741, 'Erhöhen immer Performance', FALSE, 4);
+
+-- Frage 43: Was ist „CI“?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (742, 24, 'MC', 'Was ist „CI“?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (742, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1994, 742, 'Manuelle Tests', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1995, 742, 'Automatisches Bauen/Testen bei Änderungen', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1996, 742, 'Clownintervention', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1997, 742, 'Container-Name', FALSE, 4);
+
+-- Frage 44: Was ist „CD“ (typisch)?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (743, 24, 'MC', 'Was ist „CD“ (typisch)?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (743, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1998, 743, 'Code Delete', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (1999, 743, 'Automatisches Ausrollen/Bereitstellen', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2000, 743, 'Compiler Delete', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2001, 743, 'Cache Delete', FALSE, 4);
+
+-- Frage 45: Was ist eine API?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (744, 24, 'MC', 'Was ist eine API?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (744, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2002, 744, 'Benutzeroberfläche', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2003, 744, 'Schnittstelle zum Austausch von Daten/Funktionen', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2004, 744, 'Datenbanktyp', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2005, 744, 'Compiler', FALSE, 4);
+
+-- Frage 46: Was ist HTTP?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (745, 24, 'MC', 'Was ist HTTP?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (745, 10);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2006, 745, 'Datenbank', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2007, 745, 'Protokoll für Web-Kommunikation', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2008, 745, 'Programmiersprache', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2009, 745, 'Verschlüsselungsalgorithmus', FALSE, 4);
+
+-- Frage 47: Statuscode 200 bedeutet typischerweise:
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (746, 24, 'MC', 'Statuscode 200 bedeutet typischerweise:', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (746, 10);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2010, 746, 'Fehler', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2011, 746, 'Erfolg', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2012, 746, 'Nicht gefunden', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2013, 746, 'Keine Rechte', FALSE, 4);
+
+-- Frage 48: Warum Input-Validierung im Backend?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (747, 24, 'MC', 'Warum Input-Validierung im Backend?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (747, 11);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2014, 747, 'Nur fürs Frontend relevant', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2015, 747, 'Schutz vor fehlerhaften/bösartigen Requests', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2016, 747, 'Macht UI schöner', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2017, 747, 'Spart Indizes', FALSE, 4);
+
+-- Frage 49: Was ist Authentifizierung?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (748, 24, 'MC', 'Was ist Authentifizierung?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (748, 11);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2018, 748, 'Rechte prüfen (darf der User das?)', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2019, 748, 'Identität feststellen (Login)', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2020, 748, 'Daten speichern', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2021, 748, 'UI rendern', FALSE, 4);
+
+-- Frage 50: Was ist Autorisierung?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (749, 24, 'MC', 'Was ist Autorisierung?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (749, 11);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2022, 749, 'Identität feststellen (Login)', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2023, 749, 'Rechte prüfen (darf der User das?)', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2024, 749, 'Passwort ändern', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2025, 749, 'Logs löschen', FALSE, 4);
+
+-- Frage 51: Was ist „Thread-Safety“?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (750, 24, 'MC', 'Was ist „Thread-Safety“?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (750, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2026, 750, 'Code läuft nur auf einem Thread', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2027, 750, 'Code verhält sich korrekt bei parallelem Zugriff', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2028, 750, 'Wir lassen keine Threads zu', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2029, 750, 'Code so kurz wie möglich', FALSE, 4);
+
+-- Frage 52: Was ist „Caching“?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (751, 24, 'MC', 'Was ist „Caching“?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (751, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2030, 751, 'Daten absichtlich löschen', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2031, 751, 'Daten zwischenspeichern für schnelleren Zugriff', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2032, 751, 'Daten verschlüsseln', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2033, 751, 'Daten normalisieren', FALSE, 4);
+
+-- Frage 53: Was ist ein häufiger Cache-Fehler?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (752, 24, 'MC', 'Was ist ein häufiger Cache-Fehler?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (752, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2034, 752, 'Zu viele Logs', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2035, 752, 'Veraltete Daten', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2036, 752, 'Zu viele Variablen', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2037, 752, 'Zu viele Tests', FALSE, 4);
+
+-- Frage 54: Was ist ein Vorteil von Logging?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (753, 24, 'MC', 'Was ist ein Vorteil von Logging?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (753, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2038, 753, 'Ersetzt Tests', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2039, 753, 'Hilft beim Debugging/Monitoring', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2040, 753, 'Macht Code immer schneller', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2041, 753, 'Verhindert Bugs', FALSE, 4);
+
+-- Frage 55: Warum sollen Secrets nicht ins Repo?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (754, 24, 'MC', 'Warum sollen Secrets nicht ins Repo?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (754, 11);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2042, 754, 'Sie machen Code langsamer', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2043, 754, 'Sicherheitsrisiko bei einem Leak', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2044, 754, 'Git kann keine Secrets speichern', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2045, 754, 'Tests schlagen dann fehl', FALSE, 4);
+
+-- Frage 56: Was ist DRY?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (755, 24, 'MC', 'Was ist DRY?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (755, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2046, 755, 'Don’t Repeat Yourself', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2047, 755, 'Don’t Render YAML', FALSE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2048, 755, 'Delete Random Yaks', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2049, 755, 'Debugging Requires Yelling', FALSE, 4);
+
+-- Frage 57: Was ist KISS?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (756, 24, 'MC', 'Was ist KISS?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (756, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2050, 756, 'Keep It Simple, Stupid', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2051, 756, 'Kurvige Insekten summen super', FALSE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2052, 756, 'Kubernetes Is Super Simple', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2053, 756, 'Kein Interface, Single Switch', FALSE, 4);
+
+-- Frage 58: Was ist YAGNI?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (757, 24, 'MC', 'Was ist YAGNI?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (757, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2054, 757, 'You Aren’t Gonna Need It', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2055, 757, 'Your API Generates New IDs', FALSE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2056, 757, 'yoga abc go no infinity', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2057, 757, 'yacks arbeiten gerne nicht intervallartig', FALSE, 4);
+
+-- Frage 59: Was ist „Exception Handling“ best practice?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (758, 24, 'MC', 'Was ist „Exception Handling“ best practice?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (758, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2058, 758, 'Alle Exceptions ignorieren', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2059, 758, 'Sinnvoll behandeln/loggen und ggf. weiterwerfen', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2060, 758, 'Nur print', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2061, 758, 'Immer Programm beenden', FALSE, 4);
+
+-- Frage 60: Was ist ein „Build“?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (759, 24, 'MC', 'Was ist ein „Build“?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (759, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2062, 759, 'Datenbankbackup', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2063, 759, 'Kompilieren/Packen des Projekts', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2064, 759, 'Branch erstellen', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2065, 759, 'Login-Prozess', FALSE, 4);
+
+-- Frage 61: Vorteil von Containern?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (760, 24, 'MC', 'Vorteil von Containern?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (760, 15);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2066, 760, 'Immer mehr Performance', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2067, 760, 'Reproduzierbare Umgebungen', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2068, 760, 'Keine Konfiguration nötig', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2069, 760, 'Ersetzt Tests', FALSE, 4);
+
+-- Frage 62: Was ist „Rollback“ im Deployment-Kontext?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (761, 24, 'MC', 'Was ist „Rollback“ im Deployment-Kontext?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (761, 15);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2070, 761, 'Daten löschen', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2071, 761, 'Zur vorherigen Version zurück', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2072, 761, 'Branch umbenennen', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2073, 761, 'Cache leeren', FALSE, 4);
+
+-- Frage 63: Wozu dient MVC grob?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (762, 24, 'MC', 'Wozu dient MVC grob?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (762, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2074, 762, 'Nur Datenbank', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2075, 762, 'Trennung von Model, View, Controller', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2076, 762, 'Verschlüsselung', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2077, 762, 'Versionierung', FALSE, 4);
+
+-- Frage 64: Was ist ein „Singleton“-Pattern?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (763, 24, 'MC', 'Was ist ein „Singleton“-Pattern?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (763, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2078, 763, 'Viele Instanzen', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2079, 763, 'Genau eine Instanz (global zugreifbar)', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2080, 763, 'Keine Instanz', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2081, 763, 'Nur für Datenbanken', FALSE, 4);
+
+-- Frage 65: Warum kann Singleton problematisch sein?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points) VALUES (764, 24, 'MC', 'Warum kann Singleton problematisch sein?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (764, 12);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2082, 764, 'Macht Code schneller', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2083, 764, 'Erschwert Tests und erhöht Kopplung', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2084, 764, 'Ersetzt Interfaces', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2085, 764, 'Verhindert Bugs', FALSE, 4);
+
+

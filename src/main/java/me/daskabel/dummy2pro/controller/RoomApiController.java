@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -88,6 +89,7 @@ public class RoomApiController
         private LocalDateTime startedAt;
         private LocalDateTime finishedAt;
         private boolean finished;
+        private String displayName;
 
         public LocalDateTime getFinishedAt()
         {
@@ -109,6 +111,11 @@ public class RoomApiController
             return this.finished;
         }
 
+        public String getDisplayName()
+        {
+            return this.displayName;
+        }
+
         public void setFinished(boolean finished)
         {
             this.finished = finished;
@@ -127,6 +134,26 @@ public class RoomApiController
         public void setStartedAt(LocalDateTime startedAt)
         {
             this.startedAt = startedAt;
+        }
+
+        public void setDisplayName(String displayName)
+        {
+            this.displayName = displayName;
+        }
+    }
+
+    public static class RenameRunRequest
+    {
+        private String displayName;
+
+        public String getDisplayName()
+        {
+            return this.displayName;
+        }
+
+        public void setDisplayName(String displayName)
+        {
+            this.displayName = displayName;
         }
     }
 
@@ -352,95 +379,26 @@ public class RoomApiController
             dto.setStartedAt(run.getStartedAt());
             dto.setFinishedAt(run.getFinishedAt());
             dto.setFinished(run.getFinishedAt() != null);
+            dto.setDisplayName(run.getDisplayName());
             return dto;
         }).toList();
 
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/dashboard")
-    public ResponseEntity<DashboardOverviewResponse> getDashboardOverview(@RequestParam Long userId)
+    @PutMapping("/{runId}/name")
+    public ResponseEntity<RunListEntryResponse> renameRun(
+            @PathVariable Long runId,
+            @RequestParam Long userId,
+            @RequestBody RenameRunRequest request)
     {
-        List<GameRun> runs = this.gameRunRepository.findByUser_UserIdOrderByFinishedAtAscStartedAtDesc(userId);
+        GameRun run = this.gameRunRepository.findByRunIdAndUser_UserId(runId, userId)
+                .orElseThrow(() -> new NoSuchElementException("Spielstand nicht gefunden"));
 
-        GameRun selectedRun = null;
-        for (GameRun run : runs)
-        {
-            if (run.getFinishedAt() == null)
-            {
-                selectedRun = run;
-                break;
-            }
-        }
+        run.setDisplayName(normalizeDisplayName(request != null ? request.getDisplayName() : null));
 
-        if (selectedRun == null && !runs.isEmpty())
-        {
-            selectedRun = runs.get(0);
-        }
-
-        Map<Integer, QuestionProgressRepository.RoomOverviewProjection> summaryByRoom = new HashMap<>();
-        if (selectedRun != null)
-        {
-            List<QuestionProgressRepository.RoomOverviewProjection> summaries =
-                    this.questionProgressRepository.summarizeByRunId(selectedRun.getRunId());
-
-            for (QuestionProgressRepository.RoomOverviewProjection summary : summaries)
-            {
-                summaryByRoom.put(summary.getRoomId(), summary);
-            }
-        }
-
-        List<Theme> themes = this.themeRepository.findAllByOrderByThemeIdAsc();
-        List<DashboardRoomResponse> rooms = new ArrayList<>();
-
-        for (int i = 0; i < themes.size(); i++)
-        {
-            int roomId = i + 1;
-            Theme theme = themes.get(i);
-
-            int totalQuestions;
-            int answeredQuestions = 0;
-            int correctAnswers = 0;
-
-            QuestionProgressRepository.RoomOverviewProjection summary = summaryByRoom.get(roomId);
-
-            if (summary != null)
-            {
-                totalQuestions = summary.getTotalQuestions().intValue();
-                answeredQuestions = summary.getAnsweredQuestions().intValue();
-                correctAnswers = summary.getCorrectAnswers().intValue();
-            }
-            else
-            {
-                long availableQuestions = this.questionRepository.countQuestionsByThemeId(theme.getThemeId());
-                totalQuestions = (int) Math.min(QUESTIONS_PER_ROOM, availableQuestions);
-            }
-
-            int completionPercent = totalQuestions > 0
-                    ? (int) Math.round((answeredQuestions * 100.0) / totalQuestions)
-                    : 0;
-
-            DashboardRoomResponse room = new DashboardRoomResponse();
-            room.setRoomId(roomId);
-            room.setThemeName(theme.getName());
-            room.setTotalQuestions(totalQuestions);
-            room.setAnsweredQuestions(answeredQuestions);
-            room.setCorrectAnswers(correctAnswers);
-            room.setCompletionPercent(completionPercent);
-
-            rooms.add(room);
-        }
-
-        DashboardOverviewResponse response = new DashboardOverviewResponse();
-        response.setRunId(selectedRun != null ? selectedRun.getRunId() : null);
-        response.setUsername(
-                this.userRepository.findById(userId)
-                        .map(user -> user.getUsername())
-                        .orElse("NutzerName")
-        );
-        response.setRooms(rooms);
-
-        return ResponseEntity.ok(response);
+        GameRun savedRun = this.gameRunRepository.save(run);
+        return ResponseEntity.ok(toRunListEntryResponse(savedRun));
     }
 
     // Fehlerbehandlung
@@ -510,6 +468,45 @@ public class RoomApiController
         @RequestBody AnswerRequest request)
     {
         return ResponseEntity.ok(this.sessionManager.submitAnswer(sessionId, roomId, request));
+    }
+
+    @PostMapping("/{sessionId}/room/{roomId}/prepare")
+    public ResponseEntity<RoomStatusDto> prepareRoom(@PathVariable String sessionId, @PathVariable int roomId)
+    {
+        return ResponseEntity.ok(this.sessionManager.prepareRoom(sessionId, roomId));
+    }
+
+    private String normalizeDisplayName(String displayName)
+    {
+        if (displayName == null)
+        {
+            return null;
+        }
+
+        String trimmed = displayName.trim();
+
+        if (trimmed.isEmpty())
+        {
+            return null;
+        }
+
+        if (trimmed.length() > 100)
+        {
+            throw new IllegalArgumentException("Der Spielstandname darf maximal 100 Zeichen lang sein.");
+        }
+
+        return trimmed;
+    }
+
+    private RunListEntryResponse toRunListEntryResponse(GameRun run)
+    {
+        RunListEntryResponse dto = new RunListEntryResponse();
+        dto.setRunId(run.getRunId());
+        dto.setStartedAt(run.getStartedAt());
+        dto.setFinishedAt(run.getFinishedAt());
+        dto.setFinished(run.getFinishedAt() != null);
+        dto.setDisplayName(run.getDisplayName());
+        return dto;
     }
 
 }

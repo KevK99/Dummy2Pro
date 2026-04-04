@@ -426,31 +426,54 @@ public class RoomService
      */
     private List<Question> loadAllQuestionsForTheme(int roomId)
     {
-        List<Theme> themes = themeRepo.findAllByOrderByThemeIdAsc();
-        long themeId = themes.get(roomId - 1).getThemeId();
+        Theme theme = getTheme(roomId);
 
-        // 1. Alle Fragen mit Antwortoptionen (für MC + TF)
-        List<Question> withAnswers = this.questionRepo.findByThemeIdWithAnswers(themeId);
+        List<Long> questionIds = this.questionRepo.findQuestionIdsByThemeId(theme.getThemeId());
 
-        // 2. Alle Fragen mit GapFields+Options (für GAP)
-        List<Question> withGaps = this.questionRepo.findByThemeIdWithGaps(themeId);
-
-        // 3. In-memory mergen: GAP-Daten in die withAnswers-Liste einbauen
-        Map<Long, Question> gapMap = withGaps.stream().collect(Collectors.toMap(Question::getQuestionId, q -> q));
-
-        for (Question q : withAnswers)
+        if (questionIds.isEmpty())
         {
-            if (QuestionType.GAP.equals(q.getQuestionType()))
+            return List.of();
+        }
+
+        List<Question> withAnswers = this.questionRepo.findByQuestionIdsWithAnswers(questionIds);
+        List<Question> withGaps = this.questionRepo.findByQuestionIdsWithGaps(questionIds);
+
+        Map<Long, Question> mergedMap = new HashMap<>();
+
+        for (Question question : withAnswers)
+        {
+            mergedMap.put(question.getQuestionId(), question);
+        }
+
+        for (Question gapQuestion : withGaps)
+        {
+            Question existing = mergedMap.get(gapQuestion.getQuestionId());
+
+            if (existing == null)
             {
-                Question gapVersion = gapMap.get(q.getQuestionId());
-                if (gapVersion != null)
-                {
-                    q.setGapFields(gapVersion.getGapFields());
-                }
+                mergedMap.put(gapQuestion.getQuestionId(), gapQuestion);
+                continue;
+            }
+
+            if (gapQuestion.getGapFields() != null && !gapQuestion.getGapFields().isEmpty())
+            {
+                existing.setGapFields(gapQuestion.getGapFields());
             }
         }
 
-        return withAnswers;
+        List<Question> orderedQuestions = new ArrayList<>();
+
+        for (Long questionId : questionIds)
+        {
+            Question question = mergedMap.get(questionId);
+
+            if (question != null)
+            {
+                orderedQuestions.add(question);
+            }
+        }
+
+        return orderedQuestions;
     }
 
     /**

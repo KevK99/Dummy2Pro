@@ -1,26 +1,31 @@
 <!DOCTYPE html>
 <html lang="de"
       xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{base :: layout(~{::body}, 'bg-indigo-700 dark:bg-[#000010] text-white font-mono tracking-wider min-h-screen')}">
+      th:replace="~{base :: layout(~{::body}, 'min-h-screen bg-[#020403] text-white font-mono tracking-wider dark:bg-[#000000] overflow-x-hidden')}">
 
-<body class="bg-indigo-700 dark:bg-[#000010] text-white font-mono tracking-wider min-h-screen">
+<body class="min-h-screen bg-[#020403] text-white font-mono tracking-wider dark:bg-[#000000] overflow-x-hidden">
 
-<!-- HEADER FULL WIDTH -->
 <div th:replace="~{fragments/headline :: headline(${ 'Raum ' + roomId}, ${'Thema: ' + themeName}, ${avatarUrl}, null, null)}"></div>
 
 <style>
     :root {
-        --room-home-btn-bg: #daa61b;
-        --room-home-btn-hover-bg: #b88714;
-        --room-home-btn-text: #0a1022;
-        --room-home-btn-border: #0a1022;
+        --room-home-btn-bg: #22c55e;
+        --room-home-btn-hover-bg: #16a34a;
+        --room-home-btn-text: #001b08;
+        --room-home-btn-border: #86efac;
+        --panda-tip-fill: #22c55e;
     }
 
     html.dark {
-        --room-home-btn-bg: #a37b14;
-        --room-home-btn-hover-bg: #c79619;
-        --room-home-btn-text: #0a1022;
-        --room-home-btn-border: #fff7cc;
+        --room-home-btn-bg: #22c55e;
+        --room-home-btn-hover-bg: #16a34a;
+        --room-home-btn-text: #001b08;
+        --room-home-btn-border: #86efac;
+        --panda-tip-fill: #22c55e;
+    }
+
+    .panda-leaf-fill {
+        fill: #00ff66;
     }
 </style>
 
@@ -28,28 +33,35 @@
 <main id="welcomeContainer" class="flex justify-center mt-10">
     <div class="w-full max-w-6xl px-6 relative">
         <section
-            class="relative border-[10px] border-[#050a14] shadow-2xl overflow-visible bg-[#daa61b] dark:bg-[#222a66]"
-            style="
+                class="relative border-[10px] border-[#00ff66] shadow-2xl overflow-visible bg-[#031108] dark:bg-[#031108]"
+                style="
+            box-shadow:
+                0 0 0 2px #001f0c,
+                0 0 18px rgba(34,197,94,0.55),
+                0 0 40px rgba(34,197,94,0.20);
             background-image:
-                radial-gradient(rgba(255,255,255,0.10) 1px, transparent 1px),
-                radial-gradient(rgba(140,170,255,0.10) 1px, transparent 1px),
-                radial-gradient(rgba(20,30,90,0.18) 1px, transparent 1px);
-            background-size: 18px 18px, 18px 18px, 18px 18px;
-            background-position: 0 0, 9px 9px, 4px 4px;
+                linear-gradient(rgba(34,197,94,0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(34,197,94,0.06) 1px, transparent 1px),
+                radial-gradient(rgba(34,197,94,0.10) 1px, transparent 1px);
+            background-size: 26px 26px, 26px 26px, 18px 18px;
+            background-position: 0 0, 0 0, 8px 8px;
         ">
 
             <!-- FLOOR -->
             <div
-                    class="absolute inset-12 border-4 border-white/30"
+                    class="absolute inset-12 border-4 border-[#22c55e]/50"
                     style="
-                    background-color: #0a2a3a;
-                    background-image:
-                        radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
-                        radial-gradient(rgba(120,170,190,0.10) 1px, transparent 1px),
-                        radial-gradient(rgba(5,20,30,0.22) 1px, transparent 1px);
-                    background-size: 20px 20px, 20px 20px, 20px 20px;
-                    background-position: 0 0, 10px 10px, 5px 5px;
-                ">
+                background-color: #000000;
+                background-image:
+                    linear-gradient(rgba(34,197,94,0.06) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(34,197,94,0.06) 1px, transparent 1px),
+                    radial-gradient(rgba(34,197,94,0.12) 1px, transparent 1px);
+                background-size: 24px 24px, 24px 24px, 16px 16px;
+                background-position: 0 0, 0 0, 6px 6px;
+                box-shadow:
+                    inset 0 0 24px rgba(34,197,94,0.18),
+                    0 0 18px rgba(34,197,94,0.10);
+            ">
             </div>
 
             <!-- ROOM CONTENT -->
@@ -60,58 +72,60 @@
                     <div class="relative min-h-[150px]">
                         <!-- outer bubble -->
                         <div
-                            class="absolute inset-0 bg-[#e9f0ff]"
-                            style="
-                            clip-path: polygon(
-                                20px 0,
-                                calc(100% - 20px) 0,
-                                100% 20px,
-                                100% calc(100% - 20px),
-                                calc(100% - 20px) 100%,
-                                20px 100%,
-                                0 calc(100% - 20px),
-                                0 20px
-                            );
-                        ">
+                                class="absolute inset-0 bg-[#b7ffcb] dark:bg-[#b7ffcb]"
+                                style="
+                                clip-path: polygon(
+                                    20px 0,
+                                    calc(100% - 20px) 0,
+                                    100% 20px,
+                                    100% calc(100% - 20px),
+                                    calc(100% - 20px) 100%,
+                                    20px 100%,
+                                    0 calc(100% - 20px),
+                                    0 20px
+                                );
+                                box-shadow: 0 0 16px rgba(34,197,94,0.35);
+                            ">
                         </div>
 
                         <!-- bubble fill -->
                         <div
-                            class="absolute inset-[5px] bg-[#0a1022]"
-                            style="
-                            clip-path: polygon(
-                                18px 0,
-                                calc(100% - 18px) 0,
-                                100% 18px,
-                                100% calc(100% - 18px),
-                                calc(100% - 18px) 100%,
-                                18px 100%,
-                                0 calc(100% - 18px),
-                                0 18px
-                            );
+                                class="absolute inset-[5px] bg-[#020403] dark:bg-[#020403]"
+                                style="
+                                clip-path: polygon(
+                                    18px 0,
+                                    calc(100% - 18px) 0,
+                                    100% 18px,
+                                    100% calc(100% - 18px),
+                                    calc(100% - 18px) 100%,
+                                    18px 100%,
+                                    0 calc(100% - 18px),
+                                    0 18px
+                                );
                             ">
                         </div>
 
                         <!-- inner stroke -->
                         <div
-                            class="absolute inset-[14px] border border-[#1a2a52]"
-                            style="
-                            clip-path: polygon(
-                                14px 0,
-                                calc(100% - 14px) 0,
-                                100% 14px,
-                                100% calc(100% - 14px),
-                                calc(100% - 14px) 100%,
-                                14px 100%,
-                                0 calc(100% - 14px),
-                                0 14px
-                            );
+                                class="absolute inset-[14px] border border-[#00ff66] dark:border-[#00ff66]"
+                                style="
+                                clip-path: polygon(
+                                    14px 0,
+                                    calc(100% - 14px) 0,
+                                    100% 14px,
+                                    100% calc(100% - 14px),
+                                    calc(100% - 14px) 100%,
+                                    14px 100%,
+                                    0 calc(100% - 14px),
+                                    0 14px
+                                );
+                                box-shadow: inset 0 0 10px rgba(34,197,94,0.18);
                             ">
                         </div>
 
                         <!-- text -->
                         <div class="relative px-10 py-8 min-h-[150px]">
-                            <div id="dialogText" class="text-lg leading-8 whitespace-pre-line pr-2 text-white">
+                            <div id="dialogText" class="text-lg leading-8 whitespace-pre-line pr-2 text-[#86efac]">
                                 Hey.
                             </div>
                         </div>
@@ -121,20 +135,7 @@
                     <div id="speechTail" class="absolute left-[72%] -translate-x-1/2 top-full -translate-y-[1px] transition-all duration-300">
                         <!-- tail outer -->
                         <div
-                            class="relative w-[40px] h-[34px] bg-[#e9f0ff]"
-                            style="
-                            clip-path: polygon(
-                                0 0,
-                                100% 0,
-                                100% 55%,
-                                68% 100%,
-                                32% 100%,
-                                0 55%
-                            );
-                        ">
-                            <!-- tail fill -->
-                            <div
-                                class="absolute inset-[4px] bg-[#0a1022]"
+                                class="relative w-[40px] h-[34px] bg-[#b7ffcb] dark:bg-[#b7ffcb]"
                                 style="
                                 clip-path: polygon(
                                     0 0,
@@ -144,63 +145,79 @@
                                     32% 100%,
                                     0 55%
                                 );
+                                box-shadow: 0 0 16px rgba(34,197,94,0.35);
                             ">
+                            <!-- tail fill -->
+                            <div
+                                    class="absolute inset-[4px] bg-[#020403] dark:bg-[#020403]"
+                                    style="
+                                    clip-path: polygon(
+                                        0 0,
+                                        100% 0,
+                                        100% 55%,
+                                        68% 100%,
+                                        32% 100%,
+                                        0 55%
+                                    );
+                                ">
                             </div>
 
                             <!-- tail inner stroke -->
                             <div
-                                class="absolute inset-[10px] border border-[#1a2a52]"
-                                style="
-                                clip-path: polygon(
-                                    0 0,
-                                    100% 0,
-                                    100% 55%,
-                                    68% 100%,
-                                    32% 100%,
-                                    0 55%
-                                );
-                            ">
+                                    class="absolute inset-[10px] border border-[#00ff66] dark:border-[#00ff66]"
+                                    style="
+                                    clip-path: polygon(
+                                        0 0,
+                                        100% 0,
+                                        100% 55%,
+                                        68% 100%,
+                                        32% 100%,
+                                        0 55%
+                                    );
+                                ">
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Troll-CHARACTER  PANDA ÒwÓ bleibt -->
-                <div class="absolute left-1/2 -translate-x-1/2 bottom-[70px] flex flex-col items-center z-10">
-                    <div class="w-[170px] h-[30px] bg-white/50 rounded-full blur-sm"></div>
+                <!-- Troll-CHARACTER PANDA -->
+                <div id="welcomePanda" class="absolute left-[120px] top-[180px] z-10 pointer-events-none">
+                    <div id="welcomePandaInner" class="transition-all duration-700 ease-in-out flex flex-col items-center">
+                        <div class="w-[170px] h-[30px] bg-[#22c55e]/30 rounded-full blur-sm"></div>
 
-                    <svg class="w-[230px] mt-[-10px]" viewBox="0 0 24 24" shape-rendering="crispEdges">
-                        <rect x="19" y="4" width="2" height="16" fill="#8b5a2b"/>
-                        <rect x="18" y="3" width="4" height="2" fill="#8b5a2b"/>
-                        <rect x="18" y="2" width="4" height="1" fill="#6f4421"/>
-                        <rect x="19" y="1" width="2" height="2" class="fill-cyan-200"/>
+                        <svg class="w-[230px] mt-[-10px]" viewBox="0 0 24 24" shape-rendering="crispEdges">
+                            <rect x="19" y="4" width="2" height="16" fill="#14532d"/>
+                            <rect x="18" y="3" width="4" height="2" fill="#14532d"/>
+                            <rect x="18" y="2" width="4" height="1" fill="#166534"/>
+                            <rect x="19" y="1" width="2" height="2" class="panda-leaf-fill"/>
 
-                        <rect x="7" y="3" width="10" height="8" fill="#050a14"/>
-                        <rect x="8" y="4" width="8" height="6" fill="#e9f0ff"/>
+                            <rect x="7" y="3" width="10" height="8" fill="#050a14"/>
+                            <rect x="8" y="4" width="8" height="6" fill="#d9ffe7"/>
 
-                        <rect x="10" y="6" width="2" height="2" fill="#050a14"/>
-                        <rect x="14" y="6" width="2" height="2" fill="#050a14"/>
+                            <rect x="10" y="6" width="2" height="2" fill="#050a14"/>
+                            <rect x="14" y="6" width="2" height="2" fill="#050a14"/>
 
-                        <rect x="12" y="8" width="1" height="1" fill="#050a14"/>
+                            <rect x="12" y="8" width="1" height="1" fill="#050a14"/>
 
-                        <rect x="6" y="12" width="12" height="9" fill="#050a14"/>
-                        <rect x="7" y="13" width="10" height="7" fill="#2b4aa8"/>
+                            <rect x="6" y="12" width="12" height="9" fill="#050a14"/>
+                            <rect x="7" y="13" width="10" height="7" fill="#00ff66"/>
 
-                        <rect x="5" y="14" width="2" height="3" fill="#e9f0ff"/>
-                        <rect x="17" y="14" width="2" height="3" fill="#e9f0ff"/>
+                            <rect x="5" y="14" width="2" height="3" fill="#d9ffe7"/>
+                            <rect x="17" y="14" width="2" height="3" fill="#d9ffe7"/>
 
-                        <rect x="8" y="20" width="3" height="2" fill="#e9f0ff"/>
-                        <rect x="13" y="20" width="3" height="2" fill="#e9f0ff"/>
-                    </svg>
+                            <rect x="8" y="20" width="3" height="2" fill="#d9ffe7"/>
+                            <rect x="13" y="20" width="3" height="2" fill="#d9ffe7"/>
+                        </svg>
+                    </div>
                 </div>
 
                 <!-- Raum-CHARACTER -->
                 <div class="absolute right-[140px] bottom-[95px] z-10">
                     <img
-                            src="/room-characters/Magier.png"
-                            alt="Raumcharakter Magier"
+                            src="/room-characters/Schmied.png"
+                            alt="Raumcharakter Schmied"
                             class="w-[150px]"
-                            style="image-rendering: pixelated;"
+                            style="image-rendering: pixelated; filter: drop-shadow(0 0 10px rgba(34,197,94,0.45));"
                     >
                 </div>
 
@@ -219,107 +236,112 @@
                 </div>
 
                 <!-- CONTROLS -->
-                <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-4">
+                <div class="absolute bottom-6 left-[calc(50%_-_120px)] z-20 flex gap-4">
                     <button id="dialogNextBtn"
-                            class="bg-violet-700 text-white px-6 py-3 rounded-lg font-black hover:bg-violet-600">
+                            class="bg-[#22c55e] text-[#001b08] px-6 py-3 rounded-lg font-black hover:bg-[#16a34a] shadow-[0_0_18px_rgba(34,197,94,0.45)]">
                         Weiter
                     </button>
 
                     <button id="startQuizBtn"
-                            class="hidden bg-emerald-600 text-white px-6 py-3 rounded-lg font-black hover:bg-emerald-500">
+                            class="hidden bg-[#86efac] text-[#001b08] px-6 py-3 rounded-lg font-black hover:bg-[#4ade80] shadow-[0_0_18px_rgba(134,239,172,0.45)]">
                         Prüfung beginnen
                     </button>
                 </div>
             </div>
 
         </section>
+
         <!-- CORRIDOR -->
-        <div class="absolute left-1/2 -translate-x-1/2 top-[calc(100%-3rem)] w-28 h-[220px] z-0 pointer-events-none">
-            <!-- linke Außenwand -->
-            <div class="absolute left-0 top-0 w-[10px] h-full bg-[#daa61b] dark:bg-[#222a66]"></div>
-
-            <!-- linke graue Innenkante -->
-            <div class="absolute left-[10px] top-0 w-[4px] h-full bg-[#8f9fa3]"></div>
-
-            <!-- Mitte / Flurboden -->
-            <div class="absolute left-[14px] top-0 w-[84px] h-full bg-[#0a2a3a]"></div>
-
-            <!-- rechte graue Innenkante -->
-            <div class="absolute left-[98px] top-0 w-[4px] h-full bg-[#8f9fa3]"></div>
-
-            <!-- rechte Außenwand -->
-            <div class="absolute left-[102px] top-0 w-[10px] h-full bg-[#daa61b] dark:bg-[#222a66]"></div>
+        <div class="absolute left-[calc(50%_-_120px)] top-[calc(100%_-_3rem)] w-28 h-[220px] z-0 pointer-events-none">
+            <div class="absolute left-0 top-0 w-[10px] h-full bg-[#22c55e] dark:bg-[#22c55e]"></div>
+            <div class="absolute left-[10px] top-0 w-[4px] h-full bg-[#86efac] dark:bg-[#86efac]"></div>
+            <div class="absolute left-[14px] top-0 w-[84px] h-full bg-[#000000] dark:bg-[#000000]"></div>
+            <div class="absolute left-[98px] top-0 w-[4px] h-full bg-[#86efac] dark:bg-[#86efac]"></div>
+            <div class="absolute left-[102px] top-0 w-[10px] h-full bg-[#22c55e] dark:bg-[#22c55e]"></div>
         </div>
     </div>
 </main>
 
 <!-- GAME -->
-<div id="gameContainer" class="bg-indigo-700 dark:bg-slate-950 text-white font-mono tracking-wider hidden min-h-screen">
-    <div id="gameScene" class="w-[1200px] h-[680px] mx-auto relative bg-yellow-500/90 dark:bg-slate-950 overflow-visible">
+<div id="gameContainer" class="bg-[#020403] dark:bg-[#000000] text-white font-mono tracking-wider hidden min-h-screen">
+    <div id="gameScene"
+         class="w-[1200px] h-[680px] mx-auto relative bg-[#031108] dark:bg-[#000000] overflow-visible"
+         style="
+            box-shadow:
+                inset 0 0 35px rgba(34,197,94,0.18);
+            background-image:
+                linear-gradient(rgba(34,197,94,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(34,197,94,0.05) 1px, transparent 1px),
+                radial-gradient(rgba(34,197,94,0.08) 1px, transparent 1px);
+            background-size: 26px 26px, 26px 26px, 16px 16px;
+            background-position: 0 0, 0 0, 6px 6px;
+         ">
 
         <!-- ROOM CHARACTER -->
         <div id="gameRoomCharacter" class="absolute left-[105px] top-[-5px] z-20 pointer-events-none">
             <img
-                    src="/room-characters/Magier.png"
-                    alt="Raumcharakter Magier"
+                    src="/room-characters/Schmied.png"
+                    alt="Raumcharakter Schmied"
                     class="w-[110px]"
-                    style="image-rendering: pixelated; transform: scaleX(-1);"
+                    style="image-rendering: pixelated; transform: scaleX(-1); filter: drop-shadow(0 0 10px rgba(34,197,94,0.45));"
             >
         </div>
 
         <!-- PANDA -->
-        <div id="gamePanda" class="absolute left-[390px] top-[-34px] flex flex-col items-center pointer-events-none animate-pulse [animation-duration:2s] z-50">
-            <div class="w-[150px] h-[26px] bg-white/80 rounded-full blur-sm"></div>
+        <div id="gamePanda" class="absolute left-[80px] top-[-24px] z-50 pointer-events-none">
+            <div id="gamePandaInner" class="transition-all duration-700 ease-in-out flex flex-col items-center">
+                <div class="w-[130px] h-[22px] bg-[#22c55e]/30 rounded-full blur-sm"></div>
 
-            <svg class="w-[190px] mt-[-10px]" viewBox="0 0 24 24" shape-rendering="crispEdges">
-                <rect x="19" y="4" width="2" height="16" fill="#8b5a2b"/>
-                <rect x="18" y="3" width="4" height="2" fill="#8b5a2b"/>
-                <rect x="18" y="2" width="4" height="1" fill="#6f4421"/>
-                <rect x="19" y="1" width="2" height="2" fill="fill-cyan-200"/>
+                <svg class="w-[160px] mt-[-8px]" viewBox="0 0 24 24" shape-rendering="crispEdges">
+                    <rect x="19" y="4" width="2" height="16" fill="#14532d"/>
+                    <rect x="18" y="3" width="4" height="2" fill="#14532d"/>
+                    <rect x="18" y="2" width="4" height="1" fill="#166534"/>
+                    <rect x="19" y="1" width="2" height="2" class="panda-leaf-fill"/>
 
-                <rect x="7" y="3" width="10" height="8" fill="#050a14"/>
-                <rect x="8" y="4" width="8" height="6" fill="#e9f0ff"/>
+                    <rect x="7" y="3" width="10" height="8" fill="#050a14"/>
+                    <rect x="8" y="4" width="8" height="6" fill="#d9ffe7"/>
 
-                <rect x="10" y="6" width="2" height="2" fill="#050a14"/>
-                <rect x="14" y="6" width="2" height="2" fill="#050a14"/>
+                    <rect x="10" y="6" width="2" height="2" fill="#050a14"/>
+                    <rect x="14" y="6" width="2" height="2" fill="#050a14"/>
 
-                <rect x="12" y="8" width="1" height="1" fill="#050a14"/>
+                    <rect x="12" y="8" width="1" height="1" fill="#050a14"/>
 
-                <rect x="6" y="12" width="12" height="9" fill="#050a14"/>
-                <rect x="7" y="13" width="10" height="7" fill="#2b4aa8"/>
+                    <rect x="6" y="12" width="12" height="9" fill="#050a14"/>
+                    <rect x="7" y="13" width="10" height="7" fill="#00ff66"/>
 
-                <rect x="5" y="14" width="2" height="3" fill="#e9f0ff"/>
-                <rect x="17" y="14" width="2" height="3" fill="#e9f0ff"/>
+                    <rect x="5" y="14" width="2" height="3" fill="#d9ffe7"/>
+                    <rect x="17" y="14" width="2" height="3" fill="#d9ffe7"/>
 
-                <rect x="8" y="20" width="3" height="2" fill="#e9f0ff"/>
-                <rect x="13" y="20" width="3" height="2" fill="#e9f0ff"/>
-            </svg>
+                    <rect x="8" y="20" width="3" height="2" fill="#d9ffe7"/>
+                    <rect x="13" y="20" width="3" height="2" fill="#d9ffe7"/>
+                </svg>
+            </div>
         </div>
 
         <!-- QUESTION PANEL -->
         <div th:replace="~{fragments/question-panel :: questionPanel(
-            'bg-[#f5f8ff] shadow-[0_0_0_2px_rgba(245,248,255,0.85)]',
-            'bg-emerald-600 dark:bg-[#0a1022]',
-            'border-[#1a2a52]',
-            'bg-indigo-600 text-white px-6 py-3 rounded-lg font-black hover:bg-indigo-500',
-            'bg-emerald-600 text-white px-6 py-3 rounded-lg font-black hover:bg-emerald-500'
+            'bg-[#b7ffcb] dark:bg-[#b7ffcb]',
+            'bg-[#020403] dark:bg-[#020403]',
+            'border-[#00ff66] dark:border-[#00ff66]',
+            'bg-[#22c55e] text-[#001b08] px-6 py-3 rounded-lg font-black hover:bg-[#16a34a] shadow-[0_0_18px_rgba(34,197,94,0.45)]',
+            'bg-[#86efac] text-[#001b08] px-6 py-3 rounded-lg font-black hover:bg-[#4ade80] shadow-[0_0_18px_rgba(134,239,172,0.45)]'
         )}"></div>
 
         <!-- STATUS PANEL -->
         <div th:replace="~{fragments/status-panel :: statusPanel(
-            'bg-[#f5f8ff] shadow-[0_0_0_2px_rgba(245,248,255,0.85)]',
-            'bg-emerald-600 dark:bg-[#0b1327]',
-            'border-[#1a2a52]',
-            'bg-yellow-400 text-black font-black text-xs text-center py-3 rounded-xl'
+            'bg-[#b7ffcb] dark:bg-[#b7ffcb]',
+            'bg-[#020403] dark:bg-[#020403]',
+            'border-[#00ff66] dark:border-[#00ff66]',
+            'bg-[#86efac] text-[#052e16] dark:bg-[#86efac] dark:text-[#052e16] font-black text-xs text-center py-3 rounded-xl'
         )}"></div>
     </div>
 </div>
 
-<!-- TODO Sessionproblem beim Laden des Raumes. Der Raum kann oft nicht laden. -->
 <script th:src="@{/js/darkmode.js}"></script>
 
 <script th:inline="javascript">
-    const roomId = /*[[${roomId}]]*/ 3;
+    const roomId = /*[[${roomId}]]*/ 16;
+    const maxRoomId = 16;
 
     const userId = sessionStorage.getItem("userId");
     const runId = sessionStorage.getItem("runId");
@@ -355,45 +377,45 @@
     let currentGapStep = 0;
     let roomLoaded = false;
 
-    const darkmodeBtn = document.getElementById("darkmodeBtn");
-    const htmlElement = document.documentElement;
+    const welcomePanda = document.getElementById("welcomePanda");
+    const welcomePandaInner = document.getElementById("welcomePandaInner");
+    const gamePandaInner = document.getElementById("gamePandaInner");
 
-    function updateDarkmodeButtonText() {
-        if (!darkmodeBtn) {
-            return;
-        }
-
-        if (htmlElement.classList.contains("dark")) {
-            darkmodeBtn.textContent = "Bunt edition ☀️";
-        } else {
-            darkmodeBtn.textContent = "Hello Darkmode, my old friend 🌙";
-        }
+    function randomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    function initDarkmode() {
-        if (!darkmodeBtn) {
+    function startFallingPanda(element, maxX, minY, maxY, intervalMs) {
+        if (!element) {
             return;
         }
 
-        if (localStorage.theme === "dark") {
-            htmlElement.classList.add("dark");
-        } else {
-            htmlElement.classList.remove("dark");
-        }
+        const drop = () => {
+            const x = randomInt(0, maxX);
+            const endY = randomInt(minY, maxY);
+            const tilt = randomInt(-18, 18);
 
-        updateDarkmodeButtonText();
+            element.getAnimations().forEach(animation => animation.cancel());
 
-        darkmodeBtn.addEventListener("click", () => {
-            if (htmlElement.classList.contains("dark")) {
-                htmlElement.classList.remove("dark");
-                localStorage.theme = "light";
-            } else {
-                htmlElement.classList.add("dark");
-                localStorage.theme = "dark";
-            }
+            element.animate([
+                { transform: `translate(${x}px, -180px) rotate(0deg)` },
+                { transform: `translate(${x}px, ${endY}px) rotate(${tilt}deg)` },
+                { transform: `translate(${x}px, ${Math.max(0, endY - 14)}px) rotate(${Math.trunc(tilt / 2)}deg)` },
+                { transform: `translate(${x}px, ${endY}px) rotate(0deg)` }
+            ], {
+                duration: randomInt(900, 1500),
+                easing: "cubic-bezier(.18,.72,.22,1.18)",
+                fill: "forwards"
+            });
+        };
 
-            updateDarkmodeButtonText();
-        });
+        drop();
+        setInterval(drop, intervalMs);
+    }
+
+    function initRandomPandas() {
+        startFallingPanda(welcomePandaInner, 420, 35, 170, 1700);
+        startFallingPanda(gamePandaInner, 860, 45, 255, 1400);
     }
 
     const welcomeContainer = document.getElementById("welcomeContainer");
@@ -431,7 +453,7 @@
         }
 
         const line = introDialog[dialogIndex];
-        const speakerLabel = line.speaker === "player" ? "Du" : "Magier";
+        const speakerLabel = line.speaker === "player" ? "Du" : "Schmied";
 
         updateSpeechTailPosition(line.speaker);
         dialogText.innerText = `${speakerLabel}: ${line.text}`;
@@ -464,7 +486,7 @@
         applyQuestionLayout(question);
 
         if (isGapQuestion(question)) {
-            questionText.className = "text-center px-2 min-h-0 overflow-hidden text-[clamp(9px,0.9vw,14px)] leading-[1.1]";
+            questionText.className = "text-center px-2 min-h-0 overflow-hidden text-[clamp(9px,0.9vw,14px)] leading-[1.1] text-[#86efac]";
             renderGapQuestionText(question);
             renderGapQuestion(question);
 
@@ -476,16 +498,16 @@
             return;
         }
 
-        questionText.className = "text-center px-6 shrink-0 min-h-[72px] max-h-[250px] overflow-hidden leading-[1.08] text-[clamp(10px,1.15vw,18px)]";
+        questionText.className = "text-center px-6 shrink-0 min-h-[72px] max-h-[250px] overflow-hidden leading-[1.08] text-[clamp(10px,1.15vw,18px)] text-[#86efac]";
         questionText.innerText = question.startText || "Keine Frage vorhanden.";
         questionText.style.wordBreak = "break-word";
 
         if (!question.answerOptions || question.answerOptions.length === 0) {
             answerContainer.innerHTML = `
-            <div class="col-span-2 text-center text-red-300">
-                Dieser Fragetyp wird hier noch nicht unterstützt.
-            </div>
-        `;
+                <div class="col-span-2 text-center text-red-300">
+                    Dieser Fragetyp wird hier noch nicht unterstützt.
+                </div>
+            `;
             return;
         }
 
@@ -503,16 +525,20 @@
             button.dataset.fullText = option.optionText;
 
             button.className = `
-            quiz-answer-btn
-            relative w-full h-full
-            border-4 border-yellow-400
-            px-6 py-4
-            font-black text-yellow-400 text-left
-            bg-[#09122a]
-            flex items-center
-        `;
+                quiz-answer-btn
+                relative w-full h-full
+                border-4 border-[#86efac]
+                px-6 py-4
+                font-black text-[#86efac] text-left
+                bg-[#020403]
+                dark:border-[#86efac]
+                dark:text-[#86efac]
+                dark:bg-[#020403]
+                flex items-center
+            `;
 
             button.style.minHeight = rows >= 2 ? "120px" : "150px";
+            button.style.boxShadow = "0 0 14px rgba(34,197,94,0.14)";
 
             const label = document.createElement("div");
             label.className = "answer-label w-full leading-[1.35]";
@@ -566,9 +592,13 @@
                 relative inline-flex items-center justify-center
                 min-w-[88px] max-w-full
                 px-2.5 py-1
-                border-2 border-dashed border-white/40
-                text-center font-black text-yellow-300
-                bg-[#0a1022] transition
+                border-2 border-dashed border-[#22c55e]
+                text-center font-black text-[#86efac]
+                bg-[#020403]
+                dark:border-[#22c55e]
+                dark:text-[#86efac]
+                dark:bg-[#020403]
+                transition
             `;
             preview.textContent = `[ Lücke ${gapIndex + 1} ]`;
 
@@ -599,10 +629,10 @@
 
         if (!question.gapFields || question.gapFields.length === 0) {
             answerContainer.innerHTML = `
-        <div class="text-center text-red-300">
-            GAP-Frage enthält keine Lückenfelder.
-        </div>
-    `;
+                <div class="text-center text-red-300">
+                    GAP-Frage enthält keine Lückenfelder.
+                </div>
+            `;
             return;
         }
 
@@ -610,7 +640,7 @@
 
         const currentGapLabel = document.createElement("div");
         currentGapLabel.id = "gapCurrentLabel";
-        currentGapLabel.className = "text-xs text-gray-300 font-black tracking-wide shrink-0";
+        currentGapLabel.className = "text-xs text-[#86efac] font-black tracking-wide shrink-0";
         answerContainer.appendChild(currentGapLabel);
 
         gapFields.forEach((gapField, gapIndex) => {
@@ -650,13 +680,17 @@
                 button.className = `
                     gap-option-btn
                     relative w-full
-                    border-4 border-yellow-400
+                    border-4 border-[#86efac]
                     px-3 py-2
-                    font-black text-yellow-400 text-left
-                    bg-[#0a1022]
+                    font-black text-[#86efac] text-left
+                    bg-[#020403]
+                    dark:border-[#86efac]
+                    dark:text-[#86efac]
+                    dark:bg-[#020403]
                     flex items-center
                 `;
                 button.style.minHeight = `${minHeight}px`;
+                button.style.boxShadow = "0 0 14px rgba(34,197,94,0.14)";
 
                 const label = document.createElement("div");
                 label.className = "gap-option-label w-full leading-[1.15]";
@@ -681,7 +715,7 @@
         const prevBtn = document.createElement("button");
         prevBtn.type = "button";
         prevBtn.id = "gapPrevBtn";
-        prevBtn.className = "bg-slate-700 text-white px-5 py-2.5 rounded-lg font-black hover:bg-slate-600";
+        prevBtn.className = "bg-[#166534] text-[#d9ffe7] px-5 py-2.5 rounded-lg font-black hover:bg-[#15803d] shadow-[0_0_18px_rgba(34,197,94,0.35)]";
         prevBtn.innerText = "Zurück";
 
         prevBtn.addEventListener("click", () => {
@@ -691,7 +725,7 @@
         const stepBtn = document.createElement("button");
         stepBtn.type = "button";
         stepBtn.id = "gapStepBtn";
-        stepBtn.className = "bg-indigo-600 text-white px-5 py-2.5 rounded-lg font-black hover:bg-indigo-500";
+        stepBtn.className = "bg-[#22c55e] text-[#001b08] px-5 py-2.5 rounded-lg font-black hover:bg-[#16a34a] shadow-[0_0_18px_rgba(34,197,94,0.45)]";
         stepBtn.innerText = "Weiter";
 
         stepBtn.addEventListener("click", () => {
@@ -773,23 +807,48 @@
             preview.classList.remove(
                 "border-dashed",
                 "border-white/40",
-                "text-yellow-300",
-                "border-yellow-400",
+                "dark:border-white/40",
+                "border-[#22c55e]",
+                "border-[#86efac]",
+                "dark:border-[#86efac]",
+                "text-[#86efac]",
+                "dark:text-[#86efac]",
                 "text-white",
-                "bg-yellow-400/10",
-                "bg-indigo-500/20",
+                "bg-[#020403]",
+                "bg-[#16a34a]/20",
+                "bg-[#22c55e]/20",
+                "dark:bg-[#020403]",
                 "ring-2",
                 "ring-white/40"
             );
 
             if (hasAnswer) {
-                preview.classList.add("border-yellow-400", "text-white", "bg-yellow-400/10");
+                preview.classList.add(
+                    "border-[#86efac]",
+                    "text-white",
+                    "bg-[#16a34a]/20",
+                    "dark:border-[#86efac]",
+                    "dark:text-white",
+                    "dark:bg-[#16a34a]/20"
+                );
             } else {
-                preview.classList.add("border-dashed", "border-white/40", "text-yellow-300");
+                preview.classList.add(
+                    "border-dashed",
+                    "border-[#22c55e]",
+                    "text-[#86efac]",
+                    "bg-[#020403]",
+                    "dark:border-[#22c55e]",
+                    "dark:text-[#86efac]",
+                    "dark:bg-[#020403]"
+                );
             }
 
             if (previewStep === currentGapStep) {
-                preview.classList.add("bg-indigo-500/20", "ring-2", "ring-white/40");
+                preview.classList.add(
+                    "bg-[#22c55e]/20",
+                    "ring-2",
+                    "ring-white/40"
+                );
             }
         });
 
@@ -818,12 +877,12 @@
 
             if (isLastGap) {
                 stepBtn.innerText = "Antwort prüfen";
-                stepBtn.classList.remove("bg-indigo-600", "hover:bg-indigo-500");
-                stepBtn.classList.add("bg-emerald-800", "hover:bg-emerald-700");
+                stepBtn.classList.remove("bg-[#22c55e]", "hover:bg-[#16a34a]");
+                stepBtn.classList.add("bg-[#86efac]", "hover:bg-[#4ade80]");
             } else {
                 stepBtn.innerText = "Weiter";
-                stepBtn.classList.remove("bg-emerald-600", "hover:bg-emerald-500");
-                stepBtn.classList.add("bg-indigo-600", "hover:bg-indigo-500");
+                stepBtn.classList.remove("bg-[#86efac]", "hover:bg-[#4ade80]");
+                stepBtn.classList.add("bg-[#22c55e]", "hover:bg-[#16a34a]");
             }
         }
 
@@ -909,7 +968,7 @@
 
                     if (data.correctAnswerIds && data.correctAnswerIds.includes(answerId)) {
                         btn.classList.remove("border-yellow-400", "text-yellow-400");
-                        btn.classList.add("border-emerald-400", "text-emerald-300");
+                        btn.classList.add("border-emerald-500", "text-emerald-400");
                     } else if (selectedAnswerIds.includes(answerId)) {
                         btn.classList.remove("border-yellow-400", "text-yellow-400", "bg-yellow-400", "text-black");
                         btn.classList.add("border-red-500", "text-red-400");
@@ -929,7 +988,7 @@
                         if (entry.correct) {
                             if (preview) {
                                 preview.classList.remove("border-yellow-400", "text-white", "bg-yellow-400/10");
-                                preview.classList.add("border-emerald-500", "text-emerald-300", "bg-emerald-700/10");
+                                preview.classList.add("border-emerald-500", "text-emerald-300", "bg-emerald-500/10");
                             }
                         } else {
                             if (preview) {
@@ -944,7 +1003,7 @@
 
                             if (btnOptionId === entry.correctGapOptionId) {
                                 btn.classList.remove("border-yellow-400", "text-yellow-400");
-                                btn.classList.add("border-emerald-400", "text-emerald-400");
+                                btn.classList.add("border-emerald-500", "text-emerald-400");
                             } else if (btn.classList.contains("bg-yellow-400")) {
                                 btn.classList.remove("border-yellow-400", "text-yellow-400", "bg-yellow-400", "text-black");
                                 btn.classList.add("border-red-500", "text-red-400");
@@ -976,7 +1035,7 @@
         if (!currentQuestion) {
             const nextRoomId = roomId + 1;
 
-            if (nextRoomId <= 15) {
+            if (nextRoomId <= maxRoomId) {
                 window.location.href = `/room/${nextRoomId}`;
             } else {
                 window.location.href = "/dashboard";
@@ -1033,7 +1092,7 @@
 
         const nextRoomId = roomId + 1;
 
-        if (nextRoomId <= 15) {
+        if (nextRoomId <= maxRoomId) {
             nextQuestionBtn.innerText = `Zu Raum ${nextRoomId}`;
             nextQuestionBtn.classList.remove("hidden");
         } else {
@@ -1055,8 +1114,8 @@
     nextQuestionBtn.addEventListener("click", loadNextQuestion);
 
     updateHeadlineOverview();
+    initRandomPandas();
     initWelcomeRoom();
-
 </script>
 </body>
 </html>

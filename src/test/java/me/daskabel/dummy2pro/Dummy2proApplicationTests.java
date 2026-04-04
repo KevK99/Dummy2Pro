@@ -1,13 +1,14 @@
 package me.daskabel.dummy2pro;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class Dummy2proApplicationTests {
-
-	@Test
-	void contextLoads() {
-	}
-
+class Dummy2proApplicationTests
+{
+    @Test
+    void applicationClassExists()
+    {
+        assertNotNull(Dummy2proApplication.class);
+    }
 }

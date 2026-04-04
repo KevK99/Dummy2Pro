@@ -47,6 +47,7 @@
                 sessionStorage.removeItem("runId");
                 sessionStorage.removeItem("userId");
                 sessionStorage.removeItem("username");
+                sessionStorage.removeItem("avatar");
 
                 const username = document.getElementById("username").value;
                 const password = document.getElementById("password").value;
@@ -67,6 +68,7 @@
 
                     sessionStorage.setItem("userId", String(data.userId));
                     sessionStorage.setItem("username", data.username);
+                    sessionStorage.setItem("avatar", data.avatar || "duck.jpg");
 
                     // Alte Session-/Run-Daten verwerfen.
                     // Das Dashboard lädt oder erstellt danach den AKTIVEN Spielstand.

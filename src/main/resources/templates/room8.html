@@ -1,223 +1,27 @@
 <!DOCTYPE html>
 <html lang="de"
       xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{base :: layout(~{::body}, 'min-h-screen text-white font-mono tracking-wider overflow-x-hidden room7-theme-page')}">
+      th:replace="~{base :: layout(~{::body}, 'min-h-screen bg-[#5B217A] text-white font-mono tracking-wider dark:bg-[#000010] overflow-x-hidden')}">
 
-<body class="min-h-screen text-white font-mono tracking-wider overflow-x-hidden room7-theme-page">
+<body class="min-h-screen bg-[#5B217A] text-white font-mono tracking-wider dark:bg-[#000010] overflow-x-hidden">
 
 <div th:replace="~{fragments/headline :: headline(${ 'Raum ' + roomId}, ${'Thema: ' + themeName}, ${avatarUrl}, null, null)}"></div>
 
 <style>
-    :root,
-    html.theme-colorful {
-        --room-home-btn-bg: #18FA70;
-        --room-home-btn-hover-bg: #12d360;
-        --room-home-btn-text: #0a1022;
-        --room-home-btn-border: #0a1022;
-        --room7-page-bg: #FFF123;
-        --room7-welcome-bg: #18FA70;
-        --room7-game-bg: #18FA70;
-        --room7-corridor-outer-bg: #18FA70;
-        --room7-floor-bg: #0a2a3a;
-        --room7-floor-border: rgba(255,255,255,0.30);
-
-        --room7-speech-outer: #f5f8ff;
-        --room7-speech-fill: #0a1022;
-        --room7-speech-line: #1a2a52;
-
-        --room7-panel-outer: #f5f8ff;
-        --room7-panel-fill: #0a1022;
-        --room7-status-fill: #0b1327;
-        --room7-panel-line: #1a2a52;
-
-        --room7-panda-leaf: #facc15;
+    :root {
+        --room-home-btn-bg: #C084FC;
+        --room-home-btn-hover-bg: #a96bea;
+        --room-home-btn-text: #24103A;
+        --room-home-btn-border: #24103A;
+        --panda-tip-fill: #3F7B03;
     }
 
     html.dark {
-        --room-home-btn-bg: #4254b8;
-        --room-home-btn-hover-bg: #5368e0;
-        --room-home-btn-text: #f5f8ff;
-        --room-home-btn-border: #f5f8ff;
-        --room7-page-bg: #000010;
-        --room7-welcome-bg: #222a66;
-        --room7-game-bg: #000010;
-        --room7-corridor-outer-bg: #222a66;
-        --room7-floor-bg: #0a2a3a;
-        --room7-floor-border: rgba(255,255,255,0.30);
-
-        --room7-speech-outer: #f5f8ff;
-        --room7-speech-fill: #0a1022;
-        --room7-speech-line: #1a2a52;
-
-        --room7-panel-outer: #f5f8ff;
-        --room7-panel-fill: #0a1022;
-        --room7-status-fill: #0b1327;
-        --room7-panel-line: #1a2a52;
-
-        --room7-panda-leaf: #ffffff;
-    }
-
-    html.theme-blackout {
-        --room-home-btn-bg: #111827;
-        --room-home-btn-hover-bg: #1f2937;
-        --room-home-btn-text: #ffffff;
-        --room-home-btn-border: #4b5563;
-        --room7-page-bg: #000000;
-        --room7-welcome-bg: #000000;
-        --room7-game-bg: #000000;
-        --room7-corridor-outer-bg: #000000;
-        --room7-floor-bg: #000000;
-        --room7-floor-border: #000000;
-
-        --room7-speech-outer: #000000;
-        --room7-speech-fill: #000000;
-        --room7-speech-line: #000000;
-
-        --room7-panel-outer: #000000;
-        --room7-panel-fill: #000000;
-        --room7-status-fill: #000000;
-        --room7-panel-line: #000000;
-
-        --room7-panda-leaf: #ffffff;
-    }
-
-    /* Alles wirklich schwarz machen */
-    html.theme-blackout body.room7-theme-page,
-    html.theme-blackout body.room7-theme-page header,
-    html.theme-blackout body.room7-theme-page main,
-    html.theme-blackout body.room7-theme-page section,
-    html.theme-blackout body.room7-theme-page div,
-    html.theme-blackout body.room7-theme-page p,
-    html.theme-blackout body.room7-theme-page span,
-    html.theme-blackout body.room7-theme-page h1,
-    html.theme-blackout body.room7-theme-page h2,
-    html.theme-blackout body.room7-theme-page b,
-    html.theme-blackout body.room7-theme-page hr,
-    html.theme-blackout body.room7-theme-page button {
-        background: #000000 !important;
-        background-color: #000000 !important;
-        background-image: none !important;
-        color: #000000 !important;
-        border-color: #000000 !important;
-        box-shadow: none !important;
-        text-shadow: none !important;
-    }
-
-    /* Bilder ebenfalls verschwinden lassen */
-    html.theme-blackout body.room7-theme-page img {
-        opacity: 0 !important;
-    }
-
-    /* Auch Fortschrittsbalken / Badge / Coin komplett schwarz */
-    html.theme-blackout #themeProgressBar,
-    html.theme-blackout #questionCorrectBar,
-    html.theme-blackout #questionWrongBar,
-    html.theme-blackout #roomStatusBadge,
-    html.theme-blackout #medalCoin {
-        background: #000000 !important;
-        color: #000000 !important;
-        border-color: #000000 !important;
-    }
-
-    /* Header-Avatar ebenfalls weg */
-    html.theme-blackout header img {
-        opacity: 0 !important;
-    }
-
-    html.theme-blackout #darkmodeBtn {
-        background: #000000 !important;
-        background-color: #000000 !important;
-        background-image: none !important;
-        color: #000000 !important;
-        border-color: #000000 !important;
-        box-shadow: none !important;
-        text-shadow: none !important;
-    }
-
-    html.theme-blackout .room-home-button,
-    html.theme-blackout .room-home-button:hover {
-        background: #000000 !important;
-        background-color: #000000 !important;
-        background-image: none !important;
-        color: #000000 !important;
-        border-color: #000000 !important;
-        box-shadow: none !important;
-        text-shadow: none !important;
-    }
-
-    html.theme-blackout .room-home-button svg {
-        fill: #000000 !important;
-    }
-
-    /* Panda darf sichtbar bleiben */
-    html.theme-blackout .room7-panda,
-    html.theme-blackout .room7-panda * {
-        opacity: 1 !important;
-        box-shadow: none !important;
-    }
-
-    /* Falls der Panda ein img wäre */
-    html.theme-blackout .room7-panda img {
-        opacity: 1 !important;
-    }
-
-    .room7-theme-page {
-        background-color: var(--room7-page-bg);
-    }
-
-    .room7-welcome-section {
-        background-color: var(--room7-welcome-bg);
-    }
-
-    .room7-floor {
-        background-color: var(--room7-floor-bg);
-        border-color: var(--room7-floor-border);
-    }
-
-    .room7-corridor-outer {
-        background-color: var(--room7-corridor-outer-bg);
-    }
-
-    .room7-game-container {
-        background-color: var(--room7-page-bg);
-    }
-
-    .room7-game-scene {
-        background-color: var(--room7-game-bg);
-    }
-
-    .speech-bubble-outer {
-        background-color: var(--room7-speech-outer);
-    }
-
-    .speech-bubble-fill {
-        background-color: var(--room7-speech-fill);
-    }
-
-    .speech-bubble-line {
-        border-color: var(--room7-speech-line);
-    }
-
-    .question-frame-outer,
-    .status-frame-outer {
-        background-color: var(--room7-panel-outer);
-    }
-
-    .question-frame-fill {
-        background-color: var(--room7-panel-fill);
-    }
-
-    .status-frame-fill {
-        background-color: var(--room7-status-fill);
-    }
-
-    .question-frame-line,
-    .status-frame-line {
-        border-color: var(--room7-panel-line);
-    }
-
-    .panda-leaf {
-        fill: #facc15;
+        --room-home-btn-bg: #1e293b;
+        --room-home-btn-hover-bg: #334155;
+        --room-home-btn-text: #f8fafc;
+        --room-home-btn-border: #475569;
+        --panda-tip-fill: #3F7B03;
     }
 </style>
 
@@ -225,84 +29,85 @@
 <main id="welcomeContainer" class="flex justify-center mt-10">
     <div class="w-full max-w-6xl px-6 relative">
         <section
-                class="room7-welcome-section relative border-[10px] border-[#050a14] shadow-2xl overflow-visible"
+                class="relative border-[10px] border-[#050a14] shadow-2xl overflow-visible bg-[#C084FC] dark:bg-[#222a66]"
                 style="
-                    background-image:
-                        radial-gradient(rgba(255,255,255,0.10) 1px, transparent 1px),
-                        radial-gradient(rgba(140,170,255,0.10) 1px, transparent 1px),
-                        radial-gradient(rgba(20,30,90,0.18) 1px, transparent 1px);
-                    background-size: 18px 18px, 18px 18px, 18px 18px;
-                    background-position: 0 0, 9px 9px, 4px 4px;
-                ">
+            background-image:
+                radial-gradient(rgba(255,255,255,0.10) 1px, transparent 1px),
+                radial-gradient(rgba(220,190,255,0.12) 1px, transparent 1px),
+                radial-gradient(rgba(75,20,120,0.20) 1px, transparent 1px);
+            background-size: 18px 18px, 18px 18px, 18px 18px;
+            background-position: 0 0, 9px 9px, 4px 4px;
+        ">
 
             <!-- FLOOR -->
             <div
-                    class="room7-floor blackout-hide absolute inset-12 border-4"
+                    class="absolute inset-12 border-4 border-white/30"
                     style="
-                        background-image:
-                            radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
-                            radial-gradient(rgba(120,170,190,0.10) 1px, transparent 1px),
-                            radial-gradient(rgba(5,20,30,0.22) 1px, transparent 1px);
-                        background-size: 20px 20px, 20px 20px, 20px 20px;
-                        background-position: 0 0, 10px 10px, 5px 5px;
-                    ">
+                background-color: #34124d;
+                background-image:
+                    radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+                    radial-gradient(rgba(205,170,255,0.12) 1px, transparent 1px),
+                    radial-gradient(rgba(25,8,45,0.26) 1px, transparent 1px);
+                background-size: 20px 20px, 20px 20px, 20px 20px;
+                background-position: 0 0, 10px 10px, 5px 5px;
+            ">
             </div>
 
             <!-- ROOM CONTENT -->
             <div class="relative h-[560px] flex items-center justify-center">
 
                 <!-- SPEECH PANEL -->
-                <div id="speechPanel" class="blackout-hide absolute top-8 left-1/2 -translate-x-[42%] w-[62%] z-20 transition-all duration-300">
+                <div id="speechPanel" class="absolute top-8 left-1/2 -translate-x-[42%] w-[62%] z-20 transition-all duration-300">
                     <div class="relative min-h-[150px]">
                         <!-- outer bubble -->
                         <div
-                                class="speech-bubble-outer absolute inset-0"
+                                class="absolute inset-0 bg-[#E9D5FF] dark:bg-[#f5f8ff]"
                                 style="
-                                    clip-path: polygon(
-                                        20px 0,
-                                        calc(100% - 20px) 0,
-                                        100% 20px,
-                                        100% calc(100% - 20px),
-                                        calc(100% - 20px) 100%,
-                                        20px 100%,
-                                        0 calc(100% - 20px),
-                                        0 20px
-                                    );
-                                ">
+                                clip-path: polygon(
+                                    20px 0,
+                                    calc(100% - 20px) 0,
+                                    100% 20px,
+                                    100% calc(100% - 20px),
+                                    calc(100% - 20px) 100%,
+                                    20px 100%,
+                                    0 calc(100% - 20px),
+                                    0 20px
+                                );
+                            ">
                         </div>
 
                         <!-- bubble fill -->
                         <div
-                                class="speech-bubble-fill absolute inset-[5px]"
+                                class="absolute inset-[5px] bg-[#24103A] dark:bg-[#0a1022]"
                                 style="
-                                    clip-path: polygon(
-                                        18px 0,
-                                        calc(100% - 18px) 0,
-                                        100% 18px,
-                                        100% calc(100% - 18px),
-                                        calc(100% - 18px) 100%,
-                                        18px 100%,
-                                        0 calc(100% - 18px),
-                                        0 18px
-                                    );
-                                ">
+                                clip-path: polygon(
+                                    18px 0,
+                                    calc(100% - 18px) 0,
+                                    100% 18px,
+                                    100% calc(100% - 18px),
+                                    calc(100% - 18px) 100%,
+                                    18px 100%,
+                                    0 calc(100% - 18px),
+                                    0 18px
+                                );
+                            ">
                         </div>
 
                         <!-- inner stroke -->
                         <div
-                                class="speech-bubble-line absolute inset-[14px] border"
+                                class="absolute inset-[14px] border border-[#4C1D95] dark:border-[#1a2a52]"
                                 style="
-                                    clip-path: polygon(
-                                        14px 0,
-                                        calc(100% - 14px) 0,
-                                        100% 14px,
-                                        100% calc(100% - 14px),
-                                        calc(100% - 14px) 100%,
-                                        14px 100%,
-                                        0 calc(100% - 14px),
-                                        0 14px
-                                    );
-                                ">
+                                clip-path: polygon(
+                                    14px 0,
+                                    calc(100% - 14px) 0,
+                                    100% 14px,
+                                    100% calc(100% - 14px),
+                                    calc(100% - 14px) 100%,
+                                    14px 100%,
+                                    0 calc(100% - 14px),
+                                    0 14px
+                                );
+                            ">
                         </div>
 
                         <!-- text -->
@@ -317,8 +122,36 @@
                     <div id="speechTail" class="absolute left-[72%] -translate-x-1/2 top-full -translate-y-[1px] transition-all duration-300">
                         <!-- tail outer -->
                         <div
-                                class="speech-bubble-outer relative w-[40px] h-[34px]"
+                                class="relative w-[40px] h-[34px] bg-[#E9D5FF] dark:bg-[#f5f8ff]"
                                 style="
+                                clip-path: polygon(
+                                    0 0,
+                                    100% 0,
+                                    100% 55%,
+                                    68% 100%,
+                                    32% 100%,
+                                    0 55%
+                                );
+                            ">
+                            <!-- tail fill -->
+                            <div
+                                    class="absolute inset-[4px] bg-[#24103A] dark:bg-[#0a1022]"
+                                    style="
+                                clip-path: polygon(
+                                    0 0,
+                                    100% 0,
+                                    100% 55%,
+                                    68% 100%,
+                                    32% 100%,
+                                    0 55%
+                                );
+                            ">
+                            </div>
+
+                            <!-- tail inner stroke -->
+                            <div
+                                    class="absolute inset-[10px] border border-[#4C1D95] dark:border-[#1a2a52]"
+                                    style="
                                     clip-path: polygon(
                                         0 0,
                                         100% 0,
@@ -328,48 +161,20 @@
                                         0 55%
                                     );
                                 ">
-                            <!-- tail fill -->
-                            <div
-                                    class="speech-bubble-fill absolute inset-[4px]"
-                                    style="
-                                        clip-path: polygon(
-                                            0 0,
-                                            100% 0,
-                                            100% 55%,
-                                            68% 100%,
-                                            32% 100%,
-                                            0 55%
-                                        );
-                                    ">
-                            </div>
-
-                            <!-- tail inner stroke -->
-                            <div
-                                    class="speech-bubble-line absolute inset-[10px] border"
-                                    style="
-                                        clip-path: polygon(
-                                            0 0,
-                                            100% 0,
-                                            100% 55%,
-                                            68% 100%,
-                                            32% 100%,
-                                            0 55%
-                                        );
-                                    ">
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Troll-CHARACTER PANDA bleibt -->
-                <div class="room7-panda absolute left-1/2 -translate-x-1/2 bottom-[70px] flex flex-col items-center z-10">
+                <!-- Troll-CHARACTER  PANDA ÒwÓ bleibt -->
+                <div class="absolute left-[calc(50%_-_120px)] bottom-[70px] flex flex-col items-center z-10 room8-panda-walk-welcome">
                     <div class="w-[170px] h-[30px] bg-white/50 rounded-full blur-sm"></div>
 
-                    <svg class="w-[230px] mt-[-10px]" viewBox="0 0 24 24" shape-rendering="crispEdges">
+                    <svg class="w-[230px] mt-[-10px] room8-panda-sprite" viewBox="0 0 24 24" shape-rendering="crispEdges">
                         <rect x="19" y="4" width="2" height="16" fill="#8b5a2b"/>
                         <rect x="18" y="3" width="4" height="2" fill="#8b5a2b"/>
                         <rect x="18" y="2" width="4" height="1" fill="#6f4421"/>
-                        <rect x="19" y="1" width="2" height="2" class="panda-leaf"/>
+                        <rect x="19" y="1" width="2" height="2" class="panda-leaf-fill"/>
 
                         <rect x="7" y="3" width="10" height="8" fill="#050a14"/>
                         <rect x="8" y="4" width="8" height="6" fill="#e9f0ff"/>
@@ -391,10 +196,10 @@
                 </div>
 
                 <!-- Raum-CHARACTER -->
-                <div id="welcomeRoomCharacter" class="blackout-hide absolute right-[140px] bottom-[95px] z-10">
+                <div class="absolute right-[140px] bottom-[95px] z-10">
                     <img
-                            src="/room-characters/GoblinDieb.png"
-                            alt="Raumcharakter goblinDieb"
+                            src="/room-characters/Schmied.png"
+                            alt="Raumcharakter Schmied"
                             class="w-[150px]"
                             style="image-rendering: pixelated;"
                     >
@@ -403,7 +208,7 @@
                 <!-- SPIELERFIGUR -->
                 <div
                         id="playerCharacter"
-                        class="blackout-hide absolute left-1/2 -translate-x-1/2 bottom-[-170px] z-10 transition-all duration-[1800ms] ease-linear"
+                        class="absolute left-1/2 -translate-x-1/2 bottom-[-170px] z-10 transition-all duration-[1800ms] ease-linear"
                 >
                     <img
                             id="playerAvatar"
@@ -415,7 +220,7 @@
                 </div>
 
                 <!-- CONTROLS -->
-                <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-4">
+                <div class="absolute bottom-6 left-[calc(50%_-_120px)] z-20 flex gap-4">
                     <button id="dialogNextBtn"
                             class="bg-violet-700 text-white px-6 py-3 rounded-lg font-black hover:bg-violet-600">
                         Weiter
@@ -431,48 +236,98 @@
         </section>
 
         <!-- CORRIDOR -->
-        <div class="blackout-hide absolute left-1/2 -translate-x-1/2 top-[calc(100%-3rem)] w-28 h-[220px] z-0 pointer-events-none">
+        <div class="absolute left-[calc(50%_-_120px)] top-[calc(100%_-_3rem)] w-28 h-[220px] z-0 pointer-events-none">
             <!-- linke Außenwand -->
-            <div class="room7-corridor-outer absolute left-0 top-0 w-[10px] h-full"></div>
+            <div class="absolute left-0 top-0 w-[10px] h-full bg-[#C084FC] dark:bg-[#222a66]"></div>
 
-            <!-- linke graue Innenkante -->
-            <div class="absolute left-[10px] top-0 w-[4px] h-full bg-[#8f9fa3]"></div>
+            <!-- linke Innenkante -->
+            <div class="absolute left-[10px] top-0 w-[4px] h-full bg-[#8B5CF6] dark:bg-[#8f9fa3]"></div>
 
             <!-- Mitte / Flurboden -->
-            <div class="absolute left-[14px] top-0 w-[84px] h-full bg-[#0a2a3a]"></div>
+            <div class="absolute left-[14px] top-0 w-[84px] h-full bg-[#24103A] dark:bg-[#0a2a3a]"></div>
 
-            <!-- rechte graue Innenkante -->
-            <div class="absolute left-[98px] top-0 w-[4px] h-full bg-[#8f9fa3]"></div>
+            <!-- rechte Innenkante -->
+            <div class="absolute left-[98px] top-0 w-[4px] h-full bg-[#8B5CF6] dark:bg-[#8f9fa3]"></div>
 
             <!-- rechte Außenwand -->
-            <div class="room7-corridor-outer absolute left-[102px] top-0 w-[10px] h-full"></div>
+            <div class="absolute left-[102px] top-0 w-[10px] h-full bg-[#C084FC] dark:bg-[#222a66]"></div>
         </div>
     </div>
+
+    <style>
+        @keyframes room8PandaWalkWelcome {
+            0% {
+                transform: translateX(0);
+            }
+            50% {
+                transform: translateX(220px);
+            }
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes room8PandaWalkGame {
+            0% {
+                transform: translateX(0);
+            }
+            50% {
+                transform: translateX(330px);
+            }
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes room8PandaFlip {
+            0%,
+            49.999% {
+                transform: scaleX(1);
+            }
+            50%,
+            100% {
+                transform: scaleX(-1);
+            }
+        }
+
+        .room8-panda-walk-welcome {
+            animation: room8PandaWalkWelcome 6s ease-in-out infinite;
+        }
+
+        .room8-panda-walk-game {
+            animation: room8PandaWalkGame 6s ease-in-out infinite;
+        }
+
+        .room8-panda-sprite {
+            animation: room8PandaFlip 6s step-end infinite;
+            transform-origin: center;
+        }
+    </style>
 </main>
 
 <!-- GAME -->
-<div id="gameContainer" class="room7-game-container text-white font-mono tracking-wider hidden min-h-screen">
-    <div id="gameScene" class="room7-game-scene w-[1200px] h-[680px] mx-auto relative overflow-visible">
+<div id="gameContainer" class="bg-[#5B217A] dark:bg-[#000010] text-white font-mono tracking-wider hidden min-h-screen">
+    <div id="gameScene" class="w-[1200px] h-[680px] mx-auto relative bg-[#C084FC] dark:bg-[#000010] overflow-visible">
 
         <!-- ROOM CHARACTER -->
-        <div id="gameRoomCharacter" class="blackout-hide absolute left-[105px] top-[-5px] z-20 pointer-events-none">
+        <div id="gameRoomCharacter" class="absolute left-[105px] top-[-5px] z-20 pointer-events-none">
             <img
-                    src="/room-characters/GoblinDieb.png"
-                    alt="Raumcharakter goblinDieb"
+                    src="/room-characters/Schmied.png"
+                    alt="Raumcharakter Schmied"
                     class="w-[110px]"
                     style="image-rendering: pixelated; transform: scaleX(-1);"
             >
         </div>
 
         <!-- PANDA -->
-        <div id="gamePanda" class="room7-panda absolute left-[390px] top-[-34px] flex flex-col items-center pointer-events-none z-50">
+        <div id="gamePanda" class="absolute left-[240px] top-[-34px] flex flex-col items-center pointer-events-none z-50 room8-panda-walk-game">
             <div class="w-[130px] h-[22px] bg-white/80 rounded-full blur-sm"></div>
 
-            <svg class="w-[160px] mt-[-8px]" viewBox="0 0 24 24" shape-rendering="crispEdges">
+            <svg class="w-[160px] mt-[-8px] room8-panda-sprite" viewBox="0 0 24 24" shape-rendering="crispEdges">
                 <rect x="19" y="4" width="2" height="16" fill="#8b5a2b"/>
                 <rect x="18" y="3" width="4" height="2" fill="#8b5a2b"/>
                 <rect x="18" y="2" width="4" height="1" fill="#6f4421"/>
-                <rect x="19" y="1" width="2" height="2" class="panda-leaf"/>
+                <rect x="19" y="1" width="2" height="2" class="panda-leaf-fill"/>
 
                 <rect x="7" y="3" width="10" height="8" fill="#050a14"/>
                 <rect x="8" y="4" width="8" height="6" fill="#e9f0ff"/>
@@ -494,263 +349,28 @@
         </div>
 
         <!-- QUESTION PANEL -->
-        <div id="questionPanel" class="absolute left-[30px] bottom-[30px] w-[830px] h-[520px] z-10">
-            <div class="relative w-full h-full">
-
-                <!-- outer frame -->
-                <div
-                        class="question-frame-outer absolute inset-0"
-                        style="
-                            clip-path: polygon(
-                                22px 0,
-                                calc(100% - 22px) 0,
-                                100% 22px,
-                                100% calc(100% - 22px),
-                                calc(100% - 22px) 100%,
-                                22px 100%,
-                                0 calc(100% - 22px),
-                                0 22px
-                            );
-                        ">
-                </div>
-
-                <!-- fill -->
-                <div
-                        class="question-frame-fill absolute inset-[5px]"
-                        style="
-                            clip-path: polygon(
-                                18px 0,
-                                calc(100% - 18px) 0,
-                                100% 18px,
-                                100% calc(100% - 18px),
-                                calc(100% - 18px) 100%,
-                                18px 100%,
-                                0 calc(100% - 18px),
-                                0 18px
-                            );
-                        ">
-                </div>
-
-                <!-- inner line -->
-                <div
-                        class="question-frame-line absolute inset-[16px] border"
-                        style="
-                            clip-path: polygon(
-                                12px 0,
-                                calc(100% - 12px) 0,
-                                100% 12px,
-                                100% calc(100% - 12px),
-                                calc(100% - 12px) 100%,
-                                12px 100%,
-                                0 calc(100% - 12px),
-                                0 12px
-                            );
-                        ">
-                </div>
-
-                <!-- content -->
-                <div class="relative h-full px-8 py-8 flex flex-col min-h-0">
-                    <h2 class="text-lg font-black tracking-widest shrink-0">FRAGE</h2>
-
-                    <div class="border-t border-white/20 mt-2 mb-5 shrink-0"></div>
-
-                    <div id="questionText"
-                         class="text-center leading-8 px-8 shrink-0 min-h-[72px] text-[clamp(18px,2vw,32px)]">
-                        Frage wird geladen...
-                    </div>
-
-                    <div class="text-sm text-gray-400 mt-6 mb-3 shrink-0">
-                        ANTWORTEN
-                    </div>
-
-                    <div id="answerContainer"
-                         class="grid grid-cols-2 gap-4 flex-1 min-h-0 content-stretch">
-                    </div>
-
-                    <div id="feedbackBox"
-                         class="mt-4 text-center text-lg font-black min-h-[32px] shrink-0">
-                    </div>
-
-                    <div class="mt-4 flex justify-center gap-4 relative z-20 shrink-0">
-                        <button id="submitAnswerBtn"
-                                class="hidden bg-indigo-600 text-white px-6 py-3 rounded-lg font-black hover:bg-indigo-500">
-                            Antwort prüfen
-                        </button>
-
-                        <button id="nextQuestionBtn"
-                                class="hidden bg-emerald-600 text-white px-6 py-3 rounded-lg font-black hover:bg-emerald-500">
-                            Nächste Frage
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div th:replace="~{fragments/question-panel :: questionPanel(
+            'bg-[#E9D5FF] dark:bg-[#f5f8ff]',
+            'bg-[#24103A] dark:bg-[#0a1022]',
+            'border-[#4C1D95] dark:border-[#1a2a52]',
+            'bg-indigo-600 text-white px-6 py-3 rounded-lg font-black hover:bg-indigo-500',
+            'bg-emerald-600 text-white px-6 py-3 rounded-lg font-black hover:bg-emerald-500'
+        )}"></div>
 
         <!-- STATUS PANEL -->
-        <div id="statusPanel" class="absolute right-[30px] top-[30px] w-[260px] h-[600px] z-10">
-            <div class="relative w-full h-full">
-
-                <!-- outer frame -->
-                <div
-                        class="status-frame-outer absolute inset-0"
-                        style="
-                            clip-path: polygon(
-                                18px 0,
-                                calc(100% - 18px) 0,
-                                100% 18px,
-                                100% calc(100% - 18px),
-                                calc(100% - 18px) 100%,
-                                18px 100%,
-                                0 calc(100% - 18px),
-                                0 18px
-                            );
-                        ">
-                </div>
-
-                <!-- fill -->
-                <div
-                        class="status-frame-fill absolute inset-[5px]"
-                        style="
-                            clip-path: polygon(
-                                14px 0,
-                                calc(100% - 14px) 0,
-                                100% 14px,
-                                100% calc(100% - 14px),
-                                calc(100% - 14px) 100%,
-                                14px 100%,
-                                0 calc(100% - 14px),
-                                0 14px
-                            );
-                        ">
-                </div>
-
-                <!-- inner line -->
-                <div
-                        class="status-frame-line absolute inset-[16px] border"
-                        style="
-                            clip-path: polygon(
-                                10px 0,
-                                calc(100% - 10px) 0,
-                                100% 10px,
-                                100% calc(100% - 10px),
-                                calc(100% - 10px) 100%,
-                                10px 100%,
-                                0 calc(100% - 10px),
-                                0 10px
-                            );
-                        ">
-                </div>
-
-                <div class="relative h-full p-8">
-                    <h2 class="text-xl font-black mb-6">STATUS</h2>
-
-                    <div class="space-y-2 text-sm">
-                        <div>Punkte (Thema): <b id="earnedPoints">0/0</b></div>
-                        <div>Fragen im Raum: <b id="questionProgress">0/0</b></div>
-                    </div>
-
-                    <div class="mt-8">
-                        <div class="text-xs text-gray-400 mb-1">Thema-Fortschritt</div>
-
-                        <div class="h-4 bg-white/10 border border-white relative overflow-hidden">
-                            <div id="themeProgressBar" class="absolute left-0 top-0 h-full bg-emerald-500 w-0"></div>
-                        </div>
-
-                        <div id="themeProgressText" class="text-right text-xs text-gray-400 mt-1">0%</div>
-                    </div>
-
-                    <div class="mt-6">
-                        <div class="text-xs text-gray-400 mb-1">Fragen-Fortschritt</div>
-
-                        <div class="h-4 bg-white/10 border border-white relative overflow-hidden">
-                            <div id="questionCorrectBar" class="absolute left-0 top-0 h-full bg-emerald-500 w-0"></div>
-                            <div id="questionWrongBar" class="absolute right-0 top-0 h-full bg-red-500 w-0"></div>
-                        </div>
-
-                        <div class="mt-2 flex justify-between text-xs text-gray-300">
-                            <span>Richtig: <b id="correctAnswersText">0</b></span>
-                            <span>Falsch: <b id="wrongAnswersText">0</b></span>
-                        </div>
-                    </div>
-
-                    <hr class="my-8 border-white/20">
-
-                    <div class="mt-8">
-                        <div id="roomStatusBadge" class="bg-yellow-400 text-black font-black text-xs text-center py-3 rounded-xl">
-                            IN PROGRESS (0%)
-                        </div>
-
-                        <div th:replace="~{fragments/medal :: medal}"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div th:replace="~{fragments/status-panel :: statusPanel(
+            'bg-[#E9D5FF] dark:bg-[#f5f8ff]',
+            'bg-[#24103A] dark:bg-[#0b1327]',
+            'border-[#4C1D95] dark:border-[#1a2a52]',
+            'bg-yellow-400 text-black font-black text-xs text-center py-3 rounded-xl'
+        )}"></div>
     </div>
 </div>
 
+<script th:src="@{/js/darkmode.js}"></script>
+
 <script th:inline="javascript">
-    const themeModeBtn = document.getElementById("darkmodeBtn");
-    const htmlElement = document.documentElement;
-
-    const ROOM7_THEME_ORDER = ["theme-colorful", "theme-blackout", "dark"];
-    const ROOM7_THEME_LABELS = {
-        "theme-colorful": "Modus: Farbig",
-        "theme-blackout": "Modus: Schwarz",
-        "dark": "Modus: Darkmode"
-    };
-
-    function updateThemeModeButton(themeMode) {
-        if (!themeModeBtn) {
-            return;
-        }
-
-        themeModeBtn.textContent = ROOM7_THEME_LABELS[themeMode] ?? "Modus: Farbig";
-    }
-
-    function applyRoom7Theme(themeMode) {
-        htmlElement.classList.remove("theme-colorful", "theme-blackout", "dark");
-        htmlElement.classList.add(themeMode);
-        localStorage.setItem("dummy2pro-room7-theme", themeMode);
-
-        if (themeMode === "dark") {
-            localStorage.theme = "dark";
-        } else {
-            localStorage.theme = "light";
-        }
-
-        updateThemeModeButton(themeMode);
-    }
-
-    function getStoredRoom7Theme() {
-        const storedRoom7Theme = localStorage.getItem("dummy2pro-room7-theme");
-
-        if (storedRoom7Theme && ROOM7_THEME_ORDER.includes(storedRoom7Theme)) {
-            return storedRoom7Theme;
-        }
-
-        if (localStorage.theme === "dark") {
-            return "dark";
-        }
-
-        return "theme-colorful";
-    }
-
-    applyRoom7Theme(getStoredRoom7Theme());
-
-    if (themeModeBtn) {
-        themeModeBtn.addEventListener("click", () => {
-            const currentTheme =
-                ROOM7_THEME_ORDER.find(themeClass => htmlElement.classList.contains(themeClass))
-                ?? "theme-colorful";
-
-            const currentIndex = ROOM7_THEME_ORDER.indexOf(currentTheme);
-            const nextTheme = ROOM7_THEME_ORDER[(currentIndex + 1) % ROOM7_THEME_ORDER.length];
-
-            applyRoom7Theme(nextTheme);
-        });
-    }
-
-    const roomId = /*[[${roomId}]]*/ 7;
+    const roomId = /*[[${roomId}]]*/ 8;
 
     const userId = sessionStorage.getItem("userId");
     const runId = sessionStorage.getItem("runId");
@@ -785,47 +405,6 @@
     let selectedGapAnswersMap = {};
     let currentGapStep = 0;
     let roomLoaded = false;
-
-    const darkmodeBtn = document.getElementById("darkmodeBtn");
-    const htmlElement = document.documentElement;
-
-    function updateDarkmodeButtonText() {
-        if (!darkmodeBtn) {
-            return;
-        }
-
-        if (htmlElement.classList.contains("dark")) {
-            darkmodeBtn.textContent = "Bunt edition ☀️";
-        } else {
-            darkmodeBtn.textContent = "Hello Darkmode, my old friend 🌙";
-        }
-    }
-
-    function initDarkmode() {
-        if (!darkmodeBtn) {
-            return;
-        }
-
-        if (localStorage.theme === "dark") {
-            htmlElement.classList.add("dark");
-        } else {
-            htmlElement.classList.remove("dark");
-        }
-
-        updateDarkmodeButtonText();
-
-        darkmodeBtn.addEventListener("click", () => {
-            if (htmlElement.classList.contains("dark")) {
-                htmlElement.classList.remove("dark");
-                localStorage.theme = "light";
-            } else {
-                htmlElement.classList.add("dark");
-                localStorage.theme = "dark";
-            }
-
-            updateDarkmodeButtonText();
-        });
-    }
 
     const welcomeContainer = document.getElementById("welcomeContainer");
     const gameContainer = document.getElementById("gameContainer");
@@ -862,7 +441,7 @@
         }
 
         const line = introDialog[dialogIndex];
-        const speakerLabel = line.speaker === "player" ? "Du" : "Goblin-Dieb";
+        const speakerLabel = line.speaker === "player" ? "Du" : "Schmied";
 
         updateSpeechTailPosition(line.speaker);
         dialogText.innerText = `${speakerLabel}: ${line.text}`;
@@ -936,10 +515,13 @@
             button.className = `
                 quiz-answer-btn
                 relative w-full h-full
-                border-4 border-yellow-400
+                border-4 border-[#E9D5FF]
                 px-6 py-4
-                font-black text-yellow-400 text-left
-                bg-[#09122a]
+                font-black text-[#F3E8FF] text-left
+                bg-[#24103A]
+                dark:border-yellow-400
+                dark:text-yellow-400
+                dark:bg-[#09122a]
                 flex items-center
             `;
 
@@ -997,9 +579,13 @@
                 relative inline-flex items-center justify-center
                 min-w-[88px] max-w-full
                 px-2.5 py-1
-                border-2 border-dashed border-white/40
-                text-center font-black text-yellow-300
-                bg-[#0a1022] transition
+                border-2 border-dashed border-[#D8B4FE]
+                text-center font-black text-[#F3E8FF]
+                bg-[#24103A]
+                dark:border-white/40
+                dark:text-yellow-300
+                dark:bg-[#0a1022]
+                transition
             `;
             preview.textContent = `[ Lücke ${gapIndex + 1} ]`;
 
@@ -1081,10 +667,13 @@
                 button.className = `
                     gap-option-btn
                     relative w-full
-                    border-4 border-yellow-400
+                    border-4 border-[#E9D5FF]
                     px-3 py-2
-                    font-black text-yellow-400 text-left
-                    bg-[#0a1022]
+                    font-black text-[#F3E8FF] text-left
+                    bg-[#24103A]
+                    dark:border-yellow-400
+                    dark:text-yellow-400
+                    dark:bg-[#0a1022]
                     flex items-center
                 `;
                 button.style.minHeight = `${minHeight}px`;

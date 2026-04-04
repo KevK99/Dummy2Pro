@@ -20,4 +20,6 @@ public interface RunGapAnswerRepository extends JpaRepository<RunGapAnswer, RunG
     );
 
     void deleteByRun_RunIdAndQuestion_QuestionId(Long runId, Long questionId);
+
+    void deleteByRun_RunId(Long runId);
 }

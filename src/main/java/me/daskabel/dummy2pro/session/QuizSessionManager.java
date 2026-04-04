@@ -159,6 +159,180 @@ public class QuizSessionManager
         return s;
     }
 
+    private List<RoomStatusDto> buildRoomStatusesFromDatabase(Long runId)
+    {
+        Map<Integer, QuestionProgressRepository.RoomProgressSummary> summaryByRoom =
+                this.questionProgressRepo.summarizeRoomProgressByRunId(runId).stream()
+                        .collect(Collectors.toMap(
+                                QuestionProgressRepository.RoomProgressSummary::getRoomId,
+                                summary -> summary
+                        ));
+
+        List<Theme> themes = this.generator.getThemesOrdered();
+        List<RoomStatusDto> roomStatuses = new ArrayList<>();
+
+        for (int i = 0; i < themes.size(); i++)
+        {
+            int roomId = i + 1;
+            Theme theme = themes.get(i);
+
+            QuestionProgressRepository.RoomProgressSummary summary = summaryByRoom.get(roomId);
+
+            int totalQuestions = summary != null ? Math.toIntExact(summary.getTotalQuestions()) : 0;
+            int answeredQuestions = summary != null ? Math.toIntExact(summary.getAnsweredQuestions()) : 0;
+            int correctAnswers = summary != null ? Math.toIntExact(summary.getCorrectAnswers()) : 0;
+            int wrongAnswers = summary != null ? Math.toIntExact(summary.getWrongAnswers()) : 0;
+            int totalPoints = summary != null ? Math.toIntExact(summary.getTotalPoints()) : 0;
+            int earnedPoints = summary != null ? Math.toIntExact(summary.getEarnedPoints()) : 0;
+
+            RoomStatusDto status = new RoomStatusDto();
+            status.setRoomId(roomId);
+            status.setThemeName(theme.getName());
+            status.setTotalQuestions(totalQuestions);
+            status.setAnsweredQuestions(answeredQuestions);
+            status.setCorrectAnswers(correctAnswers);
+            status.setWrongAnswers(wrongAnswers);
+            status.setOpenQuestions(Math.max(0, totalQuestions - answeredQuestions));
+            status.setTotalPoints(totalPoints);
+            status.setEarnedPoints(earnedPoints);
+            status.setCompletionPercent(
+                    totalQuestions > 0
+                            ? Math.round(((double) answeredQuestions / totalQuestions) * 1000.0) / 10.0
+                            : 0.0
+            );
+            status.setMedal(calculateMedal(correctAnswers, totalQuestions));
+
+            roomStatuses.add(status);
+        }
+
+        return roomStatuses;
+    }
+
+    @Transactional
+    public RoomStatusDto prepareRoom(String sessionId, int roomId)
+    {
+        QuizSession session = getSession(sessionId);
+        RoomSession preparedRoom = ensureRoomPrepared(session, roomId);
+        return buildRoomStatus(preparedRoom);
+    }
+
+    private RoomSession ensureRoomPrepared(QuizSession session, int roomId)
+    {
+        RoomSession existingRoom = session.getRoom(roomId);
+
+        if (existingRoom == null)
+        {
+            throw new NoSuchElementException("Raum " + roomId + " in Session nicht gefunden.");
+        }
+
+        if (!existingRoom.getQuestionSequence().isEmpty())
+        {
+            return existingRoom;
+        }
+
+        String lockKey = session.getSessionId() + ":" + roomId;
+        Object lock = this.roomPreparationLocks.computeIfAbsent(lockKey, key -> new Object());
+
+        synchronized (lock)
+        {
+            try
+            {
+                RoomSession currentRoom = session.getRoom(roomId);
+
+                if (currentRoom == null)
+                {
+                    throw new NoSuchElementException("Raum " + roomId + " in Session nicht gefunden.");
+                }
+
+                if (!currentRoom.getQuestionSequence().isEmpty())
+                {
+                    return currentRoom;
+                }
+
+                List<QuestionProgress> roomProgressEntries =
+                        this.questionProgressRepo.findByRunIdAndRoomIdOrderByQuestionOrder(
+                                session.getRunId(),
+                                roomId
+                        );
+
+                if (!roomProgressEntries.isEmpty())
+                {
+                    RoomSession restoredRoom = buildRoomSessionFromProgressEntries(roomId, roomProgressEntries);
+                    session.replaceRoom(restoredRoom);
+                    return restoredRoom;
+                }
+
+                List<Theme> themes = this.generator.getThemesOrdered();
+                if (roomId < 1 || roomId > themes.size())
+                {
+                    throw new IllegalArgumentException("Ungültige roomId: " + roomId);
+                }
+
+                Theme theme = themes.get(roomId - 1);
+                RoomSession preparedRoom = this.generator.buildRoomSession(theme, roomId);
+
+                GameRun run = this.gameRunRepo.findById(session.getRunId())
+                        .orElseThrow(() -> new NoSuchElementException(
+                                "Run " + session.getRunId() + " nicht gefunden."));
+
+                persistInitialQuestionProgressForRoom(run, preparedRoom);
+
+                session.replaceRoom(preparedRoom);
+                return preparedRoom;
+            }
+            finally
+            {
+                this.roomPreparationLocks.remove(lockKey, lock);
+            }
+        }
+    }
+
+    private void persistInitialQuestionProgressForRoom(GameRun run, RoomSession room)
+    {
+        List<QuestionProgress> progressEntries = new ArrayList<>();
+
+        for (int i = 0; i < room.getQuestionSequence().size(); i++)
+        {
+            Long questionId = room.getQuestionSequence().get(i);
+            Question questionRef = this.questionRepo.getReferenceById(questionId);
+
+            progressEntries.add(new QuestionProgress(
+                    run,
+                    questionRef,
+                    room.getRoomId(),
+                    i + 1,
+                    ProgressStatus.OPEN,
+                    null
+            ));
+        }
+
+        this.questionProgressRepo.saveAll(progressEntries);
+    }
+
+    private static String calculateMedal(int correctAnswers, int totalQuestions)
+    {
+        if (totalQuestions <= 0)
+        {
+            return "NONE";
+        }
+
+        double ratio = (double) correctAnswers / totalQuestions;
+
+        if (ratio >= 1.00)
+        {
+            return "GOLD";
+        }
+        if (ratio >= 0.75)
+        {
+            return "SILVER";
+        }
+        if (ratio >= 0.50)
+        {
+            return "BRONZE";
+        }
+        return "NONE";
+    }
+
     // sessionId -> QuizSession
     private final Map<String, QuizSession> sessions = new ConcurrentHashMap<>();
 
@@ -169,6 +343,10 @@ public class QuizSessionManager
     // userId -> zuletzt geladene oder neu erzeugte sessionId
     // Fachlich führend ist aber runId -> sessionId.
     private final Map<Long, String> userSessionMap = new ConcurrentHashMap<>();
+
+    // Schutz gegen doppelte Raumvorbereitung bei parallelen Requests
+    // (z. B. Dashboard-Prepare + echter Raumaufruf gleichzeitig).
+    private final Map<String, Object> roomPreparationLocks = new ConcurrentHashMap<>();
 
     private final QuizSessionGenerator generator;
     private final QuestionRepository questionRepo;
@@ -217,8 +395,7 @@ public class QuizSessionManager
         run.setFinishedAt(null);
         run = this.gameRunRepo.save(run);
 
-        QuizSession session = this.generator.generate(userId, run.getRunId());
-        persistInitialQuestionProgress(run, session);
+        QuizSession session = this.generator.generateSkeleton(userId, run.getRunId());
 
         this.sessions.put(session.getSessionId(), session);
         this.runSessionMap.put(run.getRunId(), session.getSessionId());
@@ -258,7 +435,29 @@ public class QuizSessionManager
             return this.sessions.get(sessionId);
         }
 
-        return restoreSessionFromRun(runId);
+        GameRun run = this.gameRunRepo.findById(runId)
+                .orElseThrow(() -> new NoSuchElementException("Run " + runId + " nicht gefunden."));
+
+        QuizSession session = this.generator.generateSkeleton(run.getUser().getUserId(), runId);
+
+        List<RoomStatusDto> roomStatuses = buildRoomStatusesFromDatabase(runId);
+
+        int activeRoomId = roomStatuses.stream()
+                .filter(room -> room.getTotalQuestions() == 0
+                        || room.getAnsweredQuestions() < room.getTotalQuestions())
+                .map(RoomStatusDto::getRoomId)
+                .findFirst()
+                .orElse(roomStatuses.isEmpty()
+                        ? 1
+                        : roomStatuses.get(roomStatuses.size() - 1).getRoomId());
+
+        session.setActiveRoomId(activeRoomId);
+
+        this.sessions.put(session.getSessionId(), session);
+        this.runSessionMap.put(runId, session.getSessionId());
+        this.userSessionMap.put(run.getUser().getUserId(), session.getSessionId());
+
+        return session;
     }
 
     public QuizSession getSession(String sessionId)
@@ -269,6 +468,8 @@ public class QuizSessionManager
             throw new NoSuchElementException(
                     "Session '" + sessionId + "' nicht gefunden oder abgelaufen. Bitte neu starten.");
         }
+
+        session.touchSession();
         return session;
     }
 
@@ -277,29 +478,53 @@ public class QuizSessionManager
         return this.sessions.size();
     }
 
+    @Transactional
     public QuestionDto advance(String sessionId, int roomId)
     {
         QuizSession session = getSession(sessionId);
-        RoomSession room = session.getRooms().get(roomId);
+        RoomSession room = ensureRoomPrepared(session, roomId);
 
-        if (room == null || room.isCompleted())
+        if (room.isCompleted())
         {
             return null;
+        }
+
+        QuestionDto currentQuestion = room.currentQuestion();
+        if (currentQuestion != null && !room.isAnswered(currentQuestion.getQuestionId()))
+        {
+            throw new IllegalStateException("Die aktuelle Frage muss zuerst beantwortet werden.");
         }
 
         boolean hasNext = room.advance();
         return hasNext ? room.currentQuestion() : null;
     }
 
+    @Transactional(readOnly = true)
     public SessionOverviewDto getOverview(String sessionId)
     {
         QuizSession session = getSession(sessionId);
 
-        List<RoomStatusDto> roomStatuses = new ArrayList<>();
-        for (RoomSession room : session.getRooms().values())
-        {
-            roomStatuses.add(buildRoomStatus(room));
-        }
+        List<RoomStatusDto> roomStatuses = buildRoomStatusesFromDatabase(session.getRunId());
+
+        int totalEarnedPoints = roomStatuses.stream()
+                .mapToInt(RoomStatusDto::getEarnedPoints)
+                .sum();
+
+        int totalMaxPoints = roomStatuses.stream()
+                .mapToInt(RoomStatusDto::getTotalPoints)
+                .sum();
+
+        int totalCorrect = roomStatuses.stream()
+                .mapToInt(RoomStatusDto::getCorrectAnswers)
+                .sum();
+
+        int totalWrong = roomStatuses.stream()
+                .mapToInt(RoomStatusDto::getWrongAnswers)
+                .sum();
+
+        boolean fullyCompleted = !roomStatuses.isEmpty() && roomStatuses.stream()
+                .allMatch(room -> room.getTotalQuestions() > 0
+                        && room.getAnsweredQuestions() >= room.getTotalQuestions());
 
         String username = this.userRepo.findById(session.getUserId())
                 .map(User::getUsername)
@@ -307,25 +532,20 @@ public class QuizSessionManager
 
         SessionOverviewDto overview = new SessionOverviewDto();
         overview.setSessionId(sessionId);
-        overview.setUsername(username);
-        overview.setTotalEarnedPoints(session.getTotalEarnedPoints());
-        overview.setTotalMaxPoints(session.getTotalMaxPoints());
-        overview.setTotalCorrect(session.getTotalCorrect());
-        overview.setTotalWrong(session.getTotalWrong());
-        overview.setFullyCompleted(session.isFullyCompleted());
+        overview.setTotalEarnedPoints(totalEarnedPoints);
+        overview.setTotalMaxPoints(totalMaxPoints);
+        overview.setTotalCorrect(totalCorrect);
+        overview.setTotalWrong(totalWrong);
+        overview.setFullyCompleted(fullyCompleted);
         overview.setRooms(roomStatuses);
         return overview;
     }
 
+    @Transactional
     public RoomStartDto getRoomState(String sessionId, int roomId)
     {
         QuizSession session = getSession(sessionId);
-        RoomSession room = session.getRooms().get(roomId);
-
-        if (room == null)
-        {
-            throw new NoSuchElementException("Raum " + roomId + " in Session nicht gefunden.");
-        }
+        RoomSession room = ensureRoomPrepared(session, roomId);
 
         RoomStartDto dto = new RoomStartDto();
         dto.setStatus(buildRoomStatus(room));
@@ -335,31 +555,28 @@ public class QuizSessionManager
         return dto;
     }
 
+    @Transactional
     public RoomStatusDto getRoomStatus(String sessionId, int roomId)
     {
         QuizSession session = getSession(sessionId);
-        RoomSession room = session.getRooms().get(roomId);
-
-        if (room == null)
-        {
-            throw new NoSuchElementException("Raum " + roomId + " nicht gefunden.");
-        }
-
+        RoomSession room = ensureRoomPrepared(session, roomId);
         return buildRoomStatus(room);
     }
 
+    @Transactional
     public RoomStartDto switchRoom(String sessionId, int roomId)
     {
         QuizSession session = getSession(sessionId);
+        RoomSession room = ensureRoomPrepared(session, roomId);
         session.setActiveRoomId(roomId);
 
-        RoomSession room = session.activeRoom();
         QuestionDto currentQuestion = room.currentQuestion();
 
         RoomStartDto dto = new RoomStartDto();
         dto.setStatus(buildRoomStatus(room));
         dto.setFirstQuestion(currentQuestion);
         dto.setQuestionSequence(room.getQuestionSequence());
+        dto.setIntroDialog(RoomIntroDialogs.getDialogForRoom(roomId));
         return dto;
     }
 
@@ -367,22 +584,43 @@ public class QuizSessionManager
     public AnswerResultDto submitAnswer(String sessionId, int roomId, AnswerRequest request)
     {
         QuizSession session = getSession(sessionId);
-        RoomSession room = session.getRooms().get(roomId);
+        RoomSession room = ensureRoomPrepared(session, roomId);
 
-        if (room == null)
+        QuestionDto currentQuestion = room.currentQuestion();
+
+        if (currentQuestion == null)
         {
-            throw new NoSuchElementException("Raum " + roomId + " in Session nicht gefunden.");
+            throw new IllegalStateException("Der Raum ist bereits abgeschlossen.");
         }
 
-        Question question = this.questionRepo.findById(request.getQuestionId())
-                .orElseThrow(() -> new NoSuchElementException(
-                        "Frage " + request.getQuestionId() + " nicht gefunden."));
+        if (!currentQuestion.getQuestionId().equals(request.getQuestionId()))
+        {
+            throw new IllegalArgumentException("Es darf nur die aktuelle Frage beantwortet werden.");
+        }
 
-        if (room.getQuestion(request.getQuestionId()) == null)
+        if (room.isAnswered(request.getQuestionId()))
+        {
+            throw new IllegalStateException("Diese Frage wurde bereits beantwortet.");
+        }
+
+        QuestionDto cachedQuestion = room.getQuestion(request.getQuestionId());
+        if (cachedQuestion == null)
         {
             throw new IllegalArgumentException(
                     "Frage " + request.getQuestionId() + " gehört nicht zu Raum " + roomId + ".");
         }
+
+        Question question = switch (cachedQuestion.getQuestionType())
+        {
+            case MC, TF -> this.questionRepo.findByQuestionIdWithAnswers(request.getQuestionId())
+                    .orElseThrow(() -> new NoSuchElementException(
+                            "Frage " + request.getQuestionId() + " nicht gefunden."));
+            case GAP -> this.questionRepo.findByQuestionIdWithGaps(request.getQuestionId())
+                    .orElseThrow(() -> new NoSuchElementException(
+                            "Frage " + request.getQuestionId() + " nicht gefunden."));
+            default -> throw new IllegalArgumentException(
+                    "Unbekannter Fragetyp: " + cachedQuestion.getQuestionType());
+        };
 
         AnswerResultDto result = switch (question.getQuestionType())
         {
@@ -433,25 +671,53 @@ public class QuizSessionManager
         return removed;
     }
 
+    public void removeRunSession(Long runId)
+    {
+        String sessionId = this.runSessionMap.remove(runId);
+
+        if (sessionId == null)
+        {
+            return;
+        }
+
+        QuizSession removedSession = this.sessions.remove(sessionId);
+
+        if (removedSession != null)
+        {
+            Long userId = removedSession.getUserId();
+            String mappedSessionId = this.userSessionMap.get(userId);
+
+            if (sessionId.equals(mappedSessionId))
+            {
+                this.userSessionMap.remove(userId);
+            }
+        }
+    }
+
     private void persistProgress(
             Long runId,
             Question question,
             AnswerResultDto result,
             AnswerRequest request)
     {
-        GameRun run = this.gameRunRepo.findById(runId)
-                .orElseThrow(() -> new NoSuchElementException("Run " + runId + " nicht gefunden."));
+        LocalDateTime answeredAt = LocalDateTime.now();
 
-        QuestionProgress progress = this.questionProgressRepo
-                .findByRun_RunIdAndQuestion_QuestionId(runId, question.getQuestionId())
-                .orElseThrow(() -> new NoSuchElementException(
-                        "QuestionProgress für runId=" + runId
-                                + " und questionId=" + question.getQuestionId()
-                                + " nicht gefunden."));
+        int updated = this.questionProgressRepo.updateStatusAndAnsweredAt(
+                runId,
+                question.getQuestionId(),
+                result.isCorrect() ? ProgressStatus.CORRECT : ProgressStatus.WRONG,
+                answeredAt
+        );
 
-        progress.setStatus(result.isCorrect() ? ProgressStatus.CORRECT : ProgressStatus.WRONG);
-        progress.setAnsweredAt(LocalDateTime.now());
-        this.questionProgressRepo.save(progress);
+        if (updated == 0)
+        {
+            throw new NoSuchElementException(
+                    "QuestionProgress für runId=" + runId
+                            + " und questionId=" + question.getQuestionId()
+                            + " nicht gefunden.");
+        }
+
+        GameRun run = this.gameRunRepo.getReferenceById(runId);
 
         if (question.getQuestionType() == QuestionType.GAP)
         {
@@ -459,6 +725,8 @@ public class QuizSessionManager
 
             Map<Long, GapField> gapFieldMap = question.getGapFields().stream()
                     .collect(Collectors.toMap(GapField::getGapId, gf -> gf));
+
+            List<RunGapAnswer> gapAnswersToSave = new ArrayList<>();
 
             if (request.getGapAnswers() != null)
             {
@@ -476,9 +744,15 @@ public class QuizSessionManager
                             .orElseThrow(() -> new IllegalArgumentException(
                                     "Ungültige selectedGapOptionId: " + entry.getSelectedGapOptionId()));
 
-                    this.runGapAnswerRepo.save(
-                            new RunGapAnswer(run, question, gapField, selectedOption, LocalDateTime.now()));
+                    gapAnswersToSave.add(
+                            new RunGapAnswer(run, question, gapField, selectedOption, answeredAt)
+                    );
                 }
+            }
+
+            if (!gapAnswersToSave.isEmpty())
+            {
+                this.runGapAnswerRepo.saveAll(gapAnswersToSave);
             }
         }
         else
@@ -492,6 +766,8 @@ public class QuizSessionManager
             Map<Long, AnswerOption> answerMap = question.getAnswerOptions().stream()
                     .collect(Collectors.toMap(AnswerOption::getAnswerId, a -> a));
 
+            List<RunSelectedAnswer> selectedAnswersToSave = new ArrayList<>();
+
             for (Long selectedId : selectedIds)
             {
                 AnswerOption answerOption = answerMap.get(selectedId);
@@ -500,98 +776,16 @@ public class QuizSessionManager
                     throw new IllegalArgumentException("Ungültige answerId: " + selectedId);
                 }
 
-                this.runSelectedAnswerRepo.save(new RunSelectedAnswer(run, question, answerOption));
+                selectedAnswersToSave.add(new RunSelectedAnswer(run, question, answerOption));
             }
-        }
-    }
 
-    private void persistInitialQuestionProgress(GameRun run, QuizSession session)
-    {
-        List<QuestionProgress> progressEntries = new ArrayList<>();
-
-        for (RoomSession room : session.getRooms().values())
-        {
-            List<Long> sequence = room.getQuestionSequence();
-
-            for (int i = 0; i < sequence.size(); i++)
+            if (!selectedAnswersToSave.isEmpty())
             {
-                Long questionId = sequence.get(i);
-
-                Question question = this.questionRepo.getReferenceById(questionId);
-
-                QuestionProgress progress = new QuestionProgress(
-                        run,
-                        question,
-                        room.getRoomId(),
-                        i + 1,
-                        ProgressStatus.OPEN,
-                        null
-                );
-
-                progressEntries.add(progress);
+                this.runSelectedAnswerRepo.saveAll(selectedAnswersToSave);
             }
         }
 
         this.questionProgressRepo.saveAll(progressEntries);
-    }
-
-    private QuizSession restoreSessionFromRun(Long runId)
-    {
-        GameRun run = this.gameRunRepo.findById(runId)
-                .orElseThrow(() -> new NoSuchElementException("Run " + runId + " nicht gefunden."));
-
-        List<QuestionProgress> allProgressEntries =
-                this.questionProgressRepo.findByRun_RunIdOrderByRoomIdAscQuestionOrderAsc(runId);
-
-        if (allProgressEntries.isEmpty())
-        {
-            throw new NoSuchElementException(
-                    "Für Run " + runId + " wurden keine QuestionProgress-Einträge gefunden.");
-        }
-
-        QuizSession restoredSession = new QuizSession(run.getUser().getUserId(), runId);
-
-        int activeRoomId = 1;
-        boolean firstOpenRoomFound = false;
-
-        Map<Integer, List<QuestionProgress>> progressByRoom = allProgressEntries.stream()
-                .collect(Collectors.groupingBy(
-                        QuestionProgress::getRoomId,
-                        java.util.LinkedHashMap::new,
-                        Collectors.toList()
-                ));
-
-        for (Map.Entry<Integer, List<QuestionProgress>> entry : progressByRoom.entrySet())
-        {
-            Integer roomId = entry.getKey();
-            List<QuestionProgress> roomProgressEntries = entry.getValue();
-
-            RoomSession restoredRoom = buildRoomSessionFromProgressEntries(roomId, roomProgressEntries);
-            restoredSession.addRoom(restoredRoom);
-
-            boolean roomCompleted = restoredRoom.isCompleted();
-            if (!roomCompleted && !firstOpenRoomFound)
-            {
-                activeRoomId = roomId;
-                firstOpenRoomFound = true;
-            }
-        }
-
-        if (!firstOpenRoomFound)
-        {
-            Integer lastRoomId = restoredSession.getRooms().keySet().stream()
-                    .max(Integer::compareTo)
-                    .orElse(1);
-            activeRoomId = lastRoomId;
-        }
-
-        restoredSession.setActiveRoomId(activeRoomId);
-
-        this.sessions.put(restoredSession.getSessionId(), restoredSession);
-        this.runSessionMap.put(runId, restoredSession.getSessionId());
-        this.userSessionMap.put(run.getUser().getUserId(), restoredSession.getSessionId());
-
-        return restoredSession;
     }
 
     private RoomSession buildRoomSessionFromProgressEntries(
@@ -603,25 +797,28 @@ public class QuizSessionManager
             throw new IllegalArgumentException("roomProgressEntries darf nicht leer sein.");
         }
 
-        List<Long> questionSequence = new ArrayList<>();
+        List<Long> questionSequence = roomProgressEntries.stream()
+                .map(progress -> progress.getQuestion().getQuestionId())
+                .toList();
+
+        List<Question> orderedQuestions = this.generator.loadQuestionsByIdsOrdered(questionSequence);
+
+        Map<Long, Question> questionMap = orderedQuestions.stream()
+                .collect(Collectors.toMap(Question::getQuestionId, q -> q));
+
         Map<Long, QuestionDto> questionCache = new ConcurrentHashMap<>();
         int maxPoints = 0;
 
-        for (QuestionProgress progress : roomProgressEntries)
+        for (Question question : orderedQuestions)
         {
-            Question question = progress.getQuestion();
-            Long questionId = question.getQuestionId();
-
-            questionSequence.add(questionId);
             maxPoints += question.getPoints();
-
             QuestionDto dto = toQuestionDtoForRestore(question);
-            questionCache.put(questionId, dto);
+            questionCache.put(question.getQuestionId(), dto);
         }
 
-        List<Theme> themes = roomProgressEntries.get(0).getQuestion().getThemes();
-        String themeName = (themes != null && !themes.isEmpty())
-                ? themes.get(0).getName()
+        List<Theme> themes = this.generator.getThemesOrdered();
+        String themeName = (roomId >= 1 && roomId <= themes.size())
+                ? themes.get(roomId - 1).getName()
                 : "Unbekannt";
 
         RoomSession room = new RoomSession(
@@ -639,8 +836,13 @@ public class QuizSessionManager
             if (progress.getStatus() == ProgressStatus.CORRECT
                     || progress.getStatus() == ProgressStatus.WRONG)
             {
-                Question question = progress.getQuestion();
-                Long questionId = question.getQuestionId();
+                Long questionId = progress.getQuestion().getQuestionId();
+                Question question = questionMap.get(questionId);
+                if (question == null)
+                {
+                    throw new NoSuchElementException("Frage " + questionId + " nicht gefunden.");
+                }
+
                 boolean correct = progress.getStatus() == ProgressStatus.CORRECT;
                 int pointsEarned = correct ? question.getPoints() : 0;
 
@@ -761,7 +963,6 @@ public class QuizSessionManager
 
             dto.setGapFields(gapFieldDtos);
         }
-
         return dto;
     }
 

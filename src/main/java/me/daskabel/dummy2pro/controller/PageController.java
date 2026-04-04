@@ -31,7 +31,7 @@ public class PageController {
     @GetMapping("/room/{id}")
     public String room(@PathVariable int id, Model model) {
         var themes = themeRepository.findAllByOrderByThemeIdAsc();
-        int roomCount = Math.min(themes.size(), 7);
+        int roomCount = Math.min(themes.size(), 15);
 
         if (id < 1 || id > roomCount) {
             return "redirect:/dashboard";

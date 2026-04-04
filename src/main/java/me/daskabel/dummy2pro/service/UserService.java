@@ -1,7 +1,9 @@
 package me.daskabel.dummy2pro.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,8 @@ import me.daskabel.dummy2pro.model.QuestionProgress;
 import me.daskabel.dummy2pro.model.User;
 import me.daskabel.dummy2pro.repository.GameRunRepository;
 import me.daskabel.dummy2pro.repository.QuestionProgressRepository;
+import me.daskabel.dummy2pro.repository.RunGapAnswerRepository;
+import me.daskabel.dummy2pro.repository.RunSelectedAnswerRepository;
 import me.daskabel.dummy2pro.repository.UserRepository;
 
 /**
@@ -21,19 +25,53 @@ import me.daskabel.dummy2pro.repository.UserRepository;
 @Service
 public class UserService
 {
+    private static final String DEFAULT_AVATAR = "duck.jpg";
+
+    private static final Set<String> ALLOWED_AVATARS = Set.of(
+            "Alf.png",
+            "bee.jpg",
+            "beee.jpg",
+            "beesleep.jpg",
+            "block.jpg",
+            "catBlack.PNG",
+            "catRed.PNG",
+            "catWhiteShadow.PNG",
+            "duck.jpg",
+            "flowers.jpg",
+            "hase.jpg",
+            "hase.PNG",
+            "Herberg.PNG",
+            "lama.png",
+            "maus.jpg",
+            "mond.jpg",
+            "panda.PNG",
+            "pingwin.jpg",
+            "subi.PNG",
+            "sunflower.PNG",
+            "sunflowerCursed.PNG"
+    );
 
     private final BCryptPasswordEncoder encoder;
     private final UserRepository userRepository;
     private final GameRunRepository gameRunRepository;
     private final QuestionProgressRepository questionProgressRepository;
+    private final RunSelectedAnswerRepository runSelectedAnswerRepository;
+    private final RunGapAnswerRepository runGapAnswerRepository;
 
-    public UserService(BCryptPasswordEncoder encoder, UserRepository userRepository,
-        GameRunRepository gameRunRepository, QuestionProgressRepository questionProgressRepository)
+    public UserService(
+            BCryptPasswordEncoder encoder,
+            UserRepository userRepository,
+            GameRunRepository gameRunRepository,
+            QuestionProgressRepository questionProgressRepository,
+            RunSelectedAnswerRepository runSelectedAnswerRepository,
+            RunGapAnswerRepository runGapAnswerRepository)
     {
         this.encoder = encoder;
         this.userRepository = userRepository;
         this.gameRunRepository = gameRunRepository;
         this.questionProgressRepository = questionProgressRepository;
+        this.runSelectedAnswerRepository = runSelectedAnswerRepository;
+        this.runGapAnswerRepository = runGapAnswerRepository;
     }
 
     public User authenticate(String username, String password)
@@ -41,31 +79,43 @@ public class UserService
         validateLoginInput(username, password);
 
         User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new IllegalArgumentException("Benutzername oder Passwort falsch."));
+                .orElseThrow(() -> new IllegalArgumentException("Benutzername oder Passwort falsch."));
 
         if (!encoder.matches(password, user.getPasswordHash()))
         {
             throw new IllegalArgumentException("Benutzername oder Passwort falsch.");
         }
 
+        applyDefaultAvatarIfMissing(user);
+        return user;
+    }
+
+    public User getUser(Long userId)
+    {
+        User user = this.userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("Benutzer nicht gefunden"));
+
+        applyDefaultAvatarIfMissing(user);
         return user;
     }
 
     public void deleteUser(Long userId)
     {
         User user =
-            userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Benutzer nicht gefunden"));
+                this.userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Benutzer nicht gefunden"));
 
         // Lösche alle Spielstände des Benutzers
-        List<GameRun> gameRuns = gameRunRepository.findByUser_UserId(userId);
+        List<GameRun> gameRuns = this.gameRunRepository.findByUser_UserId(userId);
         for (GameRun run : gameRuns)
         {
-            questionProgressRepository.deleteByRun_RunId(run.getRunId());
+            this.runSelectedAnswerRepository.deleteByRun_RunId(run.getRunId());
+            this.runGapAnswerRepository.deleteByRun_RunId(run.getRunId());
+            this.questionProgressRepository.deleteByRun_RunId(run.getRunId());
         }
-        gameRunRepository.deleteAll(gameRuns);
+        this.gameRunRepository.deleteAll(gameRuns);
 
         // Lösche den Benutzer
-        userRepository.delete(user);
+        this.userRepository.delete(user);
     }
 
     public boolean login(String username, String password)
@@ -73,10 +123,11 @@ public class UserService
         validateLoginInput(username, password);
 
         return userRepository.findByUsername(username)
-            .map(u -> encoder.matches(password, u.getPasswordHash()))
-            .orElse(false);
+                .map(u -> encoder.matches(password, u.getPasswordHash()))
+                .orElse(false);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public User register(String username, String password)
     {
         validateUsername(username);
@@ -88,9 +139,84 @@ public class UserService
         }
 
         String passwordHash = encoder.encode(password);
-        User user = new User(username, passwordHash);
+        User user = new User(username, passwordHash, DEFAULT_AVATAR);
 
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        GameRun initialRun = new GameRun();
+        initialRun.setUser(savedUser);
+        initialRun.setStartedAt(LocalDateTime.now());
+        initialRun.setFinishedAt(null);
+        initialRun.setDisplayName(null);
+
+        this.gameRunRepository.save(initialRun);
+
+        return savedUser;
+    }
+
+    public User updateUsername(Long userId, String newUsername)
+    {
+        validateUsername(newUsername);
+
+        User user = getUser(userId);
+
+        boolean usernameAlreadyUsed = this.userRepository.existsByUsername(newUsername);
+        if (usernameAlreadyUsed && !newUsername.equals(user.getUsername()))
+        {
+            throw new IllegalArgumentException("Username ist bereits vergeben.");
+        }
+
+        user.setUsername(newUsername);
+        return this.userRepository.save(user);
+    }
+
+    public User updateAvatar(Long userId, String newAvatar)
+    {
+        User user = getUser(userId);
+
+        if (newAvatar == null || newAvatar.isBlank())
+        {
+            user.setAvatar(DEFAULT_AVATAR);
+            return this.userRepository.save(user);
+        }
+
+        if (!ALLOWED_AVATARS.contains(newAvatar))
+        {
+            throw new IllegalArgumentException("Ungültiger Avatar.");
+        }
+
+        user.setAvatar(newAvatar);
+        return this.userRepository.save(user);
+    }
+
+    public void updatePassword(Long userId, String currentPassword, String newPassword, String newPasswordConfirm)
+    {
+        if (currentPassword == null || currentPassword.isBlank())
+        {
+            throw new IllegalArgumentException("Aktuelles Passwort darf nicht leer sein.");
+        }
+
+        if (newPassword == null || newPasswordConfirm == null || !newPassword.equals(newPasswordConfirm))
+        {
+            throw new IllegalArgumentException("Die neuen Passwörter stimmen nicht überein.");
+        }
+
+        User user = getUser(userId);
+
+        if (!this.encoder.matches(currentPassword, user.getPasswordHash()))
+        {
+            throw new IllegalArgumentException("Das aktuelle Passwort ist falsch.");
+        }
+
+        validatePassword(newPassword);
+
+        if (this.encoder.matches(newPassword, user.getPasswordHash()))
+        {
+            throw new IllegalArgumentException("Das neue Passwort muss sich vom alten unterscheiden.");
+        }
+
+        user.setPasswordHash(this.encoder.encode(newPassword));
+        this.userRepository.save(user);
     }
 
     public void saveCurrentGameProgress(Long userId)
@@ -98,13 +224,36 @@ public class UserService
         // Hier kannst du die Logik implementieren, um den aktuellen Spielstand zu speichern.
         // Das könnte das Speichern von `GameRun`-Objekten und deren Fortschritt beinhalten.
         GameRun run = gameRunRepository.findTopByUser_UserIdOrderByStartedAtDesc(userId)
-            .orElseThrow(() -> new NoSuchElementException("Kein aktiver Spielstand gefunden."));
+                .orElseThrow(() -> new NoSuchElementException("Kein aktiver Spielstand gefunden."));
 
         // Speichere den Fortschritt, falls erforderlich
         // Hier musst du möglicherweise den Fortschritt des Spiels speichern, bevor der Benutzer sich abmeldet.
         // Beispiel:
         List<QuestionProgress> progressList = questionProgressRepository.findByRun_RunId(run.getRunId());
         // Speichere Fortschritte oder führe hier eine spezifische Logik aus.
+    }
+
+    public String resolveAvatarFilename(User user)
+    {
+        if (user == null || user.getAvatar() == null || user.getAvatar().isBlank())
+        {
+            return DEFAULT_AVATAR;
+        }
+
+        return user.getAvatar();
+    }
+
+    private void applyDefaultAvatarIfMissing(User user)
+    {
+        if (user == null)
+        {
+            return;
+        }
+
+        if (user.getAvatar() == null || user.getAvatar().isBlank())
+        {
+            user.setAvatar(DEFAULT_AVATAR);
+        }
     }
 
     private void validateLoginInput(String username, String password)
@@ -134,14 +283,14 @@ public class UserService
         boolean hasLower = password.chars().anyMatch(Character::isLowerCase);
         boolean hasDigit = password.chars().anyMatch(Character::isDigit);
         boolean hasSign =
-            password.chars().anyMatch(ch -> !Character.isLetterOrDigit(ch) && !Character.isWhitespace(ch));
+                password.chars().anyMatch(ch -> !Character.isLetterOrDigit(ch) && !Character.isWhitespace(ch));
         boolean hasWhitespace = password.chars().anyMatch(Character::isWhitespace);
 
         if (!hasUpper || !hasLower || !hasDigit || !hasSign || hasWhitespace)
         {
             throw new IllegalArgumentException(
-                "Passwort muss Groß-, Kleinbuchstaben, eine Zahl und ein Sonderzeichen enthalten. "
-                    + "Es darf kein Leerzeichen benutzt werden!");
+                    "Passwort muss Groß-, Kleinbuchstaben, eine Zahl und ein Sonderzeichen enthalten. "
+                            + "Es darf kein Leerzeichen benutzt werden!");
         }
     }
 
