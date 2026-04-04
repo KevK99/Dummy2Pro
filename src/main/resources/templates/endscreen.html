@@ -1,106 +1,427 @@
+<!doctype html>
+<html lang="de"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base :: layout(~{::body}, 'min-h-screen bg-[#ffd8bf] text-[#5a2f1f] dark:bg-none dark:bg-[#000010] dark:text-slate-100')}">
 
-<div class="flex gap-6">
+<body class="min-h-screen text-[#5a2f1f] dark:text-slate-100">
 
-    <div class="rounded-xl bg-slate-900/60 p-6 ring-1 ring-white/10">
-        <div class="text-center gap-3">
-            <h2 class="text-2xl font-bold">Gesamtbewertung</h2>
+<div class="min-h-screen px-6 py-6 lg:px-16 bg-[#ffd8bf] dark:bg-transparent">
+    <header class="mx-auto flex w-full max-w-7xl items-start justify-between gap-6 pb-6">
+        <div class="flex items-start gap-4">
+            <div th:replace="~{fragments/home-button :: homeButton}"></div>
 
-            <div class="pt-20 text-lg">
-                <p>Gesamtpunkte: <b>900000</b></p>
-                <p>Fragen beantwortet: <b>140/140</b></p>
-                <p>Beste Serie: <b>12 richtig</b></p>
+            <div>
+                <p class="text-sm font-semibold uppercase tracking-[0.25em] text-[#9b5e42] dark:text-slate-300/80">
+                    Dummy2Pro
+                </p>
+
+                <h1 id="endscreenHeadline"
+                    class="mt-2 text-3xl font-black tracking-tight text-[#5a2f1f] dark:text-white">
+                    Abschlussauswertung
+                </h1>
+
+                <p id="endscreenSubtitle"
+                   class="mt-2 text-base text-[#7a4a35] dark:text-slate-300">
+                    Alle abgeschlossenen Themenräume werden jetzt ausgewertet.
+                </p>
             </div>
         </div>
-    </div>
 
-    <section class="w-full rounded-xl bg-slate-900/60 p-6 ring-1 ring-white/10">
-        <div class="flex items-center justify-between gap-3">
-            <h2 class="text-xl font-bold">Themenübersicht</h2>
+        <div class="flex items-start gap-4">
+            <div th:replace="~{fragments/darkmode-button :: darkmodeButton}"></div>
+
+            <a th:href="@{/profile.html}" class="block text-center">
+                <img id="endscreenAvatar"
+                     th:src="@{/images/duck.jpg}"
+                     alt="Avatar"
+                     class="h-20 w-20 rounded-full object-cover shadow-lg ring-2 ring-white/50" />
+            </a>
         </div>
+    </header>
 
-        <div class="mt-4 overflow-hidden rounded-2xl ring-1 ring-white/10">
-            <table class="w-full text-left">
-                <thead class="bg-slate-900 text-slate-200">
-                <tr>
-                    <th class="text-lg px-4 py-3 font-bold">Thema</th>
-                    <th class="text-lg px-4 py-3 font-bold">Punkte</th>
-                    <th class="text-lg px-4 py-3 font-bold">Status</th>
-                </tr>
-                </thead>
+    <main class="mx-auto flex w-full max-w-7xl flex-col gap-6">
+        <section class="rounded-3xl bg-[#fff1e8]/90 p-6 shadow-2xl ring-1 ring-[#efc3a8] backdrop-blur-md dark:bg-slate-950/70 dark:ring-white/10">
+            <div class="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+                <div>
+                    <p class="text-sm font-semibold uppercase tracking-[0.25em] text-[#9b5e42] dark:text-slate-300">
+                        Finale Bewertung
+                    </p>
 
-                <tbody class="divide-y divide-white/10 bg-slate-900/40">
-                <tr class="hover:bg-slate-900/70">
-                    <td class="px-4 py-3 font-semibold">Datenbanken</td>
-                    <td class="px-4 py-3 text-slate-200">22 / 20</td>
-                    <td class="px-4 py-3">
-                        <span class="inline-flex items-center gap-2 rounded-full bg-emerald-500/15 px-3 py-1 font-bold text-emerald-200 ring-1 ring-emerald-500/30">
-                          ✅ Ziel erreicht
-                        </span>
-                    </td>
-                </tr>
+                    <h2 id="heroTitle"
+                        class="mt-3 text-3xl font-black tracking-tight text-[#5a2f1f] dark:text-white">
+                        Du hast alle 15 Räume abgeschlossen.
+                    </h2>
 
-                <tr class="hover:bg-slate-900/70">
-                    <td class="px-4 py-3 font-semibold">Programmierung</td>
-                    <td class="px-4 py-3 text-slate-200">14 / 20</td>
-                    <td class="px-4 py-3">
-                        <span class="inline-flex items-center gap-2 rounded-full bg-amber-400/15 px-3 py-1 font-bold text-amber-200 ring-1 ring-amber-400/30">
-                          ⏳ offen
-                        </span>
-                    </td>
-                </tr>
+                    <p id="heroText"
+                       class="mt-3 max-w-3xl text-base leading-7 text-[#7a4a35] dark:text-slate-300">
+                        Deine erzielten Punkte, beantworteten Fragen und Raum-Auszeichnungen werden hier zusammengefasst.
+                    </p>
+                </div>
 
-                <tr class="hover:bg-slate-900/70">
-                    <td class="px-4 py-3 font-semibold">Wirtschaft</td>
-                    <td class="px-4 py-3 text-slate-200">22 / 20</td>
-                    <td class="px-4 py-3">
-                        <span class="inline-flex items-center gap-2 rounded-full bg-emerald-500/15 px-3 py-1 font-bold text-emerald-200 ring-1 ring-emerald-500/30">
-                          ✅ Ziel erreicht
-                        </span>
-                    </td>
-                </tr>
+                <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                    <div class="rounded-2xl bg-[#f3b38a] px-5 py-4 text-[#5a2f1f] shadow-lg ring-1 ring-[#df9c72] dark:bg-slate-900 dark:text-white dark:ring-white/10">
+                        <p class="text-sm font-medium text-[#7a4a35] dark:text-slate-300">Gold-Räume</p>
+                        <p id="goldRoomCount" class="mt-2 text-3xl font-black">0</p>
+                    </div>
 
-                <tr class="hover:bg-slate-900/70">
-                    <td class="px-4 py-3 font-semibold">Netzwerke</td>
-                    <td class="px-4 py-3 text-slate-200">22 / 20</td>
-                    <td class="px-4 py-3">
-                        <span class="inline-flex items-center gap-2 rounded-full bg-emerald-500/15 px-3 py-1 font-bold text-emerald-200 ring-1 ring-emerald-500/30">
-                          ✅ Ziel erreicht
-                        </span>
-                    </td>
-                </tr>
+                    <div class="rounded-2xl bg-[#f7c8a7] px-5 py-4 text-[#5a2f1f] shadow-lg ring-1 ring-[#e4ae88] dark:bg-slate-900 dark:text-white dark:ring-white/10">
+                        <p class="text-sm font-medium text-[#7a4a35] dark:text-slate-300">Abschlussquote</p>
+                        <p id="completionRate" class="mt-2 text-3xl font-black">0%</p>
+                    </div>
 
-                <tr class="hover:bg-slate-900/70">
-                    <td class="px-4 py-3 font-semibold">IT-Sicherheit</td>
-                    <td class="px-4 py-3 text-slate-200">14 / 20</td>
-                    <td class="px-4 py-3">
-                        <span class="inline-flex items-center gap-2 rounded-full bg-amber-400/15 px-3 py-1 font-bold text-amber-200 ring-1 ring-amber-400/30">
-                          ⏳ offen
-                        </span>
-                    </td>
-                </tr>
+                    <div class="rounded-2xl bg-[#f9dcc4] px-5 py-4 text-[#5a2f1f] shadow-lg ring-1 ring-[#ebc2a5] dark:bg-slate-900 dark:text-white dark:ring-white/10">
+                        <p class="text-sm font-medium text-[#7a4a35] dark:text-slate-300">Gesamtstatus</p>
+                        <p id="overallState" class="mt-2 text-2xl font-black">Fertig</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-                <tr class="hover:bg-slate-900/70">
-                    <td class="px-4 py-3 font-semibold">Projektmanagement</td>
-                    <td class="px-4 py-3 text-slate-200">8 / 20</td>
-                    <td class="px-4 py-3">
-                        <span class="inline-flex items-center gap-2 rounded-full bg-emerald-500/15 px-3 py-1 font-bold text-emerald-200 ring-1 ring-emerald-500/30">
-                          ✅ Ziel erreicht
-                        </span>
-                    </td>
-                </tr>
+        <section class="grid grid-cols-1 gap-6 xl:grid-cols-[320px_minmax(0,1fr)]">
+            <aside class="rounded-3xl bg-[#fff1e8]/90 p-6 shadow-2xl ring-1 ring-[#efc3a8] backdrop-blur-md dark:bg-slate-950/70 dark:ring-white/10">
+                <div class="text-center">
+                    <h2 class="text-2xl font-black text-[#5a2f1f] dark:text-white">Gesamtbewertung</h2>
 
-                <tr class="hover:bg-slate-900/70">
-                    <td class="px-4 py-3 font-semibold">Versionsverwaltung</td>
-                    <td class="px-4 py-3 text-slate-200">22 / 20</td>
-                    <td class="px-4 py-3">
-                        <span class="inline-flex items-center gap-2 rounded-full bg-emerald-500/15 px-3 py-1 font-bold text-emerald-200 ring-1 ring-emerald-500/30">
-                          ✅ Ziel erreicht
-                        </span>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
+                    <div class="mt-8 space-y-4 text-left">
+                        <div class="rounded-2xl bg-[#eea377] px-5 py-4 text-[#5a2f1f] ring-1 ring-[#dc8e63] dark:bg-slate-900 dark:text-white dark:ring-white/10">
+                            <p class="text-sm font-medium text-[#7a4a35] dark:text-slate-300">Gesamtpunkte</p>
+                            <p id="totalPointsText" class="mt-2 text-3xl font-black">0 / 0</p>
+                        </div>
 
+                        <div class="rounded-2xl bg-[#ffe6d6] px-5 py-4 ring-1 ring-[#efc3a8] dark:bg-slate-900/80 dark:ring-white/10">
+                            <p class="text-sm font-medium text-[#9b5e42] dark:text-slate-300">Fragen beantwortet</p>
+                            <p id="answeredQuestionsText" class="mt-2 text-2xl font-black text-[#5a2f1f] dark:text-white">0 / 0</p>
+                        </div>
+
+                        <div class="rounded-2xl bg-[#ffe6d6] px-5 py-4 ring-1 ring-[#efc3a8] dark:bg-slate-900/80 dark:ring-white/10">
+                            <p class="text-sm font-medium text-[#9b5e42] dark:text-slate-300">Richtige Antworten</p>
+                            <p id="correctAnswersText" class="mt-2 text-2xl font-black text-[#5a2f1f] dark:text-white">0</p>
+                        </div>
+
+                        <div class="rounded-2xl bg-[#ffe6d6] px-5 py-4 ring-1 ring-[#efc3a8] dark:bg-slate-900/80 dark:ring-white/10">
+                            <p class="text-sm font-medium text-[#9b5e42] dark:text-slate-300">Falsche Antworten</p>
+                            <p id="wrongAnswersText" class="mt-2 text-2xl font-black text-[#5a2f1f] dark:text-white">0</p>
+                        </div>
+
+                        <div class="rounded-2xl bg-[#ffe6d6] px-5 py-4 ring-1 ring-[#efc3a8] dark:bg-slate-900/80 dark:ring-white/10">
+                            <p class="text-sm font-medium text-[#9b5e42] dark:text-slate-300">Raum-Auszeichnungen</p>
+                            <p id="medalSummaryText" class="mt-2 text-lg font-bold text-[#5a2f1f] dark:text-white">🥇 0 · 🥈 0 · 🥉 0</p>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="rounded-3xl bg-[#fff1e8]/90 p-6 shadow-2xl ring-1 ring-[#efc3a8] backdrop-blur-md dark:bg-slate-950/70 dark:ring-white/10">
+                <div class="flex flex-col gap-3">
+                    <div>
+                        <h2 class="text-2xl font-black text-[#5a2f1f] dark:text-white">Themenübersicht</h2>
+                        <p class="mt-2 text-sm text-[#7a4a35] dark:text-slate-300">
+                            Auswertung aller Räume 1 bis 15 auf Basis deines gespeicherten Spielstands.
+                        </p>
+
+                        <a href="/review"
+                           class="mt-4 inline-flex rounded-xl bg-[#eea377] px-4 py-2 font-semibold text-[#5a2f1f] ring-1 ring-[#dc8e63] transition hover:bg-[#e89667] dark:bg-slate-800 dark:text-white dark:ring-white/10 dark:hover:bg-slate-700">
+                            Antworten prüfen
+                        </a>
+                    </div>
+                </div>
+
+                <div class="mt-6 overflow-hidden rounded-2xl ring-1 ring-[#efc3a8] dark:ring-white/10">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full text-left">
+                            <thead class="bg-[#efad84] text-[#5a2f1f] dark:bg-slate-900 dark:text-white">
+                            <tr>
+                                <th class="px-4 py-3 text-sm font-bold uppercase tracking-wide">Thema</th>
+                                <th class="px-4 py-3 text-sm font-bold uppercase tracking-wide">Fragen</th>
+                                <th class="px-4 py-3 text-sm font-bold uppercase tracking-wide">Punkte</th>
+                                <th class="px-4 py-3 text-sm font-bold uppercase tracking-wide">Auszeichnung</th>
+                                <th class="px-4 py-3 text-sm font-bold uppercase tracking-wide">Status</th>
+                            </tr>
+                            </thead>
+
+                            <tbody id="themeTableBody"
+                                   class="divide-y divide-[#efc3a8] bg-[#fff8f3] dark:divide-white/10 dark:bg-slate-900/50">
+                            <tr>
+                                <td colspan="5" class="px-4 py-6 text-center text-[#7a4a35] dark:text-slate-300">
+                                    Auswertung wird geladen...
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </main>
 </div>
+
+<script th:src="@{/js/darkmode.js}"></script>
+<script>
+    function escapeHtml(value) {
+        const div = document.createElement("div");
+        div.textContent = value ?? "";
+        return div.innerHTML;
+    }
+
+    function toNumber(value) {
+        const parsed = Number(value);
+        return Number.isFinite(parsed) ? parsed : 0;
+    }
+
+    function buildMedalBadge(medal) {
+        const normalizedMedal = String(medal ?? "NONE").toUpperCase();
+
+        if (normalizedMedal === "GOLD") {
+            return '<span class="inline-flex rounded-full bg-amber-100 px-3 py-1 text-sm font-bold text-amber-800 ring-1 ring-amber-300 dark:bg-amber-500/15 dark:text-amber-200 dark:ring-amber-400/30">🥇 Gold</span>';
+        }
+
+        if (normalizedMedal === "SILVER") {
+            return '<span class="inline-flex rounded-full bg-slate-200 px-3 py-1 text-sm font-bold text-slate-800 ring-1 ring-slate-300 dark:bg-slate-400/15 dark:text-slate-200 dark:ring-slate-400/30">🥈 Silber</span>';
+        }
+
+        if (normalizedMedal === "BRONZE") {
+            return '<span class="inline-flex rounded-full bg-orange-100 px-3 py-1 text-sm font-bold text-orange-800 ring-1 ring-orange-300 dark:bg-orange-500/15 dark:text-orange-200 dark:ring-orange-400/30">🥉 Bronze</span>';
+        }
+
+        return '<span class="inline-flex rounded-full bg-[#ffe6d6] px-3 py-1 text-sm font-bold text-[#7a4a35] ring-1 ring-[#efc3a8] dark:bg-slate-700/30 dark:text-slate-200 dark:ring-slate-500/30">— Keine</span>';
+    }
+
+    function buildCompletionBadge(room) {
+        const answeredQuestions = toNumber(room.answeredQuestions);
+        const totalQuestions = toNumber(room.totalQuestions);
+        const isCompleted = totalQuestions > 0 && answeredQuestions >= totalQuestions;
+
+        if (isCompleted) {
+            return '<span class="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-sm font-bold text-emerald-800 ring-1 ring-emerald-300 dark:bg-emerald-500/15 dark:text-emerald-200 dark:ring-emerald-400/30">Abgeschlossen</span>';
+        }
+
+        return '<span class="inline-flex rounded-full bg-amber-100 px-3 py-1 text-sm font-bold text-amber-800 ring-1 ring-amber-300 dark:bg-amber-500/15 dark:text-amber-200 dark:ring-amber-400/30">Offen</span>';
+    }
+
+    async function fetchOverview(sessionId) {
+        const overviewResponse = await fetch(`/api/session/${sessionId}/overview`);
+
+        if (!overviewResponse.ok) {
+            return null;
+        }
+
+        return await overviewResponse.json();
+    }
+
+    async function loadOverviewForEndscreen() {
+        const userId = sessionStorage.getItem("userId");
+        const storedRunId = sessionStorage.getItem("runId");
+        let storedSessionId = sessionStorage.getItem("sessionId");
+
+        if (!userId) {
+            window.location.href = "/";
+            return null;
+        }
+
+        if (storedSessionId) {
+            const overview = await fetchOverview(storedSessionId);
+            if (overview) {
+                return overview;
+            }
+
+            sessionStorage.removeItem("sessionId");
+            storedSessionId = null;
+        }
+
+        if (!storedRunId) {
+            window.location.href = "/dashboard";
+            return null;
+        }
+
+        const loadResponse = await fetch(`/api/session/load?userId=${encodeURIComponent(userId)}&runId=${encodeURIComponent(storedRunId)}`, {
+            method: "POST"
+        });
+
+        if (!loadResponse.ok) {
+            window.location.href = "/dashboard";
+            return null;
+        }
+
+        const loadData = await loadResponse.json();
+        const loadedSessionId = loadData.sessionId;
+
+        if (!loadedSessionId) {
+            window.location.href = "/dashboard";
+            return null;
+        }
+
+        sessionStorage.setItem("sessionId", loadedSessionId);
+
+        if (loadData.runId != null) {
+            sessionStorage.setItem("runId", String(loadData.runId));
+        }
+
+        return await fetchOverview(loadedSessionId);
+    }
+
+    function updateHeader(overview) {
+        const headline = document.getElementById("endscreenHeadline");
+        const subtitle = document.getElementById("endscreenSubtitle");
+        const heroTitle = document.getElementById("heroTitle");
+        const heroText = document.getElementById("heroText");
+        const avatar = document.getElementById("endscreenAvatar");
+
+        const username =
+            overview.username ??
+            sessionStorage.getItem("username") ??
+            "NutzerName";
+
+        if (headline) {
+            headline.textContent = `Abschlussauswertung für ${username}`;
+        }
+
+        if (subtitle) {
+            subtitle.textContent = "Alle Räume 1 bis 15 wurden abgeschlossen und ausgewertet.";
+        }
+
+        if (heroTitle) {
+            heroTitle.textContent = `${username}, du hast alle 15 Räume abgeschlossen.`;
+        }
+
+        if (heroText) {
+            heroText.textContent = "Hier siehst du deine Gesamtpunkte, deine Antwortverteilung und die Auszeichnungen pro Thema.";
+        }
+
+        if (avatar) {
+            const storedAvatar = sessionStorage.getItem("avatar");
+            if (storedAvatar) {
+                avatar.src = `/images/${storedAvatar}`;
+            }
+        }
+    }
+
+    function renderSummary(quizRooms) {
+        const totalEarnedPoints = quizRooms.reduce((sum, room) => sum + toNumber(room.earnedPoints), 0);
+        const totalMaxPoints = quizRooms.reduce((sum, room) => sum + toNumber(room.totalPoints), 0);
+        const totalAnsweredQuestions = quizRooms.reduce((sum, room) => sum + toNumber(room.answeredQuestions), 0);
+        const totalQuestions = quizRooms.reduce((sum, room) => sum + toNumber(room.totalQuestions), 0);
+        const totalCorrect = quizRooms.reduce((sum, room) => sum + toNumber(room.correctAnswers), 0);
+        const totalWrong = quizRooms.reduce((sum, room) => sum + toNumber(room.wrongAnswers), 0);
+
+        const goldCount = quizRooms.filter(room => String(room.medal ?? "").toUpperCase() === "GOLD").length;
+        const silverCount = quizRooms.filter(room => String(room.medal ?? "").toUpperCase() === "SILVER").length;
+        const bronzeCount = quizRooms.filter(room => String(room.medal ?? "").toUpperCase() === "BRONZE").length;
+
+        const completionRate = totalQuestions > 0
+            ? Math.round((totalAnsweredQuestions / totalQuestions) * 1000) / 10
+            : 0;
+
+        const totalPointsText = document.getElementById("totalPointsText");
+        const answeredQuestionsText = document.getElementById("answeredQuestionsText");
+        const correctAnswersText = document.getElementById("correctAnswersText");
+        const wrongAnswersText = document.getElementById("wrongAnswersText");
+        const medalSummaryText = document.getElementById("medalSummaryText");
+        const goldRoomCount = document.getElementById("goldRoomCount");
+        const completionRateElement = document.getElementById("completionRate");
+        const overallState = document.getElementById("overallState");
+
+        if (totalPointsText) {
+            totalPointsText.textContent = `${totalEarnedPoints} / ${totalMaxPoints}`;
+        }
+
+        if (answeredQuestionsText) {
+            answeredQuestionsText.textContent = `${totalAnsweredQuestions} / ${totalQuestions}`;
+        }
+
+        if (correctAnswersText) {
+            correctAnswersText.textContent = String(totalCorrect);
+        }
+
+        if (wrongAnswersText) {
+            wrongAnswersText.textContent = String(totalWrong);
+        }
+
+        if (medalSummaryText) {
+            medalSummaryText.textContent = `🥇 ${goldCount} · 🥈 ${silverCount} · 🥉 ${bronzeCount}`;
+        }
+
+        if (goldRoomCount) {
+            goldRoomCount.textContent = String(goldCount);
+        }
+
+        if (completionRateElement) {
+            completionRateElement.textContent = `${completionRate}%`;
+        }
+
+        if (overallState) {
+            overallState.textContent = totalAnsweredQuestions >= totalQuestions && totalQuestions > 0
+                ? "Komplett"
+                : "Unvollständig";
+        }
+    }
+
+    function renderThemeTable(quizRooms) {
+        const tableBody = document.getElementById("themeTableBody");
+
+        if (!tableBody) {
+            return;
+        }
+
+        tableBody.innerHTML = quizRooms.map(room => {
+            const themeName = escapeHtml(room.themeName ?? `Raum ${room.roomId}`);
+            const answeredQuestions = toNumber(room.answeredQuestions);
+            const totalQuestions = toNumber(room.totalQuestions);
+            const earnedPoints = toNumber(room.earnedPoints);
+            const totalPoints = toNumber(room.totalPoints);
+
+            return `
+                <tr class="align-middle transition hover:bg-[#ffe6d6] dark:hover:bg-slate-800/60">
+                    <td class="px-4 py-4 font-semibold text-[#5a2f1f] dark:text-white">${themeName}</td>
+                    <td class="px-4 py-4 text-[#7a4a35] dark:text-slate-200">${answeredQuestions} / ${totalQuestions}</td>
+                    <td class="px-4 py-4 text-[#7a4a35] dark:text-slate-200">${earnedPoints} / ${totalPoints}</td>
+                    <td class="px-4 py-4">${buildMedalBadge(room.medal)}</td>
+                    <td class="px-4 py-4">${buildCompletionBadge(room)}</td>
+                </tr>
+            `;
+        }).join("");
+    }
+
+    function areAllQuizRoomsCompleted(quizRooms) {
+        return quizRooms.length === 15 && quizRooms.every(room => {
+            const totalQuestions = toNumber(room.totalQuestions);
+            const answeredQuestions = toNumber(room.answeredQuestions);
+
+            return totalQuestions > 0 && answeredQuestions >= totalQuestions;
+        });
+    }
+
+    async function initEndscreen() {
+        try {
+            const overview = await loadOverviewForEndscreen();
+
+            if (!overview) {
+                return;
+            }
+
+            const allRooms = Array.isArray(overview.rooms) ? overview.rooms : [];
+            const quizRooms = allRooms
+                .filter(room => {
+                    const roomId = toNumber(room.roomId);
+                    return roomId >= 1 && roomId <= 15;
+                })
+                .sort((a, b) => toNumber(a.roomId) - toNumber(b.roomId));
+
+            if (!areAllQuizRoomsCompleted(quizRooms)) {
+                window.location.href = "/dashboard";
+                return;
+            }
+
+            updateHeader(overview);
+            renderSummary(quizRooms);
+            renderThemeTable(quizRooms);
+        } catch (error) {
+            console.error("Fehler beim Laden des Endscreens:", error);
+            window.location.href = "/dashboard";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", initEndscreen);
+</script>
+
+</body>
+</html>

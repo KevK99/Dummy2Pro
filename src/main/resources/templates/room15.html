@@ -1261,7 +1261,7 @@
         if (!currentQuestion) {
             const nextRoomId = roomId + 1;
 
-            if (nextRoomId <= 15) {
+            if (nextRoomId <= 16) {
                 window.location.href = `/room/${nextRoomId}`;
             } else {
                 window.location.href = "/dashboard";
@@ -1320,6 +1320,9 @@
 
         if (nextRoomId <= 15) {
             nextQuestionBtn.innerText = `Zu Raum ${nextRoomId}`;
+            nextQuestionBtn.classList.remove("hidden");
+        } else if (nextRoomId === 16) {
+            nextQuestionBtn.innerText = "Zum Abschlussraum";
             nextQuestionBtn.classList.remove("hidden");
         } else {
             nextQuestionBtn.innerText = "Zurück zum Dashboard";

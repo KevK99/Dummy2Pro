@@ -39,6 +39,15 @@ public interface QuestionProgressRepository extends JpaRepository<QuestionProgre
     List<QuestionProgress> findByRun_RunIdOrderByRoomIdAscQuestionOrderAsc(Long runId);
 
     @Query("""
+        SELECT qp
+        FROM QuestionProgress qp
+        JOIN FETCH qp.question q
+        WHERE qp.run.runId = :runId
+        ORDER BY qp.roomId, qp.questionOrder
+    """)
+    List<QuestionProgress> findDetailedByRunIdOrderByRoomIdAscQuestionOrderAsc(@Param("runId") Long runId);
+
+    @Query("""
         SELECT qp FROM QuestionProgress qp
         WHERE qp.run.runId = :runId
           AND qp.roomId = :roomId

@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="de"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base :: layout(~{::body}, 'min-h-screen bg-[#ffd8bf] text-[#5a2f1f] dark:bg-none dark:bg-[#000010] dark:text-slate-100')}">
+
+<body class="min-h-screen bg-[#ffd8bf] text-[#5a2f1f] dark:bg-[#000010] dark:text-slate-100">
+
+<style>
+    #headlineTitle {
+        color: #5a2f1f !important;
+    }
+
+    #headlineSubtitle {
+        color: #9b5e42 !important;
+    }
+
+    html.dark #headlineTitle {
+        color: white !important;
+    }
+
+    html.dark #headlineSubtitle {
+        color: #cbd5e1 !important;
+    }
+</style>
+
+<div th:replace="~{fragments/headline :: headline('Antworten prüfen', 'Deine Antworten und die richtigen Lösungen', ${avatarUrl}, null, null)}"></div>
+
+<main class="mx-auto w-full max-w-7xl px-6 pb-10 pt-6">
+    <section class="rounded-3xl bg-[#fff1e8]/90 p-6 shadow-2xl ring-1 ring-[#efc3a8] backdrop-blur-md dark:bg-slate-950/70 dark:ring-white/10">
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+                <p class="text-sm font-semibold uppercase tracking-[0.25em] text-[#9b5e42] dark:text-slate-300">
+                    Review
+                </p>
+
+                <h1 id="reviewHeadline" class="mt-2 text-3xl font-black tracking-tight text-[#5a2f1f] dark:text-white">
+                    Lade Antworten...
+                </h1>
+
+                <p class="mt-3 text-base text-[#7a4a35] dark:text-slate-300">
+                    Pro Raum kannst du aufklappen, was gefragt wurde, was du geantwortet hast und was richtig gewesen wäre.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <div class="rounded-2xl bg-[#f3b38a] px-5 py-4 text-[#5a2f1f] shadow-lg ring-1 ring-[#df9c72] dark:bg-slate-900 dark:text-white dark:ring-white/10">
+                    <p class="text-sm font-medium text-[#7a4a35] dark:text-slate-300">Richtige Fragen</p>
+                    <p id="summaryCorrect" class="mt-2 text-3xl font-black">0</p>
+                </div>
+
+                <div class="rounded-2xl bg-[#f7c8a7] px-5 py-4 text-[#5a2f1f] shadow-lg ring-1 ring-[#e4ae88] dark:bg-slate-900 dark:text-white dark:ring-white/10">
+                    <p class="text-sm font-medium text-[#7a4a35] dark:text-slate-300">Falsche Fragen</p>
+                    <p id="summaryWrong" class="mt-2 text-3xl font-black">0</p>
+                </div>
+
+                <div class="rounded-2xl bg-[#f9dcc4] px-5 py-4 text-[#5a2f1f] shadow-lg ring-1 ring-[#ebc2a5] dark:bg-slate-900 dark:text-white dark:ring-white/10">
+                    <p class="text-sm font-medium text-[#7a4a35] dark:text-slate-300">Räume</p>
+                    <p id="summaryRooms" class="mt-2 text-3xl font-black">0</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="reviewRoomsContainer" class="mt-6 space-y-4">
+        <div class="rounded-3xl bg-[#fff1e8]/90 p-6 shadow-xl ring-1 ring-[#efc3a8] dark:bg-slate-950/70 dark:ring-white/10">
+            Lade Rückschau...
+        </div>
+    </section>
+</main>
+
+<script th:src="@{/js/darkmode.js}"></script>
+<script>
+    function escapeHtml(value) {
+        const div = document.createElement("div");
+        div.textContent = value ?? "";
+        return div.innerHTML;
+    }
+
+    function toNumber(value) {
+        const parsed = Number(value);
+        return Number.isFinite(parsed) ? parsed : 0;
+    }
+
+    function formatAnsweredAt(value) {
+        if (!value) {
+            return "Nicht beantwortet";
+        }
+
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) {
+            return value;
+        }
+
+        return date.toLocaleString("de-DE");
+    }
+
+    function buildQuestionStatusBadge(status) {
+        const normalized = String(status ?? "OPEN").toUpperCase();
+
+        if (normalized === "CORRECT") {
+            return '<span class="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-sm font-bold text-emerald-800 ring-1 ring-emerald-300 dark:bg-emerald-500/15 dark:text-emerald-200 dark:ring-emerald-400/30">Richtig</span>';
+        }
+
+        if (normalized === "WRONG") {
+            return '<span class="inline-flex rounded-full bg-red-100 px-3 py-1 text-sm font-bold text-red-800 ring-1 ring-red-300 dark:bg-red-500/15 dark:text-red-200 dark:ring-red-400/30">Falsch</span>';
+        }
+
+        return '<span class="inline-flex rounded-full bg-slate-100 px-3 py-1 text-sm font-bold text-slate-700 ring-1 ring-slate-300 dark:bg-slate-700/30 dark:text-slate-200 dark:ring-slate-500/30">Offen</span>';
+    }
+
+    function buildRoomMedalBadge(medal) {
+        const normalized = String(medal ?? "NONE").toUpperCase();
+
+        if (normalized === "GOLD") {
+            return '<span class="inline-flex rounded-full bg-amber-100 px-3 py-1 text-sm font-bold text-amber-800 ring-1 ring-amber-300 dark:bg-amber-500/15 dark:text-amber-200 dark:ring-amber-400/30">🥇 Gold</span>';
+        }
+
+        if (normalized === "SILVER") {
+            return '<span class="inline-flex rounded-full bg-slate-200 px-3 py-1 text-sm font-bold text-slate-800 ring-1 ring-slate-300 dark:bg-slate-400/15 dark:text-slate-200 dark:ring-slate-400/30">🥈 Silber</span>';
+        }
+
+        if (normalized === "BRONZE") {
+            return '<span class="inline-flex rounded-full bg-orange-100 px-3 py-1 text-sm font-bold text-orange-800 ring-1 ring-orange-300 dark:bg-orange-500/15 dark:text-orange-200 dark:ring-orange-400/30">🥉 Bronze</span>';
+        }
+
+        return '<span class="inline-flex rounded-full bg-[#ffe6d6] px-3 py-1 text-sm font-bold text-[#7a4a35] ring-1 ring-[#efc3a8] dark:bg-slate-700/30 dark:text-slate-200 dark:ring-slate-500/30">Keine</span>';
+    }
+
+    async function fetchReview(sessionId) {
+        const response = await fetch(`/api/session/${sessionId}/review`);
+
+        if (!response.ok) {
+            return null;
+        }
+
+        return await response.json();
+    }
+
+    async function loadReviewData() {
+        const userId = sessionStorage.getItem("userId");
+        const storedRunId = sessionStorage.getItem("runId");
+        let storedSessionId = sessionStorage.getItem("sessionId");
+
+        if (!userId) {
+            window.location.href = "/";
+            return null;
+        }
+
+        if (storedSessionId) {
+            const review = await fetchReview(storedSessionId);
+            if (review) {
+                return review;
+            }
+
+            sessionStorage.removeItem("sessionId");
+            storedSessionId = null;
+        }
+
+        if (!storedRunId) {
+            window.location.href = "/dashboard";
+            return null;
+        }
+
+        const loadResponse = await fetch(`/api/session/load?userId=${encodeURIComponent(userId)}&runId=${encodeURIComponent(storedRunId)}`, {
+            method: "POST"
+        });
+
+        if (!loadResponse.ok) {
+            window.location.href = "/dashboard";
+            return null;
+        }
+
+        const loadData = await loadResponse.json();
+        const loadedSessionId = loadData.sessionId;
+
+        if (!loadedSessionId) {
+            window.location.href = "/dashboard";
+            return null;
+        }
+
+        sessionStorage.setItem("sessionId", loadedSessionId);
+
+        if (loadData.runId != null) {
+            sessionStorage.setItem("runId", String(loadData.runId));
+        }
+
+        return await fetchReview(loadedSessionId);
+    }
+
+    function renderChoiceAnswerBlock(question) {
+        const choices = Array.isArray(question.choices) ? question.choices : [];
+        const selectedChoices = choices.filter(choice => choice.selected);
+        const correctChoices = choices.filter(choice => choice.correct);
+        const status = String(question.status ?? "OPEN").toUpperCase();
+
+        if (status === "CORRECT") {
+            return `
+                <div class="mt-4">
+                    <div class="text-xs font-black uppercase tracking-wide text-emerald-700 dark:text-emerald-300">Deine Antwort</div>
+                    <div class="mt-2 flex flex-wrap gap-2">
+                        ${selectedChoices.map(choice => `
+                            <span class="rounded-full bg-emerald-100 px-3 py-1 text-sm font-bold text-emerald-800 ring-1 ring-emerald-300 dark:bg-emerald-500/15 dark:text-emerald-200 dark:ring-emerald-400/30">
+                                ${escapeHtml(choice.optionText)}
+                            </span>
+                        `).join("")}
+                    </div>
+                </div>
+            `;
+        }
+
+        if (status === "WRONG") {
+            return `
+                <div class="mt-4">
+                    <div class="text-xs font-black uppercase tracking-wide text-red-700 dark:text-red-300">Deine Antwort</div>
+                    <div class="mt-2 flex flex-wrap gap-2">
+                        ${selectedChoices.length > 0
+                ? selectedChoices.map(choice => `
+                                <span class="rounded-full bg-red-100 px-3 py-1 text-sm font-bold text-red-800 ring-1 ring-red-300 dark:bg-red-500/15 dark:text-red-200 dark:ring-red-400/30">
+                                    ${escapeHtml(choice.optionText)}
+                                </span>
+                            `).join("")
+                : '<span class="rounded-full bg-slate-100 px-3 py-1 text-sm font-bold text-slate-700 ring-1 ring-slate-300 dark:bg-slate-700/30 dark:text-slate-200 dark:ring-slate-500/30">Keine Auswahl</span>'
+            }
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <div class="text-xs font-black uppercase tracking-wide text-emerald-700 dark:text-emerald-300">Richtige Lösung</div>
+                    <div class="mt-2 flex flex-wrap gap-2">
+                        ${correctChoices.map(choice => `
+                            <span class="rounded-full bg-emerald-100 px-3 py-1 text-sm font-bold text-emerald-800 ring-1 ring-emerald-300 dark:bg-emerald-500/15 dark:text-emerald-200 dark:ring-emerald-400/30">
+                                ${escapeHtml(choice.optionText)}
+                            </span>
+                        `).join("")}
+                    </div>
+                </div>
+            `;
+        }
+
+        return `
+            <div class="mt-4">
+                <div class="text-xs font-black uppercase tracking-wide text-slate-600 dark:text-slate-300">Deine Antwort</div>
+                <div class="mt-2">
+                    <span class="rounded-full bg-slate-100 px-3 py-1 text-sm font-bold text-slate-700 ring-1 ring-slate-300 dark:bg-slate-700/30 dark:text-slate-200 dark:ring-slate-500/30">
+                        Nicht beantwortet
+                    </span>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderGapAnswerBlock(question) {
+        const gaps = Array.isArray(question.gaps) ? question.gaps : [];
+
+        if (gaps.length === 0) {
+            return "";
+        }
+
+        return `
+            <div class="mt-4 space-y-3">
+                ${gaps.map(gap => `
+                    <div class="rounded-2xl bg-[#fff8f3] p-4 ring-1 ring-[#efc3a8] dark:bg-slate-900/60 dark:ring-white/10">
+                        <div class="text-sm font-bold text-[#7a4a35] dark:text-slate-200">
+                            ${escapeHtml(gap.label ?? `Lücke ${toNumber(gap.gapIndex) + 1}`)}
+                        </div>
+
+                        ${gap.correct ? `
+                            <div class="mt-3">
+                                <div class="text-xs font-black uppercase tracking-wide text-emerald-700 dark:text-emerald-300">Deine Antwort</div>
+                                <div class="mt-2">
+                                    <span class="rounded-full bg-emerald-100 px-3 py-1 text-sm font-bold text-emerald-800 ring-1 ring-emerald-300 dark:bg-emerald-500/15 dark:text-emerald-200 dark:ring-emerald-400/30">
+                                        ${escapeHtml(gap.selectedText ?? "Keine Auswahl")}
+                                    </span>
+                                </div>
+                            </div>
+                        ` : `
+                            <div class="mt-3">
+                                <div class="text-xs font-black uppercase tracking-wide text-red-700 dark:text-red-300">Deine Antwort</div>
+                                <div class="mt-2">
+                                    <span class="rounded-full bg-red-100 px-3 py-1 text-sm font-bold text-red-800 ring-1 ring-red-300 dark:bg-red-500/15 dark:text-red-200 dark:ring-red-400/30">
+                                        ${escapeHtml(gap.selectedText ?? "Keine Auswahl")}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="mt-3">
+                                <div class="text-xs font-black uppercase tracking-wide text-emerald-700 dark:text-emerald-300">Richtige Lösung</div>
+                                <div class="mt-2">
+                                    <span class="rounded-full bg-emerald-100 px-3 py-1 text-sm font-bold text-emerald-800 ring-1 ring-emerald-300 dark:bg-emerald-500/15 dark:text-emerald-200 dark:ring-emerald-400/30">
+                                        ${escapeHtml(gap.correctText ?? "—")}
+                                    </span>
+                                </div>
+                            </div>
+                        `}
+                    </div>
+                `).join("")}
+            </div>
+        `;
+    }
+
+    function renderQuestionCard(question) {
+        const questionText = escapeHtml(question.questionText ?? "Frage ohne Text");
+        const questionOrder = toNumber(question.questionOrder);
+        const imageHtml = question.imageUrl
+            ? `
+                <div class="mt-4">
+                    <img src="${escapeHtml(question.imageUrl)}"
+                         alt="Fragebild"
+                         class="max-h-64 rounded-2xl ring-1 ring-[#efc3a8] dark:ring-white/10" />
+                </div>
+            `
+            : "";
+
+        const answerBlock = String(question.questionType ?? "").toUpperCase() === "GAP"
+            ? renderGapAnswerBlock(question)
+            : renderChoiceAnswerBlock(question);
+
+        return `
+            <article class="rounded-2xl bg-[#fff1e8]/90 p-5 shadow-lg ring-1 ring-[#efc3a8] dark:bg-slate-950/70 dark:ring-white/10">
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                        <p class="text-xs font-black uppercase tracking-[0.2em] text-[#9b5e42] dark:text-slate-400">
+                            Frage ${questionOrder} · ${escapeHtml(question.questionType ?? "")} · ${toNumber(question.points)} Punkte
+                        </p>
+                        <h3 class="mt-2 text-lg font-black text-[#5a2f1f] dark:text-white">
+                            ${questionText}
+                        </h3>
+                        <p class="mt-2 text-sm text-[#7a4a35] dark:text-slate-300">
+                            Beantwortet: ${escapeHtml(formatAnsweredAt(question.answeredAt))}
+                        </p>
+                    </div>
+
+                    <div>
+                        ${buildQuestionStatusBadge(question.status)}
+                    </div>
+                </div>
+
+                ${imageHtml}
+                ${answerBlock}
+            </article>
+        `;
+    }
+
+    function renderRooms(review) {
+        const container = document.getElementById("reviewRoomsContainer");
+        const rooms = Array.isArray(review.rooms) ? review.rooms : [];
+
+        if (!container) {
+            return;
+        }
+
+        if (rooms.length === 0) {
+            container.innerHTML = `
+                <div class="rounded-3xl bg-[#fff1e8]/90 p-6 shadow-xl ring-1 ring-[#efc3a8] dark:bg-slate-950/70 dark:ring-white/10">
+                    Für diesen Spielstand wurden noch keine Fragen gefunden.
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = rooms.map((room, roomIndex) => `
+            <details class="group overflow-hidden rounded-3xl bg-[#fff1e8]/90 shadow-2xl ring-1 ring-[#efc3a8] dark:bg-slate-950/70 dark:ring-white/10" ${roomIndex === 0 ? "open" : ""}>
+                <summary class="cursor-pointer list-none px-6 py-5">
+                    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                        <div>
+                            <p class="text-sm font-semibold uppercase tracking-[0.25em] text-[#9b5e42] dark:text-slate-400">
+                                Raum ${toNumber(room.roomId)}
+                            </p>
+                            <h2 class="mt-2 text-2xl font-black text-[#5a2f1f] dark:text-white">
+                                ${escapeHtml(room.themeName ?? `Raum ${room.roomId}`)}
+                            </h2>
+                            <p class="mt-2 text-sm text-[#7a4a35] dark:text-slate-300">
+                                Richtig: ${toNumber(room.correctAnswers)} · Falsch: ${toNumber(room.wrongAnswers)} · Offen: ${toNumber(room.openQuestions)}
+                            </p>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-3">
+                            ${buildRoomMedalBadge(room.medal)}
+                            <span class="rounded-full bg-[#ffe6d6] px-3 py-1 text-sm font-bold text-[#7a4a35] ring-1 ring-[#efc3a8] dark:bg-slate-700/30 dark:text-slate-200 dark:ring-slate-500/30">
+                                ${toNumber(room.totalQuestions)} Fragen
+                            </span>
+                        </div>
+                    </div>
+                </summary>
+
+                <div class="border-t border-[#efc3a8] px-6 py-6 dark:border-white/10">
+                    <div class="space-y-4">
+                        ${(Array.isArray(room.questions) ? room.questions : []).map(question => renderQuestionCard(question)).join("")}
+                    </div>
+                </div>
+            </details>
+        `).join("");
+    }
+
+    function updateSummary(review) {
+        const rooms = Array.isArray(review.rooms) ? review.rooms : [];
+        const totalCorrect = rooms.reduce((sum, room) => sum + toNumber(room.correctAnswers), 0);
+        const totalWrong = rooms.reduce((sum, room) => sum + toNumber(room.wrongAnswers), 0);
+
+        const reviewHeadline = document.getElementById("reviewHeadline");
+        const summaryCorrect = document.getElementById("summaryCorrect");
+        const summaryWrong = document.getElementById("summaryWrong");
+        const summaryRooms = document.getElementById("summaryRooms");
+        const headlineTitle = document.getElementById("headlineTitle");
+        const headlineAvatar = document.getElementById("headlineAvatar");
+
+        const username = review.username ?? sessionStorage.getItem("username") ?? "NutzerName";
+
+        if (reviewHeadline) {
+            reviewHeadline.textContent = `${username} – Rückschau auf deine Antworten`;
+        }
+
+        if (headlineTitle) {
+            headlineTitle.textContent = "Antworten prüfen";
+        }
+
+        if (headlineAvatar) {
+            const storedAvatar = sessionStorage.getItem("avatar");
+            if (storedAvatar) {
+                headlineAvatar.src = `/images/${storedAvatar}`;
+            }
+        }
+
+        if (summaryCorrect) {
+            summaryCorrect.textContent = String(totalCorrect);
+        }
+
+        if (summaryWrong) {
+            summaryWrong.textContent = String(totalWrong);
+        }
+
+        if (summaryRooms) {
+            summaryRooms.textContent = String(rooms.length);
+        }
+    }
+
+    async function initReviewPage() {
+        try {
+            const review = await loadReviewData();
+
+            if (!review) {
+                return;
+            }
+
+            updateSummary(review);
+            renderRooms(review);
+        } catch (error) {
+            console.error("Fehler beim Laden der Review-Seite:", error);
+            window.location.href = "/dashboard";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", initReviewPage);
+</script>
+
+</body>
+</html>

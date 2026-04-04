@@ -23,6 +23,7 @@ import me.daskabel.dummy2pro.dto.RoomDtos.AnswerResultDto;
 import me.daskabel.dummy2pro.dto.RoomDtos.QuestionDto;
 import me.daskabel.dummy2pro.dto.RoomDtos.RoomStartDto;
 import me.daskabel.dummy2pro.dto.RoomDtos.RoomStatusDto;
+import me.daskabel.dummy2pro.dto.RunReviewDto;
 import me.daskabel.dummy2pro.model.GameRun;
 import me.daskabel.dummy2pro.model.Theme;
 import me.daskabel.dummy2pro.repository.GameRunRepository;
@@ -347,6 +348,12 @@ public class RoomApiController
     public ResponseEntity<SessionOverviewDto> getOverview(@PathVariable String sessionId)
     {
         return ResponseEntity.ok(this.sessionManager.getOverview(sessionId));
+    }
+
+    @GetMapping("/{sessionId}/review")
+    public ResponseEntity<RunReviewDto> getRunReview(@PathVariable String sessionId)
+    {
+        return ResponseEntity.ok(this.sessionManager.getRunReview(sessionId));
     }
 
     /**
