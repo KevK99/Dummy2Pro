@@ -1,7 +1,7 @@
 package me.daskabel.dummy2pro.integration;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import me.daskabel.dummy2pro.model.AnswerOption;
 import me.daskabel.dummy2pro.model.GameRun;
@@ -15,7 +15,7 @@ import me.daskabel.dummy2pro.repository.GameRunRepository;
 import me.daskabel.dummy2pro.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,11 +26,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -111,6 +114,55 @@ class RoomApiControllerIntegrationTest
     }
 
     @Test
+    void renameRun_emptyDisplayName_setsNull() throws Exception
+    {
+        User user = new User("jan" + System.nanoTime(), encoder.encode("SehrSicheresPass1!"), "duck.jpg");
+        user = userRepository.save(user);
+
+        GameRun run = new GameRun();
+        run.setUser(user);
+        run.setStartedAt(LocalDateTime.now());
+        run.setDisplayName("Vorheriger Name");
+        run = gameRunRepository.save(run);
+
+        String json = objectMapper.writeValueAsString(new RenameRunRequest("   "));
+
+        mockMvc.perform(put("/api/session/{runId}/name", run.getRunId())
+                        .param("userId", String.valueOf(user.getUserId()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.runId").value(run.getRunId()))
+                .andExpect(jsonPath("$.displayName").value(nullValue()));
+
+        GameRun reloaded = gameRunRepository.findById(run.getRunId()).orElseThrow();
+        assertEquals(null, reloaded.getDisplayName());
+    }
+
+    @Test
+    void renameRun_tooLongDisplayName_returnsBadRequest() throws Exception
+    {
+        User user = new User("jan" + System.nanoTime(), encoder.encode("SehrSicheresPass1!"), "duck.jpg");
+        user = userRepository.save(user);
+
+        GameRun run = new GameRun();
+        run.setUser(user);
+        run.setStartedAt(LocalDateTime.now());
+        run = gameRunRepository.save(run);
+
+        String tooLongName = "a".repeat(101);
+        String json = objectMapper.writeValueAsString(new RenameRunRequest(tooLongName));
+
+        mockMvc.perform(put("/api/session/{runId}/name", run.getRunId())
+                        .param("userId", String.valueOf(user.getUserId()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.message").value("Der Spielstandname darf maximal 100 Zeichen lang sein."));
+    }
+
+    @Test
     void prepareRoom_getRoom_answer_getStatus_andOverview_workTogether() throws Exception
     {
         User user = new User("jan" + System.nanoTime(), encoder.encode("SehrSicheresPass1!"), "duck.jpg");
@@ -173,6 +225,95 @@ class RoomApiControllerIntegrationTest
                 .andExpect(jsonPath("$.totalCorrect").value(1))
                 .andExpect(jsonPath("$.totalWrong").value(0))
                 .andExpect(jsonPath("$.rooms[0].themeName").value("Thema 1"));
+    }
+
+    @Test
+    void prepareRoom_invalidRoomId_returnsBadRequest() throws Exception
+    {
+        User user = new User("jan" + System.nanoTime(), encoder.encode("SehrSicheresPass1!"), "duck.jpg");
+        user = userRepository.save(user);
+
+        seedRoom1WithOneMcQuestion();
+
+        String createBody = mockMvc.perform(post("/api/session/new")
+                        .param("userId", String.valueOf(user.getUserId())))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        String sessionId = objectMapper.readTree(createBody).get("sessionId").asText();
+
+        mockMvc.perform(post("/api/session/{sessionId}/room/{roomId}/prepare", sessionId, 999))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("NOT_FOUND"))
+                .andExpect(jsonPath("$.message").value("Raum 999 in Session nicht gefunden."));
+    }
+
+    @Test
+    void answer_withWrongQuestionId_returnsBadRequest() throws Exception
+    {
+        User user = new User("jan" + System.nanoTime(), encoder.encode("SehrSicheresPass1!"), "duck.jpg");
+        user = userRepository.save(user);
+
+        SeededMcQuestion seeded = seedRoom1WithOneMcQuestion();
+
+        String createBody = mockMvc.perform(post("/api/session/new")
+                        .param("userId", String.valueOf(user.getUserId())))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        String sessionId = objectMapper.readTree(createBody).get("sessionId").asText();
+
+        mockMvc.perform(post("/api/session/{sessionId}/room/{roomId}/prepare", sessionId, 1))
+                .andExpect(status().isOk());
+
+        String answerJson = objectMapper.writeValueAsString(
+                new AnswerRequest(999999L, List.of(seeded.correctAnswer().getAnswerId()))
+        );
+
+        mockMvc.perform(post("/api/session/{sessionId}/room/{roomId}/answer", sessionId, 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(answerJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.message").value("Es darf nur die aktuelle Frage beantwortet werden."));
+    }
+
+    @Test
+    void loadRun_success_returnsExistingRunForCorrectUser() throws Exception
+    {
+        User user = new User("jan" + System.nanoTime(), encoder.encode("SehrSicheresPass1!"), "duck.jpg");
+        user = userRepository.save(user);
+
+        seedRoom1WithOneMcQuestion();
+
+        String createBody = mockMvc.perform(post("/api/session/new")
+                        .param("userId", String.valueOf(user.getUserId())))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        JsonNode created = objectMapper.readTree(createBody);
+        long runId = created.get("runId").asLong();
+
+        String loadedBody = mockMvc.perform(post("/api/session/load")
+                        .param("userId", String.valueOf(user.getUserId()))
+                        .param("runId", String.valueOf(runId)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.runId").value(runId))
+                .andExpect(jsonPath("$.sessionId").isNotEmpty())
+                .andExpect(jsonPath("$.overview.username").value(user.getUsername()))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        JsonNode loaded = objectMapper.readTree(loadedBody);
+        assertNotNull(loaded.get("sessionId").asText());
+        assertEquals(runId, loaded.get("runId").asLong());
     }
 
     @Test

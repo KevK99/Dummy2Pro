@@ -100,8 +100,10 @@ class QuizSessionGeneratorTest
         Question question2 = question(102L, 5);
 
         when(questionRepo.findQuestionIdsByThemeId(20L)).thenReturn(List.of(101L, 102L));
-        when(questionRepo.findByQuestionIdsWithAnswers(List.of(101L, 102L))).thenReturn(List.of(question2, question1));
-        when(questionRepo.findByQuestionIdsWithGaps(List.of(101L, 102L))).thenReturn(List.of(question2, question1));
+        when(questionRepo.findByQuestionIdsWithAnswers(org.mockito.ArgumentMatchers.anyList()))
+                .thenReturn(List.of(question1, question2));
+        when(questionRepo.findByQuestionIdsWithGaps(org.mockito.ArgumentMatchers.anyList()))
+                .thenReturn(List.of(question1, question2));
 
         RoomSession roomSession = generator.buildRoomSession(theme, 8);
 

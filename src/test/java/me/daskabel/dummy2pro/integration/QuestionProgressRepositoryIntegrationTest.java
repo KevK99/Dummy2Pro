@@ -13,13 +13,14 @@ import me.daskabel.dummy2pro.model.User;
 import me.daskabel.dummy2pro.repository.QuestionProgressRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -91,6 +92,67 @@ class QuestionProgressRepositoryIntegrationTest
         assertEquals(1L, summary.getWrongAnswers());
         assertEquals(8L, summary.getTotalPoints());
         assertEquals(5L, summary.getEarnedPoints());
+    }
+
+    @Test
+    void findByRunIdAndRoomIdOrderByQuestionOrder_returnsEntriesInCorrectOrder()
+    {
+        TestData data = createBasicData();
+
+        List<QuestionProgress> result = questionProgressRepository.findByRunIdAndRoomIdOrderByQuestionOrder(
+                data.run.getRunId(),
+                1
+        );
+
+        assertEquals(2, result.size());
+        assertEquals(data.question1.getQuestionId(), result.get(0).getQuestion().getQuestionId());
+        assertEquals(1, result.get(0).getQuestionOrder());
+        assertEquals(data.question2.getQuestionId(), result.get(1).getQuestion().getQuestionId());
+        assertEquals(2, result.get(1).getQuestionOrder());
+    }
+
+    @Test
+    void findByRunIdAndRoomIdAndStatusOrderByQuestionOrder_filtersByStatus()
+    {
+        TestData data = createBasicData();
+
+        QuestionProgress progress1 = questionProgressRepository
+                .findByRun_RunIdAndQuestion_QuestionId(data.run.getRunId(), data.question1.getQuestionId())
+                .orElseThrow();
+        progress1.setStatus(ProgressStatus.CORRECT);
+        progress1.setAnsweredAt(LocalDateTime.now());
+
+        QuestionProgress progress2 = questionProgressRepository
+                .findByRun_RunIdAndQuestion_QuestionId(data.run.getRunId(), data.question2.getQuestionId())
+                .orElseThrow();
+        progress2.setStatus(ProgressStatus.WRONG);
+        progress2.setAnsweredAt(LocalDateTime.now());
+
+        questionProgressRepository.save(progress1);
+        questionProgressRepository.save(progress2);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        List<QuestionProgress> correctEntries =
+                questionProgressRepository.findByRunIdAndRoomIdAndStatusOrderByQuestionOrder(
+                        data.run.getRunId(),
+                        1,
+                        ProgressStatus.CORRECT
+                );
+
+        List<QuestionProgress> wrongEntries =
+                questionProgressRepository.findByRunIdAndRoomIdAndStatusOrderByQuestionOrder(
+                        data.run.getRunId(),
+                        1,
+                        ProgressStatus.WRONG
+                );
+
+        assertEquals(1, correctEntries.size());
+        assertEquals(data.question1.getQuestionId(), correctEntries.get(0).getQuestion().getQuestionId());
+
+        assertEquals(1, wrongEntries.size());
+        assertEquals(data.question2.getQuestionId(), wrongEntries.get(0).getQuestion().getQuestionId());
     }
 
     private TestData createBasicData()

@@ -57,5 +57,7 @@ ausführen Testdateien
 
 .\mvnw.cmd clean test
 
+.\mvnw.cmd clean test jacoco:report
+
 -----------------------------
 

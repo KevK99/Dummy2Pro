@@ -1,11 +1,11 @@
 package me.daskabel.dummy2pro.integration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import me.daskabel.dummy2pro.model.User;
 import me.daskabel.dummy2pro.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,11 +13,14 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -79,6 +82,25 @@ class UserControllerIntegrationTest
     }
 
     @Test
+    void updateAvatar_blankValue_resetsToDefaultAvatar() throws Exception
+    {
+        User user = new User("jan" + System.nanoTime(), encoder.encode("SehrSicheresPass1!"), "bee.jpg");
+        user = userRepository.save(user);
+
+        String json = objectMapper.writeValueAsString(new AvatarUpdateRequest(" "));
+
+        mockMvc.perform(put("/api/user/{userId}/avatar", user.getUserId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userId").value(user.getUserId()))
+                .andExpect(jsonPath("$.avatar").value("duck.jpg"));
+
+        User reloaded = userRepository.findById(user.getUserId()).orElseThrow();
+        assertEquals("duck.jpg", reloaded.getAvatar());
+    }
+
+    @Test
     void updateAvatar_invalidAvatar_returnsBadRequest() throws Exception
     {
         User user = new User("jan" + System.nanoTime(), encoder.encode("SehrSicheresPass1!"), "duck.jpg");
@@ -92,6 +114,27 @@ class UserControllerIntegrationTest
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.message").value("Ungültiger Avatar."));
+    }
+
+    @Test
+    void updateUsername_success_updatesUsername() throws Exception
+    {
+        User user = new User("alt" + System.nanoTime(), encoder.encode("SehrSicheresPass1!"), "duck.jpg");
+        user = userRepository.save(user);
+
+        String newUsername = "neu" + System.nanoTime();
+        String json = objectMapper.writeValueAsString(new UsernameUpdateRequest(newUsername));
+
+        mockMvc.perform(put("/api/user/{userId}/username", user.getUserId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userId").value(user.getUserId()))
+                .andExpect(jsonPath("$.username").value(newUsername))
+                .andExpect(jsonPath("$.avatar").value("duck.jpg"));
+
+        User reloaded = userRepository.findById(user.getUserId()).orElseThrow();
+        assertEquals(newUsername, reloaded.getUsername());
     }
 
     @Test
@@ -135,6 +178,26 @@ class UserControllerIntegrationTest
         User reloaded = userRepository.findById(user.getUserId()).orElseThrow();
         assertTrue(encoder.matches(newPassword, reloaded.getPasswordHash()));
         assertFalse(encoder.matches(oldPassword, reloaded.getPasswordHash()));
+    }
+
+    @Test
+    void updatePassword_confirmationMismatch_returnsBadRequest() throws Exception
+    {
+        String oldPassword = "AktuellesPasswort1!";
+
+        User user = new User("jan" + System.nanoTime(), encoder.encode(oldPassword), "duck.jpg");
+        user = userRepository.save(user);
+
+        String json = objectMapper.writeValueAsString(
+                new PasswordUpdateRequest(oldPassword, "NeuesPasswort123!", "AnderesPasswort123!")
+        );
+
+        mockMvc.perform(put("/api/user/{userId}/password", user.getUserId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.message").value("Die neuen Passwörter stimmen nicht überein."));
     }
 
     @Test
