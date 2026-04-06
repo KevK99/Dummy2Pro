@@ -16,7 +16,7 @@ class RoomIntroDialogsUnitTest
         List<DialogLineDto> dialog = RoomIntroDialogs.getDialogForRoom(1);
 
         assertTrue(dialog.size() > 1);
-        assertEquals("char1", dialog.get(0).getSpeaker());
+        assertEquals("player", dialog.get(0).getSpeaker());
     }
 
     @Test

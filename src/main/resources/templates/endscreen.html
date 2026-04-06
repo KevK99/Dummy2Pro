@@ -353,6 +353,13 @@
                 ? "Komplett"
                 : "Unvollständig";
         }
+
+        const overallMedal = window.Dummy2ProSound?.determineOverallMedal(totalCorrect, totalQuestions) ?? "NONE";
+
+        if (!window.__dummy2proEndscreenMedalPlayed && overallMedal !== "NONE") {
+            window.__dummy2proEndscreenMedalPlayed = true;
+            window.Dummy2ProSound?.playMedal(overallMedal, "endscreen");
+        }
     }
 
     function renderThemeTable(quizRooms) {

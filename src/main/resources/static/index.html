@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/js/sound-manager.js"></script>
     <title>Dummy2Pro</title>
 </head>
 
@@ -42,6 +43,7 @@
 
             async function loginUser(event) {
                 event.preventDefault();
+                window.Dummy2ProSound?.play("login");
 
                 sessionStorage.removeItem("sessionId");
                 sessionStorage.removeItem("runId");

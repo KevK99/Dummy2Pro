@@ -1,3 +1,59 @@
+function playDummy2ProSound(soundName) {
+    window.Dummy2ProSound?.play(soundName);
+}
+
+function playDummy2ProMedalSound(medal, variant = "room") {
+    window.Dummy2ProSound?.playMedal(medal, variant);
+}
+
+function normalizeMedalValue(medal) {
+    return String(medal ?? "NONE").toUpperCase();
+}
+
+function attachRoomFeedbackSoundObserver() {
+    const roomFeedbackBox = document.getElementById("feedbackBox");
+
+    if (!roomFeedbackBox || roomFeedbackBox.dataset.soundObserverAttached === "true") {
+        return;
+    }
+
+    roomFeedbackBox.dataset.soundObserverAttached = "true";
+
+    let lastFeedbackSignature = roomFeedbackBox.textContent.trim();
+
+    const playFeedbackSound = () => {
+        const currentText = roomFeedbackBox.textContent.trim();
+
+        if (!currentText || currentText === lastFeedbackSignature) {
+            return;
+        }
+
+        lastFeedbackSignature = currentText;
+
+        if (currentText.startsWith("Richtig!")) {
+            playDummy2ProSound("correct");
+            return;
+        }
+
+        if (currentText.startsWith("Falsch!")) {
+            playDummy2ProSound("wrong");
+        }
+    };
+
+    const observer = new MutationObserver(playFeedbackSound);
+    observer.observe(roomFeedbackBox, {
+        characterData: true,
+        childList: true,
+        subtree: true
+    });
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", attachRoomFeedbackSoundObserver);
+} else {
+    attachRoomFeedbackSoundObserver();
+}
+
 function updateHeadlineOverview(overview = null) {
     const usernameElement = document.getElementById("headlineUsername");
     const answeredElement = document.getElementById("headlineAnsweredQuestions");
@@ -416,6 +472,15 @@ function updateStatus(status) {
 
     document.getElementById("roomStatusBadge").innerText =
         `${medalText} (${roomPercent}%)`;
+
+    const normalizedMedal = normalizeMedalValue(status.medal);
+    const previousMedal = window.__dummy2proLastRoomMedal;
+
+    if (previousMedal !== undefined && previousMedal !== normalizedMedal && normalizedMedal !== "NONE") {
+        playDummy2ProMedalSound(normalizedMedal, "room");
+    }
+
+    window.__dummy2proLastRoomMedal = normalizedMedal;
 
     updateMedalCoin(status.medal);
 }

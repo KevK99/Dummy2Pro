@@ -504,4 +504,270 @@ INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, opti
 INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2084, 764, 'Ersetzt Interfaces', FALSE, 3);
 INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2085, 764, 'Verhindert Bugs', FALSE, 4);
 
+--------------------------------------------
+
+-- Thema Recht
+
+INSERT INTO question_set (question_set_id, team_id, title)
+VALUES (25, 12, 'Recht AP2 Ergänzungen');
+
+-- =========================================================
+-- JA/NEIN-FRAGEN (TF)
+-- =========================================================
+
+-- Frage 1: Eine Kündigung per E-Mail erfüllt grundsätzlich die gesetzlich vorgeschriebene Schriftform.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (765, 25, 'TF', 'Eine Kündigung per E-Mail erfüllt grundsätzlich die gesetzlich vorgeschriebene Schriftform.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (765, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2086, 765, 'Ja', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2087, 765, 'Nein', TRUE, 2);
+
+-- Frage 2: Nutzungsrechte an individuell entwickelter Software gehen automatisch vollständig auf den Auftraggeber über, auch wenn dazu nichts vereinbart wurde.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (766, 25, 'TF', 'Nutzungsrechte an individuell entwickelter Software gehen automatisch vollständig auf den Auftraggeber über, auch wenn dazu nichts vereinbart wurde.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (766, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2088, 766, 'Ja', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2089, 766, 'Nein', TRUE, 2);
+
+-- Frage 3: Personenbezogene Daten dürfen nur für den Zweck verarbeitet werden, für den sie erhoben wurden, sofern keine andere Rechtsgrundlage vorliegt.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (767, 25, 'TF', 'Personenbezogene Daten dürfen nur für den Zweck verarbeitet werden, für den sie erhoben wurden, sofern keine andere Rechtsgrundlage vorliegt.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (767, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2090, 767, 'Ja', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2091, 767, 'Nein', FALSE, 2);
+
+-- Frage 4: Ein Sachmangel kann auch dann vorliegen, wenn eine Software zwar startet, aber eine vertraglich vereinbarte Funktion fehlt.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (768, 25, 'TF', 'Ein Sachmangel kann auch dann vorliegen, wenn eine Software zwar startet, aber eine vertraglich vereinbarte Funktion fehlt.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (768, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2092, 768, 'Ja', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2093, 768, 'Nein', FALSE, 2);
+
+-- Frage 5: Eine rein private Website ohne geschäftsmäßigen Zweck braucht in der Regel kein Impressum.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (769, 25, 'TF', 'Eine rein private Website ohne geschäftsmäßigen Zweck braucht in der Regel kein Impressum.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (769, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2094, 769, 'Ja', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2095, 769, 'Nein', FALSE, 2);
+
+-- Frage 6: Minderjährige Auszubildende können einen Ausbildungsvertrag in der Regel nicht allein wirksam abschließen.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (770, 25, 'TF', 'Minderjährige Auszubildende können einen Ausbildungsvertrag in der Regel nicht allein wirksam abschließen.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (770, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2096, 770, 'Ja', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2097, 770, 'Nein', FALSE, 2);
+
+-- Frage 7: Bei einem Werkvertrag schuldet der Auftragnehmer nur ein Bemühen, aber keinen konkreten Erfolg.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (771, 25, 'TF', 'Bei einem Werkvertrag schuldet der Auftragnehmer nur ein Bemühen, aber keinen konkreten Erfolg.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (771, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2098, 771, 'Ja', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2099, 771, 'Nein', TRUE, 2);
+
+-- Frage 8: Ein Arbeitgeber darf Bewerber wegen ihres Alters grundsätzlich bevorzugen, wenn das aus Sicht des Teams besser passt.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (772, 25, 'TF', 'Ein Arbeitgeber darf Bewerber wegen ihres Alters grundsätzlich bevorzugen, wenn das aus Sicht des Teams besser passt.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (772, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2100, 772, 'Ja', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2101, 772, 'Nein', TRUE, 2);
+
+-- =========================================================
+-- MULTIPLE-CHOICE-FRAGEN (MC)
+-- =========================================================
+
+-- Frage 9: Ein Unternehmen beauftragt die Entwicklung eines Tools mit genau definierten Funktionen und einer Abnahme. Welcher Vertragstyp passt am besten?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (773, 25, 'MC', 'Ein Unternehmen beauftragt die Entwicklung eines Tools mit genau definierten Funktionen und einer Abnahme. Welcher Vertragstyp passt am besten?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (773, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2102, 773, 'Kaufvertrag', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2103, 773, 'Werkvertrag', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2104, 773, 'Mietvertrag', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2105, 773, 'Dienstvertrag', FALSE, 4);
+
+-- Frage 10: Welche Aussage zur DSGVO ist richtig?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (774, 25, 'MC', 'Welche Aussage zur DSGVO ist richtig?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (774, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2106, 774, 'Sie gilt nur für große Unternehmen mit mehr als 250 Beschäftigten.', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2107, 774, 'Sie gilt nur für Behörden.', FALSE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2108, 774, 'Sie gilt auch für kleine Unternehmen, wenn personenbezogene Daten verarbeitet werden.', TRUE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2109, 774, 'Sie gilt nur für Daten auf Papier.', FALSE, 4);
+
+-- Frage 11: Was sollte vor der Nutzung einer Open-Source-Bibliothek in einem Projekt besonders geprüft werden?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (775, 25, 'MC', 'Was sollte vor der Nutzung einer Open-Source-Bibliothek in einem Projekt besonders geprüft werden?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (775, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2110, 775, 'Die Bildschirmauflösung des Entwickler-PCs', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2111, 775, 'Die Lizenzbedingungen der Bibliothek', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2112, 775, 'Die Anzahl der Teammitglieder', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2113, 775, 'Die Schriftart im README', FALSE, 4);
+
+-- Frage 12: Ein externer Cloud-Dienst verarbeitet Kundendaten im Auftrag eines Unternehmens. Was ist besonders wichtig?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (776, 25, 'MC', 'Ein externer Cloud-Dienst verarbeitet Kundendaten im Auftrag eines Unternehmens. Was ist besonders wichtig?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (776, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2114, 776, 'Ein Auftragsverarbeitungsvertrag', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2115, 776, 'Ein Urlaubsplan für das Entwicklerteam', FALSE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2116, 776, 'Eine automatische Dunkelmodus-Umschaltung', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2117, 776, 'Eine Verlängerung der Probezeit', FALSE, 4);
+
+-- Frage 13: Welche zwei Maßnahmen unterstützen besonders den Grundsatz der Datenminimierung?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (777, 25, 'MC', 'Welche zwei Maßnahmen unterstützen besonders den Grundsatz der Datenminimierung?', NULL, NULL, TRUE, 2);
+INSERT INTO question_theme (question_id, theme_id) VALUES (777, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2118, 777, 'Nur die wirklich nötigen Pflichtfelder in Formularen verlangen', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2119, 777, 'Sämtliche Eingaben vorsorglich dauerhaft speichern', FALSE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2120, 777, 'Nicht mehr benötigte Daten löschen', TRUE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2121, 777, 'Testsysteme möglichst mit echten Kundendaten befüllen', FALSE, 4);
+
+-- Frage 14: Ein Kunde meldet, dass die gelieferte Anwendung eine ausdrücklich vereinbarte Exportfunktion nicht besitzt. Welcher Begriff passt am besten?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (778, 25, 'MC', 'Ein Kunde meldet, dass die gelieferte Anwendung eine ausdrücklich vereinbarte Exportfunktion nicht besitzt. Welcher Begriff passt am besten?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (778, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2122, 778, 'Kulanz', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2123, 778, 'Sachmangel', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2124, 778, 'Tarifbindung', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2125, 778, 'Schweigepflicht', FALSE, 4);
+
+-- Frage 15: Was regelt eine Softwarelizenz in erster Linie?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (779, 25, 'MC', 'Was regelt eine Softwarelizenz in erster Linie?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (779, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2126, 779, 'Die erlaubte Nutzung der Software', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2127, 779, 'Die Kündigungsfrist eines Arbeitnehmers', FALSE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2128, 779, 'Die Höhe der Gewerbesteuer', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2129, 779, 'Die Zusammensetzung des Betriebsrats', FALSE, 4);
+
+-- Frage 16: Welche Aussage zu AGB ist richtig?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (780, 25, 'MC', 'Welche Aussage zu AGB ist richtig?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (780, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2130, 780, 'AGB müssen immer handschriftlich vereinbart werden.', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2131, 780, 'AGB gelten nur im Arbeitsrecht.', FALSE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2132, 780, 'AGB sollten für den Vertragspartner vor Vertragsschluss zugänglich sein.', TRUE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2133, 780, 'AGB dürfen Kunden beliebig benachteiligen.', FALSE, 4);
+
+-- Frage 17: Welche Aussage zum Widerrufsrecht im Online-Handel trifft grundsätzlich zu?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (781, 25, 'MC', 'Welche Aussage zum Widerrufsrecht im Online-Handel trifft grundsätzlich zu?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (781, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2134, 781, 'Verbraucher haben bei Fernabsatzverträgen grundsätzlich ein Widerrufsrecht.', TRUE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2135, 781, 'Ein Widerrufsrecht gibt es nur bei Barzahlung.', FALSE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2136, 781, 'Nur Unternehmen haben ein Widerrufsrecht.', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2137, 781, 'Ein Widerruf ist nur bei Mängeln möglich.', FALSE, 4);
+
+-- Frage 18: Welche Angabe ist für eine geschäftsmäßig betriebene Website besonders wichtig?
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (782, 25, 'MC', 'Welche Angabe ist für eine geschäftsmäßig betriebene Website besonders wichtig?', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (782, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2138, 782, 'Die Lieblingsfarbe des Entwicklers', FALSE, 1);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2139, 782, 'Eine erreichbare Anbieterkennzeichnung im Impressum', TRUE, 2);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2140, 782, 'Die private Handynummer aller Teammitglieder', FALSE, 3);
+INSERT INTO answer_option (answer_id, question_id, option_text, is_correct, option_order) VALUES (2141, 782, 'Die Anzahl aller Git-Commits', FALSE, 4);
+
+-- =========================================================
+-- LÜCKENTEXTE (GAP)
+-- =========================================================
+
+-- Frage 19: Ein Vertrag kommt durch zwei übereinstimmende ____ zustande.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (783, 25, 'GAP', 'Ein Vertrag kommt durch zwei übereinstimmende ____ zustande.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (783, 2);
+INSERT INTO gap_field (gap_id, question_id, gap_index, text_before, text_after) VALUES (177, 783, 0, 'Ein Vertrag kommt durch zwei übereinstimmende', 'zustande.');
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (540, 177, 'Willenserklärungen', TRUE, 1);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (541, 177, 'Betriebsräte', FALSE, 2);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (542, 177, 'Datenbanken', FALSE, 3);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (543, 177, 'Abteilungen', FALSE, 4);
+
+-- Frage 20: Bei einer geschäftsmäßig betriebenen Website besteht in der Regel eine Pflicht zum ____.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (784, 25, 'GAP', 'Bei einer geschäftsmäßig betriebenen Website besteht in der Regel eine Pflicht zum ____.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (784, 2);
+INSERT INTO gap_field (gap_id, question_id, gap_index, text_before, text_after) VALUES (178, 784, 0, 'Bei einer geschäftsmäßig betriebenen Website besteht in der Regel eine Pflicht zum', '.');
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (544, 178, 'Impressum', TRUE, 1);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (545, 178, 'Quellcode', FALSE, 2);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (546, 178, 'Dienstplan', FALSE, 3);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (547, 178, 'Backup', FALSE, 4);
+
+-- Frage 21: Wer Software für einen Auftrag mit festem Erfolg und Abnahme erstellt, arbeitet häufig auf Basis eines ____.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (785, 25, 'GAP', 'Wer Software für einen Auftrag mit festem Erfolg und Abnahme erstellt, arbeitet häufig auf Basis eines ____.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (785, 2);
+INSERT INTO gap_field (gap_id, question_id, gap_index, text_before, text_after) VALUES (179, 785, 0, 'Wer Software für einen Auftrag mit festem Erfolg und Abnahme erstellt, arbeitet häufig auf Basis eines', '.');
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (548, 179, 'Mietvertrags', FALSE, 1);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (549, 179, 'Werkvertrags', TRUE, 2);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (550, 179, 'Leihvertrags', FALSE, 3);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (551, 179, 'Tarifvertrags', FALSE, 4);
+
+-- Frage 22: Personenbezogene Daten dürfen nur verarbeitet werden, wenn eine ____ oder eine andere Rechtsgrundlage vorliegt.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (786, 25, 'GAP', 'Personenbezogene Daten dürfen nur verarbeitet werden, wenn eine ____ oder eine andere Rechtsgrundlage vorliegt.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (786, 2);
+INSERT INTO gap_field (gap_id, question_id, gap_index, text_before, text_after) VALUES (180, 786, 0, 'Personenbezogene Daten dürfen nur verarbeitet werden, wenn eine', 'oder eine andere Rechtsgrundlage vorliegt.');
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (552, 180, 'Einwilligung', TRUE, 1);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (553, 180, 'Abschrift', FALSE, 2);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (554, 180, 'Farbauswahl', FALSE, 3);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (555, 180, 'Quittung', FALSE, 4);
+
+-- Frage 23: Wer nur die wirklich erforderlichen Daten erhebt, beachtet den Grundsatz der Daten____.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (787, 25, 'GAP', 'Wer nur die wirklich erforderlichen Daten erhebt, beachtet den Grundsatz der Daten____.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (787, 2);
+INSERT INTO gap_field (gap_id, question_id, gap_index, text_before, text_after) VALUES (181, 787, 0, 'Wer nur die wirklich erforderlichen Daten erhebt, beachtet den Grundsatz der Daten', '.');
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (556, 181, 'minimierung', TRUE, 1);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (557, 181, 'vervielfältigung', FALSE, 2);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (558, 181, 'verschiebung', FALSE, 3);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (559, 181, 'zerlegung', FALSE, 4);
+
+-- Frage 24: Fehlt einer Software eine vertraglich vereinbarte Funktion, kann ein ____ vorliegen.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (788, 25, 'GAP', 'Fehlt einer Software eine vertraglich vereinbarte Funktion, kann ein ____ vorliegen.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (788, 2);
+INSERT INTO gap_field (gap_id, question_id, gap_index, text_before, text_after) VALUES (182, 788, 0, 'Fehlt einer Software eine vertraglich vereinbarte Funktion, kann ein', 'vorliegen.');
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (560, 182, 'Sachmangel', TRUE, 1);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (561, 182, 'Feiertag', FALSE, 2);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (562, 182, 'Tarifvertrag', FALSE, 3);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (563, 182, 'Betriebsrat', FALSE, 4);
+
+-- Frage 25: Rechte zur Nutzung einer Software werden oft über eine ____ geregelt.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (789, 25, 'GAP', 'Rechte zur Nutzung einer Software werden oft über eine ____ geregelt.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (789, 2);
+INSERT INTO gap_field (gap_id, question_id, gap_index, text_before, text_after) VALUES (183, 789, 0, 'Rechte zur Nutzung einer Software werden oft über eine', 'geregelt.');
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (564, 183, 'Lizenz', TRUE, 1);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (565, 183, 'Gehaltserhöhung', FALSE, 2);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (566, 183, 'Abteilung', FALSE, 3);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (567, 183, 'Kündigung', FALSE, 4);
+
+-- Frage 26: Minderjährige Auszubildende benötigen für den Ausbildungsvertrag in der Regel die Zustimmung ihrer gesetzlichen ____.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (790, 25, 'GAP', 'Minderjährige Auszubildende benötigen für den Ausbildungsvertrag in der Regel die Zustimmung ihrer gesetzlichen ____.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (790, 2);
+INSERT INTO gap_field (gap_id, question_id, gap_index, text_before, text_after) VALUES (184, 790, 0, 'Minderjährige Auszubildende benötigen für den Ausbildungsvertrag in der Regel die Zustimmung ihrer gesetzlichen', '.');
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (568, 184, 'Vertreter', TRUE, 1);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (569, 184, 'Kollegen', FALSE, 2);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (570, 184, 'Kunden', FALSE, 3);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (571, 184, 'Entwickler', FALSE, 4);
+
+-- Frage 27: Die Jugend- und Auszubildendenvertretung vertritt die Interessen der jugendlichen Beschäftigten und der ____.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (791, 25, 'GAP', 'Die Jugend- und Auszubildendenvertretung vertritt die Interessen der jugendlichen Beschäftigten und der ____.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (791, 2);
+INSERT INTO gap_field (gap_id, question_id, gap_index, text_before, text_after) VALUES (185, 791, 0, 'Die Jugend- und Auszubildendenvertretung vertritt die Interessen der jugendlichen Beschäftigten und der', '.');
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (572, 185, 'Auszubildenden', TRUE, 1);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (573, 185, 'Geschäftsführer', FALSE, 2);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (574, 185, 'Auftraggeber', FALSE, 3);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (575, 185, 'Bewerber', FALSE, 4);
+
+-- Frage 28: Wer Daten nicht länger speichert als nötig, beachtet den Grundsatz der Speicher____.
+INSERT INTO question (question_id, question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
+VALUES (792, 25, 'GAP', 'Wer Daten nicht länger speichert als nötig, beachtet den Grundsatz der Speicher____.', NULL, NULL, FALSE, 1);
+INSERT INTO question_theme (question_id, theme_id) VALUES (792, 2);
+INSERT INTO gap_field (gap_id, question_id, gap_index, text_before, text_after) VALUES (186, 792, 0, 'Wer Daten nicht länger speichert als nötig, beachtet den Grundsatz der Speicher', '.');
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (576, 186, 'begrenzung', TRUE, 1);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (577, 186, 'erhöhung', FALSE, 2);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (578, 186, 'verdopplung', FALSE, 3);
+INSERT INTO gap_option (gap_option_id, gap_id, option_text, is_correct, option_order) VALUES (579, 186, 'aufteilung', FALSE, 4);
+
+-----------------------------------
 

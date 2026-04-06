@@ -1,4 +1,4 @@
-package me.daskabel.dummy2pro.tools;
+package me.daskabel.dummy2pro.Tools;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 
+import me.daskabel.dummy2pro.tools.Bcrypt;
 import org.junit.jupiter.api.Test;
 
 class BcryptSmokeTest

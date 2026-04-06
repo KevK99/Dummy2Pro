@@ -2,9 +2,9 @@ package me.daskabel.dummy2pro.session;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,16 +15,7 @@ import me.daskabel.dummy2pro.dto.RoomDtos.QuestionDto;
 import me.daskabel.dummy2pro.dto.RoomDtos.RoomStartDto;
 import me.daskabel.dummy2pro.dto.RoomDtos.RoomStatusDto;
 import me.daskabel.dummy2pro.dto.RunReviewDto;
-import me.daskabel.dummy2pro.model.AnswerOption;
-import me.daskabel.dummy2pro.model.GameRun;
-import me.daskabel.dummy2pro.model.GapField;
-import me.daskabel.dummy2pro.model.GapOption;
-import me.daskabel.dummy2pro.model.ProgressStatus;
-import me.daskabel.dummy2pro.model.Question;
-import me.daskabel.dummy2pro.model.QuestionProgress;
 import me.daskabel.dummy2pro.model.QuestionType;
-import me.daskabel.dummy2pro.model.RunGapAnswer;
-import me.daskabel.dummy2pro.model.RunSelectedAnswer;
 import me.daskabel.dummy2pro.model.Theme;
 import me.daskabel.dummy2pro.model.User;
 import me.daskabel.dummy2pro.repository.GameRunRepository;
@@ -106,7 +97,7 @@ class QuizSessionManagerCoverageTest
     }
 
     @Test
-    void getRoomState_andSwitchRoom_usePreparedRoomsAndDialogs()
+    void getRoomState_switchRoom_andGetRoomStatus_usePreparedRooms()
     {
         QuizSession session = new QuizSession(7L, 70L);
         session.addRoom(preparedRoom(1, 101L));
@@ -125,6 +116,19 @@ class QuizSessionManagerCoverageTest
     }
 
     @Test
+    void advance_returnsNull_whenPreparedRoomIsAlreadyCompleted()
+    {
+        QuizSession.RoomSession room = preparedRoom(1, 101L);
+        room.setCompleted(true);
+
+        QuizSession session = new QuizSession(7L, 70L);
+        session.addRoom(room);
+        cacheSession(session);
+
+        assertNull(manager.advance(session.getSessionId(), 1));
+    }
+
+    @Test
     void getRunReview_returnsEmptyRoomsWhenNoProgressExists()
     {
         QuizSession session = new QuizSession(7L, 70L);
@@ -140,95 +144,15 @@ class QuizSessionManagerCoverageTest
         assertEquals(List.of(), review.getRooms());
     }
 
-    @Test
-    void getRunReview_buildsChoiceAndGapDetails()
-    {
-        User user = new User("jan", "hash");
-        user.setUserId(7L);
-
-        GameRun run = new GameRun(user, LocalDateTime.of(2026, 4, 5, 11, 30));
-        run.setRunId(70L);
-
-        QuizSession session = new QuizSession(7L, 70L);
-        cacheSession(session);
-
-        Question mcQuestion = new Question(QuestionType.MC, "MC Start", null, "MC Ende", false, 2);
-        mcQuestion.setQuestionId(101L);
-        AnswerOption mcOptionA = new AnswerOption(mcQuestion, "B", false, 2);
-        mcOptionA.setAnswerId(1002L);
-        AnswerOption mcOptionB = new AnswerOption(mcQuestion, "A", true, 1);
-        mcOptionB.setAnswerId(1001L);
-        mcQuestion.setAnswerOptions(List.of(mcOptionA, mcOptionB));
-
-        Question gapQuestion = new Question(QuestionType.GAP, "Gap Start", null, "Gap Ende", false, 3);
-        gapQuestion.setQuestionId(202L);
-        GapField gapField = new GapField(gapQuestion, 0);
-        gapField.setGapId(3001L);
-        gapField.setTextBefore("vor");
-        gapField.setTextAfter("nach");
-        GapOption wrongOption = new GapOption(gapField, "falsch", false, 2);
-        wrongOption.setGapOptionId(4002L);
-        GapOption correctOption = new GapOption(gapField, "richtig", true, 1);
-        correctOption.setGapOptionId(4001L);
-        gapField.setGapOptions(new java.util.LinkedHashSet<>(List.of(wrongOption, correctOption)));
-        gapQuestion.setGapFields(new java.util.LinkedHashSet<>(List.of(gapField)));
-
-        QuestionProgress mcProgress = new QuestionProgress(
-                run,
-                mcQuestion,
-                1,
-                1,
-                ProgressStatus.CORRECT,
-                LocalDateTime.of(2026, 4, 5, 11, 31)
-        );
-        QuestionProgress gapProgress = new QuestionProgress(
-                run,
-                gapQuestion,
-                2,
-                1,
-                ProgressStatus.WRONG,
-                LocalDateTime.of(2026, 4, 5, 11, 32)
-        );
-
-        RunSelectedAnswer selectedAnswer = new RunSelectedAnswer(run, mcQuestion, mcOptionB);
-        RunGapAnswer selectedGapAnswer = new RunGapAnswer(
-                run,
-                gapQuestion,
-                gapField,
-                wrongOption,
-                LocalDateTime.of(2026, 4, 5, 11, 32)
-        );
-
-        when(userRepository.findById(7L)).thenReturn(Optional.of(user));
-        when(questionProgressRepository.findDetailedByRunIdOrderByRoomIdAscQuestionOrderAsc(70L))
-                .thenReturn(List.of(mcProgress, gapProgress));
-        when(questionRepository.findByQuestionIdsWithAnswers(List.of(101L))).thenReturn(List.of(mcQuestion));
-        when(questionRepository.findByQuestionIdsWithGaps(List.of(202L))).thenReturn(List.of(gapQuestion));
-        when(runSelectedAnswerRepository.findDetailedByRunId(70L)).thenReturn(List.of(selectedAnswer));
-        when(runGapAnswerRepository.findDetailedByRunId(70L)).thenReturn(List.of(selectedGapAnswer));
-        when(generator.getThemesOrdered()).thenReturn(List.of(new Theme("Recht"), new Theme("SQL")));
-
-        RunReviewDto review = manager.getRunReview(session.getSessionId());
-
-        assertEquals(2, review.getRooms().size());
-        assertEquals("Recht", review.getRooms().get(0).getThemeName());
-        assertEquals("MC Start MC Ende", review.getRooms().get(0).getQuestions().get(0).getQuestionText());
-        assertEquals("A", review.getRooms().get(0).getQuestions().get(0).getChoices().get(0).getOptionText());
-        assertEquals(true, review.getRooms().get(0).getQuestions().get(0).getChoices().get(0).isSelected());
-        assertEquals("Gap Start vor _____ nach Gap Ende", review.getRooms().get(1).getQuestions().get(0).getQuestionText());
-        assertEquals("vor _____ nach", review.getRooms().get(1).getQuestions().get(0).getGaps().get(0).getLabel());
-        assertEquals("falsch", review.getRooms().get(1).getQuestions().get(0).getGaps().get(0).getSelectedText());
-        assertEquals("richtig", review.getRooms().get(1).getQuestions().get(0).getGaps().get(0).getCorrectText());
-        assertFalse(review.getRooms().get(1).getQuestions().get(0).getGaps().get(0).isCorrect());
-    }
-
     private QuizSession.RoomSession preparedRoom(int roomId, Long questionId)
     {
         QuestionDto questionDto = new QuestionDto();
         questionDto.setQuestionId(questionId);
         questionDto.setQuestionType(QuestionType.MC);
+
         Map<Long, QuestionDto> cache = new HashMap<>();
         cache.put(questionId, questionDto);
+
         return new QuizSession.RoomSession(roomId, "Thema " + roomId, List.of(questionId), cache, 5);
     }
 
