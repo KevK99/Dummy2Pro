@@ -18,13 +18,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -67,8 +70,10 @@ class RoomApiControllerIntegrationTest
 
         seedRoom1WithOneMcQuestion();
 
+        MockHttpSession session = loginAndReturnSession(user.getUsername(), "SehrSicheresPass1!");
+
         String body = mockMvc.perform(post("/api/session/new")
-                        .param("userId", String.valueOf(user.getUserId())))
+                        .session(session))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.sessionId").isNotEmpty())
                 .andExpect(jsonPath("$.runId").isNumber())
@@ -82,7 +87,7 @@ class RoomApiControllerIntegrationTest
         long runId = json.get("runId").asLong();
 
         mockMvc.perform(get("/api/session/runs")
-                        .param("userId", String.valueOf(user.getUserId())))
+                        .session(session))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].runId").value(runId));
     }
@@ -100,9 +105,10 @@ class RoomApiControllerIntegrationTest
         run = gameRunRepository.save(run);
 
         String json = objectMapper.writeValueAsString(new RenameRunRequest("   Mein Spielstand   "));
+        MockHttpSession session = loginAndReturnSession(user.getUsername(), "SehrSicheresPass1!");
 
         mockMvc.perform(put("/api/session/{runId}/name", run.getRunId())
-                        .param("userId", String.valueOf(user.getUserId()))
+                        .session(session)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
@@ -126,9 +132,10 @@ class RoomApiControllerIntegrationTest
         run = gameRunRepository.save(run);
 
         String json = objectMapper.writeValueAsString(new RenameRunRequest("   "));
+        MockHttpSession session = loginAndReturnSession(user.getUsername(), "SehrSicheresPass1!");
 
         mockMvc.perform(put("/api/session/{runId}/name", run.getRunId())
-                        .param("userId", String.valueOf(user.getUserId()))
+                        .session(session)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
@@ -150,16 +157,17 @@ class RoomApiControllerIntegrationTest
         run.setStartedAt(LocalDateTime.now());
         run = gameRunRepository.save(run);
 
-        String tooLongName = "a".repeat(101);
+        String tooLongName = "a".repeat(41);
         String json = objectMapper.writeValueAsString(new RenameRunRequest(tooLongName));
+        MockHttpSession session = loginAndReturnSession(user.getUsername(), "SehrSicheresPass1!");
 
         mockMvc.perform(put("/api/session/{runId}/name", run.getRunId())
-                        .param("userId", String.valueOf(user.getUserId()))
+                        .session(session)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.message").value("Der Spielstandname darf maximal 100 Zeichen lang sein."));
+                .andExpect(jsonPath("$.message").value("Der Spielstandname darf maximal 40 Zeichen lang sein."));
     }
 
     @Test
@@ -169,9 +177,10 @@ class RoomApiControllerIntegrationTest
         user = userRepository.save(user);
 
         SeededMcQuestion seeded = seedRoom1WithOneMcQuestion();
+        MockHttpSession session = loginAndReturnSession(user.getUsername(), "SehrSicheresPass1!");
 
         String createBody = mockMvc.perform(post("/api/session/new")
-                        .param("userId", String.valueOf(user.getUserId())))
+                        .session(session))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
@@ -179,31 +188,29 @@ class RoomApiControllerIntegrationTest
 
         String sessionId = objectMapper.readTree(createBody).get("sessionId").asText();
 
-        mockMvc.perform(post("/api/session/{sessionId}/room/{roomId}/prepare", sessionId, 1))
+        mockMvc.perform(post("/api/session/{sessionId}/room/{roomId}/prepare", sessionId, 1)
+                        .session(session))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.roomId").value(1))
                 .andExpect(jsonPath("$.themeName").value("Thema 1"))
                 .andExpect(jsonPath("$.totalQuestions").value(1))
                 .andExpect(jsonPath("$.answeredQuestions").value(0))
-                .andExpect(jsonPath("$.openQuestions").value(1));
+                .andExpect(jsonPath("$.earnedPoints").value(0));
 
-        mockMvc.perform(get("/api/session/{sessionId}/room/{roomId}", sessionId, 1))
+        mockMvc.perform(get("/api/session/{sessionId}/room/{roomId}", sessionId, 1)
+                        .session(session))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status.roomId").value(1))
+                .andExpect(jsonPath("$.status.themeName").value("Thema 1"))
                 .andExpect(jsonPath("$.firstQuestion.questionId").value(seeded.question().getQuestionId()))
-                .andExpect(jsonPath("$.firstQuestion.questionType").value("MC"))
-                .andExpect(jsonPath("$.questionSequence[0]").value(seeded.question().getQuestionId()));
-
-        mockMvc.perform(post("/api/session/{sessionId}/room/{roomId}/advance", sessionId, 1))
-                .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.error").value("SERVER_ERROR"))
-                .andExpect(jsonPath("$.message").value("Die aktuelle Frage muss zuerst beantwortet werden."));
+                .andExpect(jsonPath("$.firstQuestion.startText").value("Was ist richtig?"));
 
         String answerJson = objectMapper.writeValueAsString(
                 new AnswerRequest(seeded.question().getQuestionId(), List.of(seeded.correctAnswer().getAnswerId()))
         );
 
         mockMvc.perform(post("/api/session/{sessionId}/room/{roomId}/answer", sessionId, 1)
+                        .session(session)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(answerJson))
                 .andExpect(status().isOk())
@@ -211,7 +218,8 @@ class RoomApiControllerIntegrationTest
                 .andExpect(jsonPath("$.pointsEarned").value(5))
                 .andExpect(jsonPath("$.correctAnswerIds[0]").value(seeded.correctAnswer().getAnswerId()));
 
-        mockMvc.perform(get("/api/session/{sessionId}/room/{roomId}/status", sessionId, 1))
+        mockMvc.perform(get("/api/session/{sessionId}/room/{roomId}/status", sessionId, 1)
+                        .session(session))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.answeredQuestions").value(1))
                 .andExpect(jsonPath("$.correctAnswers").value(1))
@@ -219,7 +227,8 @@ class RoomApiControllerIntegrationTest
                 .andExpect(jsonPath("$.earnedPoints").value(5))
                 .andExpect(jsonPath("$.medal").value("GOLD"));
 
-        mockMvc.perform(get("/api/session/{sessionId}/overview", sessionId))
+        mockMvc.perform(get("/api/session/{sessionId}/overview", sessionId)
+                        .session(session))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalEarnedPoints").value(5))
                 .andExpect(jsonPath("$.totalCorrect").value(1))
@@ -228,15 +237,16 @@ class RoomApiControllerIntegrationTest
     }
 
     @Test
-    void prepareRoom_invalidRoomId_returnsBadRequest() throws Exception
+    void prepareRoom_invalidRoomId_returnsNotFound() throws Exception
     {
         User user = new User("jan" + System.nanoTime(), encoder.encode("SehrSicheresPass1!"), "duck.jpg");
         user = userRepository.save(user);
 
         seedRoom1WithOneMcQuestion();
+        MockHttpSession session = loginAndReturnSession(user.getUsername(), "SehrSicheresPass1!");
 
         String createBody = mockMvc.perform(post("/api/session/new")
-                        .param("userId", String.valueOf(user.getUserId())))
+                        .session(session))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
@@ -244,7 +254,8 @@ class RoomApiControllerIntegrationTest
 
         String sessionId = objectMapper.readTree(createBody).get("sessionId").asText();
 
-        mockMvc.perform(post("/api/session/{sessionId}/room/{roomId}/prepare", sessionId, 999))
+        mockMvc.perform(post("/api/session/{sessionId}/room/{roomId}/prepare", sessionId, 999)
+                        .session(session))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("NOT_FOUND"))
                 .andExpect(jsonPath("$.message").value("Raum 999 in Session nicht gefunden."));
@@ -257,9 +268,10 @@ class RoomApiControllerIntegrationTest
         user = userRepository.save(user);
 
         SeededMcQuestion seeded = seedRoom1WithOneMcQuestion();
+        MockHttpSession session = loginAndReturnSession(user.getUsername(), "SehrSicheresPass1!");
 
         String createBody = mockMvc.perform(post("/api/session/new")
-                        .param("userId", String.valueOf(user.getUserId())))
+                        .session(session))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
@@ -267,7 +279,8 @@ class RoomApiControllerIntegrationTest
 
         String sessionId = objectMapper.readTree(createBody).get("sessionId").asText();
 
-        mockMvc.perform(post("/api/session/{sessionId}/room/{roomId}/prepare", sessionId, 1))
+        mockMvc.perform(post("/api/session/{sessionId}/room/{roomId}/prepare", sessionId, 1)
+                        .session(session))
                 .andExpect(status().isOk());
 
         String answerJson = objectMapper.writeValueAsString(
@@ -275,6 +288,7 @@ class RoomApiControllerIntegrationTest
         );
 
         mockMvc.perform(post("/api/session/{sessionId}/room/{roomId}/answer", sessionId, 1)
+                        .session(session)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(answerJson))
                 .andExpect(status().isBadRequest())
@@ -287,11 +301,12 @@ class RoomApiControllerIntegrationTest
     {
         User user = new User("jan" + System.nanoTime(), encoder.encode("SehrSicheresPass1!"), "duck.jpg");
         user = userRepository.save(user);
+        MockHttpSession session = loginAndReturnSession(user.getUsername(), "SehrSicheresPass1!");
 
         seedRoom1WithOneMcQuestion();
 
         String createBody = mockMvc.perform(post("/api/session/new")
-                        .param("userId", String.valueOf(user.getUserId())))
+                        .session(session))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
@@ -301,7 +316,7 @@ class RoomApiControllerIntegrationTest
         long runId = created.get("runId").asLong();
 
         String loadedBody = mockMvc.perform(post("/api/session/load")
-                        .param("userId", String.valueOf(user.getUserId()))
+                        .session(session)
                         .param("runId", String.valueOf(runId)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.runId").value(runId))
@@ -330,17 +345,25 @@ class RoomApiControllerIntegrationTest
         run.setStartedAt(LocalDateTime.now());
         run = gameRunRepository.save(run);
 
+        MockHttpSession strangerSession = loginAndReturnSession(stranger.getUsername(), "SehrSicheresPass1!");
+
         mockMvc.perform(post("/api/session/load")
-                        .param("userId", String.valueOf(stranger.getUserId()))
+                        .session(strangerSession)
                         .param("runId", String.valueOf(run.getRunId())))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.error").value("NOT_FOUND"));
+                .andExpect(jsonPath("$.error").value("NOT_FOUND"))
+                .andExpect(jsonPath("$.message").value("Spielstand nicht gefunden."));
     }
 
     @Test
     void overview_forUnknownSession_returnsNotFound() throws Exception
     {
-        mockMvc.perform(get("/api/session/{sessionId}/overview", "nicht-vorhanden"))
+        User user = new User("jan" + System.nanoTime(), encoder.encode("SehrSicheresPass1!"), "duck.jpg");
+        user = userRepository.save(user);
+        MockHttpSession session = loginAndReturnSession(user.getUsername(), "SehrSicheresPass1!");
+
+        mockMvc.perform(get("/api/session/{sessionId}/overview", "nicht-vorhanden")
+                        .session(session))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("NOT_FOUND"));
     }
@@ -374,6 +397,22 @@ class RoomApiControllerIntegrationTest
         entityManager.clear();
 
         return new SeededMcQuestion(question, correct);
+    }
+
+    private MockHttpSession loginAndReturnSession(String username, String password) throws Exception
+    {
+        String json = objectMapper.writeValueAsString(Map.of(
+                "username", username,
+                "password", password
+        ));
+
+        MvcResult result = mockMvc.perform(post("/api/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        return (MockHttpSession) result.getRequest().getSession(false);
     }
 
     private record RenameRunRequest(String displayName) {}

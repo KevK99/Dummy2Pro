@@ -2,11 +2,19 @@ package me.daskabel.dummy2pro.controller;
 
 import java.util.NoSuchElementException;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
+import jakarta.servlet.http.HttpSession;
+
+import me.daskabel.dummy2pro.security.SecuritySessionKeys;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -169,10 +177,10 @@ public class UserController
         this.userService = userService;
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<UserProfileResponse> getUserProfile(@PathVariable Long userId)
+    @GetMapping("/me")
+    public ResponseEntity<UserProfileResponse> getUserProfile(Authentication authentication)
     {
-        User user = this.userService.getUser(userId);
+        User user = this.userService.getUser(requireCurrentUserId(authentication));
 
         UserProfileResponse response = new UserProfileResponse();
         response.setUserId(user.getUserId());
@@ -182,12 +190,12 @@ public class UserController
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{userId}/avatar")
+    @PutMapping("/me/avatar")
     public ResponseEntity<UserProfileResponse> updateAvatar(
-            @PathVariable Long userId,
+            Authentication authentication,
             @RequestBody AvatarUpdateRequest request)
     {
-        User user = this.userService.updateAvatar(userId, request.getAvatar());
+        User user = this.userService.updateAvatar(requireCurrentUserId(authentication), request.getAvatar());
 
         UserProfileResponse response = new UserProfileResponse();
         response.setUserId(user.getUserId());
@@ -197,12 +205,12 @@ public class UserController
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{userId}/username")
+    @PutMapping("/me/username")
     public ResponseEntity<UserProfileResponse> updateUsername(
-            @PathVariable Long userId,
+            Authentication authentication,
             @RequestBody UsernameUpdateRequest request)
     {
-        User user = this.userService.updateUsername(userId, request.getUsername());
+        User user = this.userService.updateUsername(requireCurrentUserId(authentication), request.getUsername());
 
         UserProfileResponse response = new UserProfileResponse();
         response.setUserId(user.getUserId());
@@ -212,13 +220,13 @@ public class UserController
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{userId}/password")
+    @PutMapping("/me/password")
     public ResponseEntity<MessageResponse> updatePassword(
-            @PathVariable Long userId,
+            Authentication authentication,
             @RequestBody PasswordUpdateRequest request)
     {
         this.userService.updatePassword(
-                userId,
+                requireCurrentUserId(authentication),
                 request.getCurrentPassword(),
                 request.getNewPassword(),
                 request.getNewPasswordConfirm()
@@ -227,23 +235,39 @@ public class UserController
         return ResponseEntity.ok(new MessageResponse("Passwort erfolgreich geändert."));
     }
 
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<MessageResponse> deleteUser(@PathVariable Long userId, @RequestParam String confirmation)
+    @DeleteMapping("/me")
+    public ResponseEntity<MessageResponse> deleteUser(
+            Authentication authentication,
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @RequestParam String confirmation)
     {
         if (!"CONFIRM".equals(confirmation))
         {
             return ResponseEntity.badRequest().body(new MessageResponse("Bestätigung erforderlich."));
         }
 
+        Long userId = requireCurrentUserId(authentication);
         this.userService.deleteUser(userId);
+
+        new SecurityContextLogoutHandler().logout(request, response, authentication);
+
         return ResponseEntity.ok(new MessageResponse("Benutzer erfolgreich gelöscht."));
     }
 
-    @PostMapping("/logout/{userId}")
-    public ResponseEntity<MessageResponse> logout(@PathVariable Long userId)
+    @PostMapping("/logout")
+    public ResponseEntity<MessageResponse> logout(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Authentication authentication)
     {
-        this.userService.saveCurrentGameProgress(userId);
+        new SecurityContextLogoutHandler().logout(request, response, authentication);
         return ResponseEntity.ok(new MessageResponse("Erfolgreich ausgeloggt."));
+    }
+
+    private Long requireCurrentUserId(Authentication authentication)
+    {
+        return AuthController.extractUserId(authentication);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -256,5 +280,11 @@ public class UserController
     public ResponseEntity<ErrorResponse> handleNotFound(NoSuchElementException ex)
     {
         return ResponseEntity.status(404).body(new ErrorResponse("NOT_FOUND", ex.getMessage()));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleForbidden(AccessDeniedException ex)
+    {
+        return ResponseEntity.status(403).body(new ErrorResponse("FORBIDDEN", ex.getMessage()));
     }
 }

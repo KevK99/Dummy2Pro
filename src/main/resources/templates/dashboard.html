@@ -41,7 +41,7 @@
     }
 
     async function loadPreferredRunSession(userId) {
-        const runsResponse = await fetch(`/api/session/runs?userId=${userId}`);
+        const runsResponse = await fetch("/api/session/runs");
 
         if (!runsResponse.ok) {
             return {
@@ -55,11 +55,11 @@
 
         let response;
         if (preferredRun?.runId) {
-            response = await fetch(`/api/session/load?userId=${userId}&runId=${preferredRun.runId}`, {
+            response = await fetch(`/api/session/load?runId=${preferredRun.runId}`, {
                 method: "POST"
             });
         } else {
-            response = await fetch(`/api/session/new?userId=${userId}`, {
+            response = await fetch(`/api/session/new`, {
                 method: "POST"
             });
         }
@@ -87,9 +87,14 @@
     }
 
     async function fetchDashboardOverview() {
-        const userId = sessionStorage.getItem("userId");
+        let userId = sessionStorage.getItem("userId");
         const storedSessionId = sessionStorage.getItem("sessionId");
         const storedRunId = sessionStorage.getItem("runId");
+
+        if (!userId) {
+            const currentUser = await window.Dummy2ProSecurity.syncCurrentUser();
+            userId = currentUser?.userId ? String(currentUser.userId) : null;
+        }
 
         if (!userId) {
             window.location.href = "/";
@@ -117,7 +122,7 @@
         let payload = null;
 
         if (storedRunId) {
-            const storedRunResponse = await fetch(`/api/session/load?userId=${userId}&runId=${storedRunId}`, {
+            const storedRunResponse = await fetch(`/api/session/load?runId=${storedRunId}`, {
                 method: "POST"
             });
 
@@ -154,7 +159,12 @@
     }
 
     async function ensureSessionForRoom() {
-        const userId = sessionStorage.getItem("userId");
+        let userId = sessionStorage.getItem("userId");
+
+        if (!userId) {
+            const currentUser = await window.Dummy2ProSecurity.syncCurrentUser();
+            userId = currentUser?.userId ? String(currentUser.userId) : null;
+        }
 
         if (!userId) {
             window.location.href = "/";
@@ -175,7 +185,7 @@
         let data = null;
 
         if (desiredRunId) {
-            const desiredRunResponse = await fetch(`/api/session/load?userId=${userId}&runId=${desiredRunId}`, {
+            const desiredRunResponse = await fetch(`/api/session/load?runId=${desiredRunId}`, {
                 method: "POST"
             });
 

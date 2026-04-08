@@ -122,6 +122,98 @@ function isGapQuestion(question) {
             (question.gapFields && question.gapFields.length > 0));
 }
 
+function countWords(text) {
+    return String(text ?? "")
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean)
+        .length;
+}
+
+function buildAnswerPreviewText(index, fullText, maxWords = 4) {
+    const normalizedText = String(fullText ?? "").trim();
+
+    if (!normalizedText) {
+        return `${String.fromCharCode(65 + index)})`;
+    }
+
+    const words = normalizedText.split(/\s+/).filter(Boolean);
+    const preview = words.slice(0, maxWords).join(" ");
+    const suffix = words.length > maxWords ? " ..." : "";
+
+    return `${String.fromCharCode(65 + index)}) ${preview}${suffix}`;
+}
+
+function getStandardQuestionMetrics(question) {
+    const textLength = [question?.startText, question?.endText]
+        .filter(Boolean)
+        .join(" ")
+        .length;
+
+    const optionCount = Array.isArray(question?.answerOptions)
+        ? question.answerOptions.length
+        : 0;
+
+    const rowCount = Math.max(1, Math.ceil(optionCount / 2));
+
+    return {
+        textLength,
+        optionCount,
+        rowCount,
+        hasImage: Boolean(question?.imageUrl)
+    };
+}
+
+function renderStandardQuestionText(question, baseClassName) {
+    if (!questionText) {
+        return;
+    }
+
+    questionText.className = baseClassName;
+    questionText.innerHTML = "";
+    questionText.style.wordBreak = "break-word";
+
+    const hasStartText = Boolean(question?.startText?.trim());
+    const hasEndText = Boolean(question?.endText?.trim());
+    const hasImage = Boolean(question?.imageUrl);
+
+    if (!hasStartText && !hasEndText && !hasImage) {
+        questionText.innerText = "Keine Frage vorhanden.";
+        return;
+    }
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "flex h-full w-full flex-col items-center justify-center gap-3 whitespace-pre-line";
+
+    if (hasStartText) {
+        const startBlock = document.createElement("div");
+        startBlock.className = "w-full";
+        startBlock.textContent = question.startText;
+        wrapper.appendChild(startBlock);
+    }
+
+    if (hasImage) {
+        const image = document.createElement("img");
+        image.src = question.imageUrl;
+        image.alt = "Fragebild";
+        image.className = "mx-auto max-h-[150px] w-auto max-w-full object-contain rounded-lg border border-white/20";
+        image.loading = "lazy";
+        image.onerror = () => {
+            image.remove();
+        };
+        wrapper.appendChild(image);
+    }
+
+    if (hasEndText) {
+        const endBlock = document.createElement("div");
+        endBlock.className = "w-full";
+        endBlock.textContent = question.endText;
+        wrapper.appendChild(endBlock);
+    }
+
+    questionText.appendChild(wrapper);
+}
+
 function getGapMetrics(question) {
     const gapFields = [...(question?.gapFields || [])];
 
@@ -184,26 +276,43 @@ function applyQuestionLayout(question) {
     }
 
     if (!isGapQuestion(question)) {
-        const questionLength = (question?.startText || "").length;
+        const { textLength, optionCount, rowCount } = getStandardQuestionMetrics(question);
 
         let panelHeight = 520;
         let sceneHeight = 680;
         let questionTextMaxHeight = 250;
 
-        if (questionLength > 180) {
+        if (textLength > 180) {
             panelHeight += 30;
             questionTextMaxHeight += 20;
         }
-        if (questionLength > 260) {
+        if (textLength > 260) {
             panelHeight += 40;
             questionTextMaxHeight += 30;
         }
-        if (questionLength > 360) {
+        if (textLength > 360) {
             panelHeight += 35;
             questionTextMaxHeight += 20;
         }
 
-        panelHeight = Math.min(panelHeight, 625);
+        if (optionCount > 4) {
+            panelHeight += 70;
+        }
+        if (optionCount > 6) {
+            panelHeight += 35;
+        }
+        if (optionCount > 8) {
+            panelHeight += 35;
+        }
+
+        if (rowCount >= 3) {
+            panelHeight += 30;
+        }
+        if (rowCount >= 4) {
+            panelHeight += 30;
+        }
+
+        panelHeight = Math.min(panelHeight, 720);
         sceneHeight = Math.max(680, panelHeight + 80);
         questionTextMaxHeight = Math.min(questionTextMaxHeight, 320);
 
@@ -351,7 +460,7 @@ function fitAnswerTexts() {
 
         const isLong =
             label.scrollHeight > label.clientHeight ||
-            (button.dataset.fullText && button.dataset.fullText.length > 55);
+            countWords(button.dataset.fullText) > 4;
 
         if (isLong) {
             button.classList.add("has-answer-tooltip");

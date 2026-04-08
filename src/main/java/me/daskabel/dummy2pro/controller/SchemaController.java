@@ -1,5 +1,6 @@
 package me.daskabel.dummy2pro.controller;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,7 @@ import java.util.Map;
  *
  */
 
+@Profile("dev")
 @RestController
 @RequestMapping("/schema")
 public class SchemaController {

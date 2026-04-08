@@ -6,7 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.regex.Pattern;
 
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +20,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import me.daskabel.dummy2pro.dto.RoomDtos.AnswerRequest;
@@ -61,6 +65,7 @@ import me.daskabel.dummy2pro.session.QuizSessionManager.SessionOverviewDto;
 @RequestMapping("/api/session")
 public class RoomApiController
 {
+    private static final Pattern DISPLAY_NAME_PATTERN = Pattern.compile("^[\\p{L}\\p{N} _.-]{1,40}$");
 
     public static class ErrorResponse
     {
@@ -322,14 +327,19 @@ public class RoomApiController
      * abgeschlossen.
      */
     @PostMapping("/{sessionId}/room/{roomId}/advance")
-    public ResponseEntity<QuestionDto> advance(@PathVariable String sessionId, @PathVariable int roomId)
+    public ResponseEntity<QuestionDto> advance(
+            Authentication authentication,
+            @PathVariable String sessionId,
+            @PathVariable int roomId)
     {
+        assertSessionOwner(sessionId, requireCurrentUserId(authentication));
         return ResponseEntity.ok(this.sessionManager.advance(sessionId, roomId));
     }
 
     @PostMapping("/new")
-    public Map<String, Object> createNewRun(@RequestParam Long userId)
+    public Map<String, Object> createNewRun(Authentication authentication)
     {
+        Long userId = requireCurrentUserId(authentication);
         QuizSession session = this.sessionManager.createNewRunSession(userId);
 
         Map<String, Object> response = new HashMap<>();
@@ -345,14 +355,16 @@ public class RoomApiController
      * GET /api/session/{sessionId}/overview Alle 7 Räume + Gesamtpunkte + Medaillen.
      */
     @GetMapping("/{sessionId}/overview")
-    public ResponseEntity<SessionOverviewDto> getOverview(@PathVariable String sessionId)
+    public ResponseEntity<SessionOverviewDto> getOverview(Authentication authentication, @PathVariable String sessionId)
     {
+        assertSessionOwner(sessionId, requireCurrentUserId(authentication));
         return ResponseEntity.ok(this.sessionManager.getOverview(sessionId));
     }
 
     @GetMapping("/{sessionId}/review")
-    public ResponseEntity<RunReviewDto> getRunReview(@PathVariable String sessionId)
+    public ResponseEntity<RunReviewDto> getRunReview(Authentication authentication, @PathVariable String sessionId)
     {
+        assertSessionOwner(sessionId, requireCurrentUserId(authentication));
         return ResponseEntity.ok(this.sessionManager.getRunReview(sessionId));
     }
 
@@ -360,8 +372,12 @@ public class RoomApiController
      * GET /api/session/{sessionId}/room/{roomId} Raum betreten — liefert aktuelle Frage + Status.
      */
     @GetMapping("/{sessionId}/room/{roomId}")
-    public ResponseEntity<RoomStartDto> getRoom(@PathVariable String sessionId, @PathVariable int roomId)
+    public ResponseEntity<RoomStartDto> getRoom(
+            Authentication authentication,
+            @PathVariable String sessionId,
+            @PathVariable int roomId)
     {
+        assertSessionOwner(sessionId, requireCurrentUserId(authentication));
         return ResponseEntity.ok(this.sessionManager.getRoomState(sessionId, roomId));
     }
 
@@ -369,36 +385,37 @@ public class RoomApiController
      * GET /api/session/{sessionId}/room/{roomId}/status
      */
     @GetMapping("/{sessionId}/room/{roomId}/status")
-    public ResponseEntity<RoomStatusDto> getRoomStatus(@PathVariable String sessionId, @PathVariable int roomId)
+    public ResponseEntity<RoomStatusDto> getRoomStatus(
+            Authentication authentication,
+            @PathVariable String sessionId,
+            @PathVariable int roomId)
     {
+        assertSessionOwner(sessionId, requireCurrentUserId(authentication));
         RoomStatusDto status = this.sessionManager.getRoomStatus(sessionId, roomId);
         return ResponseEntity.ok(status);
     }
 
     @GetMapping("/runs")
-    public ResponseEntity<List<RunListEntryResponse>> getRunsForUser(@RequestParam Long userId)
+    public ResponseEntity<List<RunListEntryResponse>> getRunsForUser(Authentication authentication)
     {
+        Long userId = requireCurrentUserId(authentication);
         List<GameRun> runs = this.gameRunRepository.findByUser_UserIdOrderByFinishedAtAscStartedAtDesc(userId);
 
-        List<RunListEntryResponse> response = runs.stream().map(run -> {
-            RunListEntryResponse dto = new RunListEntryResponse();
-            dto.setRunId(run.getRunId());
-            dto.setStartedAt(run.getStartedAt());
-            dto.setFinishedAt(run.getFinishedAt());
-            dto.setFinished(run.getFinishedAt() != null);
-            dto.setDisplayName(run.getDisplayName());
-            return dto;
-        }).toList();
+        List<RunListEntryResponse> response = runs.stream()
+                .map(this::toRunListEntryResponse)
+                .toList();
 
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{runId}/name")
     public ResponseEntity<RunListEntryResponse> renameRun(
+            Authentication authentication,
             @PathVariable Long runId,
-            @RequestParam Long userId,
             @RequestBody RenameRunRequest request)
     {
+        Long userId = requireCurrentUserId(authentication);
+
         GameRun run = this.gameRunRepository.findByRunIdAndUser_UserId(runId, userId)
                 .orElseThrow(() -> new NoSuchElementException("Spielstand nicht gefunden"));
 
@@ -428,14 +445,19 @@ public class RoomApiController
     }
 
     @PostMapping("/load")
-    public Map<String, Object> loadRun(@RequestParam Long userId, @RequestParam Long runId)
+    public Map<String, Object> loadRun(Authentication authentication, @RequestParam Long runId)
     {
+        Long userId = requireCurrentUserId(authentication);
+
         this.gameRunRepository.findByRunIdAndUser_UserId(runId, userId)
-            .orElseThrow(
-                () -> new NoSuchElementException(
-                    "Run " + runId + " gehört nicht zu User " + userId + " oder existiert nicht."));
+                .orElseThrow(() -> new NoSuchElementException("Spielstand nicht gefunden."));
 
         QuizSession session = this.sessionManager.loadSessionForRun(runId);
+
+        if (!Objects.equals(session.getUserId(), userId))
+        {
+            throw new AccessDeniedException("Zugriff auf fremde Session verweigert.");
+        }
 
         Map<String, Object> response = new HashMap<>();
         response.put("sessionId", session.getSessionId());
@@ -455,8 +477,9 @@ public class RoomApiController
      */
 
     @PostMapping("/start")
-    public ResponseEntity<SessionStartResponse> startSession(@RequestParam Long userId)
+    public ResponseEntity<SessionStartResponse> startSession(Authentication authentication)
     {
+        Long userId = requireCurrentUserId(authentication);
         QuizSession session = this.sessionManager.createNewRunSession(userId);
 
         SessionStartResponse response = new SessionStartResponse();
@@ -471,16 +494,38 @@ public class RoomApiController
      * "selectedAnswerIds": [5] } oder GAP: { "questionId": 2, "gapAnswers": [{"gapId": 1, "selectedGapOptionId": 3}] }
      */
     @PostMapping("/{sessionId}/room/{roomId}/answer")
-    public ResponseEntity<AnswerResultDto> submitAnswer(@PathVariable String sessionId, @PathVariable int roomId,
-        @RequestBody AnswerRequest request)
+    public ResponseEntity<AnswerResultDto> submitAnswer(
+            Authentication authentication,
+            @PathVariable String sessionId,
+            @PathVariable int roomId,
+            @RequestBody AnswerRequest request)
     {
+        assertSessionOwner(sessionId, requireCurrentUserId(authentication));
         return ResponseEntity.ok(this.sessionManager.submitAnswer(sessionId, roomId, request));
     }
 
     @PostMapping("/{sessionId}/room/{roomId}/prepare")
-    public ResponseEntity<RoomStatusDto> prepareRoom(@PathVariable String sessionId, @PathVariable int roomId)
+    public ResponseEntity<RoomStatusDto> prepareRoom(
+            Authentication authentication,
+            @PathVariable String sessionId,
+            @PathVariable int roomId)
     {
+        assertSessionOwner(sessionId, requireCurrentUserId(authentication));
         return ResponseEntity.ok(this.sessionManager.prepareRoom(sessionId, roomId));
+    }
+
+    private Long requireCurrentUserId(Authentication authentication)
+    {
+        return AuthController.extractUserId(authentication);
+    }
+
+    private void assertSessionOwner(String sessionId, Long currentUserId)
+    {
+        QuizSession session = this.sessionManager.getSession(sessionId);
+        if (!Objects.equals(session.getUserId(), currentUserId))
+        {
+            throw new AccessDeniedException("Zugriff auf fremde Session verweigert.");
+        }
     }
 
     private String normalizeDisplayName(String displayName)
@@ -497,9 +542,14 @@ public class RoomApiController
             return null;
         }
 
-        if (trimmed.length() > 100)
+        if (trimmed.length() > 40)
         {
-            throw new IllegalArgumentException("Der Spielstandname darf maximal 100 Zeichen lang sein.");
+            throw new IllegalArgumentException("Der Spielstandname darf maximal 40 Zeichen lang sein.");
+        }
+
+        if (!DISPLAY_NAME_PATTERN.matcher(trimmed).matches())
+        {
+            throw new IllegalArgumentException("Der Spielstandname enthält ungültige Zeichen.");
         }
 
         return trimmed;
@@ -516,4 +566,9 @@ public class RoomApiController
         return dto;
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleForbidden(AccessDeniedException ex)
+    {
+        return ResponseEntity.status(403).body(new ErrorResponse("FORBIDDEN", ex.getMessage()));
+    }
 }

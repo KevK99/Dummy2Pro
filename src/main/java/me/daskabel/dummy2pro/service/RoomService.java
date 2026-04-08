@@ -130,21 +130,36 @@ public class RoomService
     }
 
     /**
-     * MC / TF auswerten. Eine Antwort ist korrekt wenn ALLE korrekten Optionen ausgewählt wurden und KEINE falschen.
+     * MC / TF auswerten.
+     *
+     * Einfachauswahl:
+     * - exakt richtige Auswahl = korrekt
+     *
+     * Mehrfachauswahl:
+     * - mindestens eine richtige Antwort ausgewählt = korrekt
+     * - nur falsche Antworten ausgewählt = falsch
      */
     public static AnswerResultDto evaluateMcTf(Question question, AnswerRequest request)
     {
-        // Korrekte IDs aus der DB
         Set<Long> correctIds = question.getAnswerOptions()
-            .stream()
-            .filter(a -> Boolean.TRUE.equals(a.getIsCorrect()))
-            .map(AnswerOption::getAnswerId)
-            .collect(Collectors.toSet());
+                .stream()
+                .filter(a -> Boolean.TRUE.equals(a.getIsCorrect()))
+                .map(AnswerOption::getAnswerId)
+                .collect(Collectors.toSet());
 
         Set<Long> selectedIds = new HashSet<>(
-            request.getSelectedAnswerIds() != null ? request.getSelectedAnswerIds() : Collections.emptyList());
+                request.getSelectedAnswerIds() != null ? request.getSelectedAnswerIds() : Collections.emptyList());
 
-        boolean correct = correctIds.equals(selectedIds);
+        boolean correct;
+
+        if (question.getAllowsMultiple())
+        {
+            correct = !selectedIds.isEmpty() && selectedIds.stream().anyMatch(correctIds::contains);
+        }
+        else
+        {
+            correct = correctIds.equals(selectedIds);
+        }
 
         AnswerResultDto result = new AnswerResultDto();
         result.setCorrect(correct);

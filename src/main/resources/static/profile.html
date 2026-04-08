@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="/js/sound-manager.js"></script>
+    <script src="/js/security.js"></script>
     <title>Dummy2Pro</title>
 </head>
 
@@ -380,7 +381,7 @@
     }
 
     async function loadUserProfile() {
-        const profile = await apiRequest(`/api/user/${userId}`);
+        const profile = await apiRequest(`/api/user/me`);
         updateProfileUi(profile);
     }
 
@@ -393,7 +394,7 @@
         }
 
         try {
-            const data = await apiRequest(`/api/user/${userId}/username`, {
+            const data = await apiRequest(`/api/user/me/username`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username: newName })
@@ -402,7 +403,7 @@
             updateProfileUi(data);
             profileForm.classList.add("hidden");
             profilePicBtn.disabled = false;
-            alert("Profilbild gespeichert.");
+            alert("Name gespeichert.");
         } catch (error) {
             alert(error.message);
         }
@@ -419,7 +420,7 @@
         }
 
         try {
-            const data = await apiRequest(`/api/user/${userId}/password`, {
+            const data = await apiRequest(`/api/user/me/password`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -449,7 +450,7 @@
         }
 
         try {
-            const data = await apiRequest(`/api/user/${userId}?confirmation=CONFIRM`, {
+            const data = await apiRequest(`/api/user/me?confirmation=CONFIRM`, {
                 method: "DELETE"
             });
 
@@ -469,7 +470,7 @@
 
         try {
             if (userId) {
-                await apiRequest(`/api/user/logout/${userId}`, {
+                await apiRequest(`/api/user/logout`, {
                     method: "POST"
                 });
             }
@@ -488,7 +489,7 @@
         }
 
         try {
-            const data = await apiRequest(`/api/user/${userId}/avatar`, {
+            const data = await apiRequest(`/api/user/me/avatar`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ avatar: selectedProfileImage })
@@ -532,7 +533,7 @@
 
     async function loadRuns() {
         try {
-            const runs = await apiRequest(`/api/session/runs?userId=${userId}`);
+            const runs = await apiRequest(`/api/session/runs`);
             const activeRunId = sessionStorage.getItem("runId");
 
             if (!Array.isArray(runs) || runs.length === 0) {
@@ -568,7 +569,7 @@
                     <div class="bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <div>
                             <div class="flex items-center gap-2 flex-wrap">
-                                <span class="font-bold">${displayName}</span>
+                                <span class="font-bold">${escapeHtml(displayName)}</span>
                                 <span class="${statusClass} text-white text-xs font-semibold px-2 py-1 rounded-full">${statusText}</span>
                                 ${isActive ? '<span class="bg-indigo-600 text-white text-xs font-semibold px-2 py-1 rounded-full">Ausgewählt</span>' : ''}
                             </div>
@@ -609,7 +610,7 @@
         } catch (error) {
             runsContainer.innerHTML = `
                 <div class="bg-slate-900 border border-red-500 text-red-300 rounded-lg px-4 py-3">
-                    ${error.message}
+                    ${escapeHtml(error.message)}
                 </div>
             `;
         }
@@ -633,7 +634,7 @@
         }
 
         try {
-            await apiRequest(`/api/session/${runId}/name?userId=${userId}`, {
+            await apiRequest(`/api/session/${runId}/name`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ displayName: newName })
@@ -648,7 +649,7 @@
 
     async function loadRun(runId) {
         try {
-            const data = await apiRequest(`/api/session/load?userId=${userId}&runId=${runId}`, {
+            const data = await apiRequest(`/api/session/load?runId=${runId}`, {
                 method: "POST"
             });
 
@@ -669,7 +670,7 @@
         createRunBtn.textContent = "Spielstand wird erstellt...";
 
         try {
-            const data = await apiRequest(`/api/session/new?userId=${userId}`, {
+            const data = await apiRequest(`/api/session/new`, {
                 method: "POST"
             });
 
@@ -695,7 +696,7 @@
         }
 
         try {
-            const data = await apiRequest(`/api/game/${runId}?userId=${userId}`, {
+            const data = await apiRequest(`/api/game/${runId}`, {
                 method: "DELETE"
             });
 
@@ -712,7 +713,14 @@
     }
 
     async function initProfilePage() {
-        if (!userId) {
+        let resolvedUserId = userId;
+
+        if (!resolvedUserId) {
+            const currentUser = await window.Dummy2ProSecurity.syncCurrentUser();
+            resolvedUserId = currentUser?.userId ? String(currentUser.userId) : null;
+        }
+
+        if (!resolvedUserId) {
             alert("Kein Benutzer gefunden. Bitte neu einloggen.");
             window.location.href = "/";
             return;

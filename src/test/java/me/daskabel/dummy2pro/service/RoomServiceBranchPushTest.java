@@ -288,4 +288,101 @@ class RoomServiceBranchPushTest
     {
         org.junit.jupiter.api.Assertions.assertTrue(condition);
     }
+
+    @Test
+    void privateLoadAllQuestionsForTheme_shouldReturnEmptyList_whenThemeHasNoQuestions() throws Exception
+    {
+        Theme theme = new Theme("Thema 1");
+        theme.setThemeId(100L);
+
+        when(themeRepository.findAllByOrderByThemeIdAsc()).thenReturn(List.of(theme));
+        when(questionRepository.findQuestionIdsByThemeId(100L)).thenReturn(List.of());
+
+        Method method = RoomService.class.getDeclaredMethod("loadAllQuestionsForTheme", int.class);
+        method.setAccessible(true);
+
+        @SuppressWarnings("unchecked")
+        List<Question> result = (List<Question>) method.invoke(roomService, 1);
+
+        assertEquals(List.of(), result);
+    }
+
+    @Test
+    void privateLoadAllQuestionsForTheme_shouldMergeGapFieldsKeepOrderAndIncludeGapOnlyQuestions() throws Exception
+    {
+        Theme theme = new Theme("Thema 1");
+        theme.setThemeId(100L);
+
+        Question answerQuestion = new Question(QuestionType.MC, "Q1", null, null, false, 5);
+        answerQuestion.setQuestionId(10L);
+
+        AnswerOption answer = new AnswerOption(answerQuestion, "A", true, 1);
+        answer.setAnswerId(1001L);
+        answerQuestion.setAnswerOptions(List.of(answer));
+
+        Question gapOverlay = new Question(QuestionType.MC, "Q1", null, null, false, 5);
+        gapOverlay.setQuestionId(10L);
+
+        GapField mergedGap = new GapField(gapOverlay, 0);
+        mergedGap.setGapId(500L);
+        mergedGap.setTextBefore("vor");
+        mergedGap.setTextAfter("nach");
+
+        GapOption mergedGapOption = new GapOption(mergedGap, "opt", true, 1);
+        mergedGapOption.setGapOptionId(501L);
+        mergedGap.setGapOptions(new LinkedHashSet<>(List.of(mergedGapOption)));
+        gapOverlay.setGapFields(new LinkedHashSet<>(List.of(mergedGap)));
+
+        Question gapOnlyQuestion = new Question(QuestionType.GAP, "Q2", null, null, false, 7);
+        gapOnlyQuestion.setQuestionId(20L);
+
+        GapField gapOnlyField = new GapField(gapOnlyQuestion, 0);
+        gapOnlyField.setGapId(600L);
+        gapOnlyField.setTextBefore("x");
+        gapOnlyField.setTextAfter("y");
+
+        GapOption gapOnlyOption = new GapOption(gapOnlyField, "ok", true, 1);
+        gapOnlyOption.setGapOptionId(601L);
+        gapOnlyField.setGapOptions(new LinkedHashSet<>(List.of(gapOnlyOption)));
+        gapOnlyQuestion.setGapFields(new LinkedHashSet<>(List.of(gapOnlyField)));
+
+        when(themeRepository.findAllByOrderByThemeIdAsc()).thenReturn(List.of(theme));
+        when(questionRepository.findQuestionIdsByThemeId(100L)).thenReturn(List.of(10L, 20L));
+        when(questionRepository.findByQuestionIdsWithAnswers(List.of(10L, 20L))).thenReturn(List.of(answerQuestion));
+        when(questionRepository.findByQuestionIdsWithGaps(List.of(10L, 20L))).thenReturn(List.of(gapOverlay, gapOnlyQuestion));
+
+        Method method = RoomService.class.getDeclaredMethod("loadAllQuestionsForTheme", int.class);
+        method.setAccessible(true);
+
+        @SuppressWarnings("unchecked")
+        List<Question> result = (List<Question>) method.invoke(roomService, 1);
+
+        assertEquals(2, result.size());
+        assertEquals(10L, result.get(0).getQuestionId());
+        assertEquals(1, result.get(0).getGapFields().size());
+        assertEquals(20L, result.get(1).getQuestionId());
+        assertEquals(1, result.get(1).getGapFields().size());
+    }
+
+    @Test
+    void privateGetRoomIdForThemeId_shouldReturnIndexAndThrowForUnknownTheme() throws Exception
+    {
+        Theme theme1 = new Theme("A");
+        theme1.setThemeId(11L);
+
+        Theme theme2 = new Theme("B");
+        theme2.setThemeId(22L);
+
+        when(themeRepository.findAllByOrderByThemeIdAsc()).thenReturn(List.of(theme1, theme2));
+
+        Method method = RoomService.class.getDeclaredMethod("getRoomIdForThemeId", Long.class);
+        method.setAccessible(true);
+
+        int roomId = (int) method.invoke(roomService, 22L);
+        assertEquals(2, roomId);
+
+        Exception ex = assertThrows(Exception.class, () -> method.invoke(roomService, 99L));
+        assertTrue(ex.getCause() instanceof IllegalArgumentException);
+        assertEquals("Kein Raum für themeId 99 gefunden.", ex.getCause().getMessage());
+    }
 }

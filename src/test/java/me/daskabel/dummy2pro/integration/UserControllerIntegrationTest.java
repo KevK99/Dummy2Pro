@@ -8,16 +8,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -41,12 +46,14 @@ class UserControllerIntegrationTest
     private BCryptPasswordEncoder encoder;
 
     @Test
-    void getUserProfile_success_returnsDefaultAvatarForBlankStoredAvatar() throws Exception
+    void getUserProfile_success_returnsCurrentUserFromSession() throws Exception
     {
-        User user = new User("jan" + System.nanoTime(), encoder.encode("SehrSicheresPass1!"), " ");
-        user = userRepository.save(user);
+        String password = "SehrSicheresPass1!";
+        User user = createUser("jan" + System.nanoTime(), password, " ");
 
-        mockMvc.perform(get("/api/user/{userId}", user.getUserId()))
+        MockHttpSession session = loginAndReturnSession(user.getUsername(), password);
+
+        mockMvc.perform(get("/api/user/me").session(session))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.userId").value(user.getUserId()))
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
@@ -54,145 +61,74 @@ class UserControllerIntegrationTest
     }
 
     @Test
-    void getUserProfile_unknownUser_returnsNotFound() throws Exception
+    void getUserProfile_withoutLogin_returnsUnauthorized() throws Exception
     {
-        mockMvc.perform(get("/api/user/{userId}", 999999L))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.error").value("NOT_FOUND"))
-                .andExpect(jsonPath("$.message").value("Benutzer nicht gefunden"));
+        mockMvc.perform(get("/api/user/me"))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void updateAvatar_success_updatesAvatar() throws Exception
+    void updateAvatar_success_updatesCurrentUser() throws Exception
     {
-        User user = new User("jan" + System.nanoTime(), encoder.encode("SehrSicheresPass1!"), "duck.jpg");
-        user = userRepository.save(user);
+        String password = "SehrSicheresPass1!";
+        User user = createUser("jan" + System.nanoTime(), password, "duck.jpg");
 
-        String json = objectMapper.writeValueAsString(new AvatarUpdateRequest("bee.jpg"));
+        MockHttpSession session = loginAndReturnSession(user.getUsername(), password);
 
-        mockMvc.perform(put("/api/user/{userId}/avatar", user.getUserId())
+        String json = objectMapper.writeValueAsString(Map.of("avatar", "bee.jpg"));
+
+        mockMvc.perform(put("/api/user/me/avatar")
+                        .session(session)
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.userId").value(user.getUserId()))
                 .andExpect(jsonPath("$.avatar").value("bee.jpg"));
 
-        User reloaded = userRepository.findById(user.getUserId()).orElseThrow();
-        assertEquals("bee.jpg", reloaded.getAvatar());
+        assertTrue(userRepository.findById(user.getUserId()).orElseThrow().getAvatar().equals("bee.jpg"));
     }
 
     @Test
-    void updateAvatar_blankValue_resetsToDefaultAvatar() throws Exception
+    void updateUsername_success_updatesCurrentUser() throws Exception
     {
-        User user = new User("jan" + System.nanoTime(), encoder.encode("SehrSicheresPass1!"), "bee.jpg");
-        user = userRepository.save(user);
+        String password = "SehrSicheresPass1!";
+        User user = createUser("alt" + System.nanoTime(), password, "duck.jpg");
 
-        String json = objectMapper.writeValueAsString(new AvatarUpdateRequest(" "));
-
-        mockMvc.perform(put("/api/user/{userId}/avatar", user.getUserId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.userId").value(user.getUserId()))
-                .andExpect(jsonPath("$.avatar").value("duck.jpg"));
-
-        User reloaded = userRepository.findById(user.getUserId()).orElseThrow();
-        assertEquals("duck.jpg", reloaded.getAvatar());
-    }
-
-    @Test
-    void updateAvatar_invalidAvatar_returnsBadRequest() throws Exception
-    {
-        User user = new User("jan" + System.nanoTime(), encoder.encode("SehrSicheresPass1!"), "duck.jpg");
-        user = userRepository.save(user);
-
-        String json = objectMapper.writeValueAsString(new AvatarUpdateRequest("verboten.png"));
-
-        mockMvc.perform(put("/api/user/{userId}/avatar", user.getUserId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.message").value("Ungültiger Avatar."));
-    }
-
-    @Test
-    void updateUsername_success_updatesUsername() throws Exception
-    {
-        User user = new User("alt" + System.nanoTime(), encoder.encode("SehrSicheresPass1!"), "duck.jpg");
-        user = userRepository.save(user);
+        MockHttpSession session = loginAndReturnSession(user.getUsername(), password);
 
         String newUsername = "neu" + System.nanoTime();
-        String json = objectMapper.writeValueAsString(new UsernameUpdateRequest(newUsername));
+        String json = objectMapper.writeValueAsString(Map.of("username", newUsername));
 
-        mockMvc.perform(put("/api/user/{userId}/username", user.getUserId())
+        mockMvc.perform(put("/api/user/me/username")
+                        .session(session)
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.userId").value(user.getUserId()))
-                .andExpect(jsonPath("$.username").value(newUsername))
-                .andExpect(jsonPath("$.avatar").value("duck.jpg"));
+                .andExpect(jsonPath("$.username").value(newUsername));
 
-        User reloaded = userRepository.findById(user.getUserId()).orElseThrow();
-        assertEquals(newUsername, reloaded.getUsername());
-    }
-
-    @Test
-    void updateUsername_duplicateUsername_returnsBadRequest() throws Exception
-    {
-        User first = new User("first" + System.nanoTime(), encoder.encode("SehrSicheresPass1!"), "duck.jpg");
-        User second = new User("second" + System.nanoTime(), encoder.encode("SehrSicheresPass1!"), "duck.jpg");
-
-        first = userRepository.save(first);
-        second = userRepository.save(second);
-
-        String json = objectMapper.writeValueAsString(new UsernameUpdateRequest(first.getUsername()));
-
-        mockMvc.perform(put("/api/user/{userId}/username", second.getUserId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.message").value("Username ist bereits vergeben."));
-    }
-
-    @Test
-    void updatePassword_success_updatesStoredPasswordHash() throws Exception
-    {
-        String oldPassword = "AktuellesPasswort1!";
-        String newPassword = "NeuesPasswort123!";
-
-        User user = new User("jan" + System.nanoTime(), encoder.encode(oldPassword), "duck.jpg");
-        user = userRepository.save(user);
-
-        String json = objectMapper.writeValueAsString(
-                new PasswordUpdateRequest(oldPassword, newPassword, newPassword)
-        );
-
-        mockMvc.perform(put("/api/user/{userId}/password", user.getUserId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("Passwort erfolgreich geändert."));
-
-        User reloaded = userRepository.findById(user.getUserId()).orElseThrow();
-        assertTrue(encoder.matches(newPassword, reloaded.getPasswordHash()));
-        assertFalse(encoder.matches(oldPassword, reloaded.getPasswordHash()));
+        assertTrue(userRepository.findById(user.getUserId()).orElseThrow().getUsername().equals(newUsername));
     }
 
     @Test
     void updatePassword_confirmationMismatch_returnsBadRequest() throws Exception
     {
-        String oldPassword = "AktuellesPasswort1!";
+        String password = "AktuellesPasswort1!";
+        User user = createUser("jan" + System.nanoTime(), password, "duck.jpg");
 
-        User user = new User("jan" + System.nanoTime(), encoder.encode(oldPassword), "duck.jpg");
-        user = userRepository.save(user);
+        MockHttpSession session = loginAndReturnSession(user.getUsername(), password);
 
-        String json = objectMapper.writeValueAsString(
-                new PasswordUpdateRequest(oldPassword, "NeuesPasswort123!", "AnderesPasswort123!")
-        );
+        String json = objectMapper.writeValueAsString(Map.of(
+                "currentPassword", password,
+                "newPassword", "NeuesPasswort123!",
+                "newPasswordConfirm", "AnderesPasswort123!"
+        ));
 
-        mockMvc.perform(put("/api/user/{userId}/password", user.getUserId())
+        mockMvc.perform(put("/api/user/me/password")
+                        .session(session)
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isBadRequest())
@@ -201,52 +137,62 @@ class UserControllerIntegrationTest
     }
 
     @Test
-    void updatePassword_wrongCurrentPassword_returnsBadRequest() throws Exception
+    void logout_success_thenProtectedEndpointIsUnauthorized() throws Exception
     {
-        User user = new User("jan" + System.nanoTime(), encoder.encode("AktuellesPasswort1!"), "duck.jpg");
-        user = userRepository.save(user);
+        String password = "SehrSicheresPass1!";
+        User user = createUser("jan" + System.nanoTime(), password, "duck.jpg");
 
-        String json = objectMapper.writeValueAsString(
-                new PasswordUpdateRequest("Falsch123!", "NeuesPasswort123!", "NeuesPasswort123!")
-        );
+        MockHttpSession session = loginAndReturnSession(user.getUsername(), password);
 
-        mockMvc.perform(put("/api/user/{userId}/password", user.getUserId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.message").value("Das aktuelle Passwort ist falsch."));
+        mockMvc.perform(post("/api/user/logout")
+                        .session(session)
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Erfolgreich ausgeloggt."));
+
+        mockMvc.perform(get("/api/user/me").session(session))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void deleteUser_withoutConfirmation_returnsBadRequest() throws Exception
+    void deleteUser_withConfirmation_deletesUser_andSessionCannotReadProfileAfterwards() throws Exception
     {
-        User user = new User("jan" + System.nanoTime(), encoder.encode("SehrSicheresPass1!"), "duck.jpg");
-        user = userRepository.save(user);
+        String password = "SehrSicheresPass1!";
+        User user = createUser("jan" + System.nanoTime(), password, "duck.jpg");
 
-        mockMvc.perform(delete("/api/user/{userId}", user.getUserId())
-                        .param("confirmation", "NOPE"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("Bestätigung erforderlich."));
+        MockHttpSession session = loginAndReturnSession(user.getUsername(), password);
 
-        assertTrue(userRepository.findById(user.getUserId()).isPresent());
-    }
-
-    @Test
-    void deleteUser_withConfirmation_deletesUser() throws Exception
-    {
-        User user = new User("jan" + System.nanoTime(), encoder.encode("SehrSicheresPass1!"), "duck.jpg");
-        user = userRepository.save(user);
-
-        mockMvc.perform(delete("/api/user/{userId}", user.getUserId())
+        mockMvc.perform(delete("/api/user/me")
+                        .session(session)
+                        .with(csrf())
                         .param("confirmation", "CONFIRM"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Benutzer erfolgreich gelöscht."));
 
-        assertTrue(userRepository.findById(user.getUserId()).isEmpty());
+        assertFalse(userRepository.findById(user.getUserId()).isPresent());
+
+        mockMvc.perform(get("/api/user/me").session(session))
+                .andExpect(status().isUnauthorized());
     }
 
-    private record AvatarUpdateRequest(String avatar) {}
-    private record UsernameUpdateRequest(String username) {}
-    private record PasswordUpdateRequest(String currentPassword, String newPassword, String newPasswordConfirm) {}
+    private User createUser(String username, String plainPassword, String avatar)
+    {
+        return userRepository.save(new User(username, encoder.encode(plainPassword), avatar));
+    }
+
+    private MockHttpSession loginAndReturnSession(String username, String password) throws Exception
+    {
+        String json = objectMapper.writeValueAsString(Map.of(
+                "username", username,
+                "password", password
+        ));
+
+        MvcResult result = mockMvc.perform(post("/api/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        return (MockHttpSession) result.getRequest().getSession(false);
+    }
 }

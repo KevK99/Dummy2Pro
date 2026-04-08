@@ -1,7 +1,11 @@
 package me.daskabel.dummy2pro.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
@@ -194,5 +198,46 @@ class ModelAccessorCoverageTest
         Object nested = type.getDeclaredConstructor().newInstance();
         assertNotNull(nested);
         return nested;
+    }
+
+    @Test
+    void embeddedIds_shouldCoverEqualsBranches_forSelfNullOtherTypeAndDifferentValues()
+    {
+        QuestionProgressId questionProgressId = new QuestionProgressId(1L, 2L);
+        assertTrue(questionProgressId.equals(questionProgressId));
+        assertFalse(questionProgressId.equals(null));
+        assertFalse(questionProgressId.equals("x"));
+        assertNotEquals(questionProgressId, new QuestionProgressId(1L, 99L));
+
+        RunGapAnswerId runGapAnswerId = new RunGapAnswerId(1L, 2L, 3L);
+        assertTrue(runGapAnswerId.equals(runGapAnswerId));
+        assertFalse(runGapAnswerId.equals(null));
+        assertFalse(runGapAnswerId.equals("x"));
+        assertNotEquals(runGapAnswerId, new RunGapAnswerId(1L, 2L, 99L));
+
+        RunSelectedAnswerId runSelectedAnswerId = new RunSelectedAnswerId(1L, 2L, 4L);
+        assertTrue(runSelectedAnswerId.equals(runSelectedAnswerId));
+        assertFalse(runSelectedAnswerId.equals(null));
+        assertFalse(runSelectedAnswerId.equals("x"));
+        assertNotEquals(runSelectedAnswerId, new RunSelectedAnswerId(1L, 2L, 99L));
+    }
+
+    @Test
+    void roomConstructor_shouldUseProvidedQuestionList_orCreateEmptyListWhenNull()
+    {
+        Theme theme = new Theme("Thema");
+        User user = new User("jan", "hash");
+        Question question = new Question(QuestionType.MC, "Start", null, null, false, 3);
+
+        List<Question> providedQuestions = new java.util.ArrayList<>(List.of(question));
+        Room roomWithProvidedList = new Room(theme, "Raum A", "Beschreibung", user, providedQuestions);
+
+        Room roomWithNullQuestions = new Room(theme, "Raum B", "Beschreibung", user, null);
+
+        assertSame(providedQuestions, roomWithProvidedList.getQuestion());
+        assertEquals(1, roomWithProvidedList.getQuestion().size());
+
+        assertNotNull(roomWithNullQuestions.getQuestion());
+        assertEquals(0, roomWithNullQuestions.getQuestion().size());
     }
 }

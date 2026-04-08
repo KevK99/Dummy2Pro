@@ -233,7 +233,7 @@
             return null;
         }
 
-        const loadResponse = await fetch(`/api/session/load?userId=${encodeURIComponent(userId)}&runId=${encodeURIComponent(storedRunId)}`, {
+        const loadResponse = await fetch(`/api/session/load?runId=${encodeURIComponent(storedRunId)}`, {
             method: "POST"
         });
 

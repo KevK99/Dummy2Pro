@@ -85,20 +85,19 @@ class Dummy2ProSmokeTest
     }
 
     @Test
-    void publicApiEndpoints_areReachableWithoutAuthentication() throws Exception
+    void protectedAndPublicApiEndpoints_haveExpectedSecurityBehavior() throws Exception
     {
-        mockMvc.perform(get("/api/session/runs")
-                        .param("userId", "999999"))
-                .andExpect(status().isOk());
+        mockMvc.perform(get("/api/session/runs"))
+                .andExpect(status().isUnauthorized());
 
         mockMvc.perform(post("/api/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "username": "niemand",
-                                  "password": "falsch"
-                                }
-                                """))
+                            {
+                              "username": "niemand",
+                              "password": "falsch"
+                            }
+                            """))
                 .andExpect(status().isUnauthorized());
     }
 }

@@ -9,16 +9,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -126,5 +131,72 @@ class AuthControllerIntegrationTest
                         .content(json))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.error").value("UNAUTHORIZED"));
+    }
+
+    @Test
+    void login_success_thenProtectedEndpointWorksWithReturnedSession() throws Exception
+    {
+        String username = "jan" + System.nanoTime();
+        String password = "SehrSicheresPass1!";
+
+        User user = new User(username, encoder.encode(password), "duck.jpg");
+        user = userRepository.save(user);
+
+        MockHttpSession session = loginAndReturnSession(username, password, null);
+
+        mockMvc.perform(get("/api/user/me").session(session))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userId").value(user.getUserId()))
+                .andExpect(jsonPath("$.username").value(username))
+                .andExpect(jsonPath("$.avatar").value("duck.jpg"));
+    }
+
+    @Test
+    void login_onSameSession_switchesCurrentUser() throws Exception
+    {
+        String password = "SehrSicheresPass1!";
+
+        User firstUser = new User("first" + System.nanoTime(), encoder.encode(password), "duck.jpg");
+        User secondUser = new User("second" + System.nanoTime(), encoder.encode(password), "bee.jpg");
+        firstUser = userRepository.save(firstUser);
+        secondUser = userRepository.save(secondUser);
+
+        MockHttpSession firstSession = loginAndReturnSession(firstUser.getUsername(), password, null);
+
+        mockMvc.perform(get("/api/user/me").session(firstSession))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userId").value(firstUser.getUserId()))
+                .andExpect(jsonPath("$.username").value(firstUser.getUsername()));
+
+        MockHttpSession secondSession = loginAndReturnSession(secondUser.getUsername(), password, firstSession);
+
+        mockMvc.perform(get("/api/user/me").session(secondSession))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userId").value(secondUser.getUserId()))
+                .andExpect(jsonPath("$.username").value(secondUser.getUsername()))
+                .andExpect(jsonPath("$.avatar").value("bee.jpg"));
+    }
+
+    private MockHttpSession loginAndReturnSession(String username, String password, MockHttpSession existingSession) throws Exception
+    {
+        String json = objectMapper.writeValueAsString(Map.of(
+                "username", username,
+                "password", password
+        ));
+
+        var requestBuilder = post("/api/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        if (existingSession != null)
+        {
+            requestBuilder.session(existingSession);
+        }
+
+        MvcResult result = mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andReturn();
+
+        return (MockHttpSession) result.getRequest().getSession(false);
     }
 }

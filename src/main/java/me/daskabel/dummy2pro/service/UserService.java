@@ -99,6 +99,7 @@ public class UserService
         return user;
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public void deleteUser(Long userId)
     {
         User user =

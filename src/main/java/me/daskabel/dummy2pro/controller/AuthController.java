@@ -5,6 +5,10 @@ import me.daskabel.dummy2pro.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import me.daskabel.dummy2pro.security.SecuritySessionKeys;
+import me.daskabel.dummy2pro.security.AuthenticatedUser;
 
 /**
  * Controller für Authentifizierung.
@@ -36,9 +40,43 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest request) {
+    public LoginResponse login(
+            @RequestBody LoginRequest request,
+            HttpServletRequest httpRequest)
+    {
         try {
             User user = userService.authenticate(request.getUsername(), request.getPassword());
+
+            HttpSession existingSession = httpRequest.getSession(false);
+            if (existingSession != null)
+            {
+                existingSession.invalidate();
+            }
+
+            HttpSession session = httpRequest.getSession(true);
+
+            session.setAttribute(SecuritySessionKeys.USER_ID, user.getUserId());
+            session.setAttribute(SecuritySessionKeys.USERNAME, user.getUsername());
+
+            AuthenticatedUser principal = new AuthenticatedUser(user.getUserId(), user.getUsername());
+
+            org.springframework.security.authentication.UsernamePasswordAuthenticationToken authentication =
+                    org.springframework.security.authentication.UsernamePasswordAuthenticationToken.authenticated(
+                            principal,
+                            null,
+                            org.springframework.security.core.authority.AuthorityUtils.createAuthorityList("ROLE_USER")
+                    );
+
+            org.springframework.security.core.context.SecurityContext context =
+                    org.springframework.security.core.context.SecurityContextHolder.createEmptyContext();
+            context.setAuthentication(authentication);
+            org.springframework.security.core.context.SecurityContextHolder.setContext(context);
+
+            session.setAttribute(
+                    org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
+                    context
+            );
+
             return new LoginResponse(
                     user.getUserId(),
                     user.getUsername(),
@@ -48,6 +86,16 @@ public class AuthController {
         } catch (IllegalArgumentException ex) {
             throw new UnauthorizedException(ex.getMessage());
         }
+    }
+
+    public static Long extractUserId(org.springframework.security.core.Authentication authentication)
+    {
+        if (authentication == null || !(authentication.getPrincipal() instanceof AuthenticatedUser authenticatedUser))
+        {
+            throw new org.springframework.security.access.AccessDeniedException("Nicht eingeloggt.");
+        }
+
+        return authenticatedUser.userId();
     }
 
     @ExceptionHandler(UnauthorizedException.class)

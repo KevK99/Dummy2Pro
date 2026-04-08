@@ -1,23 +1,88 @@
 package me.daskabel.dummy2pro.config;
 
+import me.daskabel.dummy2pro.security.SessionAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-
-/**
- * Einfache Security-Konfiguration für die Entwicklungsphase:
- * alle Endpunkte sind hiermit ohne Login erreichbar.
- */
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
-public class SecurityConfig {
-
+public class SecurityConfig
+{
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            SessionAuthenticationFilter sessionAuthenticationFilter) throws Exception
+    {
         return http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .addFilterBefore(sessionAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .ignoringRequestMatchers(
+                                "/api/login",
+                                "/api/register",
+                                "/api/session/**",
+                                "/api/user/**",
+                                "/api/game/**"
+                        )
+                )
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                )
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/",
+                                "/index.html",
+                                "/login.html",
+                                "/register.html",
+                                "/api/login",
+                                "/api/register",
+                                "/csrf",
+                                "/images/**",
+                                "/js/**",
+                                "/css/**",
+                                "/favicon.ico",
+                                "/actuator/health",
+                                "/actuator/info"
+                        ).permitAll()
+                        .requestMatchers(
+                                "/schema/**",
+                                "/actuator/beans/**",
+                                "/actuator/env/**",
+                                "/actuator/configprops/**"
+                        ).denyAll()
+                        .requestMatchers(HttpMethod.GET, "/error").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            if (request.getRequestURI().startsWith("/api/"))
+                            {
+                                response.sendError(401);
+                            }
+                            else
+                            {
+                                response.sendRedirect("/");
+                            }
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            if (request.getRequestURI().startsWith("/api/"))
+                            {
+                                response.sendError(403);
+                            }
+                            else
+                            {
+                                response.sendRedirect("/");
+                            }
+                        })
+                )
+                .logout(logout -> logout.disable())
+                .httpBasic(httpBasic -> httpBasic.disable())
+                .formLogin(form -> form.disable())
                 .build();
     }
 }

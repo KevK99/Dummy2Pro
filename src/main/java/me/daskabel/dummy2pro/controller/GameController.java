@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RestController;
 
 import me.daskabel.dummy2pro.model.GameRun;
@@ -81,8 +81,10 @@ public class GameController
 
     @Transactional
     @DeleteMapping("/{runId}")
-    public ResponseEntity<MessageResponse> deleteGameRun(@PathVariable Long runId, @RequestParam Long userId)
+    public ResponseEntity<MessageResponse> deleteGameRun(@PathVariable Long runId, Authentication authentication)
     {
+        Long userId = AuthController.extractUserId(authentication);
+
         GameRun run = this.gameRunRepository.findByRunIdAndUser_UserId(runId, userId)
                 .orElseThrow(() -> new NoSuchElementException("Spielstand nicht gefunden"));
 
@@ -92,6 +94,10 @@ public class GameController
             return ResponseEntity.badRequest()
                     .body(new MessageResponse("Der letzte Spielstand kann nicht gelöscht werden."));
         }
+
+        this.runSelectedAnswerRepository.deleteByRun_RunId(runId);
+        this.runGapAnswerRepository.deleteByRun_RunId(runId);
+        this.questionProgressRepository.deleteByRun_RunId(runId);
 
         this.gameRunRepository.delete(run);
         this.gameRunRepository.flush();
