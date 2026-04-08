@@ -61,6 +61,8 @@
         >
             Registrieren
         </button>
+
+        <div id="registerErrorMessage" class="hidden mt-4"></div>
     </form>
 
     <div class="text-center text-sm text-gray-500 mt-6">
@@ -75,10 +77,40 @@
 
 <script>
     document.getElementById("registerForm").addEventListener("submit", registerUser);
+
+    function setRegisterMessage(message) {
+        const element = document.getElementById("registerErrorMessage");
+        if (!element) {
+            return;
+        }
+
+        element.className = "mt-4 rounded-lg border border-rose-400/40 bg-rose-500/10 px-4 py-3 text-rose-100";
+        element.innerHTML = `
+            <div class="flex items-start gap-3">
+                <span class="shrink-0 rounded-full px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.24em] bg-rose-400/15 text-rose-100 border border-rose-300/30">
+                    Fehler
+                </span>
+                <p class="min-w-0 flex-1 text-sm font-medium leading-6">${message}</p>
+            </div>
+        `;
+    }
+
+    function clearRegisterMessage() {
+        const element = document.getElementById("registerErrorMessage");
+        if (!element) {
+            return;
+        }
+
+        element.className = "hidden";
+        element.innerHTML = "";
+    }
+
     // damit das mit dem Backend interagiert.
     async function registerUser(event) {
         event.preventDefault();
         window.Dummy2ProSound?.play("register");
+
+        clearRegisterMessage();
 
         const username = document.getElementById("username").value.trim();
         const password = document.getElementById("password").value;
@@ -98,14 +130,17 @@
             }
 
             if (!response.ok) {
-                alert(data.message || "Registrierung fehlgeschlagen.");
+                setRegisterMessage(data.message || "Registrierung fehlgeschlagen.");
                 return;
             }
 
-            alert(data.message || `Registrierung erfolgreich für ${data.username || username}.`);
+            sessionStorage.setItem(
+                "loginFlash",
+                data.message || `Registrierung erfolgreich für ${data.username || username}.`
+            );
             window.location.href = "/";
         } catch (error) {
-            alert("Verbindung zum Server fehlgeschlagen.");
+            setRegisterMessage("Verbindung zum Server fehlgeschlagen.");
             console.error(error);
         }
     }

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="/js/sound-manager.js"></script>
+    <script src="/js/ui-feedback.js"></script>
     <script src="/js/security.js"></script>
     <title>Dummy2Pro</title>
 </head>
@@ -52,6 +53,7 @@
             </button>
         </div>
     </header>
+    <div id="profilePageMessage" class="hidden"></div>
 
     <div class="bg-slate-800 border border-slate-700 shadow-xl rounded-2xl p-8" id="nameForm">
         <form class="space-y-5">
@@ -284,6 +286,24 @@
         return div.innerHTML;
     }
 
+    function showProfileMessage(message, type = "success") {
+        window.Dummy2ProUI.setInlineMessage("profilePageMessage", message, type);
+        const target = document.getElementById("profilePageMessage");
+        target?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    function clearProfileMessage() {
+        window.Dummy2ProUI.clearInlineMessage("profilePageMessage");
+    }
+
+    async function showProfileSuccessModal(message, title = "Erfolgreich") {
+        await window.Dummy2ProUI.notice(message, {
+            title,
+            okText: "OK",
+            type: "success"
+        });
+    }
+
     function openNameEdit() {
         nameForm.classList.add("hidden");
         newNameForm.classList.remove("hidden");
@@ -388,8 +408,10 @@
     async function saveNewName() {
         const newName = newNameInput.value.trim();
 
+        clearProfileMessage();
+
         if (!newName) {
-            alert("Bitte gib einen neuen Namen ein.");
+            showProfileMessage("Bitte gib einen neuen Namen ein.", "warning");
             return;
         }
 
@@ -401,11 +423,10 @@
             });
 
             updateProfileUi(data);
-            profileForm.classList.add("hidden");
-            profilePicBtn.disabled = false;
-            alert("Name gespeichert.");
+            closeNameEdit();
+            await showProfileSuccessModal("Name erfolgreich geändert.", "Name geändert");
         } catch (error) {
-            alert(error.message);
+            showProfileMessage(error.message, "error");
         }
     }
 
@@ -415,7 +436,7 @@
         const newPwConfirm = document.getElementById('newPwConfirm').value;
 
         if (!pw || !newPw || !newPwConfirm) {
-            alert("Bitte fülle alle Passwortfelder aus.");
+            showProfileMessage("Bitte fülle alle Passwortfelder aus.", "warning");
             return;
         }
 
@@ -434,17 +455,28 @@
             document.getElementById('newPw').value = "";
             document.getElementById('newPwConfirm').value = "";
 
-            alert((data.message || "Passwort erfolgreich geändert.") + " Bitte melde dich jetzt mit dem neuen Passwort erneut an.");
+            localStorage.setItem(
+                "dummy2proLoginFlash",
+                (data.message || "Passwort erfolgreich geändert.") + " Bitte melde dich jetzt mit dem neuen Passwort erneut an."
+            );
 
             sessionStorage.clear();
             window.location.replace("/");
         } catch (error) {
-            alert(error.message);
+            showProfileMessage(error.message, "error");
         }
     }
 
     async function deleteUser() {
-        const confirmed = confirm("Willst du deinen Account wirklich endgültig löschen?");
+        clearProfileMessage();
+
+        const confirmed = await window.Dummy2ProUI.confirm("Willst du deinen Account wirklich endgültig löschen?", {
+            title: "Account löschen",
+            confirmText: "Endgültig löschen",
+            cancelText: "Abbrechen",
+            variant: "danger"
+        });
+
         if (!confirmed) {
             return;
         }
@@ -454,37 +486,43 @@
                 method: "DELETE"
             });
 
+            localStorage.setItem("dummy2proRegisterFlash", data.message || "Benutzer erfolgreich gelöscht.");
             sessionStorage.clear();
-            alert(data.message || "Benutzer erfolgreich gelöscht.");
             window.location.replace("/register.html");
         } catch (error) {
-            alert(error.message);
+            showProfileMessage(error.message, "error");
         }
     }
 
     async function logoutUser() {
-        const confirmed = confirm("Willst du dich wirklich ausloggen?");
+        clearProfileMessage();
+
+        const confirmed = await window.Dummy2ProUI.confirm("Willst du dich wirklich ausloggen?", {
+            title: "Ausloggen",
+            confirmText: "Ausloggen",
+            cancelText: "Abbrechen"
+        });
+
         if (!confirmed) {
             return;
         }
 
         try {
-            if (userId) {
-                await apiRequest(`/api/user/logout`, {
-                    method: "POST"
-                });
-            }
+            await apiRequest(`/api/user/logout`, {
+                method: "POST"
+            });
         } catch (error) {
             console.warn("Logout-API fehlgeschlagen:", error);
         }
 
+        localStorage.setItem("dummy2proLoginFlash", "Du wurdest erfolgreich ausgeloggt.");
         sessionStorage.clear();
         window.location.replace("/");
     }
 
     async function saveProfilePic() {
         if (!selectedProfileImage) {
-            alert("Bitte zuerst ein Profilbild auswählen.");
+            showProfileMessage("Bitte zuerst ein Profilbild auswählen.", "warning");
             return;
         }
 
@@ -497,9 +535,9 @@
 
             updateProfileUi(data);
             profileForm.classList.add("hidden");
-            alert("Profilbild gespeichert.");
+            await showProfileSuccessModal("Profilbild gespeichert.", "Profilbild geändert");
         } catch (error) {
-            alert(error.message);
+            showProfileMessage(error.message, "error");
         }
     }
 
@@ -620,13 +658,21 @@
         const run = currentRuns.find(entry => String(entry.runId) === String(runId));
 
         if (!run) {
-            alert("Spielstand nicht gefunden.");
+            showProfileMessage("Spielstand nicht gefunden.", "error");
             return;
         }
 
-        const newName = prompt(
+        clearProfileMessage();
+
+        const newName = await window.Dummy2ProUI.prompt(
             "Gib einen Namen für den Spielstand ein. Leer lassen = Standardname.",
-            run.displayName ?? ""
+            run.displayName ?? "",
+            {
+                title: "Spielstand umbenennen",
+                confirmText: "Speichern",
+                cancelText: "Abbrechen",
+                placeholder: "Spielstandname"
+            }
         );
 
         if (newName === null) {
@@ -634,22 +680,22 @@
         }
 
         try {
-            await apiRequest(`/api/session/${runId}/name`, {
+            await apiRequest(`/api/session/${runId}/name?userId=${userId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ displayName: newName })
             });
 
             await loadRuns();
-            alert("Spielstand wurde aktualisiert.");
+            await showProfileSuccessModal("Spielstand wurde aktualisiert.", "Spielstand umbenannt");
         } catch (error) {
-            alert(error.message);
+            showProfileMessage(error.message, "error");
         }
     }
 
     async function loadRun(runId) {
         try {
-            const data = await apiRequest(`/api/session/load?runId=${runId}`, {
+            const data = await apiRequest(`/api/session/load?userId=${userId}&runId=${runId}`, {
                 method: "POST"
             });
 
@@ -657,9 +703,9 @@
             sessionStorage.setItem("runId", String(data.runId));
 
             await loadRuns();
-            alert("Spielstand wurde geladen.");
+            showProfileMessage("Spielstand wurde geladen.", "success");
         } catch (error) {
-            alert(error.message);
+            showProfileMessage(error.message, "error");
         }
     }
 
@@ -670,7 +716,7 @@
         createRunBtn.textContent = "Spielstand wird erstellt...";
 
         try {
-            const data = await apiRequest(`/api/session/new`, {
+            const data = await apiRequest(`/api/session/new?userId=${userId}`, {
                 method: "POST"
             });
 
@@ -678,9 +724,9 @@
             sessionStorage.setItem("runId", String(data.runId));
 
             await loadRuns();
-            alert("Neuer Spielstand wurde angelegt.");
+            showProfileMessage("Neuer Spielstand wurde angelegt.", "success");
         } catch (error) {
-            alert(error.message);
+            showProfileMessage(error.message, "error");
         } finally {
             createRunBtn.disabled = false;
             createRunBtn.textContent = originalText;
@@ -689,14 +735,21 @@
 
     async function deleteRun(runId) {
         const activeRunId = sessionStorage.getItem("runId");
-        const confirmed = confirm("Soll dieser Spielstand wirklich gelöscht werden?");
+        clearProfileMessage();
+
+        const confirmed = await window.Dummy2ProUI.confirm("Soll dieser Spielstand wirklich gelöscht werden?", {
+            title: "Spielstand löschen",
+            confirmText: "Löschen",
+            cancelText: "Abbrechen",
+            variant: "danger"
+        });
 
         if (!confirmed) {
             return;
         }
 
         try {
-            const data = await apiRequest(`/api/game/${runId}`, {
+            const data = await apiRequest(`/api/game/${runId}?userId=${userId}`, {
                 method: "DELETE"
             });
 
@@ -706,9 +759,9 @@
             }
 
             await loadRuns();
-            alert(data.message || "Spielstand erfolgreich gelöscht.");
+            showProfileMessage(data.message || "Spielstand erfolgreich gelöscht.", "success");
         } catch (error) {
-            alert(error.message);
+            showProfileMessage(error.message, "error");
         }
     }
 
@@ -721,7 +774,7 @@
         }
 
         if (!resolvedUserId) {
-            alert("Kein Benutzer gefunden. Bitte neu einloggen.");
+            showProfileMessage("Kein Benutzer gefunden. Bitte neu einloggen.", "error");
             window.location.href = "/";
             return;
         }

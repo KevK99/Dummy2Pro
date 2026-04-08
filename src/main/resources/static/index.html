@@ -9,82 +9,141 @@
     <title>Dummy2Pro</title>
 </head>
 
-    <body class="min-h-screen bg-slate-950 text-slate-100">
-        <div class="mx-auto max-w-6xl px-6 py-10">
-            <div id="login"></div>
-        </div>
+<body class="min-h-screen bg-slate-950 text-slate-100">
+<div class="mx-auto max-w-6xl px-6 py-10">
+    <div id="login"></div>
+</div>
 
-        <script>
-            fetch('/login.html')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('login.html konnte nicht geladen werden');
-                    }
-                    return response.text();
-                })
-                .then(loginHTML => {
-                    document.getElementById('login').innerHTML = loginHTML;
-                    initLoginForm();
-                })
-                .catch(error => {
-                    document.getElementById('login').innerHTML =
-                        '<p class="text-red-400">Fehler beim Laden der Login-Seite.</p>';
-                    console.error(error);
-                });
-            function initLoginForm() {
-                const form = document.getElementById("loginForm");
+<script>
+    fetch('/login.html')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('login.html konnte nicht geladen werden');
+            }
+            return response.text();
+        })
+        .then(loginHTML => {
+            document.getElementById('login').innerHTML = loginHTML;
+            initLoginForm();
+            showLoginFlashIfPresent();
+        })
+        .catch(error => {
+            document.getElementById('login').innerHTML =
+                '<p class="text-red-400">Fehler beim Laden der Login-Seite.</p>';
+            console.error(error);
+        });
 
-                if (!form) {
-                    console.error("loginForm nicht gefunden.");
-                    return;
-                }
+    function setBoxMessage(targetId, message, type = "error") {
+        const element = document.getElementById(targetId);
+        if (!element) {
+            return;
+        }
 
-                form.addEventListener("submit", loginUser);
+        const config = type === "success"
+            ? {
+                wrapper: targetId === "loginSuccessMessage"
+                    ? "mb-6 rounded-lg border border-emerald-400/40 bg-emerald-500/10 px-4 py-3 text-emerald-100"
+                    : "mt-4 rounded-lg border border-emerald-400/40 bg-emerald-500/10 px-4 py-3 text-emerald-100",
+                label: "Erfolg",
+                badge: "bg-emerald-400/15 text-emerald-100 border border-emerald-300/30"
+            }
+            : {
+                wrapper: "mt-4 rounded-lg border border-rose-400/40 bg-rose-500/10 px-4 py-3 text-rose-100",
+                label: "Fehler",
+                badge: "bg-rose-400/15 text-rose-100 border border-rose-300/30"
+            };
+
+        element.className = config.wrapper;
+        element.innerHTML = `
+            <div class="flex items-start gap-3">
+                <span class="shrink-0 rounded-full px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.24em] ${config.badge}">
+                    ${config.label}
+                </span>
+                <p class="min-w-0 flex-1 text-sm font-medium leading-6">${message}</p>
+            </div>
+        `;
+    }
+
+    function clearBoxMessage(targetId) {
+        const element = document.getElementById(targetId);
+        if (!element) {
+            return;
+        }
+
+        element.className = "hidden";
+        element.innerHTML = "";
+    }
+
+    function showLoginFlashIfPresent() {
+        const flash = sessionStorage.getItem("loginFlash");
+        if (!flash) {
+            return;
+        }
+
+        sessionStorage.removeItem("loginFlash");
+        setBoxMessage("loginSuccessMessage", flash, "success");
+    }
+
+    function initLoginForm() {
+        const form = document.getElementById("loginForm");
+
+        if (!form) {
+            console.error("loginForm nicht gefunden.");
+            return;
+        }
+
+        form.addEventListener("submit", loginUser);
+    }
+
+    async function loginUser(event) {
+        event.preventDefault();
+        window.Dummy2ProSound?.play("login");
+
+        sessionStorage.removeItem("sessionId");
+        sessionStorage.removeItem("runId");
+        sessionStorage.removeItem("userId");
+        sessionStorage.removeItem("username");
+        sessionStorage.removeItem("avatar");
+
+        clearBoxMessage("loginErrorMessage");
+
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        try {
+            const response = await fetch("/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password })
+            });
+
+            let data = {};
+            try {
+                data = await response.json();
+            } catch (e) {
+                data = {};
             }
 
-            async function loginUser(event) {
-                event.preventDefault();
-                window.Dummy2ProSound?.play("login");
-
-                sessionStorage.removeItem("sessionId");
-                sessionStorage.removeItem("runId");
-                sessionStorage.removeItem("userId");
-                sessionStorage.removeItem("username");
-                sessionStorage.removeItem("avatar");
-
-                const username = document.getElementById("username").value;
-                const password = document.getElementById("password").value;
-
-                try {
-                    const response = await fetch("/api/login", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ username, password })
-                    });
-
-                    const data = await response.json();
-
-                    if (!response.ok) {
-                        alert(data.message || "Login fehlgeschlagen.");
-                        return;
-                    }
-
-                    sessionStorage.setItem("userId", String(data.userId));
-                    sessionStorage.setItem("username", data.username);
-                    sessionStorage.setItem("avatar", data.avatar || "duck.jpg");
-
-                    // Alte Session-/Run-Daten verwerfen.
-                    // Das Dashboard lädt oder erstellt danach den AKTIVEN Spielstand.
-                    sessionStorage.removeItem("sessionId");
-                    sessionStorage.removeItem("runId");
-
-                    window.location.href = "/dashboard";
-                } catch (error) {
-                    console.error("Login-Fehler:", error);
-                    alert("Beim Login ist ein Fehler aufgetreten.");
-                }
+            if (!response.ok) {
+                setBoxMessage("loginErrorMessage", data.message || "Benutzername oder Passwort falsch.", "error");
+                return;
             }
 
-        </script>
-    </body>
+            sessionStorage.setItem("userId", String(data.userId));
+            sessionStorage.setItem("username", data.username);
+            sessionStorage.setItem("avatar", data.avatar || "duck.jpg");
+
+            // Alte Session-/Run-Daten verwerfen.
+            // Das Dashboard lädt oder erstellt danach den AKTIVEN Spielstand.
+            sessionStorage.removeItem("sessionId");
+            sessionStorage.removeItem("runId");
+
+            window.location.href = "/dashboard";
+        } catch (error) {
+            console.error("Login-Fehler:", error);
+            setBoxMessage("loginErrorMessage", "Beim Login ist ein Fehler aufgetreten.", "error");
+        }
+    }
+</script>
+</body>
 </html>
