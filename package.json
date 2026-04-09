@@ -1,0 +1,14 @@
+{
+  "name": "dummy2pro-frontend-tests",
+  "private": true,
+  "scripts": {
+    "test:frontend": "jest --config jest.config.cjs --runInBand",
+    "test:frontend:watch": "jest --config jest.config.cjs --watch",
+    "test:frontend:coverage": "jest --config jest.config.cjs --coverage --runInBand"
+  },
+  "devDependencies": {
+    "istanbul-lib-instrument": "^6.0.3",
+    "jest": "^29.7.0",
+    "jsdom": "^26.1.0"
+  }
+}

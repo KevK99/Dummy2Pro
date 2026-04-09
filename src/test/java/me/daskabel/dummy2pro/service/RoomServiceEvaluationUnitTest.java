@@ -170,4 +170,50 @@ class RoomServiceEvaluationUnitTest
         question.setGapFields(Set.of(gap1, gap2));
         return question;
     }
+
+    @Test
+    void evaluateMcTf_multipleCorrectAnswers_requiresExactSelection()
+    {
+        Question question = new Question();
+        question.setQuestionId(3L);
+        question.setQuestionType(QuestionType.MC);
+        question.setAllowsMultiple(true);
+        question.setPoints(7);
+
+        AnswerOption correctOne = new AnswerOption();
+        correctOne.setAnswerId(201L);
+        correctOne.setOptionText("richtig 1");
+        correctOne.setIsCorrect(true);
+        correctOne.setOptionOrder(1);
+
+        AnswerOption correctTwo = new AnswerOption();
+        correctTwo.setAnswerId(202L);
+        correctTwo.setOptionText("richtig 2");
+        correctTwo.setIsCorrect(true);
+        correctTwo.setOptionOrder(2);
+
+        AnswerOption wrong = new AnswerOption();
+        wrong.setAnswerId(203L);
+        wrong.setOptionText("falsch");
+        wrong.setIsCorrect(false);
+        wrong.setOptionOrder(3);
+
+        question.setAnswerOptions(List.of(correctOne, correctTwo, wrong));
+
+        AnswerRequest onlyOneCorrect = new AnswerRequest();
+        onlyOneCorrect.setSelectedAnswerIds(List.of(201L));
+
+        AnswerResultDto partialResult = RoomService.evaluateMcTf(question, onlyOneCorrect);
+
+        assertFalse(partialResult.isCorrect());
+        assertEquals(0, partialResult.getPointsEarned());
+
+        AnswerRequest exactSelection = new AnswerRequest();
+        exactSelection.setSelectedAnswerIds(List.of(201L, 202L));
+
+        AnswerResultDto exactResult = RoomService.evaluateMcTf(question, exactSelection);
+
+        assertTrue(exactResult.isCorrect());
+        assertEquals(7, exactResult.getPointsEarned());
+    }
 }
