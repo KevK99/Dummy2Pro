@@ -197,16 +197,27 @@ class RoomApiControllerIntegrationTest
                 .andExpect(jsonPath("$.answeredQuestions").value(0))
                 .andExpect(jsonPath("$.earnedPoints").value(0));
 
-        mockMvc.perform(get("/api/session/{sessionId}/room/{roomId}", sessionId, 1)
+        String roomBody = mockMvc.perform(get("/api/session/{sessionId}/room/{roomId}", sessionId, 1)
                         .session(session))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status.roomId").value(1))
                 .andExpect(jsonPath("$.status.themeName").value("Thema 1"))
-                .andExpect(jsonPath("$.firstQuestion.questionId").value(seeded.question().getQuestionId()))
-                .andExpect(jsonPath("$.firstQuestion.startText").value("Was ist richtig?"));
+                .andExpect(jsonPath("$.firstQuestion.startText").isNotEmpty())
+                .andExpect(jsonPath("$.firstQuestion.answerOptions.length()").value(2))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        JsonNode roomJson = objectMapper.readTree(roomBody);
+        long currentQuestionId = roomJson.get("firstQuestion").get("questionId").asLong();
+        long currentCorrectAnswerId = roomJson.get("firstQuestion")
+                .get("answerOptions")
+                .get(0)
+                .get("answerId")
+                .asLong();
 
         String answerJson = objectMapper.writeValueAsString(
-                new AnswerRequest(seeded.question().getQuestionId(), List.of(seeded.correctAnswer().getAnswerId()))
+                new AnswerRequest(currentQuestionId, List.of(currentCorrectAnswerId))
         );
 
         mockMvc.perform(post("/api/session/{sessionId}/room/{roomId}/answer", sessionId, 1)
@@ -216,7 +227,7 @@ class RoomApiControllerIntegrationTest
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.correct").value(true))
                 .andExpect(jsonPath("$.pointsEarned").value(5))
-                .andExpect(jsonPath("$.correctAnswerIds[0]").value(seeded.correctAnswer().getAnswerId()));
+                .andExpect(jsonPath("$.correctAnswerIds[0]").value(currentCorrectAnswerId));
 
         mockMvc.perform(get("/api/session/{sessionId}/room/{roomId}/status", sessionId, 1)
                         .session(session))

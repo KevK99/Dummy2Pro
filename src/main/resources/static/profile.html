@@ -29,7 +29,7 @@
                 <img id="currentProfileImage" src="/images/duck.jpg" alt="duck" class="w-20 h-20 rounded-full hover:cursor-pointer object-cover" />
 
                 <div>
-                    <h1 class="text-3xl font-extrabold tracking-tight">Benutzerprofil</h1>
+                    <h1 id="headlineTitle" class="text-3xl font-extrabold tracking-tight">Benutzerprofil</h1>
                     <p class="mt-2 text-slate-300">Hier kannst du deine Profil Einstellungen ändern</p>
                 </div>
             </div>
@@ -455,12 +455,11 @@
             document.getElementById('newPw').value = "";
             document.getElementById('newPwConfirm').value = "";
 
-            localStorage.setItem(
-                "dummy2proLoginFlash",
-                (data.message || "Passwort erfolgreich geändert.") + " Bitte melde dich jetzt mit dem neuen Passwort erneut an."
-            );
+            const loginFlashMessage =
+                (data.message || "Passwort erfolgreich geändert.") + " Bitte melde dich jetzt mit dem neuen Passwort erneut an.";
 
             sessionStorage.clear();
+            sessionStorage.setItem("loginFlash", loginFlashMessage);
             window.location.replace("/");
         } catch (error) {
             showProfileMessage(error.message, "error");
@@ -515,8 +514,8 @@
             console.warn("Logout-API fehlgeschlagen:", error);
         }
 
-        localStorage.setItem("dummy2proLoginFlash", "Du wurdest erfolgreich ausgeloggt.");
         sessionStorage.clear();
+        sessionStorage.setItem("loginFlash", "Du wurdest erfolgreich ausgeloggt.");
         window.location.replace("/");
     }
 
