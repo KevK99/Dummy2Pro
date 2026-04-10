@@ -176,3 +176,49 @@ COMMIT;
 
 ---------------
 
+START TRANSACTION;
+
+UPDATE gap_option
+SET option_text = 'B) Qualität'
+WHERE gap_option_id = 203;
+
+UPDATE gap_option
+SET option_text = 'A) Typen'
+WHERE gap_option_id = 214;
+
+COMMIT;
+
+----------------------
+
+START TRANSACTION;
+
+UPDATE question
+SET start_text = 'Welche Angabe gehört zu einer Methodendarstellung in UML?'
+WHERE question_id = 1277;
+
+UPDATE question
+SET start_text = REPLACE(start_text, 'Sentinentelwert', 'Sentinelwert')
+WHERE question_id = 1321;
+
+UPDATE gap_option
+SET option_text = 'B) Stack Overflow'
+WHERE gap_option_id = 299;
+
+COMMIT;
+
+-------------
+
+START TRANSACTION;
+
+UPDATE question
+SET start_text = 'Was ist unabhängig vom Vorgehensmodell wichtig – egal ob agil oder klassisch?'
+WHERE start_text = 'Was ist in bei alten Vorgehensmodellen wichtig: egal ob agil und klassisch?';
+
+UPDATE answer_option
+SET option_text = 'Zum Beispiel weil der Port bereits belegt ist oder der Anwendung die nötigen Rechte bzw. die passende Bind-Konfiguration fehlen'
+WHERE option_text = 'Zum Beispiel weil der Port bereits belegt ist oder Rechte bzw. Firewall-Regeln entgegenstehen'
+  AND is_correct = 1;
+
+COMMIT;
+
+---------
