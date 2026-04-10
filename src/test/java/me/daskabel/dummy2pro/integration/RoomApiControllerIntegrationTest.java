@@ -32,6 +32,7 @@ import java.util.Map;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -73,7 +74,8 @@ class RoomApiControllerIntegrationTest
         MockHttpSession session = loginAndReturnSession(user.getUsername(), "SehrSicheresPass1!");
 
         String body = mockMvc.perform(post("/api/session/new")
-                        .session(session))
+                        .session(session)
+                        .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.sessionId").isNotEmpty())
                 .andExpect(jsonPath("$.runId").isNumber())
@@ -109,6 +111,7 @@ class RoomApiControllerIntegrationTest
 
         mockMvc.perform(put("/api/session/{runId}/name", run.getRunId())
                         .session(session)
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
@@ -136,6 +139,7 @@ class RoomApiControllerIntegrationTest
 
         mockMvc.perform(put("/api/session/{runId}/name", run.getRunId())
                         .session(session)
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
@@ -163,6 +167,7 @@ class RoomApiControllerIntegrationTest
 
         mockMvc.perform(put("/api/session/{runId}/name", run.getRunId())
                         .session(session)
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isBadRequest())
@@ -180,7 +185,8 @@ class RoomApiControllerIntegrationTest
         MockHttpSession session = loginAndReturnSession(user.getUsername(), "SehrSicheresPass1!");
 
         String createBody = mockMvc.perform(post("/api/session/new")
-                        .session(session))
+                        .session(session)
+                        .with(csrf()))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
@@ -189,7 +195,8 @@ class RoomApiControllerIntegrationTest
         String sessionId = objectMapper.readTree(createBody).get("sessionId").asText();
 
         mockMvc.perform(post("/api/session/{sessionId}/room/{roomId}/prepare", sessionId, 1)
-                        .session(session))
+                        .session(session)
+                        .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.roomId").value(1))
                 .andExpect(jsonPath("$.themeName").value("Thema 1"))
@@ -222,6 +229,7 @@ class RoomApiControllerIntegrationTest
 
         mockMvc.perform(post("/api/session/{sessionId}/room/{roomId}/answer", sessionId, 1)
                         .session(session)
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(answerJson))
                 .andExpect(status().isOk())
@@ -257,7 +265,8 @@ class RoomApiControllerIntegrationTest
         MockHttpSession session = loginAndReturnSession(user.getUsername(), "SehrSicheresPass1!");
 
         String createBody = mockMvc.perform(post("/api/session/new")
-                        .session(session))
+                        .session(session)
+                        .with(csrf()))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
@@ -266,7 +275,8 @@ class RoomApiControllerIntegrationTest
         String sessionId = objectMapper.readTree(createBody).get("sessionId").asText();
 
         mockMvc.perform(post("/api/session/{sessionId}/room/{roomId}/prepare", sessionId, 999)
-                        .session(session))
+                        .session(session)
+                        .with(csrf()))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("NOT_FOUND"))
                 .andExpect(jsonPath("$.message").value("Raum 999 in Session nicht gefunden."));
@@ -282,7 +292,8 @@ class RoomApiControllerIntegrationTest
         MockHttpSession session = loginAndReturnSession(user.getUsername(), "SehrSicheresPass1!");
 
         String createBody = mockMvc.perform(post("/api/session/new")
-                        .session(session))
+                        .session(session)
+                        .with(csrf()))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
@@ -291,7 +302,8 @@ class RoomApiControllerIntegrationTest
         String sessionId = objectMapper.readTree(createBody).get("sessionId").asText();
 
         mockMvc.perform(post("/api/session/{sessionId}/room/{roomId}/prepare", sessionId, 1)
-                        .session(session))
+                        .session(session)
+                        .with(csrf()))
                 .andExpect(status().isOk());
 
         String answerJson = objectMapper.writeValueAsString(
@@ -300,6 +312,7 @@ class RoomApiControllerIntegrationTest
 
         mockMvc.perform(post("/api/session/{sessionId}/room/{roomId}/answer", sessionId, 1)
                         .session(session)
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(answerJson))
                 .andExpect(status().isBadRequest())
@@ -317,7 +330,8 @@ class RoomApiControllerIntegrationTest
         seedRoom1WithOneMcQuestion();
 
         String createBody = mockMvc.perform(post("/api/session/new")
-                        .session(session))
+                        .session(session)
+                        .with(csrf()))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
@@ -328,6 +342,7 @@ class RoomApiControllerIntegrationTest
 
         String loadedBody = mockMvc.perform(post("/api/session/load")
                         .session(session)
+                        .with(csrf())
                         .param("runId", String.valueOf(runId)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.runId").value(runId))
@@ -360,6 +375,7 @@ class RoomApiControllerIntegrationTest
 
         mockMvc.perform(post("/api/session/load")
                         .session(strangerSession)
+                        .with(csrf())
                         .param("runId", String.valueOf(run.getRunId())))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("NOT_FOUND"))

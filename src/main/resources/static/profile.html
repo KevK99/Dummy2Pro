@@ -778,6 +778,7 @@
             return;
         }
 
+        await window.Dummy2ProSecurity.ensureCsrfToken();
         await loadUserProfile();
         await loadRuns();
     }
