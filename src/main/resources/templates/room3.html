@@ -352,6 +352,7 @@
     let selectedAnswerIds = [];
     let selectedGapAnswers = [];
     let selectedGapAnswersMap = {};
+    let isSubmittingAnswer = false;
     let currentGapStep = 0;
     let roomLoaded = false;
 
@@ -450,7 +451,15 @@
         selectedGapAnswers = [];
         selectedGapAnswersMap = {};
         currentGapStep = 0;
-        feedbackBox.innerText = "";
+        isSubmittingAnswer = false;
+        clearRoomFeedbackBox(feedbackBox);
+
+        if (!gameContainer.classList.contains("hidden")) {
+            hidePandaGameComment();
+        }
+
+        submitAnswerBtn.disabled = false;
+        submitAnswerBtn.classList.remove("opacity-70", "cursor-not-allowed");
         submitAnswerBtn.classList.add("hidden");
         nextQuestionBtn.classList.add("hidden");
 
@@ -878,6 +887,10 @@
             return;
         }
 
+        if (isSubmittingAnswer) {
+            return;
+        }
+
         if (!gapQuestion && selectedAnswerIds.length === 0) {
             return;
         }
@@ -890,6 +903,10 @@
                 return;
             }
         }
+
+        isSubmittingAnswer = true;
+        submitAnswerBtn.disabled = true;
+        submitAnswerBtn.classList.add("opacity-70", "cursor-not-allowed");
 
         try {
             const requestBody = {
@@ -909,6 +926,9 @@
             const data = await response.json();
 
             if (!response.ok) {
+                isSubmittingAnswer = false;
+                submitAnswerBtn.disabled = false;
+                submitAnswerBtn.classList.remove("opacity-70", "cursor-not-allowed");
                 alert(data.message || "Antwort konnte nicht geprüft werden.");
                 return;
             }
@@ -965,9 +985,24 @@
                 }
             }
 
-            feedbackBox.innerText = data.correct
-                ? `Richtig! +${data.pointsEarned} Punkt(e)`
-                : `Falsch! +${data.pointsEarned} Punkt(e)`;
+            const pandaWrongComment = data.correct ? "" : getRoomWrongFeedbackLine(roomId);
+
+            showRoomFeedbackBox(
+                feedbackBox,
+                data.correct
+                    ? `Richtig! +${data.pointsEarned} Punkt(e)`
+                    : buildRoomWrongFeedbackText(roomId, data.pointsEarned),
+                data.correct ? "success" : "error"
+            );
+
+            if (data.correct) {
+                hidePandaGameComment();
+            } else {
+                showPandaGameComment(pandaWrongComment);
+            }
+
+            submitAnswerBtn.classList.add("hidden");
+            nextQuestionBtn.classList.remove("hidden");
 
             feedbackBox.className = data.correct
                 ? "mt-6 text-center text-lg font-black text-emerald-400"
@@ -978,6 +1013,9 @@
 
             await refreshRoomStatus();
         } catch (error) {
+            isSubmittingAnswer = false;
+            submitAnswerBtn.disabled = false;
+            submitAnswerBtn.classList.remove("opacity-70", "cursor-not-allowed");
             console.error("Fehler beim Prüfen der Antwort:", error);
             alert("Antwort konnte nicht geprüft werden.");
         }
@@ -1037,8 +1075,11 @@
         questionText.innerText = "Raum abgeschlossen.";
         answerContainer.innerHTML = "";
 
-        feedbackBox.innerText = "Du hast alle Fragen dieses Raums beantwortet.";
-        feedbackBox.className = "mt-6 text-center text-lg font-black text-emerald-400";
+        showRoomFeedbackBox(
+            feedbackBox,
+            "Du hast alle Fragen dieses Raums beantwortet.",
+            "success"
+        );
 
         submitAnswerBtn.classList.add("hidden");
 

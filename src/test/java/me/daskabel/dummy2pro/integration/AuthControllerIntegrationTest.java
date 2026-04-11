@@ -134,6 +134,43 @@ class AuthControllerIntegrationTest
     }
 
     @Test
+    void login_tooManyFailedAttempts_blocksFurtherAttemptsTemporarily() throws Exception
+    {
+        String username = "limit" + System.nanoTime();
+        String password = "SehrSicheresPass1!";
+
+        User user = new User(username, encoder.encode(password), "duck.jpg");
+        userRepository.save(user);
+
+        String wrongPasswordJson = objectMapper.writeValueAsString(Map.of(
+                "username", username,
+                "password", "falsch"
+        ));
+
+        for (int attempt = 0; attempt < 5; attempt++)
+        {
+            mockMvc.perform(post("/api/login")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(wrongPasswordJson))
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(jsonPath("$.error").value("UNAUTHORIZED"))
+                    .andExpect(jsonPath("$.message").value("Benutzername oder Passwort falsch."));
+        }
+
+        String correctPasswordJson = objectMapper.writeValueAsString(Map.of(
+                "username", username,
+                "password", password
+        ));
+
+        mockMvc.perform(post("/api/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(correctPasswordJson))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").value("UNAUTHORIZED"))
+                .andExpect(jsonPath("$.message").value("Benutzername oder Passwort falsch."));
+    }
+
+    @Test
     void login_success_thenProtectedEndpointWorksWithReturnedSession() throws Exception
     {
         String username = "jan" + System.nanoTime();

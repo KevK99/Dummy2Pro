@@ -131,6 +131,74 @@
         </button>
     </div>
 
+    <div class="bg-slate-800 border border-slate-700 shadow-xl rounded-2xl p-8 space-y-6">
+        <div>
+            <h2 class="text-2xl font-bold">Avatar-Stil</h2>
+            <p class="mt-2 text-slate-300">Wähle Form und Rahmen für deinen Avatar.</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6">
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-2">Form</label>
+                <select
+                        id="avatarShapeSelect"
+                        class="w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition"
+                >
+                    <option value="circle">Kreis</option>
+                    <option value="square">Viereck</option>
+                    <option value="rounded-square">Abgerundetes Viereck</option>
+                    <option value="triangle">Dreieck</option>
+                    <option value="trapezoid">Trapez</option>
+                    <option value="hexagon">6-Eck</option>
+                    <option value="octagon">8-Eck</option>
+                    <option value="diamond">Diamant</option>
+                    <option value="star">Stern</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-2">Rahmen</label>
+                <select
+                        id="avatarFrameSelect"
+                        class="w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition"
+                >
+                    <option value="default">Standard</option>
+                    <option value="red">Rot</option>
+                    <option value="orange">Orange</option>
+                    <option value="amber">Amber</option>
+                    <option value="yellow">Gelb</option>
+                    <option value="lime">Lime</option>
+                    <option value="green">Grün</option>
+                    <option value="emerald">Emerald</option>
+                    <option value="teal">Teal</option>
+                    <option value="cyan">Cyan</option>
+                    <option value="sky">Sky</option>
+                    <option value="blue">Blau</option>
+                    <option value="indigo">Indigo</option>
+                    <option value="violet">Violett</option>
+                    <option value="purple">Purple</option>
+                    <option value="fuchsia">Fuchsia</option>
+                    <option value="pink">Pink</option>
+                    <option value="rose">Rose</option>
+                    <option value="slate">Slate</option>
+                    <option value="gray">Grau</option>
+                    <option value="black">Schwarz</option>
+                    <option value="bronze">Bronze</option>
+                    <option value="silver">Silber</option>
+                    <option value="gold">Gold</option>
+                </select>
+            </div>
+        </div>
+
+        <button
+                type="button"
+                class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20 disabled:bg-gray-700 disabled:shadow-none"
+                onclick="saveAvatarStyle()"
+        >
+            Avatar-Stil speichern
+        </button>
+    </div>
+
     <div class="bg-slate-800 border border-slate-700 shadow-xl rounded-2xl p-8 space-y-5 hidden" id="passwordForm">
         <form class="space-y-5">
             <div>
@@ -274,6 +342,8 @@
     const createRunBtn = document.getElementById('createRunBtn');
     const runsContainer = document.getElementById('runsContainer');
     const currentProfileImage = document.getElementById('currentProfileImage');
+    const avatarShapeSelect = document.getElementById('avatarShapeSelect');
+    const avatarFrameSelect = document.getElementById('avatarFrameSelect');
 
     const userId = sessionStorage.getItem("userId");
     let selectedProfileImage = null;
@@ -320,6 +390,8 @@
     button.addEventListener("click", openNameEdit);
     currentNameInput.addEventListener("click", openNameEdit);
     newNameButton.addEventListener("click", saveNewName);
+    avatarShapeSelect.addEventListener("change", applyAvatarPreviewStyle);
+    avatarFrameSelect.addEventListener("change", applyAvatarPreviewStyle);
 
     function showPwForm() {
         pwForm.classList.remove("hidden");
@@ -394,10 +466,128 @@
         currentProfileImage.src = `/images/${resolvedAvatar}`;
         currentAvatar = resolvedAvatar;
 
+        avatarShapeSelect.value = profile.avatarShape || "circle";
+        avatarFrameSelect.value = profile.selectedAvatarFrame || "default";
+        applyAvatarPreviewStyle();
+
         sessionStorage.setItem("username", profile.username || "");
         sessionStorage.setItem("avatar", resolvedAvatar);
+        sessionStorage.setItem("avatarShape", profile.avatarShape || "circle");
+        sessionStorage.setItem("selectedAvatarFrame", profile.selectedAvatarFrame || "default");
 
         highlightSelectedAvatar(resolvedAvatar);
+    }
+
+    function getAvatarShapeClasses(shape) {
+        if (shape === "circle") {
+            return ["rounded-full"];
+        }
+
+        if (shape === "square") {
+            return ["rounded-none"];
+        }
+
+        if (shape === "rounded-square") {
+            return ["rounded-2xl"];
+        }
+
+        if (shape === "triangle") {
+            return ["[clip-path:polygon(50%_0%,100%_100%,0%_100%)]"];
+        }
+
+        if (shape === "trapezoid") {
+            return ["[clip-path:polygon(20%_0%,80%_0%,100%_100%,0%_100%)]"];
+        }
+
+        if (shape === "hexagon") {
+            return ["[clip-path:polygon(25%_6%,75%_6%,100%_50%,75%_94%,25%_94%,0%_50%)]"];
+        }
+
+        if (shape === "octagon") {
+            return ["[clip-path:polygon(30%_0%,70%_0%,100%_30%,100%_70%,70%_100%,30%_100%,0%_70%,0%_30%)]"];
+        }
+
+        if (shape === "diamond") {
+            return ["[clip-path:polygon(50%_0%,100%_50%,50%_100%,0%_50%)]"];
+        }
+
+        if (shape === "star") {
+            return ["[clip-path:polygon(50%_0%,61%_35%,98%_35%,68%_57%,79%_91%,50%_70%,21%_91%,32%_57%,2%_35%,39%_35%)]"];
+        }
+
+        return ["rounded-full"];
+    }
+
+    function getAvatarFrameClass(frame) {
+        const frameClassMap = {
+            default: "bg-slate-500",
+            red: "bg-red-500",
+            orange: "bg-orange-500",
+            amber: "bg-amber-500",
+            yellow: "bg-yellow-400",
+            lime: "bg-lime-500",
+            green: "bg-green-500",
+            emerald: "bg-emerald-500",
+            teal: "bg-teal-500",
+            cyan: "bg-cyan-500",
+            sky: "bg-sky-500",
+            blue: "bg-blue-500",
+            indigo: "bg-indigo-500",
+            violet: "bg-violet-500",
+            purple: "bg-purple-500",
+            fuchsia: "bg-fuchsia-500",
+            pink: "bg-pink-500",
+            rose: "bg-rose-500",
+            slate: "bg-slate-400",
+            gray: "bg-gray-400",
+            black: "bg-black",
+            bronze: "bg-[#cd7f32]",
+            silver: "bg-[#c0c0c0]",
+            gold: "bg-[#ffd700]"
+        };
+
+        return frameClassMap[frame] || "bg-slate-500";
+    }
+
+    function applyAvatarPreviewStyle() {
+        const shape = avatarShapeSelect.value || "circle";
+        const frame = avatarFrameSelect.value || "default";
+
+        const shapeClasses = getAvatarShapeClasses(shape);
+        const frameClass = getAvatarFrameClass(frame);
+
+        let wrapper = currentProfileImage.parentElement;
+
+        if (!wrapper || !wrapper.classList.contains("avatar-frame-shell")) {
+            wrapper = document.createElement("div");
+            wrapper.className = "avatar-frame-shell inline-flex items-center justify-center p-[4px] overflow-hidden transition-all duration-200";
+            currentProfileImage.parentNode.insertBefore(wrapper, currentProfileImage);
+            wrapper.appendChild(currentProfileImage);
+        }
+
+        wrapper.className = `avatar-frame-shell inline-flex items-center justify-center p-[4px] overflow-hidden transition-all duration-200 w-20 h-20 ${frameClass}`;
+        wrapper.classList.add(...shapeClasses);
+
+        currentProfileImage.className = "block w-full h-full object-cover transition-all duration-200";
+        currentProfileImage.classList.add(...shapeClasses);
+    }
+
+    async function saveAvatarStyle() {
+        try {
+            const data = await apiRequest(`/api/user/me/avatar-style`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    avatarShape: avatarShapeSelect.value,
+                    selectedAvatarFrame: avatarFrameSelect.value
+                })
+            });
+
+            updateProfileUi(data);
+            await showProfileSuccessModal("Avatar-Stil gespeichert.", "Avatar-Stil geändert");
+        } catch (error) {
+            showProfileMessage(error.message, "error");
+        }
     }
 
     async function loadUserProfile() {

@@ -10,7 +10,513 @@ function normalizeMedalValue(medal) {
     return String(medal ?? "NONE").toUpperCase();
 }
 
+function getStoredAvatarShape() {
+    return sessionStorage.getItem("avatarShape") || "circle";
+}
+
+function getStoredAvatarFrame() {
+    return sessionStorage.getItem("selectedAvatarFrame") || "default";
+}
+
+function getAvatarShapeClasses(shape) {
+    if (shape === "circle") {
+        return ["rounded-full"];
+    }
+
+    if (shape === "square") {
+        return ["rounded-none"];
+    }
+
+    if (shape === "rounded-square") {
+        return ["rounded-2xl"];
+    }
+
+    if (shape === "triangle") {
+        return ["[clip-path:polygon(50%_0%,100%_100%,0%_100%)]"];
+    }
+
+    if (shape === "trapezoid") {
+        return ["[clip-path:polygon(20%_0%,80%_0%,100%_100%,0%_100%)]"];
+    }
+
+    if (shape === "hexagon") {
+        return ["[clip-path:polygon(25%_6%,75%_6%,100%_50%,75%_94%,25%_94%,0%_50%)]"];
+    }
+
+    if (shape === "octagon") {
+        return ["[clip-path:polygon(30%_0%,70%_0%,100%_30%,100%_70%,70%_100%,30%_100%,0%_70%,0%_30%)]"];
+    }
+
+    if (shape === "diamond") {
+        return ["[clip-path:polygon(50%_0%,100%_50%,50%_100%,0%_50%)]"];
+    }
+
+    if (shape === "star") {
+        return ["[clip-path:polygon(50%_0%,61%_35%,98%_35%,68%_57%,79%_91%,50%_70%,21%_91%,32%_57%,2%_35%,39%_35%)]"];
+    }
+
+    return ["rounded-full"];
+}
+
+function getAvatarFrameClass(frame) {
+    const frameClassMap = {
+        default: "bg-slate-500",
+        red: "bg-red-500",
+        orange: "bg-orange-500",
+        amber: "bg-amber-500",
+        yellow: "bg-yellow-400",
+        lime: "bg-lime-500",
+        green: "bg-green-500",
+        emerald: "bg-emerald-500",
+        teal: "bg-teal-500",
+        cyan: "bg-cyan-500",
+        sky: "bg-sky-500",
+        blue: "bg-blue-500",
+        indigo: "bg-indigo-500",
+        violet: "bg-violet-500",
+        purple: "bg-purple-500",
+        fuchsia: "bg-fuchsia-500",
+        pink: "bg-pink-500",
+        rose: "bg-rose-500",
+        slate: "bg-slate-400",
+        gray: "bg-gray-400",
+        black: "bg-black",
+        bronze: "bg-[#cd7f32]",
+        silver: "bg-[#c0c0c0]",
+        gold: "bg-[#ffd700]"
+    };
+
+    return frameClassMap[frame] || "bg-slate-500";
+}
+
+function applyAvatarStyleToElement(element, sizeClasses = "w-20 h-20") {
+    if (!element) {
+        return;
+    }
+
+    const shape = getStoredAvatarShape();
+    const frame = getStoredAvatarFrame();
+
+    const shapeClasses = getAvatarShapeClasses(shape);
+    const frameClass = getAvatarFrameClass(frame);
+
+    let wrapper = element.parentElement;
+
+    if (!wrapper || !wrapper.classList.contains("avatar-frame-shell")) {
+        wrapper = document.createElement("div");
+        wrapper.className = "avatar-frame-shell inline-flex items-center justify-center p-[4px] overflow-hidden transition-all duration-200";
+        element.parentNode.insertBefore(wrapper, element);
+        wrapper.appendChild(element);
+    }
+
+    wrapper.className = `avatar-frame-shell inline-flex items-center justify-center p-[4px] overflow-hidden transition-all duration-200 ${sizeClasses} ${frameClass}`;
+    wrapper.classList.add(...shapeClasses);
+
+    element.className = "block w-full h-full object-cover transition-all duration-200";
+    element.classList.add(...shapeClasses);
+}
+
+const roomWrongFeedbackState = {};
+
+function getNextRotatingRoomLine(roomId, lines) {
+    if (!Array.isArray(lines) || lines.length === 0) {
+        return "Das war leider falsch.";
+    }
+
+    const key = String(roomId ?? "default");
+    const currentIndex = Number(roomWrongFeedbackState[key] ?? 0);
+
+    roomWrongFeedbackState[key] = currentIndex + 1;
+
+    return lines[currentIndex % lines.length];
+}
+
+function getRoomWrongFeedbackLine(roomId) {
+    const numericRoomId = Number(roomId ?? 0);
+
+    if (numericRoomId === 1) {
+        return getNextRotatingRoomLine(numericRoomId, [
+            "Nicht schlimm, versuch’s einfach nochmal.",
+            "Fast. Beim nächsten Mal klappt’s bestimmt.",
+            "Das war noch nicht richtig, aber du schaffst das.",
+            "Kein Problem, wir gehen’s einfach nochmal an.",
+            "Noch ein Versuch. Ich glaub an dich."
+        ]);
+    }
+
+    if (numericRoomId === 2) {
+        return getNextRotatingRoomLine(numericRoomId, [
+            "Hm. Das war jetzt nicht ganz richtig.",
+            "Nein, das war’s noch nicht.",
+            "Langsam solltest du das besser treffen.",
+            "Das war leider daneben.",
+            "Nicht richtig. Nochmal konzentrieren."
+        ]);
+    }
+
+    if (numericRoomId === 3) {
+        return getNextRotatingRoomLine(numericRoomId, [
+            "Nein. Das war nichts.",
+            "Daneben. Versuch’s sauberer.",
+            "Nicht richtig.",
+            "Das war der falsche Weg.",
+            "So wird das noch nichts."
+        ]);
+    }
+
+    if (numericRoomId === 4) {
+        return getNextRotatingRoomLine(numericRoomId, [
+            "Schon wieder daneben.",
+            "Nein. Konzentration.",
+            "Das war leider falsch.",
+            "So langsam wird’s unnötig holprig.",
+            "Nicht richtig. Reiß dich zusammen."
+        ]);
+    }
+
+    if (numericRoomId === 5) {
+        return "...";
+    }
+
+    if (numericRoomId >= 6 && numericRoomId <= 9) {
+        return getNextRotatingRoomLine(numericRoomId, [
+            "Schon wieder falsch.",
+            "Nein. Schon wieder daneben.",
+            "Das war erneut nichts.",
+            "Wir drehen uns im Kreis.",
+            "Nicht schon wieder.",
+            "Das war wieder der falsche Griff.",
+            "Schon wieder daneben.",
+            "Das war jetzt wirklich derselbe Fehler.",
+            "Nein, wieder nicht.",
+            "Das wird langsam Gewohnheit.",
+            "Erneut falsch.",
+            "Wir hatten das doch gerade schon.",
+            "Noch ein Fehltritt.",
+            "Schon wieder am Ziel vorbei.",
+            "Das kippt gerade in eine richtige Serie.",
+            "Leider wieder falsch.",
+            "Das war die nächste Bauchlandung.",
+            "Und wieder daneben.",
+            "Wieder nicht richtig.",
+            "Das Muster gefällt mir gar nicht."
+        ]);
+    }
+
+    if (numericRoomId >= 10 && numericRoomId <= 12) {
+        return getNextRotatingRoomLine(numericRoomId, [
+            "Das war schon erstaunlich daneben.",
+            "Du kämpfst heute wirklich gegen die richtige Antwort.",
+            "Selbst mein Bambus hätte das präziser hinbekommen.",
+            "Kreativ war’s. Richtig leider nicht.",
+            "Du weichst der Lösung mit bemerkenswertem Talent aus.",
+            "Das war fast schon beeindruckend falsch.",
+            "Nein. So schief muss man erst mal liegen.",
+            "Die richtige Antwort stand offenbar auf deiner Blockliste.",
+            "Du verfehlst das Ziel gerade mit Konstanz.",
+            "Das war fachlich eher ein Sturzflug."
+        ]);
+    }
+
+    if (numericRoomId >= 13 && numericRoomId <= 14) {
+        return getNextRotatingRoomLine(numericRoomId, [
+            "Das war düster daneben.",
+            "Hier zerbröselt gerade jede Hoffnung auf Präzision.",
+            "Das war nicht nur falsch, das war ein Rückschritt.",
+            "Die richtige Antwort rückt so eher weiter weg.",
+            "Ich verliere langsam den Glauben an diese Runde.",
+            "Nein. Das war unerquicklich falsch.",
+            "Das sieht gerade wirklich nicht gut aus.",
+            "Mit solchen Antworten wird das hier finster.",
+            "Das war unerquicklich weit weg von richtig.",
+            "Wir bewegen uns gerade in die falsche Richtung."
+        ]);
+    }
+
+    if (numericRoomId === 15) {
+        return getNextRotatingRoomLine(numericRoomId, [
+            "Was zum *** war das denn?",
+            "Das war komplett *** daneben.",
+            "Diese Antwort war ja völlig ***.",
+            "Ich fasse es nicht. Einfach nur ***.",
+            "Nein. Absolut ***.",
+            "Das war so *** falsch, dass es fast Kunst ist.",
+            "Ganz ehrlich? ***.",
+            "Das war ein einziges ***.",
+            "So hart daneben? ***.",
+            "Ich sag’s zensiert: kompletter ***-Treffer. Nur leider auf das Falsche."
+        ]);
+    }
+
+    return "Das war leider falsch.";
+}
+
+function buildRoomWrongFeedbackText(roomId, pointsEarned) {
+    const numericPoints = Number(pointsEarned ?? 0);
+    return `Falsch! (+${numericPoints} Punkt(e))`;
+}
+
+function clearRoomFeedbackBox(feedbackBox) {
+    if (!feedbackBox) {
+        return;
+    }
+
+    feedbackBox.innerText = "";
+    feedbackBox.className = "hidden";
+    feedbackBox.style.display = "none";
+    feedbackBox.style.position = "";
+    feedbackBox.style.zIndex = "";
+    feedbackBox.style.padding = "";
+    feedbackBox.style.borderRadius = "";
+    feedbackBox.style.background = "";
+    feedbackBox.style.backdropFilter = "";
+    feedbackBox.style.webkitBackdropFilter = "";
+    feedbackBox.style.boxShadow = "";
+    feedbackBox.style.width = "";
+    feedbackBox.style.maxWidth = "";
+    feedbackBox.style.marginLeft = "";
+    feedbackBox.style.marginRight = "";
+    feedbackBox.style.color = "";
+}
+
+function showRoomFeedbackBox(feedbackBox, text, type = "error") {
+    if (!feedbackBox) {
+        return;
+    }
+
+    feedbackBox.innerText = text;
+    feedbackBox.className = "mt-4 text-center text-lg font-black min-h-[32px] shrink-0";
+    feedbackBox.style.display = "block";
+    feedbackBox.style.position = "relative";
+    feedbackBox.style.zIndex = "70";
+    feedbackBox.style.padding = "0.65rem 1rem";
+    feedbackBox.style.borderRadius = "0.9rem";
+    feedbackBox.style.background = "rgba(0, 0, 0, 0.72)";
+    feedbackBox.style.backdropFilter = "blur(6px)";
+    feedbackBox.style.webkitBackdropFilter = "blur(6px)";
+    feedbackBox.style.boxShadow = "0 10px 30px rgba(0, 0, 0, 0.35)";
+    feedbackBox.style.width = "fit-content";
+    feedbackBox.style.maxWidth = "100%";
+    feedbackBox.style.marginLeft = "auto";
+    feedbackBox.style.marginRight = "auto";
+    feedbackBox.style.color = type === "success" ? "#34d399" : "#f87171";
+}
+
+function elevateRoomFeedbackBox() {
+    const roomFeedbackBox = document.getElementById("feedbackBox");
+
+    if (!roomFeedbackBox) {
+        return;
+    }
+
+    roomFeedbackBox.style.position = "relative";
+    roomFeedbackBox.style.zIndex = "70";
+    roomFeedbackBox.style.padding = "0.65rem 1rem";
+    roomFeedbackBox.style.borderRadius = "0.9rem";
+    roomFeedbackBox.style.background = "rgba(0, 0, 0, 0.72)";
+    roomFeedbackBox.style.backdropFilter = "blur(6px)";
+    roomFeedbackBox.style.webkitBackdropFilter = "blur(6px)";
+    roomFeedbackBox.style.boxShadow = "0 10px 30px rgba(0, 0, 0, 0.35)";
+    roomFeedbackBox.style.width = "fit-content";
+    roomFeedbackBox.style.maxWidth = "100%";
+    roomFeedbackBox.style.marginLeft = "auto";
+    roomFeedbackBox.style.marginRight = "auto";
+}
+
+let pandaCommentTimeoutId = null;
+
+function elevateRoomForegroundActors() {
+    const gamePandaElement = document.getElementById("gamePanda");
+    const gameRoomCharacterElement = document.getElementById("gameRoomCharacter");
+    const welcomePandaElement = document.getElementById("welcomePanda");
+
+    if (gamePandaElement) {
+        gamePandaElement.style.zIndex = "120";
+        gamePandaElement.style.pointerEvents = "none";
+    }
+
+    if (gameRoomCharacterElement) {
+        gameRoomCharacterElement.style.zIndex = "115";
+        gameRoomCharacterElement.style.pointerEvents = "none";
+    }
+
+    if (welcomePandaElement) {
+        welcomePandaElement.style.zIndex = "115";
+        welcomePandaElement.style.pointerEvents = "none";
+    }
+
+    document
+        .querySelectorAll('#welcomeContainer img[src^="/room-characters/"], #gameContainer img[src^="/room-characters/"]')
+        .forEach(image => {
+            const wrapper = image.closest("div");
+            if (!wrapper) {
+                return;
+            }
+
+            wrapper.style.zIndex = "115";
+            wrapper.style.pointerEvents = "none";
+        });
+}
+
+function moveSpeechPanelToGameScene() {
+    const speechPanelElement = document.getElementById("speechPanel");
+    const gameSceneElement = document.getElementById("gameScene");
+
+    if (!speechPanelElement || !gameSceneElement) {
+        return;
+    }
+
+    if (speechPanelElement.parentElement !== gameSceneElement) {
+        gameSceneElement.appendChild(speechPanelElement);
+    }
+
+    speechPanelElement.style.zIndex = "140";
+    speechPanelElement.style.pointerEvents = "none";
+}
+
+function positionSpeechPanelForPandaComment() {
+    const speechPanelElement = document.getElementById("speechPanel");
+    const speechTailElement = document.getElementById("speechTail");
+    const dialogTextElement = document.getElementById("dialogText");
+    const gamePandaElement = document.getElementById("gamePanda");
+    const gameSceneElement = document.getElementById("gameScene");
+
+    if (!speechPanelElement || !speechTailElement || !dialogTextElement || !gamePandaElement || !gameSceneElement) {
+        return;
+    }
+
+    const bubbleShell = speechPanelElement.firstElementChild;
+    const bubbleInnerStroke = bubbleShell?.children?.[2];
+
+    const pandaRect = gamePandaElement.getBoundingClientRect();
+    const sceneRect = gameSceneElement.getBoundingClientRect();
+
+    const pandaMouthX = pandaRect.left - sceneRect.left + (pandaRect.width * 0.70);
+    const pandaMouthY = pandaRect.top - sceneRect.top + (pandaRect.height * 0.42);
+
+    const bubbleWidth = Math.min(390, Math.max(250, Math.round(gameSceneElement.clientWidth * 0.29)));
+    const bubbleLeft = Math.max(
+        120,
+        Math.min(
+            gameSceneElement.clientWidth - bubbleWidth - 18,
+            Math.round(pandaMouthX + 42)
+        )
+    );
+    const bubbleTop = Math.max(8, Math.round(pandaMouthY - 44));
+
+    speechPanelElement.classList.remove("-translate-x-[42%]", "-translate-x-[50%]", "-translate-x-[34%]");
+    speechTailElement.classList.remove("left-[82%]", "left-[18%]");
+
+    speechPanelElement.style.left = `${bubbleLeft}px`;
+    speechPanelElement.style.top = `${bubbleTop}px`;
+    speechPanelElement.style.transform = "none";
+    speechPanelElement.style.width = `${bubbleWidth}px`;
+    speechPanelElement.style.maxWidth = `${bubbleWidth}px`;
+    speechPanelElement.style.minWidth = "250px";
+    speechPanelElement.style.height = "auto";
+    speechPanelElement.style.minHeight = "88px";
+    speechPanelElement.style.pointerEvents = "none";
+    speechPanelElement.style.zIndex = "140";
+
+    if (bubbleShell) {
+        bubbleShell.style.minHeight = "88px";
+    }
+
+    if (bubbleInnerStroke) {
+        bubbleInnerStroke.style.display = "none";
+    }
+
+    const tailTop = Math.max(16, Math.round(pandaMouthY - bubbleTop - 18));
+
+    speechTailElement.style.left = "-18px";
+    speechTailElement.style.right = "auto";
+    speechTailElement.style.top = `${tailTop}px`;
+    speechTailElement.style.bottom = "auto";
+    speechTailElement.style.transform = "rotate(-90deg)";
+
+    dialogTextElement.style.margin = "0";
+    dialogTextElement.style.padding = "0";
+    dialogTextElement.style.lineHeight = "1.04";
+    dialogTextElement.style.fontSize = "clamp(16px, 1.25vw, 22px)";
+    dialogTextElement.style.textAlign = "left";
+    dialogTextElement.style.maxWidth = "100%";
+
+    const dialogInnerWrapper = dialogTextElement.parentElement;
+    if (dialogInnerWrapper) {
+        dialogInnerWrapper.style.padding = "0.5rem 0.8rem 0.5rem 1.8rem";
+        dialogInnerWrapper.style.minHeight = "88px";
+        dialogInnerWrapper.style.height = "auto";
+        dialogInnerWrapper.style.display = "flex";
+        dialogInnerWrapper.style.alignItems = "center";
+    }
+}
+
+function hidePandaGameComment() {
+    const speechPanelElement = document.getElementById("speechPanel");
+    const dialogTextElement = document.getElementById("dialogText");
+
+    if (!speechPanelElement || !dialogTextElement) {
+        return;
+    }
+
+    if (pandaCommentTimeoutId) {
+        clearTimeout(pandaCommentTimeoutId);
+        pandaCommentTimeoutId = null;
+    }
+
+    dialogTextElement.innerText = "";
+    speechPanelElement.style.opacity = "0";
+    speechPanelElement.style.visibility = "hidden";
+}
+
+function showPandaGameComment(text) {
+    const speechPanelElement = document.getElementById("speechPanel");
+    const dialogTextElement = document.getElementById("dialogText");
+
+    if (!speechPanelElement || !dialogTextElement || !text) {
+        return;
+    }
+
+    moveSpeechPanelToGameScene();
+    elevateRoomForegroundActors();
+
+    dialogTextElement.innerText = `Panda: ${text}`;
+    positionSpeechPanelForPandaComment();
+
+    speechPanelElement.style.opacity = "1";
+    speechPanelElement.style.visibility = "visible";
+
+    if (pandaCommentTimeoutId) {
+        clearTimeout(pandaCommentTimeoutId);
+    }
+
+    pandaCommentTimeoutId = window.setTimeout(() => {
+        hidePandaGameComment();
+    }, 4200);
+}
+
+function prepareGameForegroundLayer() {
+    moveSpeechPanelToGameScene();
+    elevateRoomForegroundActors();
+    hidePandaGameComment();
+}
+
+window.addEventListener("resize", () => {
+    const speechPanelElement = document.getElementById("speechPanel");
+
+    if (!speechPanelElement) {
+        return;
+    }
+
+    if (speechPanelElement.style.visibility === "visible" && speechPanelElement.style.opacity === "1") {
+        positionSpeechPanelForPandaComment();
+    }
+});
+
 function attachRoomFeedbackSoundObserver() {
+    elevateRoomFeedbackBox();
+    elevateRoomForegroundActors();
+
     const roomFeedbackBox = document.getElementById("feedbackBox");
 
     if (!roomFeedbackBox || roomFeedbackBox.dataset.soundObserverAttached === "true") {
@@ -69,6 +575,16 @@ function updateHeadlineOverview(overview = null) {
         if (avatarFromStorage) {
             avatarElement.src = `/images/${avatarFromStorage}`;
         }
+        applyAvatarStyleToElement(avatarElement, "w-20 h-20");
+    }
+
+    const playerAvatarElement = document.getElementById("playerAvatar");
+    if (playerAvatarElement) {
+        const avatarFromStorage = sessionStorage.getItem("avatar");
+        if (avatarFromStorage) {
+            playerAvatarElement.src = `/images/${avatarFromStorage}`;
+        }
+        applyAvatarStyleToElement(playerAvatarElement, "w-28 h-28");
     }
 
     if (!overview) {
@@ -420,6 +936,7 @@ function nextDialogLine() {
 function startQuiz() {
     welcomeContainer.classList.add("hidden");
     gameContainer.classList.remove("hidden");
+    prepareGameForegroundLayer();
 }
 
 function fitQuestionText() {
@@ -638,6 +1155,7 @@ async function loadRoom() {
         if (!currentQuestion) {
             welcomeContainer.classList.add("hidden");
             gameContainer.classList.remove("hidden");
+            prepareGameForegroundLayer();
             showRoomCompletedState();
             return true;
         }
@@ -649,6 +1167,7 @@ async function loadRoom() {
         if (answeredQuestions > 0) {
             welcomeContainer.classList.add("hidden");
             gameContainer.classList.remove("hidden");
+            prepareGameForegroundLayer();
             return true;
         }
 
@@ -711,4 +1230,12 @@ function updateMedalCoin(medal) {
         medalCoin.classList.add("bg-yellow-400", "border-yellow-100", "text-slate-900");
         medalCoin.innerText = "GOLD";
     }
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+        updateHeadlineOverview();
+    });
+} else {
+    updateHeadlineOverview();
 }

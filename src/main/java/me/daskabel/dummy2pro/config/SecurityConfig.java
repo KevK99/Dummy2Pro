@@ -11,9 +11,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
+import java.time.Clock;
+
 @Configuration
 public class SecurityConfig
 {
+    @Bean
+    public Clock applicationClock()
+    {
+        return Clock.systemUTC();
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,

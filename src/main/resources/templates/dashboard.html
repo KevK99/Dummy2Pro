@@ -253,6 +253,10 @@
             if (avatarFromStorage) {
                 avatarElement.src = `/images/${avatarFromStorage}`;
             }
+
+            if (typeof applyAvatarStyleToElement === "function") {
+                applyAvatarStyleToElement(avatarElement, "w-20 h-20");
+            }
         }
     }
 

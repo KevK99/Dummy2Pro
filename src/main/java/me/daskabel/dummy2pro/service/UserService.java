@@ -51,6 +51,45 @@ public class UserService
             "sunflowerCursed.PNG"
     );
 
+    private static final Set<String> ALLOWED_AVATAR_SHAPES = Set.of(
+            "circle",
+            "square",
+            "rounded-square",
+            "triangle",
+            "trapezoid",
+            "hexagon",
+            "octagon",
+            "diamond",
+            "star"
+    );
+
+    private static final Set<String> ALLOWED_AVATAR_FRAMES = Set.of(
+            "default",
+            "red",
+            "orange",
+            "amber",
+            "yellow",
+            "lime",
+            "green",
+            "emerald",
+            "teal",
+            "cyan",
+            "sky",
+            "blue",
+            "indigo",
+            "violet",
+            "purple",
+            "fuchsia",
+            "pink",
+            "rose",
+            "slate",
+            "gray",
+            "black",
+            "bronze",
+            "silver",
+            "gold"
+    );
+
     private final BCryptPasswordEncoder encoder;
     private final UserRepository userRepository;
     private final GameRunRepository gameRunRepository;
@@ -187,6 +226,29 @@ public class UserService
         }
 
         user.setAvatar(newAvatar);
+        return this.userRepository.save(user);
+    }
+
+    public User updateAvatarStyle(Long userId, String avatarShape, String selectedAvatarFrame)
+    {
+        User user = getUser(userId);
+
+        String resolvedShape = (avatarShape == null || avatarShape.isBlank()) ? "circle" : avatarShape.trim();
+        String resolvedFrame = (selectedAvatarFrame == null || selectedAvatarFrame.isBlank()) ? "default" : selectedAvatarFrame.trim();
+
+        if (!ALLOWED_AVATAR_SHAPES.contains(resolvedShape))
+        {
+            throw new IllegalArgumentException("Ungültige Avatar-Form.");
+        }
+
+        if (!ALLOWED_AVATAR_FRAMES.contains(resolvedFrame))
+        {
+            throw new IllegalArgumentException("Ungültiger Avatar-Rahmen.");
+        }
+
+        user.setAvatarShape(resolvedShape);
+        user.setSelectedAvatarFrame(resolvedFrame);
+
         return this.userRepository.save(user);
     }
 

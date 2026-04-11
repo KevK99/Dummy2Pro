@@ -71,6 +71,8 @@ public class UserController
         private Long userId;
         private String username;
         private String avatar;
+        private String avatarShape;
+        private String selectedAvatarFrame;
 
         public Long getUserId()
         {
@@ -101,6 +103,26 @@ public class UserController
         {
             this.avatar = avatar;
         }
+
+        public String getAvatarShape()
+        {
+            return avatarShape;
+        }
+
+        public void setAvatarShape(String avatarShape)
+        {
+            this.avatarShape = avatarShape;
+        }
+
+        public String getSelectedAvatarFrame()
+        {
+            return selectedAvatarFrame;
+        }
+
+        public void setSelectedAvatarFrame(String selectedAvatarFrame)
+        {
+            this.selectedAvatarFrame = selectedAvatarFrame;
+        }
     }
 
     public static class AvatarUpdateRequest
@@ -115,6 +137,32 @@ public class UserController
         public void setAvatar(String avatar)
         {
             this.avatar = avatar;
+        }
+    }
+
+    public static class AvatarStyleUpdateRequest
+    {
+        private String avatarShape;
+        private String selectedAvatarFrame;
+
+        public String getAvatarShape()
+        {
+            return avatarShape;
+        }
+
+        public void setAvatarShape(String avatarShape)
+        {
+            this.avatarShape = avatarShape;
+        }
+
+        public String getSelectedAvatarFrame()
+        {
+            return selectedAvatarFrame;
+        }
+
+        public void setSelectedAvatarFrame(String selectedAvatarFrame)
+        {
+            this.selectedAvatarFrame = selectedAvatarFrame;
         }
     }
 
@@ -186,6 +234,8 @@ public class UserController
         response.setUserId(user.getUserId());
         response.setUsername(user.getUsername());
         response.setAvatar(this.userService.resolveAvatarFilename(user));
+        response.setAvatarShape(user.getAvatarShape());
+        response.setSelectedAvatarFrame(user.getSelectedAvatarFrame());
 
         return ResponseEntity.ok(response);
     }
@@ -201,6 +251,29 @@ public class UserController
         response.setUserId(user.getUserId());
         response.setUsername(user.getUsername());
         response.setAvatar(this.userService.resolveAvatarFilename(user));
+        response.setAvatarShape(user.getAvatarShape());
+        response.setSelectedAvatarFrame(user.getSelectedAvatarFrame());
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/me/avatar-style")
+    public ResponseEntity<UserProfileResponse> updateAvatarStyle(
+            Authentication authentication,
+            @RequestBody AvatarStyleUpdateRequest request)
+    {
+        User user = this.userService.updateAvatarStyle(
+                requireCurrentUserId(authentication),
+                request.getAvatarShape(),
+                request.getSelectedAvatarFrame()
+        );
+
+        UserProfileResponse response = new UserProfileResponse();
+        response.setUserId(user.getUserId());
+        response.setUsername(user.getUsername());
+        response.setAvatar(this.userService.resolveAvatarFilename(user));
+        response.setAvatarShape(user.getAvatarShape());
+        response.setSelectedAvatarFrame(user.getSelectedAvatarFrame());
 
         return ResponseEntity.ok(response);
     }

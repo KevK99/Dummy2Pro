@@ -32,7 +32,7 @@ class RoomServiceEvaluationUnitTest
     }
 
     @Test
-    void evaluateMcTf_extraWrongSelection_returnsWrongAndZeroPoints()
+    void evaluateMcTf_extraWrongSelection_returnsCorrectAndPoints_whenAtLeastOneCorrectIsSelected()
     {
         Question question = buildMcQuestion();
         AnswerRequest request = new AnswerRequest();
@@ -40,8 +40,8 @@ class RoomServiceEvaluationUnitTest
 
         AnswerResultDto result = RoomService.evaluateMcTf(question, request);
 
-        assertFalse(result.isCorrect());
-        assertEquals(0, result.getPointsEarned());
+        assertTrue(result.isCorrect());
+        assertEquals(5, result.getPointsEarned());
     }
 
     @Test
@@ -172,7 +172,7 @@ class RoomServiceEvaluationUnitTest
     }
 
     @Test
-    void evaluateMcTf_multipleCorrectAnswers_requiresExactSelection()
+    void evaluateMcTf_multipleCorrectAnswers_oneCorrectIsEnoughForFullPoints()
     {
         Question question = new Question();
         question.setQuestionId(3L);
@@ -205,8 +205,8 @@ class RoomServiceEvaluationUnitTest
 
         AnswerResultDto partialResult = RoomService.evaluateMcTf(question, onlyOneCorrect);
 
-        assertFalse(partialResult.isCorrect());
-        assertEquals(0, partialResult.getPointsEarned());
+        assertTrue(partialResult.isCorrect());
+        assertEquals(7, partialResult.getPointsEarned());
 
         AnswerRequest exactSelection = new AnswerRequest();
         exactSelection.setSelectedAnswerIds(List.of(201L, 202L));
@@ -215,5 +215,43 @@ class RoomServiceEvaluationUnitTest
 
         assertTrue(exactResult.isCorrect());
         assertEquals(7, exactResult.getPointsEarned());
+    }
+
+    @Test
+    void evaluateMcTf_onlyWrongSelections_returnsWrongAndZeroPoints()
+    {
+        Question question = new Question();
+        question.setQuestionId(4L);
+        question.setQuestionType(QuestionType.MC);
+        question.setAllowsMultiple(true);
+        question.setPoints(7);
+
+        AnswerOption correctOne = new AnswerOption();
+        correctOne.setAnswerId(301L);
+        correctOne.setOptionText("richtig");
+        correctOne.setIsCorrect(true);
+        correctOne.setOptionOrder(1);
+
+        AnswerOption wrongOne = new AnswerOption();
+        wrongOne.setAnswerId(302L);
+        wrongOne.setOptionText("falsch 1");
+        wrongOne.setIsCorrect(false);
+        wrongOne.setOptionOrder(2);
+
+        AnswerOption wrongTwo = new AnswerOption();
+        wrongTwo.setAnswerId(303L);
+        wrongTwo.setOptionText("falsch 2");
+        wrongTwo.setIsCorrect(false);
+        wrongTwo.setOptionOrder(3);
+
+        question.setAnswerOptions(List.of(correctOne, wrongOne, wrongTwo));
+
+        AnswerRequest onlyWrong = new AnswerRequest();
+        onlyWrong.setSelectedAnswerIds(List.of(302L, 303L));
+
+        AnswerResultDto result = RoomService.evaluateMcTf(question, onlyWrong);
+
+        assertFalse(result.isCorrect());
+        assertEquals(0, result.getPointsEarned());
     }
 }

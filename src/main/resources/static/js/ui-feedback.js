@@ -59,12 +59,19 @@
 
     function inferType(message) {
         const text = String(message ?? "").toLowerCase();
-        if (/erfolgreich|gespeichert|geladen|angelegt|aktualisiert/.test(text)) {
+
+        if (/fehler|fehl|nicht geladen|konnte nicht|ungültig|bereits|nicht gefunden|abgelehnt/.test(text)) {
+            return "error";
+        }
+
+        if (/erfolgreich|gespeichert|angelegt|aktualisiert/.test(text)) {
             return "success";
         }
+
         if (/bitte|achtung|warn/.test(text)) {
             return "warning";
         }
+
         return "error";
     }
 

@@ -79,19 +79,53 @@ describe("room1 Mehrfachantworten Regression", () => {
             var feedbackBox = document.getElementById("feedbackBox");
             var submitAnswerBtn = document.getElementById("submitAnswerBtn");
             var nextQuestionBtn = document.getElementById("nextQuestionBtn");
-            function isGapQuestion() { return false; }
-            function applyQuestionLayout() {}
-            function renderStandardQuestionText() {}
-            function buildAnswerPreviewText(index, fullText) { return String.fromCharCode(65 + index) + ") " + fullText; }
-            function fitQuestionText() {}
-            function fitAnswerTexts() {}
-            async function refreshRoomStatus() {}
-            ${renderQuestion}
-            ${toggleAnswer}
-            ${submitAnswer}
-        `);
+            const gameContainer = {
+                classList: {
+                    contains(className) {
+                        return className === "hidden";
+                    }
+                }
+            };
 
-        return dom;
+        function isGapQuestion() { return false; }
+        function applyQuestionLayout() {}
+        function renderStandardQuestionText() {}
+        function buildAnswerPreviewText(index, fullText) { return String.fromCharCode(65 + index) + ") " + fullText; }
+        function fitQuestionText() {}
+        function fitAnswerTexts() {}
+        function clearRoomFeedbackBox(box) {
+            if (!box) {
+                return;
+            }
+            box.innerText = "";
+            box.className = "hidden";
+            box.style.display = "none";
+        }
+        function showRoomFeedbackBox(box, text, type) {
+            if (!box) {
+                return;
+            }
+            box.innerText = text;
+            box.className = type === "success"
+                ? "feedback-success"
+                : "feedback-error";
+            box.style.display = "block";
+        }
+        function buildRoomWrongFeedbackText(roomId, pointsEarned) {
+            return \`Falsch! (+\${Number(pointsEarned ?? 0)} Punkt(e))\`;
+        }
+        function getRoomWrongFeedbackLine() {
+            return "Test-Kommentar";
+        }
+        function hidePandaGameComment() {}
+        function showPandaGameComment() {}
+        async function refreshRoomStatus() {}
+        ${renderQuestion}
+        ${toggleAnswer}
+        ${submitAnswer}
+            `);
+
+            return dom;
     }
 
     test("Mehrfachauswahl markiert nur die exakt gewählten Buttons als selektiert", () => {

@@ -139,6 +139,8 @@ CREATE TABLE `users` (
      `username` VARCHAR(255) NOT NULL,
      `password_hash` VARCHAR(255) NOT NULL,
      `avatar` VARCHAR(255) NULL,
+     avatar_shape VARCHAR(30) NOT NULL DEFAULT 'circle',
+     selected_avatar_frame VARCHAR(50) DEFAULT 'default',
      PRIMARY KEY (`user_id`),
      UNIQUE KEY `uq_users_username` (`username`)
 ) ENGINE=InnoDB;

@@ -353,3 +353,9 @@ WHERE question_id IN (
 );
 
 COMMIT;
+
+
+ALTER TABLE users
+    ADD COLUMN avatar_shape VARCHAR(30) NOT NULL DEFAULT 'circle' AFTER avatar,
+    ADD COLUMN selected_avatar_frame VARCHAR(50) DEFAULT 'default' AFTER avatar_shape;
+

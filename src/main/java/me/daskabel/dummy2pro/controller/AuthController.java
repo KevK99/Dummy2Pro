@@ -1,14 +1,15 @@
 package me.daskabel.dummy2pro.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import me.daskabel.dummy2pro.model.User;
+import me.daskabel.dummy2pro.security.AuthenticatedUser;
+import me.daskabel.dummy2pro.security.LoginAttemptService;
+import me.daskabel.dummy2pro.security.SecuritySessionKeys;
 import me.daskabel.dummy2pro.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
-import me.daskabel.dummy2pro.security.SecuritySessionKeys;
-import me.daskabel.dummy2pro.security.AuthenticatedUser;
 
 /**
  * Controller für Authentifizierung.
@@ -22,19 +23,24 @@ import me.daskabel.dummy2pro.security.AuthenticatedUser;
  *
  * Delegiert für Passwort- und Hashlogik an den Service
  */
-
 @RestController
 @RequestMapping("/api")
-public class AuthController {
+public class AuthController
+{
+    private static final String GENERIC_LOGIN_ERROR = "Benutzername oder Passwort falsch.";
 
     private final UserService userService;
+    private final LoginAttemptService loginAttemptService;
 
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService, LoginAttemptService loginAttemptService)
+    {
         this.userService = userService;
+        this.loginAttemptService = loginAttemptService;
     }
 
     @PostMapping("/register")
-    public RegisterResponse register(@RequestBody RegisterRequest request) {
+    public RegisterResponse register(@RequestBody RegisterRequest request)
+    {
         User user = userService.register(request.getUsername(), request.getPassword());
         return new RegisterResponse(user.getUsername(), "Registrierung erfolgreich");
     }
@@ -44,8 +50,17 @@ public class AuthController {
             @RequestBody LoginRequest request,
             HttpServletRequest httpRequest)
     {
-        try {
-            User user = userService.authenticate(request.getUsername(), request.getPassword());
+        String username = request.getUsername();
+
+        if (loginAttemptService.isBlocked(username))
+        {
+            throw new UnauthorizedException(GENERIC_LOGIN_ERROR);
+        }
+
+        try
+        {
+            User user = userService.authenticate(username, request.getPassword());
+            loginAttemptService.registerSuccess(username);
 
             HttpSession existingSession = httpRequest.getSession(false);
             if (existingSession != null)
@@ -83,8 +98,11 @@ public class AuthController {
                     userService.resolveAvatarFilename(user),
                     "Login erfolgreich"
             );
-        } catch (IllegalArgumentException ex) {
-            throw new UnauthorizedException(ex.getMessage());
+        }
+        catch (IllegalArgumentException ex)
+        {
+            loginAttemptService.registerFailure(username);
+            throw new UnauthorizedException(GENERIC_LOGIN_ERROR);
         }
     }
 
@@ -100,91 +118,160 @@ public class AuthController {
 
     @ExceptionHandler(UnauthorizedException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorResponse handleUnauthorized(UnauthorizedException ex) {
+    public ErrorResponse handleUnauthorized(UnauthorizedException ex)
+    {
         return new ErrorResponse("UNAUTHORIZED", ex.getMessage());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleBadRequest(IllegalArgumentException ex) {
+    public ErrorResponse handleBadRequest(IllegalArgumentException ex)
+    {
         return new ErrorResponse("BAD_REQUEST", ex.getMessage());
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public static class UnauthorizedException extends RuntimeException {
-        public UnauthorizedException(String message) {
+    public static class UnauthorizedException extends RuntimeException
+    {
+        public UnauthorizedException(String message)
+        {
             super(message);
         }
     }
 
-    public static class ErrorResponse {
+    public static class ErrorResponse
+    {
         private String error;
         private String message;
 
-        public ErrorResponse(String error, String message) {
+        public ErrorResponse(String error, String message)
+        {
             this.error = error;
             this.message = message;
         }
 
-        public String getError() { return error; }
-        public String getMessage() { return message; }
+        public String getError()
+        {
+            return error;
+        }
+
+        public String getMessage()
+        {
+            return message;
+        }
     }
 
-    public static class RegisterRequest {
+    public static class RegisterRequest
+    {
         private String username;
         private String password;
 
         public RegisterRequest() {}
 
-        public String getUsername() { return username; }
-        public void setUsername(String username) { this.username = username; }
+        public String getUsername()
+        {
+            return username;
+        }
 
-        public String getPassword() { return password; }
-        public void setPassword(String password) { this.password = password; }
+        public void setUsername(String username)
+        {
+            this.username = username;
+        }
+
+        public String getPassword()
+        {
+            return password;
+        }
+
+        public void setPassword(String password)
+        {
+            this.password = password;
+        }
     }
 
-    public static class LoginRequest {
+    public static class LoginRequest
+    {
         private String username;
         private String password;
 
         public LoginRequest() {}
 
-        public String getUsername() { return username; }
-        public void setUsername(String username) { this.username = username; }
+        public String getUsername()
+        {
+            return username;
+        }
 
-        public String getPassword() { return password; }
-        public void setPassword(String password) { this.password = password; }
+        public void setUsername(String username)
+        {
+            this.username = username;
+        }
+
+        public String getPassword()
+        {
+            return password;
+        }
+
+        public void setPassword(String password)
+        {
+            this.password = password;
+        }
     }
 
-    public static class RegisterResponse {
+    public static class RegisterResponse
+    {
         private String username;
         private String message;
 
-        public RegisterResponse(String username, String message) {
+        public RegisterResponse(String username, String message)
+        {
             this.username = username;
             this.message = message;
         }
 
-        public String getUsername() { return username; }
-        public String getMessage() { return message; }
+        public String getUsername()
+        {
+            return username;
+        }
+
+        public String getMessage()
+        {
+            return message;
+        }
     }
 
-    public static class LoginResponse {
+    public static class LoginResponse
+    {
         private Long userId;
         private String username;
         private String avatar;
         private String message;
 
-        public LoginResponse(Long userId, String username, String avatar, String message) {
+        public LoginResponse(Long userId, String username, String avatar, String message)
+        {
             this.userId = userId;
             this.username = username;
             this.avatar = avatar;
             this.message = message;
         }
 
-        public Long getUserId() { return userId; }
-        public String getUsername() { return username; }
-        public String getAvatar() { return avatar; }
-        public String getMessage() { return message; }
+        public Long getUserId()
+        {
+            return userId;
+        }
+
+        public String getUsername()
+        {
+            return username;
+        }
+
+        public String getAvatar()
+        {
+            return avatar;
+        }
+
+        public String getMessage()
+        {
+            return message;
+        }
     }
 }
