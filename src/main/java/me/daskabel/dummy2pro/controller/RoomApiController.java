@@ -1,27 +1,6 @@
 package me.daskabel.dummy2pro.controller;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.regex.Pattern;
-
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import jakarta.servlet.http.HttpSession;
 import me.daskabel.dummy2pro.dto.RoomDtos.AnswerRequest;
 import me.daskabel.dummy2pro.dto.RoomDtos.AnswerResultDto;
 import me.daskabel.dummy2pro.dto.RoomDtos.QuestionDto;
@@ -29,7 +8,6 @@ import me.daskabel.dummy2pro.dto.RoomDtos.RoomStartDto;
 import me.daskabel.dummy2pro.dto.RoomDtos.RoomStatusDto;
 import me.daskabel.dummy2pro.dto.RunReviewDto;
 import me.daskabel.dummy2pro.model.GameRun;
-import me.daskabel.dummy2pro.model.Theme;
 import me.daskabel.dummy2pro.repository.GameRunRepository;
 import me.daskabel.dummy2pro.repository.QuestionProgressRepository;
 import me.daskabel.dummy2pro.repository.QuestionRepository;
@@ -38,35 +16,38 @@ import me.daskabel.dummy2pro.repository.UserRepository;
 import me.daskabel.dummy2pro.session.QuizSession;
 import me.daskabel.dummy2pro.session.QuizSessionManager;
 import me.daskabel.dummy2pro.session.QuizSessionManager.SessionOverviewDto;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
- * REST API für die Raum/Quiz-Logik — mit QuizSessionManager.
+ * Stellt die REST-Endpunkte für Spielstände, Sitzungen und Räume bereit.
  *
- * Aktueller Flow für das Frontend:
- *
- * 1. GET /api/session/runs?userId=123 → vorhandene Spielstände des Users laden
- *
- * 2. POST /api/session/load?userId=123&runId=7 → vorhandenen Spielstand laden
- *
- * 3. POST /api/session/new?userId=123 → neuen Spielstand anlegen
- *
- * 4. GET /api/session/{sessionId}/room/{roomId} → Raum betreten: aktuelle Frage + Status laden
- *
- * 5. POST /api/session/{sessionId}/room/{roomId}/answer → Antwort schicken, Ergebnis zurück
- *
- * 6. POST /api/session/{sessionId}/room/{roomId}/advance → nächste Frage anfordern
- *
- * 7. GET /api/session/{sessionId}/overview → Gesamtübersicht: alle Räume, Punkte, Medaillen
- *
- * ALT: POST /api/session/start?userId=123 → startet ausdrücklich einen neuen Spielstand
+ * Der Controller verbindet das Frontend mit dem QuizSessionManager und den
+ * benötigten Repositories. Er kümmert sich vor allem um Laden, Starten,
+ * Betreten und Auswerten von Räumen sowie um spielstandsbezogene Aktionen.
  */
-
 @RestController
 @RequestMapping("/api/session")
 public class RoomApiController
 {
+    /**
+     * Erlaubte Zeichen für einen frei gesetzten Spielstandnamen.
+     */
     private static final Pattern DISPLAY_NAME_PATTERN = Pattern.compile("^[\\p{L}\\p{N} _.-]{1,40}$");
 
+    /**
+     * Einheitliches Fehlerobjekt für API-Antworten.
+     */
     public static class ErrorResponse
     {
         private final String error;
@@ -89,6 +70,9 @@ public class RoomApiController
         }
     }
 
+    /**
+     * Daten eines Spielstands für die Listenansicht im Frontend.
+     */
     public static class RunListEntryResponse
     {
         private Long runId;
@@ -148,6 +132,9 @@ public class RoomApiController
         }
     }
 
+    /**
+     * Anfragedaten zum Umbenennen eines Spielstands.
+     */
     public static class RenameRunRequest
     {
         private String displayName;
@@ -163,6 +150,9 @@ public class RoomApiController
         }
     }
 
+    /**
+     * Antwort beim Start einer neuen Sitzung.
+     */
     public static class SessionStartResponse
     {
         private String sessionId;
@@ -189,6 +179,9 @@ public class RoomApiController
         }
     }
 
+    /**
+     * Raumdaten für die Übersicht im Dashboard.
+     */
     public static class DashboardRoomResponse
     {
         private int roomId;
@@ -259,6 +252,9 @@ public class RoomApiController
         }
     }
 
+    /**
+     * Gesamtdaten für das Dashboard.
+     */
     public static class DashboardOverviewResponse
     {
         private Long runId;
@@ -299,7 +295,6 @@ public class RoomApiController
     private static final int QUESTIONS_PER_ROOM = 40;
 
     private final QuizSessionManager sessionManager;
-
     private final GameRunRepository gameRunRepository;
     private final ThemeRepository themeRepository;
     private final QuestionRepository questionRepository;
@@ -323,8 +318,9 @@ public class RoomApiController
     }
 
     /**
-     * POST /api/session/{sessionId}/room/{roomId}/advance Nächste Frage anfordern. Gibt null zurück wenn Raum
-     * abgeschlossen.
+     * Fordert nach einer beantworteten Frage die nächste Frage des Raums an.
+     *
+     * Ist der Raum abgeschlossen, liefert der Manager null zurück.
      */
     @PostMapping("/{sessionId}/room/{roomId}/advance")
     public ResponseEntity<QuestionDto> advance(
@@ -336,6 +332,9 @@ public class RoomApiController
         return ResponseEntity.ok(this.sessionManager.advance(sessionId, roomId));
     }
 
+    /**
+     * Legt einen neuen Spielstand samt neuer Sitzung für den aktuellen Benutzer an.
+     */
     @PostMapping("/new")
     public Map<String, Object> createNewRun(Authentication authentication)
     {
@@ -352,7 +351,7 @@ public class RoomApiController
     }
 
     /**
-     * GET /api/session/{sessionId}/overview Alle 7 Räume + Gesamtpunkte + Medaillen.
+     * Liefert die Gesamtübersicht einer Sitzung über alle Räume.
      */
     @GetMapping("/{sessionId}/overview")
     public ResponseEntity<SessionOverviewDto> getOverview(Authentication authentication, @PathVariable String sessionId)
@@ -361,6 +360,9 @@ public class RoomApiController
         return ResponseEntity.ok(this.sessionManager.getOverview(sessionId));
     }
 
+    /**
+     * Liefert die Review-Daten eines kompletten Spielstands.
+     */
     @GetMapping("/{sessionId}/review")
     public ResponseEntity<RunReviewDto> getRunReview(Authentication authentication, @PathVariable String sessionId)
     {
@@ -369,7 +371,7 @@ public class RoomApiController
     }
 
     /**
-     * GET /api/session/{sessionId}/room/{roomId} Raum betreten — liefert aktuelle Frage + Status.
+     * Lädt den aktuellen Zustand eines Raums, einschließlich aktueller Frage.
      */
     @GetMapping("/{sessionId}/room/{roomId}")
     public ResponseEntity<RoomStartDto> getRoom(
@@ -382,7 +384,7 @@ public class RoomApiController
     }
 
     /**
-     * GET /api/session/{sessionId}/room/{roomId}/status
+     * Liefert nur den Status eines Raums ohne neue Frage.
      */
     @GetMapping("/{sessionId}/room/{roomId}/status")
     public ResponseEntity<RoomStatusDto> getRoomStatus(
@@ -395,6 +397,9 @@ public class RoomApiController
         return ResponseEntity.ok(status);
     }
 
+    /**
+     * Liefert alle Spielstände des aktuell angemeldeten Benutzers.
+     */
     @GetMapping("/runs")
     public ResponseEntity<List<RunListEntryResponse>> getRunsForUser(Authentication authentication)
     {
@@ -408,6 +413,9 @@ public class RoomApiController
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Ändert den Anzeigenamen eines Spielstands.
+     */
     @PutMapping("/{runId}/name")
     public ResponseEntity<RunListEntryResponse> renameRun(
             Authentication authentication,
@@ -425,25 +433,9 @@ public class RoomApiController
         return ResponseEntity.ok(toRunListEntryResponse(savedRun));
     }
 
-    // Fehlerbehandlung
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponse> handleBadRequest(IllegalArgumentException ex)
-    {
-        return ResponseEntity.badRequest().body(new ErrorResponse("BAD_REQUEST", ex.getMessage()));
-    }
-
-    @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<ErrorResponse> handleNotFound(NoSuchElementException ex)
-    {
-        return ResponseEntity.status(404).body(new ErrorResponse("NOT_FOUND", ex.getMessage()));
-    }
-
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<ErrorResponse> handleServerError(IllegalStateException ex)
-    {
-        return ResponseEntity.status(500).body(new ErrorResponse("SERVER_ERROR", ex.getMessage()));
-    }
-
+    /**
+     * Lädt einen vorhandenen Spielstand in eine aktive Sitzung.
+     */
     @PostMapping("/load")
     public Map<String, Object> loadRun(Authentication authentication, @RequestParam Long runId)
     {
@@ -469,13 +461,11 @@ public class RoomApiController
     }
 
     /**
-     * ALT-Endpoint: POST /api/session/start?userId=123
+     * Startet ausdrücklich einen neuen Spielstand.
      *
-     * Bedeutet ab jetzt ausdrücklich: neuer Spielstand + neue Session.
-     *
-     * Für bestehende Spielstände muss /api/session/load verwendet werden.
+     * Bestehende Spielstände werden nicht geladen, sondern es wird immer eine
+     * neue Sitzung erzeugt.
      */
-
     @PostMapping("/start")
     public ResponseEntity<SessionStartResponse> startSession(Authentication authentication)
     {
@@ -490,8 +480,7 @@ public class RoomApiController
     }
 
     /**
-     * POST /api/session/{sessionId}/room/{roomId}/answer Antwort auswerten. Body: { "questionId": 1,
-     * "selectedAnswerIds": [5] } oder GAP: { "questionId": 2, "gapAnswers": [{"gapId": 1, "selectedGapOptionId": 3}] }
+     * Wertet eine Antwort für einen Raum aus.
      */
     @PostMapping("/{sessionId}/room/{roomId}/answer")
     public ResponseEntity<AnswerResultDto> submitAnswer(
@@ -504,6 +493,9 @@ public class RoomApiController
         return ResponseEntity.ok(this.sessionManager.submitAnswer(sessionId, roomId, request));
     }
 
+    /**
+     * Bereitet einen Raum vor, bevor er betreten oder fortgesetzt wird.
+     */
     @PostMapping("/{sessionId}/room/{roomId}/prepare")
     public ResponseEntity<RoomStatusDto> prepareRoom(
             Authentication authentication,
@@ -514,11 +506,17 @@ public class RoomApiController
         return ResponseEntity.ok(this.sessionManager.prepareRoom(sessionId, roomId));
     }
 
+    /**
+     * Liest die Benutzer-ID des aktuell angemeldeten Benutzers aus.
+     */
     private Long requireCurrentUserId(Authentication authentication)
     {
         return AuthController.extractUserId(authentication);
     }
 
+    /**
+     * Prüft, ob die Sitzung dem aktuell angemeldeten Benutzer gehört.
+     */
     private void assertSessionOwner(String sessionId, Long currentUserId)
     {
         QuizSession session = this.sessionManager.getSession(sessionId);
@@ -528,6 +526,12 @@ public class RoomApiController
         }
     }
 
+    /**
+     * Bereinigt und prüft den Anzeigenamen eines Spielstands.
+     *
+     * Leere Eingaben werden als null behandelt, damit ein Name auch wieder
+     * entfernt werden kann.
+     */
     private String normalizeDisplayName(String displayName)
     {
         if (displayName == null)
@@ -555,6 +559,9 @@ public class RoomApiController
         return trimmed;
     }
 
+    /**
+     * Wandelt ein GameRun-Objekt in das Antwortformat für das Frontend um.
+     */
     private RunListEntryResponse toRunListEntryResponse(GameRun run)
     {
         RunListEntryResponse dto = new RunListEntryResponse();
@@ -566,6 +573,36 @@ public class RoomApiController
         return dto;
     }
 
+    /**
+     * Wandelt ungültige Eingaben in eine 400-Antwort um.
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleBadRequest(IllegalArgumentException ex)
+    {
+        return ResponseEntity.badRequest().body(new ErrorResponse("BAD_REQUEST", ex.getMessage()));
+    }
+
+    /**
+     * Wandelt nicht gefundene Daten in eine 404-Antwort um.
+     */
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<ErrorResponse> handleNotFound(NoSuchElementException ex)
+    {
+        return ResponseEntity.status(404).body(new ErrorResponse("NOT_FOUND", ex.getMessage()));
+    }
+
+    /**
+     * Wandelt interne Zustandsfehler in eine 500-Antwort um.
+     */
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ErrorResponse> handleServerError(IllegalStateException ex)
+    {
+        return ResponseEntity.status(500).body(new ErrorResponse("SERVER_ERROR", ex.getMessage()));
+    }
+
+    /**
+     * Wandelt unzulässige Zugriffe in eine 403-Antwort um.
+     */
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleForbidden(AccessDeniedException ex)
     {

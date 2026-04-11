@@ -3,6 +3,12 @@ package me.daskabel.dummy2pro.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Enthält die Review-Daten eines kompletten Spielstands.
+ *
+ * Die Struktur bildet den Spielstand hierarchisch ab:
+ * Spielstand -> Räume -> Fragen -> Antworten bzw. Lücken.
+ */
 public class RunReviewDto
 {
     private Long runId;
@@ -39,6 +45,9 @@ public class RunReviewDto
         this.rooms = rooms;
     }
 
+    /**
+     * Review-Daten eines einzelnen Raums.
+     */
     public static class RoomReviewDto
     {
         private int roomId;
@@ -131,6 +140,9 @@ public class RunReviewDto
         }
     }
 
+    /**
+     * Review-Daten einer einzelnen Frage.
+     */
     public static class QuestionReviewDto
     {
         private Long questionId;
@@ -245,6 +257,9 @@ public class RunReviewDto
         }
     }
 
+    /**
+     * Review-Daten einer Antwortoption bei MC- oder TF-Fragen.
+     */
     public static class ChoiceReviewDto
     {
         private Long answerId;
@@ -293,6 +308,9 @@ public class RunReviewDto
         }
     }
 
+    /**
+     * Review-Daten einer einzelnen Lücke bei GAP-Fragen.
+     */
     public static class GapReviewDto
     {
         private Long gapId;

@@ -1,10 +1,30 @@
-# alles was wir für unser Projekt an der Datenbank anders brauchen als von den Analysten ursprünglich gedacht
+-- =========================================================
+-- Anpassungen an der Datenbankstruktur und an vorhandenen Inhalten
+-- =========================================================
+--
+-- Zweck:
+-- Dieses Skript passt die ursprünglich gelieferte Datenbank an die
+-- Anforderungen von Dummy2Pro an.
+--
+-- Inhalt:
+-- - Umbenennungen bestehender Tabellen
+-- - Anlegen zusätzlicher Tabellen für Benutzer und Spielstände
+-- - Speichern von Antworten und Bearbeitungsständen
+-- - fachliche Umordnung vorhandener Fragen zu Themes
+--
+-- Hinweis:
+-- Das Skript enthält sowohl Änderungen an der Struktur als auch
+-- Änderungen an bereits vorhandenen Daten.
+-- =========================================================
 
-# Umbennen Tabelle, da Name unpassend
+
+-- Bestehende Tabellen an unsere Vorstellung anpassen.
 RENAME TABLE `mc_answer` TO `answer_option`;
 ALTER TABLE IF EXISTS Question_Theme RENAME TO question_theme;
 
-# Erstellen unserer Usertabelle
+
+-- Benutzertabelle anlegen
+CREATE TABLE `users` (
 CREATE TABLE `users` (
   `user_id` INT NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(255) NOT NULL,
@@ -15,7 +35,7 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB;
 
 
-# mit mehreren Speicherständen
+-- mit mehreren Speicherständen
 CREATE TABLE `game_run` (
     `run_id` INT NOT NULL AUTO_INCREMENT,
     `user_id` INT NOT NULL,
@@ -115,8 +135,10 @@ CREATE TABLE `run_gap_answer` (
     ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
--------------------------------------------
-Inhaltsmanipulation:
+-- =========================================================
+-- Inhaltsmanipulation:
+-- =========================================================
+-- Fragen werden hier nachträglich den passenden Themes zugeordnet.
 
 -- -> Recht (2)
 UPDATE question_theme SET theme_id = 2 WHERE question_id = 1 AND theme_id = 3;

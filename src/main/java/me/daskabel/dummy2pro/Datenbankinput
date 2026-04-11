@@ -1,10 +1,27 @@
--- =========================
--- möglicher Input für Livedatenbank
--- =========================
+-- =========================================================
+-- Eingabedaten für die Live-Datenbank
+-- =========================================================
+--
+-- Zweck:
+-- Dieses Skript ergänzt Themes, Teams, Fragensätze, Fragen,
+-- Antwortoptionen und Lückentextdaten für die Anwendung.
+--
+-- Inhalt:
+-- - neue Themes
+-- - neue Teams und Fragensätze
+-- - Fragen vom Typ GAP, TF und MC
+-- - Zuordnung der Fragen zu Themes
+-- - Antwort- und Lückentextoptionen
+--
+-- Hinweis:
+-- Die IDs werden hier fest vorgegeben. Das Skript ist daher für
+-- einen Datenbestand gedacht, bei dem diese Werte noch frei sind.
+-- =========================================================
 
--- =========================
--- Erweiterung Theme
--- =========================
+
+-- =========================================================
+-- Erweiterung der Themes
+-- =========================================================
 
 INSERT INTO theme (theme_id, name, description) VALUES (9, 'Programmierung', 'Grundlagen der Programmierung, OOP, Kontrollstrukturen, Datentypen, Algorithmen, Git und Codequalität');
 INSERT INTO theme (theme_id, name, description) VALUES (10, 'Netzwerke', 'OSI-Modell, TCP/IP, IPv4/IPv6, DNS, Routing, Subnetting, Protokolle');

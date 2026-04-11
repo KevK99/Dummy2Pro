@@ -8,25 +8,30 @@ import me.daskabel.dummy2pro.security.LoginAttemptService;
 import me.daskabel.dummy2pro.security.SecuritySessionKeys;
 import me.daskabel.dummy2pro.service.UserService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Controller für Authentifizierung.
+ * Stellt die Endpunkte für Registrierung und Login bereit.
  *
- * Stellt HTTP-Endpunkte für Registrierung und Login bereit. Für die
- * Kommunikation zwischen Frontend und {@link me.daskabel.dummy2pro.service.UserService}.</p>
- *
- *   Registrierung: Validiert Eingaben, erstellt einen neuen User
- *       und speichert ihn mit BCrypt-Hash in der Tabelle {@code users}.</li>
- *   Login: Prüft Benutzername/Passwort
- *
- * Delegiert für Passwort- und Hashlogik an den Service
+ * Die eigentliche Fachlogik liegt im UserService. Der Controller nimmt
+ * Anfragen entgegen, ruft die passenden Services auf und baut die
+ * Antworten für das Frontend.
  */
 @RestController
 @RequestMapping("/api")
 public class AuthController
 {
+    /**
+     * Einheitliche Fehlermeldung für fehlgeschlagene Anmeldungen.
+     *
+     */
     private static final String GENERIC_LOGIN_ERROR = "Benutzername oder Passwort falsch.";
 
     private final UserService userService;
@@ -38,6 +43,12 @@ public class AuthController
         this.loginAttemptService = loginAttemptService;
     }
 
+    /**
+     * Registriert einen neuen Benutzer.
+     *
+     * @param request Benutzername und Passwort
+     * @return Bestätigung der erfolgreichen Registrierung
+     */
     @PostMapping("/register")
     public RegisterResponse register(@RequestBody RegisterRequest request)
     {
@@ -45,6 +56,13 @@ public class AuthController
         return new RegisterResponse(user.getUsername(), "Registrierung erfolgreich");
     }
 
+    /**
+     * Meldet einen Benutzer an und legt die nötigen Sitzungsdaten an.
+     *
+     * @param request     Benutzername und Passwort
+     * @param httpRequest aktuelle HTTP-Anfrage
+     * @return Benutzerdaten für das Frontend
+     */
     @PostMapping("/login")
     public LoginResponse login(
             @RequestBody LoginRequest request,
@@ -75,20 +93,21 @@ public class AuthController
 
             AuthenticatedUser principal = new AuthenticatedUser(user.getUserId(), user.getUsername());
 
-            org.springframework.security.authentication.UsernamePasswordAuthenticationToken authentication =
-                    org.springframework.security.authentication.UsernamePasswordAuthenticationToken.authenticated(
+            UsernamePasswordAuthenticationToken authentication =
+                    UsernamePasswordAuthenticationToken.authenticated(
                             principal,
                             null,
-                            org.springframework.security.core.authority.AuthorityUtils.createAuthorityList("ROLE_USER")
+                            AuthorityUtils.createAuthorityList("ROLE_USER")
                     );
 
-            org.springframework.security.core.context.SecurityContext context =
-                    org.springframework.security.core.context.SecurityContextHolder.createEmptyContext();
+            SecurityContext context = SecurityContextHolder.createEmptyContext();
             context.setAuthentication(authentication);
-            org.springframework.security.core.context.SecurityContextHolder.setContext(context);
+            SecurityContextHolder.setContext(context);
 
+            // Security-Kontext zusätzlich in der Sitzung ablegen,
+            // damit Spring Security den Benutzer über weitere Requests erkennt.
             session.setAttribute(
-                    org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
+                    HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
                     context
             );
 
@@ -106,16 +125,25 @@ public class AuthController
         }
     }
 
-    public static Long extractUserId(org.springframework.security.core.Authentication authentication)
+    /**
+     * Liest die Benutzer-ID aus der aktuellen Anmeldung aus.
+     *
+     * @param authentication aktuelle Anmeldung
+     * @return Benutzer-ID des eingeloggten Benutzers
+     */
+    public static Long extractUserId(Authentication authentication)
     {
         if (authentication == null || !(authentication.getPrincipal() instanceof AuthenticatedUser authenticatedUser))
         {
-            throw new org.springframework.security.access.AccessDeniedException("Nicht eingeloggt.");
+            throw new AccessDeniedException("Nicht eingeloggt.");
         }
 
         return authenticatedUser.userId();
     }
 
+    /**
+     * Wandelt Anmeldefehler in eine 401-Antwort um.
+     */
     @ExceptionHandler(UnauthorizedException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResponse handleUnauthorized(UnauthorizedException ex)
@@ -123,6 +151,9 @@ public class AuthController
         return new ErrorResponse("UNAUTHORIZED", ex.getMessage());
     }
 
+    /**
+     * Wandelt ungültige Eingaben in eine 400-Antwort um.
+     */
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequest(IllegalArgumentException ex)
@@ -130,6 +161,9 @@ public class AuthController
         return new ErrorResponse("BAD_REQUEST", ex.getMessage());
     }
 
+    /**
+     * Eigene Ausnahme für fehlgeschlagene oder gesperrte Anmeldungen.
+     */
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public static class UnauthorizedException extends RuntimeException
     {
@@ -139,6 +173,9 @@ public class AuthController
         }
     }
 
+    /**
+     * Einheitliches Fehlerobjekt für API-Antworten.
+     */
     public static class ErrorResponse
     {
         private String error;
@@ -161,6 +198,9 @@ public class AuthController
         }
     }
 
+    /**
+     * Anfragedaten für die Registrierung.
+     */
     public static class RegisterRequest
     {
         private String username;
@@ -189,6 +229,9 @@ public class AuthController
         }
     }
 
+    /**
+     * Anfragedaten für die Anmeldung.
+     */
     public static class LoginRequest
     {
         private String username;
@@ -217,6 +260,9 @@ public class AuthController
         }
     }
 
+    /**
+     * Antwort nach erfolgreicher Registrierung.
+     */
     public static class RegisterResponse
     {
         private String username;
@@ -239,6 +285,9 @@ public class AuthController
         }
     }
 
+    /**
+     * Antwort nach erfolgreicher Anmeldung.
+     */
     public static class LoginResponse
     {
         private Long userId;

@@ -221,7 +221,10 @@
         const totalElement = document.getElementById("headlineTotalQuestions");
         const avatarElement = document.getElementById("headlineAvatar");
 
-        const rooms = Array.isArray(data.rooms) ? data.rooms : [];
+        const rooms = (Array.isArray(data.rooms) ? data.rooms : []).filter(room => {
+            const roomId = Number(room?.roomId ?? 0);
+            return roomId >= 1 && roomId <= 15;
+        });
 
         const totalAnsweredQuestions = rooms.reduce((sum, room) => {
             return sum + Number(room.answeredQuestions ?? 0);
@@ -253,10 +256,6 @@
             if (avatarFromStorage) {
                 avatarElement.src = `/images/${avatarFromStorage}`;
             }
-
-            if (typeof applyAvatarStyleToElement === "function") {
-                applyAvatarStyleToElement(avatarElement, "w-20 h-20");
-            }
         }
     }
 
@@ -282,7 +281,12 @@
             return;
         }
 
-        roomsGrid.innerHTML = rooms
+        const visibleRooms = rooms.filter(room => {
+            const roomId = Number(room?.roomId ?? 0);
+            return roomId >= 1 && roomId <= 15;
+        });
+
+        const roomCards = visibleRooms
             .slice()
             .sort((a, b) => Number(a.roomId) - Number(b.roomId))
             .map((room, index) => {
@@ -338,8 +342,28 @@
                         </div>
                     </a>
                 `;
-            })
-            .join("");
+            });
+
+        roomCards.push(`
+            <a href="/room17"
+               class="block rounded-2xl bg-cyan-300 dark:bg-slate-900/60 p-6 ring-2 ring-cyan-500 dark:ring-white/10 text-center text-slate-950 dark:text-slate-100 shadow-sm dark:shadow-none transition-transform hover:scale-[1.01] hover:ring-cyan-400 dark:hover:ring-white/20 cursor-pointer">
+                <p class="text-xs font-bold uppercase tracking-widest text-slate-700 dark:text-slate-400">
+                    Training
+                </p>
+
+                <h2 class="mt-1 text-lg font-black">
+                    Abkürzungstraining
+                </h2>
+
+                <div class="mt-8">
+                    <span class="rounded-full bg-cyan-500 px-3 py-1 text-xs font-bold text-white">
+                        Frei trainierbar
+                    </span>
+                </div>
+            </a>
+        `);
+
+        roomsGrid.innerHTML = roomCards.join("");
     }
 
     async function loadDashboard() {

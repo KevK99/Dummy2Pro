@@ -6,74 +6,89 @@ import me.daskabel.dummy2pro.model.QuestionType;
 
 /**
  * Alle DTOs rund um die Raum/Fragen-API.
- *
- * Werden als innere Klassen gesammelt, damit man nicht 10 kleine Dateien hat. Aufbau: RoomDtos.QuestionDto,
- * RoomDtos.AnswerRequest, ...
  */
 public class RoomDtos
 {
     // =====================================================================
     // OUTBOUND: Was der Server an den Client schickt
     // =====================================================================
+
     /**
-     * Eine Antwortoption für MC/TF — OHNE is_correct. Die ID wird gebraucht, damit der Client sie beim Antworten
-     * mitschicken kann.
+     * Eine Antwortoption für MC/TF — OHNE is_correct.
+     * Die ID wird gebraucht, damit der Client sie beim Antworten mitschicken kann.
      */
-    public static class AnswerOptionDto {
+    public static class AnswerOptionDto
+    {
         private Long answerId;
         private String optionText;
         private Integer optionOrder;
         private int correctAnswers;
         private int wrongAnswers;
 
-        public AnswerOptionDto() {
+        public AnswerOptionDto()
+        {
         }
 
-        public Long getAnswerId() {
+        public Long getAnswerId()
+        {
             return this.answerId;
         }
 
-        public Integer getOptionOrder() {
+        public Integer getOptionOrder()
+        {
             return this.optionOrder;
         }
 
-        public String getOptionText() {
+        public String getOptionText()
+        {
             return this.optionText;
         }
 
-        public void setAnswerId(Long answerId) {
+        public void setAnswerId(Long answerId)
+        {
             this.answerId = answerId;
         }
 
-        public void setOptionOrder(Integer optionOrder) {
+        public void setOptionOrder(Integer optionOrder)
+        {
             this.optionOrder = optionOrder;
         }
 
-        public void setOptionText(String optionText) {
+        public void setOptionText(String optionText)
+        {
             this.optionText = optionText;
         }
 
-        public void setCorrectAnswers(int correctAnswers) {
+        public void setCorrectAnswers(int correctAnswers)
+        {
             this.correctAnswers = correctAnswers;
         }
 
-        public void setWrongAnswers(int wrongAnswers) {
+        public void setWrongAnswers(int wrongAnswers)
+        {
             this.wrongAnswers = wrongAnswers;
         }
 
-        public int getCorrectAnswers() {
+        public int getCorrectAnswers()
+        {
             return this.correctAnswers;
         }
-        public int getWrongAnswers() {
+
+        public int getWrongAnswers()
+        {
             return this.wrongAnswers;
         }
-
     }
+
+    // =====================================================================
+    // INBOUND: Was der Client an den Server schickt
+    // =====================================================================
+
     /**
      * Der Client schickt seine Antwort(en) auf eine Frage.
      *
-     * Für MC/TF: selectedAnswerIds mit einer (oder mehreren) answer_id(s) Für GAP: gapAnswers: Map von gap_id ->
-     * gap_option_id
+     * Für MC/TF: selectedAnswerIds mit einer oder mehreren answer_id(s)
+     * Für GAP: gapAnswers als Zuordnung von gap_id zu gap_option_id
      */
     public static class AnswerRequest
     {
@@ -114,8 +129,11 @@ public class RoomDtos
         {
             this.selectedAnswerIds = selectedAnswerIds;
         }
-
     }
+
+    // =====================================================================
+    // OUTBOUND: Ergebnis einer Antwort
+    // =====================================================================
 
     /**
      * Was der Server nach dem Auswerten einer Antwort zurückschickt.
@@ -124,8 +142,7 @@ public class RoomDtos
     {
         private boolean correct;
         private List<Long> correctAnswerIds; // für MC/TF: welche wären richtig gewesen
-        private List<GapResultEntry> gapResults; // für GAP: pro Lücke richtig/falsch + korrekte
-                                                 // Option
+        private List<GapResultEntry> gapResults; // für GAP: pro Lücke richtig/falsch + korrekte Option
         private int pointsEarned;
         private String explanation; // optional: Erklärung warum richtig/falsch
 
@@ -184,10 +201,9 @@ public class RoomDtos
         }
     }
 
-    // =====================================================================
-    // INBOUND: Was der Client an den Server schickt
-    // =====================================================================
-
+    /**
+     * Eine einzelne Dialogzeile für Intro- oder Zwischendialoge.
+     */
     public static class DialogLineDto
     {
         private String speaker;
@@ -257,13 +273,10 @@ public class RoomDtos
         }
     }
 
-    // =====================================================================
-    // OUTBOUND: Ergebnis einer Antwort
-    // =====================================================================
-
     /**
-     * Ein Gap-Feld (Lücke) für GAP-Fragen. Enthält den Text davor/danach und die Auswahloptionen (ebenfalls ohne
-     * is_correct).
+     * Ein Gap-Feld (Lücke) für GAP-Fragen.
+     * Enthält den Text davor/danach und die Auswahloptionen
+     * ebenfalls ohne is_correct.
      */
     public static class GapFieldDto
     {
@@ -432,8 +445,53 @@ public class RoomDtos
     }
 
     /**
-     * Eine einzelne Frage mit allen Antwortoptionen. Die korrekten Antworten werden NICHT mitgeschickt (wäre ja
-     * cheaten). is_correct fehlt absichtlich.
+     * Eine einzelne Frage mit allen Antwortoptionen.
+     * Die korrekten Antworten werden NICHT mitgeschickt, sonst könnte
+     * der Client sie direkt auslesen.
+     */
+    public static class PracticeRoomDto
+    {
+        private String themeName;
+        private List<QuestionDto> questions;
+        private List<DialogLineDto> introDialog;
+
+        public PracticeRoomDto()
+        {
+        }
+
+        public List<DialogLineDto> getIntroDialog()
+        {
+            return this.introDialog;
+        }
+
+        public List<QuestionDto> getQuestions()
+        {
+            return this.questions;
+        }
+
+        public String getThemeName()
+        {
+            return this.themeName;
+        }
+
+        public void setIntroDialog(List<DialogLineDto> introDialog)
+        {
+            this.introDialog = introDialog;
+        }
+
+        public void setQuestions(List<QuestionDto> questions)
+        {
+            this.questions = questions;
+        }
+
+        public void setThemeName(String themeName)
+        {
+            this.themeName = themeName;
+        }
+    }
+
+    /**
+     * Eine Frage im Format für das Frontend.
      */
     public static class QuestionDto
     {
@@ -572,8 +630,8 @@ public class RoomDtos
     }
 
     /**
-     * Antwort auf GET /api/room/{id}/start Enthält die gemischte Fragen-Sequenz (nur IDs + erste Frage vollständig) und
-     * den aktuellen Status.
+     * Antwort auf den Start eines Raums.
+     * Enthält die Fragen-Sequenz, die erste Frage und den aktuellen Status.
      */
     public static class RoomStartDto
     {
@@ -628,12 +686,12 @@ public class RoomDtos
     }
 
     /**
-     * Der aktuelle Status eines Raums für einen User. Wird für die Dashboard-Anzeige und den Status-Panel im Raum
-     * genutzt.
+     * Der aktuelle Status eines Raums für einen Benutzer.
+     * Wird für Dashboard und Statusbereich im Raum verwendet.
      */
     public static class RoomStatusDto
     {
-        private int roomId; // 1..7 (= theme_id)
+        private int roomId;
         private String themeName;
         private int totalQuestions;
         private int answeredQuestions;
@@ -770,5 +828,4 @@ public class RoomDtos
             this.wrongAnswers = wrongAnswers;
         }
     }
-
 }

@@ -1,18 +1,34 @@
 -- =========================================================
--- Import Script (angepasst auf neue Analysten-DB aber mit gruppenrelevanten Änderungen)
+-- Testdaten für eine Beispiel-Datenbank
+-- =========================================================
+--
+-- Zweck:
+-- Dieses Skript füllt die Datenbank mit Beispielinhalten für Teams,
+-- Themes, Fragensätze, Fragen und Antwortmöglichkeiten.
+--
+-- Inhalt:
+-- - Test-Teams
+-- - Themes für mehrere Räume
+-- - ein Fragensatz
+-- - Beispiel-Fragen vom Typ TF, MC und GAP
+-- - Zuordnung der Fragen zu Themes
+--
+-- Hinweis:
+-- Das Skript ist vor allem für Test- und Entwicklungszwecke gedacht.
 -- =========================================================
 
--- =========================
--- Teams
--- =========================
+
+-- =========================================================
+-- Grunddaten
+-- =========================================================
+
+-- Teams anlegen.
 INSERT INTO `team` (`team_id`, `name`) VALUES
 (1, 'Dummy2Pro'),
 (2, 'ByteBuddies'),
 (3, 'CodeCrew');
 
--- =========================
--- Themes (7 Räume / Themenbereiche)
--- =========================
+-- Themes für die Räume anlegen.
 INSERT INTO `theme` (`theme_id`, `name`, `description`) VALUES
 (1, 'Datenbanken', 'SQL, Relationen, Normalisierung, Transaktionen'),
 (2, 'Programmierung', 'Grundlagen, Algorithmen, Tests'),
@@ -22,14 +38,12 @@ INSERT INTO `theme` (`theme_id`, `name`, `description`) VALUES
 (6, 'Projektmanagement', 'Planung, Risiken, Aufwand, Dokumentation'),
 (7, 'Versionsverwaltung', 'Git, Branching, Workflow');
 
--- =========================
--- 1 Fragenkatalog
--- =========================
+-- Fragensatz anlegen.
 INSERT INTO `question_set` (`question_set_id`, `team_id`, `title`)
 VALUES (1, 1, 'Datenbanken – Testfragen');
 
 -- =========================================================
--- Fragen Datenbanken (TF + MC + GAP)
+-- Fragen zum Theme Datenbanken
 -- =========================================================
 
 START TRANSACTION;

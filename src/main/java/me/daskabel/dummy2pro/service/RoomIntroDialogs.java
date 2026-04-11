@@ -95,7 +95,6 @@ public final class RoomIntroDialogs
                     new DialogLineDto("player", "...Danke für die Info.")
             )),
             Map.entry(8, List.of(
-                    new DialogLineDto("char8", "Guten Tag."),
                     new DialogLineDto("char8", "Willkommen im Raum Programmierung."),
                     new DialogLineDto("player", "Dann hoffe ich, dass heute wenigstens nichts kompiliert, nur um mich persönlich zu beleidigen."),
                     new DialogLineDto("char8", "Das wäre unprofessionell. Der Compiler beleidigt hier alle gleich."),
@@ -103,7 +102,6 @@ public final class RoomIntroDialogs
                     new DialogLineDto("char8", "Denk sauber, arbeite Schritt für Schritt und lass die Semikolons nicht unbeaufsichtigt.")
             )),
             Map.entry(9, List.of(
-                    new DialogLineDto("char9", "Miau"),
                     new DialogLineDto("char9", "Willkommen im Raum Netzwerke."),
                     new DialogLineDto("player", "Läuft hier alles stabil?"),
                     new DialogLineDto("char9", "Natürlich nicht. Sonst wäre es kein Netzwerk."),
@@ -111,7 +109,6 @@ public final class RoomIntroDialogs
                     new DialogLineDto("char9", "Sehr oft. Beunruhigend oft.")
             )),
             Map.entry(10, List.of(
-                    new DialogLineDto("char10", "Dasda"),
                     new DialogLineDto("char10", "Willkommen im Raum IT-Sicherheit."),
                     new DialogLineDto("player", "Mein Passwort ist sicher."),
                     new DialogLineDto("char10", "Das sagen sie alle."),
@@ -119,7 +116,6 @@ public final class RoomIntroDialogs
                     new DialogLineDto("char10", "Gut. Dann braucht der Angreifer nur noch drei Sekunden länger.")
             )),
             Map.entry(11, List.of(
-                    new DialogLineDto("char11", "Was geht?"),
                     new DialogLineDto("char11", "Willkommen im Raum Softwareentwicklung."),
                     new DialogLineDto("player", "Also planen, bauen, testen und verzweifeln?"),
                     new DialogLineDto("char11", "Fast. Das Verzweifeln kommt je nach Projektphase mehrfach vor."),
@@ -127,14 +123,13 @@ public final class RoomIntroDialogs
                     new DialogLineDto("char11", "Jetzt fehlt nur noch Wartbarkeit. Die vergisst man traditionell zuerst.")
             )),
             Map.entry(12, List.of(
-                    new DialogLineDto("char12", "Schere, Junge. Schere."),
+                    new DialogLineDto("char12", "Willkommen im Raum Projektmanagement."),
                     new DialogLineDto("player", "Du hier ganz allein?"),
                     new DialogLineDto("char12", "Dann kann es ja gar kein Projekt sein. Dafür braucht man mindestens ein Team und drei offene Punkte."),
                     new DialogLineDto("player", "Und ein Meeting, das auch eine E-Mail hätte sein können."),
                     new DialogLineDto("char12", "Jetzt sprichst du wie eine erfahrene Fachkraft.")
             )),
             Map.entry(13, List.of(
-                    new DialogLineDto("char13", "Knopf aus. Knopf an."),
                     new DialogLineDto("char13", "Willkommen im Raum Betriebssysteme."),
                     new DialogLineDto("player", "Bitte sag mir, dass wir heute nichts neu starten müssen."),
                     new DialogLineDto("char13", "Das hängt davon ab, wie viel du kaputtmachst."),
@@ -142,7 +137,6 @@ public final class RoomIntroDialogs
                     new DialogLineDto("char13", "Ganz genau. Wie bei den Prozessen im Task-Manager.")
             )),
             Map.entry(14, List.of(
-                    new DialogLineDto("char14", "Willkommen, willkommen."),
                     new DialogLineDto("char14", "Willkommen im Raum Cloud und Infrastruktur."),
                     new DialogLineDto("player", "Also fremde Computer bei anderen Leuten?"),
                     new DialogLineDto("char14", "Vereinfacht gesagt: ja."),
@@ -150,12 +144,18 @@ public final class RoomIntroDialogs
                     new DialogLineDto("char14", "Warte ab, bis die Rechnung kommt.")
             )),
             Map.entry(15, List.of(
-                    new DialogLineDto("char15", "Na endlich."),
                     new DialogLineDto("char15", "Willkommen im Raum Sonstiges."),
                     new DialogLineDto("player", "Das klingt irgendwie nach Restekiste."),
                     new DialogLineDto("char15", "Unterschätze niemals die Restekiste. Dort verstecken sich die seltsam präzisen Prüfungsfragen."),
                     new DialogLineDto("player", "Und warum steht da Java?"),
                     new DialogLineDto("char15", "Weil Java offenbar überall mitreden möchte.")
+            )),
+            Map.entry(17, List.of(
+                    new DialogLineDto("player", "Noch ein Raum?"),
+                    new DialogLineDto("warrior", "Eher ein Trainingsplatz. Hier schleifst du nur deine Abkürzungen."),
+                    new DialogLineDto("player", "Also kein normaler Prüfungsraum?"),
+                    new DialogLineDto("warrior", "Nein. Keine Wertung, kein Speicherstand-Zwang. Einfach üben, so oft du willst."),
+                    new DialogLineDto("warrior", "Alle Fragen aus Theme 17 warten hier komplett auf dich.")
             ))
     );
 

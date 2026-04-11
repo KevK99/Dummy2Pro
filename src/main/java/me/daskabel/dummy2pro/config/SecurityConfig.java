@@ -13,25 +13,39 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 import java.time.Clock;
 
+/**
+ * Sicherheitskonfiguration der Anwendung.
+ *
+ * Legt fest, welche Pfade frei erreichbar sind, wann eine Anmeldung
+ * erforderlich ist und wie Sitzungs- und CSRF-Prüfung behandelt werden.
+ */
 @Configuration
 public class SecurityConfig
 {
+    /**
+     * Zentrale Uhr für zeitabhängige Prüfungen.
+     */
     @Bean
     public Clock applicationClock()
     {
         return Clock.systemUTC();
     }
 
+    /**
+     * Definiert die Sicherheitsregeln der Anwendung.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             SessionAuthenticationFilter sessionAuthenticationFilter) throws Exception
     {
         return http
+                // Eigene Sitzungsprüfung vor den Standardfilter setzen.
                 .addFilterBefore(sessionAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                         .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+                        // Login und Registrierung müssen auch ohne vorhandenes CSRF-Token möglich sein.
                         .ignoringRequestMatchers(
                                 "/api/login",
                                 "/api/register"
@@ -67,6 +81,7 @@ public class SecurityConfig
                 )
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint((request, response, authException) -> {
+                            // API-Aufrufe bekommen einen Statuscode, Seitenaufrufe gehen zurück zur Startseite.
                             if (request.getRequestURI().startsWith("/api/"))
                             {
                                 response.sendError(401);

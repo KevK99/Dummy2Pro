@@ -1,0 +1,621 @@
+QUESTION|1|1|TF|false|1|Darf ein Primärschlüssel NULL enthalten.|<NULL>|<NULL>|1
+ANSWER|1|1|1|false|Wahr
+ANSWER|1|2|2|true|Falsch
+QUESTION|2|1|TF|false|1|Normalisierung kann Abfragen manchmal langsamer machen.|<NULL>|<NULL>|1
+ANSWER|2|3|1|true|Wahr
+ANSWER|2|4|2|false|Falsch
+QUESTION|3|1|TF|false|1|LEFT JOIN liefert auch Zeilen der linken Tabelle ohne entsprechenden Match.|<NULL>|<NULL>|1
+ANSWER|3|5|1|true|Wahr
+ANSWER|3|6|2|false|Falsch
+QUESTION|4|1|TF|false|1|WHERE filtert vor GROUP BY.|<NULL>|<NULL>|1
+ANSWER|4|7|1|true|Wahr
+ANSWER|4|8|2|false|Falsch
+QUESTION|5|1|TF|false|1|HAVING ohne GROUP BY ist möglich.|<NULL>|<NULL>|1
+ANSWER|5|9|1|true|Wahr
+ANSWER|5|10|2|false|Falsch
+QUESTION|6|1|TF|false|1|COUNT(*) zählt auch Zeilen, in denen alles NULL ist.|<NULL>|<NULL>|1
+ANSWER|6|11|1|true|Wahr
+ANSWER|6|12|2|false|Falsch
+QUESTION|7|1|TF|false|1|COUNT(spalte) zählt Zeilen, in denen alles NULL ist, mit.|<NULL>|<NULL>|1
+ANSWER|7|13|1|false|Wahr
+ANSWER|7|14|2|true|Falsch
+QUESTION|8|1|TF|false|1|INNER JOIN und JOIN sind gleichbedeutend.|<NULL>|<NULL>|1
+ANSWER|8|15|1|true|Wahr
+ANSWER|8|16|2|false|Falsch
+QUESTION|9|1|TF|false|1|Transaktionen verhindern automatisch parallele Änderungen in derselben Zeile.|<NULL>|<NULL>|1
+ANSWER|9|17|1|false|Wahr
+ANSWER|9|18|2|true|Falsch
+QUESTION|10|1|TF|false|1|DELETE FROM t; und TRUNCATE t; sind immer gleich.|<NULL>|<NULL>|1
+ANSWER|10|19|1|false|Wahr
+ANSWER|10|20|2|true|Falsch
+QUESTION|11|1|TF|false|1|Rollback kann Änderungen rückgängig machen.|<NULL>|<NULL>|1
+ANSWER|11|21|1|true|Wahr
+ANSWER|11|22|2|false|Falsch
+QUESTION|12|1|TF|false|1|Ein Primärschlüssel muss eindeutig sein.|<NULL>|<NULL>|1
+ANSWER|12|23|1|true|Wahr
+ANSWER|12|24|2|false|Falsch
+QUESTION|13|1|TF|false|1|Ein Fremdschlüssel verhindert automatisch doppelte Werte in der Fremdschlüssel-Spalte.|<NULL>|<NULL>|1
+ANSWER|13|25|1|false|Wahr
+ANSWER|13|26|2|true|Falsch
+QUESTION|14|1|TF|false|1|In einer 1:n-Beziehung liegt der Fremdschlüssel auf der n-Seite.|<NULL>|<NULL>|1
+ANSWER|14|27|1|true|Wahr
+ANSWER|14|28|2|false|Falsch
+QUESTION|15|1|TF|false|1|Normalisierung reduziert Datenredundanz.|<NULL>|<NULL>|1
+ANSWER|15|29|1|true|Wahr
+ANSWER|15|30|2|false|Falsch
+QUESTION|16|1|TF|false|1|Indizes machen Schreibvorgänge (Insert/Update/Delete) grundsätzlich schneller.|<NULL>|<NULL>|1
+ANSWER|16|31|1|false|Wahr
+ANSWER|16|32|2|true|Falsch
+QUESTION|17|1|TF|false|1|Ein Default-Wert wird genutzt, wenn beim Insert kein Wert geliefert wird.|<NULL>|<NULL>|1
+ANSWER|17|33|1|true|Wahr
+ANSWER|17|34|2|false|Falsch
+QUESTION|18|1|TF|false|1|Ein Audit-Log ist dasselbe wie ein Backup.|<NULL>|<NULL>|1
+ANSWER|18|35|1|false|Wahr
+ANSWER|18|36|2|true|Falsch
+QUESTION|19|1|TF|false|1|Ein Backup schützt vor Datenverlust durch „DROP TABLE“ oder versehentliches Löschen.|<NULL>|<NULL>|1
+ANSWER|19|37|1|true|Wahr
+ANSWER|19|38|2|false|Falsch
+QUESTION|20|1|TF|false|1|Datenbank-Migrationen sind nur bei großen Firmen sinnvoll.|<NULL>|<NULL>|1
+ANSWER|20|39|1|false|Wahr
+ANSWER|20|40|2|true|Falsch
+QUESTION|21|1|TF|false|1|In der Anwendung sollte man Eingaben validieren.|<NULL>|<NULL>|1
+ANSWER|21|41|1|true|Wahr
+ANSWER|21|42|2|false|Falsch
+QUESTION|22|1|TF|false|1|1NF verbietet mehrere Werte in einer Spalte (z. B. Listen in einer Zelle).|<NULL>|<NULL>|1
+ANSWER|22|43|1|true|Wahr
+ANSWER|22|44|2|false|Falsch
+QUESTION|23|1|TF|false|1|2NF ist nur bei zusammengesetzten Primärschlüsseln relevant.|<NULL>|<NULL>|1
+ANSWER|23|45|1|true|Wahr
+ANSWER|23|46|2|false|Falsch
+QUESTION|24|1|TF|false|1|3NF bedeutet „keine Abhängigkeit von Nicht-Schlüsselattributen“.|<NULL>|<NULL>|1
+ANSWER|24|47|1|true|Wahr
+ANSWER|24|48|2|false|Falsch
+QUESTION|25|1|TF|false|1|Denormalisierung reduziert Redundanz.|<NULL>|<NULL>|1
+ANSWER|25|49|1|false|Wahr
+ANSWER|25|50|2|true|Falsch
+QUESTION|26|1|TF|false|1|SELECT gehört zu DQL.|<NULL>|<NULL>|1
+ANSWER|26|51|1|true|Wahr
+ANSWER|26|52|2|false|Falsch
+QUESTION|27|1|TF|false|1|Eine Transaktion kann mehrere DML-Operationen zusammenfassen.|<NULL>|<NULL>|1
+ANSWER|27|53|1|true|Wahr
+ANSWER|27|54|2|false|Falsch
+QUESTION|28|1|MC|false|1|Welche Aggregation zählt nur nicht-NULL (gefüllte) Werte in email?|<NULL>|<NULL>|1
+ANSWER|28|55|1|false|COUNT(*)
+ANSWER|28|56|2|true|COUNT(email)
+ANSWER|28|57|3|false|SUM(email)
+ANSWER|28|58|4|false|AVG(email)
+QUESTION|29|1|MC|false|1|Welche Klausel filtert nach dem Gruppieren?|<NULL>|<NULL>|1
+ANSWER|29|59|1|false|WHERE
+ANSWER|29|60|2|false|ORDER BY
+ANSWER|29|61|3|true|HAVING
+ANSWER|29|62|4|false|LIMIT
+QUESTION|30|1|MC|false|1|Welche Abfrage ist korrekt, um nach Datum absteigend zu sortieren?|<NULL>|<NULL>|1
+ANSWER|30|63|1|true|ORDER BY datum DESC
+ANSWER|30|64|2|false|SORT BY datum DESC
+ANSWER|30|65|3|false|GROUP BY datum DESC
+ANSWER|30|66|4|false|ORDER BY DESC(datum)
+QUESTION|31|1|MC|false|1|Was liefert DISTINCT?|<NULL>|<NULL>|1
+ANSWER|31|67|1|true|Nur eindeutige Zeilen im Ergebnis
+ANSWER|31|68|2|false|Entfernt NULL aus Ergebnissen
+ANSWER|31|69|3|false|Sortiert automatisch
+ANSWER|31|70|4|false|Verhindert Duplikate in der Tabelle
+QUESTION|32|1|MC|false|1|Was beschreibt eine n:m-Beziehung korrekt?|<NULL>|<NULL>|1
+ANSWER|32|71|1|false|Foreign Key in einer Tabelle reicht
+ANSWER|32|72|2|true|Es wird eine Zwischentabelle gebraucht
+ANSWER|32|73|3|false|Nur möglich ohne Primärschlüssel
+ANSWER|32|74|4|false|Solche Beziehungen sind nicht möglich
+QUESTION|33|1|MC|false|1|Welche Eigenschaft ist typisch für einen Primary Key?|<NULL>|<NULL>|1
+ANSWER|33|75|1|false|Er darf NULL enthalten
+ANSWER|33|76|2|true|Er muss eindeutig sein
+ANSWER|33|77|3|false|Er muss eine Zeichenkette sein
+ANSWER|33|78|4|false|Er muss automatisch hoch zählen
+QUESTION|34|1|MC|false|1|Was stellt ein Foreign Key sicher?|<NULL>|<NULL>|1
+ANSWER|34|79|1|false|Dass Abfragen schneller laufen
+ANSWER|34|80|2|true|Dass referenzierte Werte existieren
+ANSWER|34|81|3|false|Die Tabelle wird automatisch normalisiert
+ANSWER|34|82|4|false|Es verhindert doppelte Werte in der Tabelle
+QUESTION|35|1|MC|false|1|Was ist ein typisches Ziel von Normalisierung?|<NULL>|<NULL>|1
+ANSWER|35|83|1|false|Mehr Speicherverbrauch
+ANSWER|35|84|2|true|Weniger Redundanz und Anomalien
+ANSWER|35|85|3|false|Mehr Duplikate
+ANSWER|35|86|4|false|Weniger Tabellen
+QUESTION|36|1|MC|false|1|Hauptziel der Normalisierung ist…|<NULL>|<NULL>|1
+ANSWER|36|87|1|false|Weniger Tabellen
+ANSWER|36|88|2|true|Redundanz reduzieren und Anomalien vermeiden
+ANSWER|36|89|3|false|Mehr Duplikate zulassen
+ANSWER|36|90|4|false|Schnellere Schreibzugriffe erzwingen
+QUESTION|37|1|MC|false|1|Was ist ein Beispiel für eine Änderungsanomalie?|<NULL>|<NULL>|1
+ANSWER|37|91|1|false|Beim Einfügen fehlen Daten
+ANSWER|37|92|2|false|Beim Löschen gehen Informationen verloren
+ANSWER|37|93|3|false|Ein Wert muss an mehreren Stellen geändert werden
+ANSWER|37|94|4|true|Alle oben
+QUESTION|38|1|MC|false|1|Denormalisierung macht man oft, wenn…|<NULL>|<NULL>|1
+ANSWER|38|95|1|false|Schreibzugriffe wichtiger sind als Lesezugriffe
+ANSWER|38|96|2|true|Leseperformance wichtiger ist und Redundanz akzeptiert wird
+ANSWER|38|97|3|false|Man 3NF unbedingt vermeiden muss
+ANSWER|38|98|4|false|Man keine Indizes nutzen darf
+QUESTION|39|1|MC|false|1|Was ist eine typische Nebenwirkung vieler Indizes?|<NULL>|<NULL>|1
+ANSWER|39|99|1|false|SELECT wird langsamer
+ANSWER|39|100|2|true|UPDATE/INSERT wird langsamer
+ANSWER|39|101|3|false|DELETE wird unmöglich
+ANSWER|39|102|4|false|GROUP BY funktioniert nicht mehr
+QUESTION|40|1|MC|false|1|Welche Spalte ist häufig ein guter Index-Kandidat?|<NULL>|<NULL>|1
+ANSWER|40|103|1|false|Spalte mit nur 2 möglichen Werten (z. B. true/false)
+ANSWER|40|104|2|false|Spalte, die nie in WHERE/JOIN vorkommt
+ANSWER|40|105|3|true|Spalte, die oft gefiltert oder gejoint wird
+ANSWER|40|106|4|false|Spalte, die nur NULL enthält
+QUESTION|41|1|MC|false|1|Wie schützt man sich am zuverlässigsten gegen SQL-Injection?|<NULL>|<NULL>|1
+ANSWER|41|107|1|false|LIKE statt =
+ANSWER|41|108|2|true|Prepared Statements / Parameterbindung
+ANSWER|41|109|3|false|DISTINCT nutzen
+ANSWER|41|110|4|false|ORDER BY entfernen
+QUESTION|42|1|MC|false|1|Was ist bei Passwörtern korrekt?|<NULL>|<NULL>|1
+ANSWER|42|111|1|true|Hash + Salt verwenden
+ANSWER|42|112|2|false|Klartext speichern ist ok, wenn DB intern ist
+ANSWER|42|113|3|false|Base64 nutzen
+ANSWER|42|114|4|false|Verschlüsseln
+QUESTION|43|1|MC|false|1|Welche Beziehung wird typischerweise durch eine Zwischentabelle modelliert?|<NULL>|<NULL>|1
+ANSWER|43|115|1|false|1:1
+ANSWER|43|116|2|false|1:n
+ANSWER|43|117|3|true|n:m
+ANSWER|43|118|4|false|0:1
+QUESTION|44|1|MC|false|1|Was beschreibt Kardinalität?|<NULL>|<NULL>|1
+ANSWER|44|119|1|false|Datenverschlüsselung
+ANSWER|44|120|2|false|Speicherformat der DB
+ANSWER|44|121|3|false|Reihenfolge von Attributen
+ANSWER|44|122|4|true|Anzahl möglicher Zuordnungen zwischen Entitäten
+QUESTION|45|1|MC|false|1|Was ist ein Attribut in einem ER-Modell?|<NULL>|<NULL>|1
+ANSWER|45|123|1|false|Tabelle
+ANSWER|45|124|2|false|Beziehung
+ANSWER|45|125|3|true|Eigenschaft einer Entität
+ANSWER|45|126|4|false|Index
+QUESTION|46|1|MC|false|1|Was ist eine Entität?|<NULL>|<NULL>|1
+ANSWER|46|127|1|false|SQL-Abfrage
+ANSWER|46|128|2|true|Objekt mit ggf. Eigenschaften
+ANSWER|46|129|3|false|Backup-Datei
+ANSWER|46|130|4|false|Transaktion
+QUESTION|47|1|MC|false|1|Welche Option ist ein Beispiel für eine schwache Entität?|<NULL>|<NULL>|1
+ANSWER|47|131|1|false|Entität ohne Attribute
+ANSWER|47|132|2|true|Entität, die ohne übergeordnete Entität nicht eindeutig identifizierbar ist
+ANSWER|47|133|3|false|Entität mit sehr vielen Attributen
+ANSWER|47|134|4|false|Entität mit UUID
+QUESTION|48|1|MC|false|1|Was ist ein zusammengesetzter Primärschlüssel?|<NULL>|<NULL>|1
+ANSWER|48|135|1|false|Primärschlüssel ist jeder Schlüssel in einer Datenbank
+ANSWER|48|136|2|false|Primärschlüssel ist verschlüsselt
+ANSWER|48|137|3|false|Primärschlüssel steht in einer anderen Tabelle
+ANSWER|48|138|4|true|Primärschlüssel besteht aus mehreren Spalten/Attributen
+QUESTION|49|1|MC|false|1|Warum ist 1:1 selten als eigene Tabelle nötig?|<NULL>|<NULL>|1
+ANSWER|49|139|1|false|Ist halt verboten in relationalen DBs
+ANSWER|49|140|2|true|Kann oft in einer Tabelle mit aufgenommen werden
+ANSWER|49|141|3|false|Macht Indizes unmöglich
+ANSWER|49|142|4|false|Funktioniert nur in NoSQL
+QUESTION|50|1|MC|false|1|Was bedeutet „optional“ in einer Beziehung?|<NULL>|<NULL>|1
+ANSWER|50|143|1|false|Beziehung muss immer existieren
+ANSWER|50|144|2|false|Beziehung ist verschlüsselt
+ANSWER|50|145|3|false|Beziehung ist materialisiert
+ANSWER|50|146|4|true|Beziehung kann fehlen
+QUESTION|51|1|MC|false|1|Ein typisches Symptom schlechter Normalisierung ist…|<NULL>|<NULL>|1
+ANSWER|51|147|1|false|Zu viele Indizes
+ANSWER|51|148|2|true|Mehrfach gespeicherte gleiche Information
+ANSWER|51|149|3|false|Keine Backups
+ANSWER|51|150|4|false|Zu große CPU
+QUESTION|52|1|MC|false|1|Was ist eine „Löschanomalie“?|<NULL>|<NULL>|1
+ANSWER|52|151|1|false|Beim Einfügen fehlen Werte
+ANSWER|52|152|2|true|Beim Löschen gehen ungewollt Infos verloren
+ANSWER|52|153|3|false|Beim Lesen fehlen Rechte
+ANSWER|52|154|4|false|Beim Backup fehlen Dateien
+QUESTION|53|1|MC|false|1|Was ist eine „Einfügeanomalie“?|<NULL>|<NULL>|1
+ANSWER|53|155|1|false|Daten werden doppelt gespeichert
+ANSWER|53|156|2|true|Man kann Daten nicht speichern, ohne Zusatzdaten zu erfinden
+ANSWER|53|157|3|false|Man kann nicht löschen
+ANSWER|53|158|4|false|Man kann nicht indizieren
+QUESTION|54|1|MC|false|1|Wofür ist ein Index primär da?|<NULL>|<NULL>|1
+ANSWER|54|159|1|true|Schnelleres Finden von Datensätzen
+ANSWER|54|160|2|false|Daten verschlüsseln
+ANSWER|54|161|3|false|Tabellen verkleinern
+ANSWER|54|162|4|false|Backups ersetzen
+QUESTION|55|1|MC|false|1|Warum können viele Indizes Schreibzugriffe verlangsamen?|<NULL>|<NULL>|1
+ANSWER|55|163|1|false|Indizes blockieren RAM dauerhaft
+ANSWER|55|164|2|true|Jeder Schreibvorgang muss Indexstrukturen mit aktualisieren
+ANSWER|55|165|3|false|Indizes sind nur für Lesen erlaubt
+ANSWER|55|166|4|false|Indizes löschen Daten
+QUESTION|56|1|MC|false|1|Was bedeutet „Selektivität“ einer Spalte?|<NULL>|<NULL>|1
+ANSWER|56|167|1|false|Wie lang der Spaltenname ist
+ANSWER|56|168|2|true|Wie einzigartig die Werte sind (wenig Wiederholungen)
+ANSWER|56|169|3|false|Ob NULL erlaubt ist
+ANSWER|56|170|4|false|Ob die Spalte verschlüsselt ist
+QUESTION|57|1|MC|false|1|Welche Spalte ist meistens ein schlechter Index-Kandidat?|<NULL>|<NULL>|1
+ANSWER|57|171|1|true|Boolean
+ANSWER|57|172|2|false|E-Mail
+ANSWER|57|173|3|false|Kundennummer
+ANSWER|57|174|4|false|UUID
+QUESTION|58|1|MC|false|1|Wo gehört der Fremdschlüssel bei 1:n normalerweise hin?|<NULL>|<NULL>|1
+ANSWER|58|175|1|false|In die 1-Tabelle
+ANSWER|58|176|2|false|In beide Tabellen
+ANSWER|58|177|3|false|In keine, das macht die DB automatisch
+ANSWER|58|178|4|true|In die n-Tabelle
+QUESTION|59|1|MC|false|1|Ein zusammengesetzter Primary Key besteht aus:|<NULL>|<NULL>|1
+ANSWER|59|179|1|false|Nur Auto-Increment
+ANSWER|59|180|2|true|Mehreren Attributen zusammen
+ANSWER|59|181|3|false|Immer einer UUID
+ANSWER|59|182|4|false|Immer Text
+QUESTION|60|1|MC|false|1|Welche Aussage passt zu „Datenintegrität“ am besten?|<NULL>|<NULL>|1
+ANSWER|60|183|1|false|Daten sind komprimiert
+ANSWER|60|184|2|false|Daten sind schnell abrufbar
+ANSWER|60|185|3|true|Daten sind korrekt, konsistent und passen zu Regeln
+ANSWER|60|186|4|false|Daten sind nur lesbar
+QUESTION|61|1|MC|false|1|Ein Beispiel für „Redundanz“ ist:|<NULL>|<NULL>|1
+ANSWER|61|187|1|true|Adresse des Kunden wird in 5 Tabellen kopiert
+ANSWER|61|188|2|false|Index auf einer Spalte
+ANSWER|61|189|3|false|Eine Tabelle pro Entität
+ANSWER|61|190|4|false|Fremdschlüssel in der n-Tabelle
+QUESTION|62|1|MC|false|1|Wofür nutzt man NOT NULL?|<NULL>|<NULL>|1
+ANSWER|62|191|1|true|Spalte darf keinen NULL-Wert enthalten
+ANSWER|62|192|2|false|Werte müssen eindeutig sein
+ANSWER|62|193|3|false|Spalte darf keine Duplikate enthalten
+ANSWER|62|194|4|false|Spalte wird automatisch indiziert
+QUESTION|63|1|MC|false|1|Was ist bei „leer“ vs. „NULL“ korrekt?|<NULL>|<NULL>|1
+ANSWER|63|195|1|true|NULL = „kein Wert“, leerer String = „Wert ist leer“
+ANSWER|63|196|2|false|Ist immer dasselbe
+ANSWER|63|197|3|false|NULL ist ein Text
+ANSWER|63|198|4|false|Leer ist immer verboten
+QUESTION|64|1|MC|false|1|Wo sollte Validierung stattfinden?|<NULL>|<NULL>|1
+ANSWER|64|199|1|false|Nur in der DB
+ANSWER|64|200|2|false|Nur im Frontend
+ANSWER|64|201|3|true|In der Anwendung + in der DB
+ANSWER|64|202|4|false|Gar nicht, Nutzer passt schon auf
+QUESTION|65|1|MC|false|1|Wann brauchst du typischerweise eine Transaktion?|<NULL>|<NULL>|1
+ANSWER|65|203|1|false|Bei jedem Select
+ANSWER|65|204|2|false|Nur beim Login
+ANSWER|65|205|3|false|Nie, DB macht alles automatisch
+ANSWER|65|206|4|true|Wenn mehrere Änderungen zusammen gehören
+QUESTION|66|1|MC|false|1|Was ist das Ziel einer Transaktion?|<NULL>|<NULL>|1
+ANSWER|66|207|1|false|Tabellen zusammenführen
+ANSWER|66|208|2|false|Indizes erstellen
+ANSWER|66|209|3|false|Daten exportieren
+ANSWER|66|210|4|true|Mehrere Schritte zuverlässig aufeinanderfolgend ausführen
+QUESTION|67|1|MC|false|1|Was ist ein typisches Problem ohne Transaktion?|<NULL>|<NULL>|1
+ANSWER|67|211|1|false|Zu viele Tabellen
+ANSWER|67|212|2|true|Teilweise gespeicherte Daten, falsche Daten (Inkonsistenz)
+ANSWER|67|213|3|false|Mehr RAM
+ANSWER|67|214|4|false|Zu viele Benutzer
+QUESTION|68|1|MC|false|1|Was bedeutet „Rollback“?|<NULL>|<NULL>|1
+ANSWER|68|215|1|true|Änderungen der Transaktion zurücknehmen
+ANSWER|68|216|2|false|Änderungen endgültig machen
+ANSWER|68|217|3|false|Index neu bauen
+ANSWER|68|218|4|false|Backup erstellen
+QUESTION|69|1|MC|false|1|Warum ist „alles in eine große Transaktion“ nicht immer gut?|<NULL>|<NULL>|1
+ANSWER|69|219|1|false|Transaktionen sind verboten
+ANSWER|69|220|2|true|Längere Sperren → Konflikte und langsamer
+ANSWER|69|221|3|false|Datenbank wird automatisch gelöscht
+ANSWER|69|222|4|false|Indizes verschwinden
+QUESTION|70|1|MC|false|1|Was ist ein Index am ehesten?|<NULL>|<NULL>|1
+ANSWER|70|223|1|true|Zusätzliche Suchstruktur für schnelleres Finden
+ANSWER|70|224|2|false|Verschlüsselung
+ANSWER|70|225|3|false|Backup
+ANSWER|70|226|4|false|Tabellenkopie
+QUESTION|71|1|MC|false|1|Wann bringen Indizes besonders viel?|<NULL>|<NULL>|1
+ANSWER|71|227|1|false|Bei kleinen Tabellen immer
+ANSWER|71|228|2|false|Nur bei Textfeldern
+ANSWER|71|229|3|true|Wenn häufig nach der gleichen Spalte gefiltert/zugeordnet wird
+ANSWER|71|230|4|false|Nur bei Boolean-Feldern
+QUESTION|72|1|MC|false|1|Warum können viele Indizes schaden?|<NULL>|<NULL>|1
+ANSWER|72|231|1|false|DB stürzt ab
+ANSWER|72|232|2|false|Lesen wird unmöglich
+ANSWER|72|233|3|false|Abhängigkeiten werden gelöscht
+ANSWER|72|234|4|true|Schreibzugriffe werden langsamer / hoher Aufwand
+QUESTION|73|1|MC|false|1|Was ist „Performance“ bei DB?|<NULL>|<NULL>|1
+ANSWER|73|235|1|true|Antwortzeiten + Stabilität
+ANSWER|73|236|2|false|Nur schöner Code
+ANSWER|73|237|3|false|Nur UI-Design
+ANSWER|73|238|4|false|Nur Server-Kauf
+QUESTION|74|1|MC|false|1|Was schützt am besten vor Datenbank-Zugriff durch gestohlene App-Credentials?|<NULL>|<NULL>|1
+ANSWER|74|239|1|false|Größere Monitore
+ANSWER|74|240|2|true|Rollen trennen + Secrets sicher speichern
+ANSWER|74|241|3|false|Mehr Tabellen
+ANSWER|74|242|4|false|Keine Indizes
+QUESTION|75|1|MC|false|1|Was ist ein häufiger Sinn von Test-/Staging-Umgebungen für DB?|<NULL>|<NULL>|1
+ANSWER|75|243|1|false|Damit niemand committen kann
+ANSWER|75|244|2|true|Migrationen/Änderungen testen ohne Produktionsdaten zu riskieren
+ANSWER|75|245|3|false|Damit Backups unnötig sind
+ANSWER|75|246|4|false|Damit man keine Rechte braucht
+QUESTION|76|1|MC|false|1|Was ist bezüglich Sichern richtig?|<NULL>|<NULL>|1
+ANSWER|76|247|1|false|Backup reicht, nie testen
+ANSWER|76|248|2|false|Nur Logs sichern
+ANSWER|76|249|3|true|Backups + Restore-Tests
+ANSWER|76|250|4|false|Nur Screenshots machen
+QUESTION|77|1|MC|false|1|Was ist typisch für relationale Datenbanken?|<NULL>|<NULL>|1
+ANSWER|77|251|1|false|Speicherung nur als JSON-Dokumente
+ANSWER|77|252|2|false|Daten nur als Schlüssel/Wert
+ANSWER|77|253|3|true|Tabellen mit Beziehungen (Relationen) und festen Regeln
+ANSWER|77|254|4|false|Nur für Graphen geeignet
+QUESTION|78|1|MC|false|1|Ein Vorteil relationaler DBs ist oft:|<NULL>|<NULL>|1
+ANSWER|78|255|1|false|Kein Schema nötig
+ANSWER|78|256|2|true|Hohe Datenintegrität
+ANSWER|78|257|3|false|Keine Indizes möglich
+ANSWER|78|258|4|false|Keine Transaktionen
+QUESTION|79|1|MC|false|1|Normalform (1NF) verlangt vor allem:|<NULL>|<NULL>|1
+ANSWER|79|259|1|false|Keine Fremdschlüssel
+ANSWER|79|260|2|true|Atomare Werte: keine Listen/Mehrfachwerte in einem Feld
+ANSWER|79|261|3|false|Keine Duplikate in der Tabelle
+ANSWER|79|262|4|false|Nur numerische Spalten
+QUESTION|80|1|MC|false|1|Was ist ein klassischer Verstoß gegen 1NF?|<NULL>|<NULL>|1
+ANSWER|80|263|1|false|Eine ID-Spalte (ID: „231531“)
+ANSWER|80|264|2|true|Spalte „Telefonnummern“ enthält „02437, 02162, 0241“
+ANSWER|80|265|3|false|Eine UNIQUE-Constraint
+ANSWER|80|266|4|false|Eine Tabelle „Kunde“
+QUESTION|81|1|MC|false|1|2NF ist relevant, wenn…|<NULL>|<NULL>|1
+ANSWER|81|267|1|true|Ein zusammengesetzter Primärschlüssel existiert
+ANSWER|81|268|2|false|Es keine Primärschlüssel gibt
+ANSWER|81|269|3|false|Nur eine Spalte in der Tabelle ist
+ANSWER|81|270|4|false|Man JSON speichert
+QUESTION|82|1|MC|false|1|Ein typischer Verstoß gegen 2NF ist:|<NULL>|<NULL>|1
+ANSWER|82|271|1|true|Attribut hängt nur von einem Teil eines zusammengesetzten Schlüssels ab
+ANSWER|82|272|2|false|Attribut hängt vom ganzen Schlüssel ab
+ANSWER|82|273|3|false|Es gibt keine Indizes
+ANSWER|82|274|4|false|Es gibt NULL-Werte
+QUESTION|83|1|MC|false|1|3NF zielt besonders darauf ab, zu vermeiden:|<NULL>|<NULL>|1
+ANSWER|83|275|1|false|Primärschlüssel
+ANSWER|83|276|2|false|Fremdschlüssel
+ANSWER|83|277|3|true|Transitive Abhängigkeiten (A hängt von B, B hängt von C)
+ANSWER|83|278|4|false|Tabellen
+QUESTION|84|1|MC|false|1|Beispiel: In Tabelle „Bestellung“ stehen kunden_plz und kunden_ort. Der Ort hängt von der PLZ ab. Das ist typischerweise ein Problem für:|<NULL>|<NULL>|1
+ANSWER|84|279|1|false|1NF
+ANSWER|84|280|2|false|2NF
+ANSWER|84|281|3|true|3NF
+ANSWER|84|282|4|false|Keine Normalform
+QUESTION|85|1|MC|false|1|DDL steht für…|<NULL>|<NULL>|1
+ANSWER|85|283|1|false|Data Query Language
+ANSWER|85|284|2|false|Data Delete Language
+ANSWER|85|285|3|false|Domain Definition Logic
+ANSWER|85|286|4|true|Data Definition Language
+QUESTION|86|1|MC|false|1|Was gehört zu DDL?|<NULL>|<NULL>|1
+ANSWER|86|287|1|false|SELECT
+ANSWER|86|288|2|false|INSERT
+ANSWER|86|289|3|true|CREATE / ALTER / DROP
+ANSWER|86|290|4|false|COMMIT
+QUESTION|87|1|MC|false|1|Was gehört zu DQL?|<NULL>|<NULL>|1
+ANSWER|87|291|1|false|UPDATE
+ANSWER|87|292|2|false|GRANT
+ANSWER|87|293|3|false|ROLLBACK
+ANSWER|87|294|4|true|SELECT
+QUESTION|88|1|MC|false|1|Was gehört zu DML?|<NULL>|<NULL>|1
+ANSWER|88|295|1|false|CREATE TABLE
+ANSWER|88|296|2|false|GRANT
+ANSWER|88|297|3|true|INSERT / UPDATE / DELETE
+ANSWER|88|298|4|false|COMMIT
+QUESTION|89|1|MC|false|1|„Referenzielle Integrität“ bedeutet:|<NULL>|<NULL>|1
+ANSWER|89|299|1|false|Tabellen sind sortiert
+ANSWER|89|300|2|false|Jede Tabelle hat einen Index
+ANSWER|89|301|3|false|Jede Spalte ist NOT NULL
+ANSWER|89|302|4|true|Fremdschlüssel zeigen nur auf existierende Datensätze
+QUESTION|90|1|MC|false|1|Wozu dient ein Foreign Key primär?|<NULL>|<NULL>|1
+ANSWER|90|303|1|false|Performance
+ANSWER|90|304|2|true|Beziehungen absichern und ungültige Referenzen verhindern
+ANSWER|90|305|3|false|Automatische Backups
+ANSWER|90|306|4|false|Automatische Normalisierung
+QUESTION|91|1|MC|false|1|Ein UNIQUE-Constraint sorgt für:|<NULL>|<NULL>|1
+ANSWER|91|307|1|true|Keine doppelten Werte
+ANSWER|91|308|2|false|Keine NULLs
+ANSWER|91|309|3|false|Immer Auto-Increment
+ANSWER|91|310|4|false|Immer zusammengesetzte Keys
+QUESTION|92|1|MC|false|1|Was ist KEIN Merkmal einer relationalen Datenbank?|<NULL>|<NULL>|1
+ANSWER|92|311|1|false|Feste Struktur (Schema)
+ANSWER|92|312|2|false|Abfrage mit SQL
+ANSWER|92|313|3|false|Beziehungen über Primär- und Fremdschlüssel
+ANSWER|92|314|4|true|Überall lose Daten
+QUESTION|93|1|MC|false|1|Was ist KEIN Beispiel für eine relationale Datenbank?|<NULL>|<NULL>|1
+ANSWER|93|315|1|true|KatzenSQL
+ANSWER|93|316|2|false|MySQL
+ANSWER|93|317|3|false|PostgreSQL
+ANSWER|93|318|4|false|Oracle Database
+QUESTION|94|1|MC|false|1|Was sind Bestandteile einer relationalen Datenbank?|<NULL>|<NULL>|1
+ANSWER|94|319|1|true|Attribute und Entitäten
+ANSWER|94|320|2|false|Häuser und Autos
+ANSWER|94|321|3|false|Kreise und Quadrate
+ANSWER|94|322|4|false|Objekte
+QUESTION|95|1|MC|false|1|Was ist KEIN Vorteil einer relationalen Datenbank?|<NULL>|<NULL>|1
+ANSWER|95|323|1|false|Klare Struktur
+ANSWER|95|324|2|false|Integrität
+ANSWER|95|325|3|true|mehr Redundanz
+ANSWER|95|326|4|false|viele Standards
+QUESTION|96|1|MC|false|1|Was ist ein Nachteil von relationalen Datenbanken?|<NULL>|<NULL>|1
+ANSWER|96|327|1|false|mehr doppelte Daten
+ANSWER|96|328|2|false|keine Möglichkeit sicher zu arbeiten
+ANSWER|96|329|3|true|Performance bei großen Datenmengen
+ANSWER|96|330|4|false|man muss selber Linien zeichnen
+QUESTION|97|1|MC|false|1|Was ist ein natürlicher Schlüssel?|<NULL>|<NULL>|1
+ANSWER|97|331|1|false|Ein zufällig erzeugter technischer Schlüssel
+ANSWER|97|332|2|false|Ein Schlüssel, der aus mehreren Spalten besteht
+ANSWER|97|333|3|false|Ein Schlüssel, der nur intern in der DB gilt
+ANSWER|97|334|4|true|Ein Schlüssel aus fachlichen Daten mit Bedeutung (z. B. ISBN)
+QUESTION|98|1|MC|false|1|Was ist ein künstlicher Schlüssel?|<NULL>|<NULL>|1
+ANSWER|98|335|1|false|Ein Schlüssel aus fachlichen Daten
+ANSWER|98|336|2|true|Ein technisch erzeugter Schlüssel ohne fachliche Bedeutung (z. B. ID)
+ANSWER|98|337|3|false|Ein Schlüssel, bestehend aus Text
+ANSWER|98|338|4|false|Ein Schlüssel, der mehrere Tabellen verbindet
+QUESTION|99|1|MC|false|1|Welcher dieser Schlüssel ist ein natürlicher Schlüssel?|<NULL>|<NULL>|1
+ANSWER|99|339|1|false|Auto-ID 12345
+ANSWER|99|340|2|false|UUID 550e8400-e29b-41d4-a716-446655440000
+ANSWER|99|341|3|true|ISBN 978-3-16-148410-0
+ANSWER|99|342|4|false|Ticket-ID T-0000123
+QUESTION|100|1|MC|false|1|Welcher dieser Schlüssel ist ein künstlicher Schlüssel?|<NULL>|<NULL>|1
+ANSWER|100|343|1|false|Steuernummer
+ANSWER|100|344|2|false|E-Mail-Adresse
+ANSWER|100|345|3|false|IBAN
+ANSWER|100|346|4|true|Interne Datenbank-ID z. B. ID = 4711
+QUESTION|101|1|MC|false|1|Welcher dieser Schlüssel ist ein anonymer Schlüssel?|<NULL>|<NULL>|1
+ANSWER|101|347|1|true|Zufällig generierte UUID
+ANSWER|101|348|2|false|ISBN eines Buches
+ANSWER|101|349|3|false|E-Mail-Adresse
+ANSWER|101|350|4|false|Sozialversicherungsnummer
+QUESTION|102|1|MC|false|1|Welcher dieser Schlüssel ist ein bedeutender Schlüssel?|<NULL>|<NULL>|1
+ANSWER|102|351|1|false|Zufällige UUID
+ANSWER|102|352|2|false|Hashwert ohne Bezug
+ANSWER|102|353|3|false|Auto-ID in deiner Datenbank
+ANSWER|102|354|4|true|ISBN
+QUESTION|103|2|TF|false|1|Unit-Tests prüfen einzelne Funktionen/Methoden isoliert.|<NULL>|<NULL>|2
+ANSWER|103|355|1|true|Wahr
+ANSWER|103|356|2|false|Falsch
+QUESTION|104|2|TF|false|1|Ein Integrationstest testet das Zusammenspiel mehrerer Komponenten.|<NULL>|<NULL>|2
+ANSWER|104|357|1|true|Wahr
+ANSWER|104|358|2|false|Falsch
+QUESTION|105|2|TF|false|1|„Refactoring“ bedeutet: Funktionalität ändern, um neue Features einzubauen.|<NULL>|<NULL>|2
+ANSWER|105|359|1|false|Wahr
+ANSWER|105|360|2|true|Falsch
+QUESTION|106|2|TF|false|1|Sprechende Namen und kleine Funktionen sind Teil von Clean Code.|<NULL>|<NULL>|2
+ANSWER|106|361|1|true|Wahr
+ANSWER|106|362|2|false|Falsch
+QUESTION|107|2|TF|false|1|Ein Interface beschreibt ein „Was“, nicht das „Wie“.|<NULL>|<NULL>|2
+ANSWER|107|363|1|true|Wahr
+ANSWER|107|364|2|false|Falsch
+QUESTION|108|2|TF|false|1|Polymorphie bedeutet, dass derselbe Methodenaufruf je nach Objekt unterschiedlich reagieren kann.|<NULL>|<NULL>|2
+ANSWER|108|365|1|true|Wahr
+ANSWER|108|366|2|false|Falsch
+QUESTION|109|2|TF|false|1|Kapselung bedeutet, dass Attribute private gemacht werden und nur über Methoden zugänglich sind.|<NULL>|<NULL>|2
+ANSWER|109|367|1|true|Wahr
+ANSWER|109|368|2|false|Falsch
+QUESTION|110|2|TF|false|1|Vererbung ist immer besser als Komposition.|<NULL>|<NULL>|2
+ANSWER|110|369|1|false|Wahr
+ANSWER|110|370|2|true|Falsch
+QUESTION|111|2|TF|false|1|Exceptions sollten immer ignoriert werden, damit das Programm weiterläuft.|<NULL>|<NULL>|2
+ANSWER|111|371|1|false|Wahr
+ANSWER|111|372|2|true|Falsch
+QUESTION|112|2|TF|false|1|Logging ersetzt Tests.|<NULL>|<NULL>|2
+ANSWER|112|373|1|false|Wahr
+ANSWER|112|374|2|true|Falsch
+QUESTION|113|2|TF|false|1|Git-Branches sind Kopien des gesamten Repositorys.|<NULL>|<NULL>|7
+ANSWER|113|375|1|false|Wahr
+ANSWER|113|376|2|true|Falsch
+QUESTION|114|2|TF|false|1|Merge-Konflikte können entstehen, wenn zwei Branches dieselbe Stelle geändert haben.|<NULL>|<NULL>|7
+ANSWER|114|377|1|true|Wahr
+ANSWER|114|378|2|false|Falsch
+QUESTION|115|2|TF|false|1|CI bedeutet, dass Code automatisch gebaut und getestet werden kann.|<NULL>|<NULL>|6
+ANSWER|115|379|1|true|Wahr
+ANSWER|115|380|2|false|Falsch
+QUESTION|116|2|TF|false|1|Input-Validierung gehört auch ins Backend.|<NULL>|<NULL>|5
+ANSWER|116|381|1|true|Wahr
+ANSWER|116|382|2|false|Falsch
+QUESTION|117|2|TF|false|1|„Idempotent“ bedeutet: Mehrfach ausführen führt zum gleichen Ergebniszustand.|<NULL>|<NULL>|2
+ANSWER|117|383|1|true|Wahr
+ANSWER|117|384|2|false|Falsch
+QUESTION|118|2|TF|false|1|Ein Stack arbeitet nach dem Prinzip FIFO.|<NULL>|<NULL>|2
+ANSWER|118|385|1|false|Wahr
+ANSWER|118|386|2|true|Falsch
+QUESTION|119|2|TF|false|1|Ein Queue arbeitet nach dem Prinzip FIFO.|<NULL>|<NULL>|2
+ANSWER|119|387|1|true|Wahr
+ANSWER|119|388|2|false|Falsch
+QUESTION|120|2|TF|false|1|Ein Compilerfehler tritt erst zur Laufzeit auf.|<NULL>|<NULL>|2
+ANSWER|120|389|1|false|Wahr
+ANSWER|120|390|2|true|Falsch
+QUESTION|121|2|TF|false|1|Ein Linter ersetzt keine Tests, kann aber typische Fehler früh finden.|<NULL>|<NULL>|2
+ANSWER|121|391|1|true|Wahr
+ANSWER|121|392|2|false|Falsch
+QUESTION|122|2|MC|false|1|Was beschreibt „Kapselung“ am besten?|<NULL>|<NULL>|2
+ANSWER|122|393|1|false|Globale Variablen nutzen
+ANSWER|122|394|2|false|Daten öffentlich machen
+ANSWER|122|395|3|true|Details verbergen, Zugriff über Methoden
+ANSWER|122|396|4|false|Alles in eine Klasse packen
+QUESTION|123|2|MC|false|1|Was ist ein typisches Ziel von Refactoring?|<NULL>|<NULL>|2
+ANSWER|123|397|1|false|Mehr Features
+ANSWER|123|398|2|true|Besserer Code ohne Funktionsänderung
+ANSWER|123|399|3|false|Mehr Bugs
+ANSWER|123|400|4|false|Weniger Tests
+QUESTION|124|2|MC|false|1|„Single Responsibility“ bedeutet:|<NULL>|<NULL>|2
+ANSWER|124|401|1|false|Eine Klasse hat viele Aufgaben
+ANSWER|124|402|2|false|Eine Methode ist nie länger als 3 Zeilen
+ANSWER|124|403|3|true|Eine Klasse hat genau eine Verantwortlichkeit
+ANSWER|124|404|4|false|Eine Klasse darf keine Attribute haben
+QUESTION|125|2|MC|false|1|„Dependency Injection“ hilft vor allem bei:|<NULL>|<NULL>|2
+ANSWER|125|405|1|false|UI-Design
+ANSWER|125|406|2|true|Testbarkeit und Austauschbarkeit
+ANSWER|125|407|3|false|Daten komprimieren
+ANSWER|125|408|4|false|Logs löschen
+QUESTION|126|2|MC|false|1|Was ist Polymorphie?|<NULL>|<NULL>|2
+ANSWER|126|409|1|false|Gleiche Klasse überall
+ANSWER|126|410|2|true|Gleiche Methode kann je nach Objekt anders wirken
+ANSWER|126|411|3|false|Nur Vererbung ohne Methoden
+ANSWER|126|412|4|false|Keine Interfaces nutzen
+QUESTION|127|2|MC|false|1|Was ist ein Interface (allgemein)?|<NULL>|<NULL>|2
+ANSWER|127|413|1|false|Implementierung einer Klasse
+ANSWER|127|414|2|true|Vertrag: welche Methoden vorhanden sein müssen
+ANSWER|127|415|3|false|Datenbanktabelle
+ANSWER|127|416|4|false|JSON-Datei
+QUESTION|128|2|MC|false|1|Was ist ein Constructor?|<NULL>|<NULL>|2
+ANSWER|128|417|1|false|Ein Destruktor
+ANSWER|128|418|2|true|Methode zum Erzeugen/Initialisieren eines Objekts
+ANSWER|128|419|3|false|Eine Schleife
+ANSWER|128|420|4|false|Eine Bibliothek
+QUESTION|129|2|MC|false|1|Welche Fehlerart fängt man oft mit Try/Catch ab?|<NULL>|<NULL>|2
+ANSWER|129|421|1|false|Kompilierfehler
+ANSWER|129|422|2|true|Laufzeitfehler/Exceptions
+ANSWER|129|423|3|false|Tippfehler im Kommentar
+ANSWER|129|424|4|false|CSS-Fehler
+QUESTION|130|2|MC|false|1|Was ist der Vorteil von Unit-Tests?|<NULL>|<NULL>|2
+ANSWER|130|425|1|false|Testen UI-Layouts
+ANSWER|130|426|2|true|Schnell, isoliert, früh Fehler finden
+ANSWER|130|427|3|false|Ersetzen Code Reviews
+ANSWER|130|428|4|false|Erhöhen immer Performance
+QUESTION|131|2|MC|false|1|Ein Mock ist…|<NULL>|<NULL>|2
+ANSWER|131|429|1|false|Ein echter Server
+ANSWER|131|430|2|true|Ein Test-Dummy für Abhängigkeiten
+ANSWER|131|431|3|false|Eine Datenbankmigration
+ANSWER|131|432|4|false|Ein Compilerflag
+QUESTION|132|2|MC|false|1|Was ist „CI“?|<NULL>|<NULL>|6
+ANSWER|132|433|1|false|Manuelle Tests
+ANSWER|132|434|2|true|Automatisches Bauen/Testen bei Änderungen
+ANSWER|132|435|3|false|Datenbank-Index
+ANSWER|132|436|4|false|Container-Name
+QUESTION|133|2|MC|false|1|Was ist „CD“ (typisch)?|<NULL>|<NULL>|6
+ANSWER|133|437|1|false|Code Delete
+ANSWER|133|438|2|true|Automatisches Deployen (je nach Prozess)
+ANSWER|133|439|3|false|Compiler Debug
+ANSWER|133|440|4|false|Cache Driver
+QUESTION|134|1|GAP|false|1|Fülle die folgenden 7 Lücken zum Thema Datenbanken aus.|<NULL>|<NULL>|1
+GAP|134|1|1|Eine Datenbank ist eine |<NULL>
+GAP_OPTION|134|1|1|1|false|zufällige
+GAP|134|2|2| Sammlung von Daten. Sie wird genutzt, damit Daten |<NULL>
+GAP|134|3|3| gespeichert und später schnell wiedergefunden werden können. Im Vergleich zu einer einfachen Datei (z. B. Excel/CSV) kann eine Datenbank besser mit |<NULL>
+GAP|134|4|4| Benutzern gleichzeitig umgehen und hilft dabei, Daten |<NULL>
+GAP|134|5|5| zu halten. Damit Daten korrekt bleiben, kann man Regeln festlegen. Solche Regeln heißen |<NULL>
+GAP|134|6|6|. Wenn man Daten aus mehreren Tabellen miteinander verbindet, nutzt man dafür |<NULL>
+GAP|134|7|7| (Verknüpfungen). Das nennt man |.
+QUESTION|135|1|GAP|false|1|Fülle die folgenden 6 Lücken zum Thema Datenbanken/Grundlagen aus.|<NULL>|<NULL>|1
+GAP|135|8|1|Eine Datenbank ist sinnvoll, wenn man Daten |<NULL>
+GAP_OPTION|135|1|2|1|false|gar nicht
+GAP|135|9|2| verwalten muss, z. B. Kunden, Bestellungen oder Tickets. Wenn Daten doppelt gespeichert werden, kann das zu |<NULL>
+GAP|135|10|3| führen. „Ein Kunde kann mehrere Bestellungen haben“. Das nennt man |<NULL>
+GAP|135|11|4|. Damit mehrere Änderungen zusammen zuverlässig klappen, nutzt man |<NULL>
+GAP|135|12|5|. Damit Daten nicht verloren gehen, braucht man regelmäßige |<NULL>
+GAP|135|13|6|. Nutzer sollten nur die | bekommen, die sie wirklich benötigen (Least Privilege).
+QUESTION|136|1|GAP|false|1|Fülle die folgenden 7 Lücken zum Thema Datenbanktypen aus.|<NULL>|<NULL>|1
+GAP|136|14|1|Welche Datenbanktypen gibt es? Die Merkmale einer |<NULL>
+GAP_OPTION|136|1|3|1|false|Kühlschrank-Datenbank
+GAP|136|15|2| sind eine feste Struktur mit Primär- und Fremdschlüsseln und man kann durch SQL abfragen. Dagegen stehen die |<NULL>
+GAP|136|16|3|. Sie sind nicht-rational. |<NULL>
+GAP|136|17|4| beinhalten ihre Daten meist als JSON- oder XML-Dokumente (z. B. MongoDB). |<NULL>
+GAP|136|18|5| speichern Daten als Schlüssel-Wert-Paare (z. B. Redis). |<NULL>
+GAP|136|19|6| speichern Daten spaltenweise und sind gut für Analysen. |<NULL>
+GAP|136|20|7| speichern Daten als Knoten und Kanten (Graph). | speichern Daten als Objekte inkl. Attributen und Referenzen.
+QUESTION|137|2|GAP|false|1|Fülle die folgenden 3 Lücken zum Thema Programmiergrundlagen aus.|<NULL>|<NULL>|2
+GAP|137|21|1|Programmierung bedeutet, dass man einem Computer |<NULL>
+GAP_OPTION|137|1|4|1|false|Farben
+GAP|137|22|2| gibt, um ein Problem zu lösen. Gute Programme sind nicht nur „funktional“, sondern auch |<NULL>
+GAP|137|23|3| und leicht zu ändern. Um Fehler früh zu finden, schreibt man oft |.
+QUESTION|138|2|GAP|false|1|Fülle die folgenden 3 Lücken zum Thema Projektstruktur und Versionsverwaltung aus.|<NULL>|<NULL>|2
+GAP|138|24|1|Bei größeren Projekten teilt man Code in |<NULL>
+GAP_OPTION|138|1|5|1|true|Module/Schichten
+GAP|138|25|2| auf, damit jeder Part eine eindeutige Aufgabe hat. Das erreicht man zum Beispiel durch |<NULL>
+GAP|138|26|3|. Änderungen werden mit Versionsverwaltung wie | nachvollziehbar gespeichert.
+QUESTION|139|2|GAP|false|1|Fülle die folgenden 4 Lücken zum Thema objektorientierte Programmierung aus.|<NULL>|<NULL>|2
+GAP|139|27|1|In objektorientierter Programmierung modelliert man die Welt mit |<NULL>
+GAP_OPTION|139|1|6|1|false|Farben
+GAP|139|28|2|. Diese besitzen |<NULL>
+GAP|139|29|3| (Daten) und |<NULL>
+GAP|139|30|4| (Verhalten). Eine Instanz einer Klasse nennt man |.
+QUESTION|140|2|GAP|false|1|Fülle die folgenden 4 Lücken zum Thema Versionsverwaltung/Git aus.|<NULL>|<NULL>|7
+GAP|140|31|1|Bei Versionsverwaltung speichert man Änderungen als |<NULL>
+GAP_OPTION|140|1|7|1|false|Tabs
+GAP|140|32|2|. In Git arbeitet man oft mit |<NULL>
+GAP|140|33|3|, um unabhängig neue Features zu entwickeln. Zum Zusammenführen nutzt man häufig |<NULL>
+GAP|140|34|4| oder |.
