@@ -2,6 +2,13 @@ package me.daskabel.dummy2pro.model;
 
 import jakarta.persistence.*;
 
+/**
+ * Speichert eine ausgewählte Antwortoption zu einer Frage innerhalb
+ * eines Spielstands.
+ *
+ * Die Klasse wird für Multiple-Choice- und Richtig/Falsch-Fragen
+ * verwendet.
+ */
 @Entity
 @Table(name = "run_selected_answer")
 public class RunSelectedAnswer

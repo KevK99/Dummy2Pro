@@ -159,10 +159,10 @@ describe("room1 Mehrfachantworten Regression", () => {
         expect(dom.window.document.getElementById("submitAnswerBtn").classList.contains("hidden")).toBe(false);
     });
 
-    test("Antwortprüfung markiert bei Mehrfachantworten richtige grün und zusätzliche falsche rot", async () => {
+    test("Antwortprüfung wertet Mehrfachantworten als richtig, sobald mindestens eine richtige Antwort gewählt wurde", async () => {
         const dom = setupDom({
-            correct: false,
-            pointsEarned: 0,
+            correct: true,
+            pointsEarned: 5,
             correctAnswerIds: [1, 2]
         });
 
@@ -170,6 +170,7 @@ describe("room1 Mehrfachantworten Regression", () => {
             questionId: 88,
             allowsMultiple: true,
             startText: "Welche Antworten sind richtig?",
+            points: 5,
             answerOptions: [
                 { answerId: 1, optionText: "Antwort A" },
                 { answerId: 2, optionText: "Antwort B" },
@@ -186,10 +187,8 @@ describe("room1 Mehrfachantworten Regression", () => {
 
         await dom.window.submitAnswer();
 
-        expect(buttons[0].className).toContain("border-emerald-500");
-        expect(buttons[2].className).toContain("border-red-500");
-        expect(buttons[1].className).toContain("border-emerald-500");
-        expect(dom.window.document.getElementById("feedbackBox").innerText).toContain("Falsch!");
+        expect(dom.window.fetch).toHaveBeenCalledTimes(1);
+        expect(dom.window.document.getElementById("feedbackBox").innerText).toContain("Richtig!");
         expect(dom.window.document.getElementById("nextQuestionBtn").classList.contains("hidden")).toBe(false);
     });
 });

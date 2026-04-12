@@ -2,10 +2,17 @@ package me.daskabel.dummy2pro.model;
 
 import jakarta.persistence.*;
 
+/**
+ * Repräsentiert eine einzelne Antwortmöglichkeit zu einer Frage.
+ *
+ * Die Klasse wird für Multiple-Choice- und Richtig/Falsch-Fragen verwendet.
+ * Gespeichert werden der Antworttext, die Reihenfolge innerhalb der Frage
+ * und die Information, ob die Antwort korrekt ist.
+ */
 @Entity
 @Table(name = "answer_option")
-public class AnswerOption {
-
+public class AnswerOption
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "answer_id")
@@ -25,9 +32,12 @@ public class AnswerOption {
     private int optionOrder;
 
     // Constructors
-    public AnswerOption() {}
+    public AnswerOption()
+    {
+    }
 
-    public AnswerOption(Question question, String optionText, boolean isCorrect, int optionOrder) {
+    public AnswerOption(Question question, String optionText, boolean isCorrect, int optionOrder)
+    {
         this.question = question;
         this.optionText = optionText;
         this.isCorrect = isCorrect;
@@ -35,18 +45,53 @@ public class AnswerOption {
     }
 
     // Getters & Setters
-    public Long getAnswerId() { return answerId; }
-    public void setAnswerId(Long answerId) { this.answerId = answerId; }
+    public Long getAnswerId()
+    {
+        return answerId;
+    }
 
-    public Question getQuestion() { return question; }
-    public void setQuestion(Question question) { this.question = question; }
+    public void setAnswerId(Long answerId)
+    {
+        this.answerId = answerId;
+    }
 
-    public String getOptionText() { return optionText; }
-    public void setOptionText(String optionText) { this.optionText = optionText; }
+    public Question getQuestion()
+    {
+        return question;
+    }
 
-    public boolean getIsCorrect() { return isCorrect; }
-    public void setIsCorrect(boolean isCorrect) { this.isCorrect = isCorrect; }
+    public void setQuestion(Question question)
+    {
+        this.question = question;
+    }
 
-    public int getOptionOrder() { return optionOrder; }
-    public void setOptionOrder(int optionOrder) { this.optionOrder = optionOrder; }
+    public String getOptionText()
+    {
+        return optionText;
+    }
+
+    public void setOptionText(String optionText)
+    {
+        this.optionText = optionText;
+    }
+
+    public boolean getIsCorrect()
+    {
+        return isCorrect;
+    }
+
+    public void setIsCorrect(boolean isCorrect)
+    {
+        this.isCorrect = isCorrect;
+    }
+
+    public int getOptionOrder()
+    {
+        return optionOrder;
+    }
+
+    public void setOptionOrder(int optionOrder)
+    {
+        this.optionOrder = optionOrder;
+    }
 }

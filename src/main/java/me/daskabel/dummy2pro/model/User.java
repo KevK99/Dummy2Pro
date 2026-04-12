@@ -4,6 +4,12 @@ import java.util.List;
 
 import jakarta.persistence.*;
 
+/**
+ * Repräsentiert einen Benutzer der Anwendung.
+ *
+ * Gespeichert werden Anmeldedaten, Avatar-Einstellungen und die
+ * zugehörigen Spielstände.
+ */
 @Entity
 @Table(name = "users")
 public class User

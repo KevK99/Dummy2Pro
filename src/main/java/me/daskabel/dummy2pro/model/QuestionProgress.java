@@ -2,8 +2,13 @@ package me.daskabel.dummy2pro.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import org.hibernate.annotations.BatchSize;
 
+/**
+ * Speichert den Bearbeitungsstand einer Frage innerhalb eines Spielstands.
+ *
+ * Gespeichert werden der zugehörige Spielstand, die Frage, der Status,
+ * der Raum, die Reihenfolge der Frage im Raum und der Antwortzeitpunkt.
+ */
 @Entity
 @Table(name = "question_progress")
 public class QuestionProgress

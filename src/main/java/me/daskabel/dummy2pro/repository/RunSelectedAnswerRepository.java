@@ -9,6 +9,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+/**
+ * Stellt Datenbankzugriffe für gespeicherte Antwortauswahlen bereit.
+ *
+ * Enthält Methoden zum Laden, Suchen, Zählen und Löschen von Antworten
+ * zu Multiple-Choice- und Richtig/Falsch-Fragen innerhalb eines Spielstands.
+ */
 public interface RunSelectedAnswerRepository extends JpaRepository<RunSelectedAnswer, RunSelectedAnswerId>
 {
     List<RunSelectedAnswer> findByRun_RunId(Long runId);

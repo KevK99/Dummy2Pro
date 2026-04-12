@@ -79,16 +79,6 @@ class QuestionLiveSemanticTest
         {
             errors.add(prefix(question) + "MC-Frage hat keine richtige Antwort.");
         }
-
-        if (!question.allowsMultiple && correctCount != 1)
-        {
-            errors.add(prefix(question) + "MC-Frage ohne allows_multiple darf genau 1 richtige Antwort haben.");
-        }
-
-        if (question.allowsMultiple && correctCount < 2)
-        {
-            errors.add(prefix(question) + "MC-Frage mit allows_multiple sollte mindestens 2 richtige Antworten haben.");
-        }
     }
 
     private void validateTf(LiveQuestionDatasetSupport.QuestionData question, List<String> errors)

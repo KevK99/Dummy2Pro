@@ -13,8 +13,17 @@ import me.daskabel.dummy2pro.model.ProgressStatus;
 import me.daskabel.dummy2pro.model.QuestionProgress;
 import me.daskabel.dummy2pro.model.QuestionProgressId;
 
+/**
+ * Stellt Datenbankzugriffe für den Bearbeitungsstand von Fragen bereit.
+ *
+ * Enthält Such-, Änderungs- und Auswertungsmethoden für Fragen
+ * innerhalb eines Spielstands.
+ */
 public interface QuestionProgressRepository extends JpaRepository<QuestionProgress, QuestionProgressId>
 {
+    /**
+     * Projektion für die zusammengefasste Raumübersicht eines Spielstands.
+     */
     interface RoomProgressSummary
     {
         Integer getRoomId();

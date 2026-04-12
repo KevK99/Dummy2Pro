@@ -154,7 +154,6 @@ class ProfileAndRoomFlowPlaywrightTest
         assertTrue(loginSuccess.contains("Passwort erfolgreich geändert"));
 
         login(renamedUsername, newPassword);
-        this.page.waitForURL(DASHBOARD_URL_PATTERN);
 
         this.page.navigate(baseUrl() + "/profile.html", new Page.NavigateOptions().setWaitUntil(WaitUntilState.DOMCONTENTLOADED));
         this.page.waitForSelector("#currentNameInput");
@@ -180,7 +179,6 @@ class ProfileAndRoomFlowPlaywrightTest
         userService.register(username, password);
 
         login(username, password);
-        this.page.waitForURL(DASHBOARD_URL_PATTERN);
         this.page.waitForFunction(
                 "() => !!sessionStorage.getItem('sessionId') && !!sessionStorage.getItem('runId')"
         );
@@ -205,7 +203,6 @@ class ProfileAndRoomFlowPlaywrightTest
         this.page.waitForSelector("#loginForm");
 
         login(username, password);
-        this.page.waitForURL(DASHBOARD_URL_PATTERN);
         this.page.waitForFunction("() => !!sessionStorage.getItem('sessionId') && !!sessionStorage.getItem('runId')");
 
         this.page.navigate(baseUrl() + "/room/1", new Page.NavigateOptions().setWaitUntil(WaitUntilState.DOMCONTENTLOADED));
@@ -258,10 +255,15 @@ class ProfileAndRoomFlowPlaywrightTest
 
         Response response = this.page.waitForResponse(
                 r -> r.url().endsWith("/api/login") && r.status() == 200,
-                () -> this.page.click("button[type='submit']")
+                () -> this.page.click("#loginForm button[type='submit']")
         );
 
         assertEquals(200, response.status());
+
+        this.page.waitForURL(DASHBOARD_URL_PATTERN);
+        this.page.waitForFunction(
+                "() => !!sessionStorage.getItem('userId')"
+        );
     }
 
     private void seedRoom1WithImageQuestion()

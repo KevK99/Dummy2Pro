@@ -10,7 +10,10 @@ import org.springframework.data.repository.query.Param;
 import me.daskabel.dummy2pro.model.Question;
 
 /**
- * Datenbankzugriff für Fragen.
+ * Stellt Datenbankzugriffe für Fragen bereit.
+ *
+ * Enthält Methoden zum Laden von Fragen, Fragen-IDs und den zugehörigen
+ * Antwort- bzw. Lückendaten.
  */
 public interface QuestionRepository extends JpaRepository<Question, Long>
 {

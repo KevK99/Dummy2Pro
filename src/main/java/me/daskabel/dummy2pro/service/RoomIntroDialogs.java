@@ -5,12 +5,21 @@ import java.util.Map;
 
 import me.daskabel.dummy2pro.dto.RoomDtos.DialogLineDto;
 
+/**
+ * Stellt die Einleitungsdialoge der einzelnen Räume bereit.
+ *
+ * Die Dialoge sind fest im Code hinterlegt und werden über die Raum-ID
+ * ausgewählt.
+ */
 public final class RoomIntroDialogs
 {
     private RoomIntroDialogs()
     {
     }
 
+    /**
+     * Enthält die Dialogzeilen je Raum.
+     */
     private static final Map<Integer, List<DialogLineDto>> ROOM_DIALOGS = Map.ofEntries(
             Map.entry(1, List.of(
                     new DialogLineDto("player", "Huch... wo bin ich denn nun gelandet?"),
@@ -159,6 +168,12 @@ public final class RoomIntroDialogs
             ))
     );
 
+    /**
+     * Liefert den Einleitungsdialog für einen Raum.
+     *
+     * Wenn kein eigener Dialog hinterlegt ist, wird ein kurzer
+     * Standarddialog zurückgegeben.
+     */
     public static List<DialogLineDto> getDialogForRoom(int roomId)
     {
         return ROOM_DIALOGS.getOrDefault(

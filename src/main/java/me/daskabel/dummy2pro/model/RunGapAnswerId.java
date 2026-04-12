@@ -6,6 +6,12 @@ import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * Zusammengesetzter Schlüssel für eine gespeicherte Lückenantwort
+ * innerhalb eines Spielstands.
+ *
+ * Der Schlüssel besteht aus Spielstand, Frage und Lücke.
+ */
 @Embeddable
 public class RunGapAnswerId implements Serializable
 {
@@ -62,8 +68,14 @@ public class RunGapAnswerId implements Serializable
     @Override
     public boolean equals(Object o)
     {
-        if (this == o) return true;
-        if (!(o instanceof RunGapAnswerId that)) return false;
+        if (this == o)
+        {
+            return true;
+        }
+        if (!(o instanceof RunGapAnswerId that))
+        {
+            return false;
+        }
         return Objects.equals(runId, that.runId)
                 && Objects.equals(questionId, that.questionId)
                 && Objects.equals(gapId, that.gapId);

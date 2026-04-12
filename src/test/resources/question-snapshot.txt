@@ -574,48 +574,177 @@ ANSWER|133|440|4|false|Cache Driver
 QUESTION|134|1|GAP|false|1|Fülle die folgenden 7 Lücken zum Thema Datenbanken aus.|<NULL>|<NULL>|1
 GAP|134|1|1|Eine Datenbank ist eine |<NULL>
 GAP_OPTION|134|1|1|1|false|zufällige
+GAP_OPTION|134|1|2|2|true|strukturierte
+GAP_OPTION|134|1|3|3|false|verschlüsselte
+GAP_OPTION|134|1|4|4|false|temporäre
 GAP|134|2|2| Sammlung von Daten. Sie wird genutzt, damit Daten |<NULL>
+GAP_OPTION|134|2|5|1|false|nur einmalig
+GAP_OPTION|134|2|6|2|true|dauerhaft
+GAP_OPTION|134|2|7|3|false|ausschließlich offline
+GAP_OPTION|134|2|8|4|false|nur im Arbeitsspeicher
 GAP|134|3|3| gespeichert und später schnell wiedergefunden werden können. Im Vergleich zu einer einfachen Datei (z. B. Excel/CSV) kann eine Datenbank besser mit |<NULL>
+GAP_OPTION|134|3|9|1|false|keinen
+GAP_OPTION|134|3|10|2|true|mehreren
+GAP_OPTION|134|3|11|3|false|maximal zwei
+GAP_OPTION|134|3|12|4|false|immer genau einem
 GAP|134|4|4| Benutzern gleichzeitig umgehen und hilft dabei, Daten |<NULL>
+GAP_OPTION|134|4|13|1|false|unsicher
+GAP_OPTION|134|4|14|2|true|konsistent
+GAP_OPTION|134|4|15|3|false|unsortiert
+GAP_OPTION|134|4|16|4|false|unvollständig
 GAP|134|5|5| zu halten. Damit Daten korrekt bleiben, kann man Regeln festlegen. Solche Regeln heißen |<NULL>
+GAP_OPTION|134|5|17|1|false|Backups
+GAP_OPTION|134|5|18|2|true|Constraints
+GAP_OPTION|134|5|19|3|false|Templates
+GAP_OPTION|134|5|20|4|false|Themes
 GAP|134|6|6|. Wenn man Daten aus mehreren Tabellen miteinander verbindet, nutzt man dafür |<NULL>
+GAP_OPTION|134|6|21|1|false|Dateien
+GAP_OPTION|134|6|22|2|true|Beziehungen
+GAP_OPTION|134|6|23|3|false|Passwörter
+GAP_OPTION|134|6|24|4|false|Cookies
 GAP|134|7|7| (Verknüpfungen). Das nennt man |.
+GAP_OPTION|134|7|25|1|false|Caching
+GAP_OPTION|134|7|26|2|true|Defense in Depth
+GAP_OPTION|134|7|27|3|false|Denormalisierung
+GAP_OPTION|134|7|28|4|false|Saving
 QUESTION|135|1|GAP|false|1|Fülle die folgenden 6 Lücken zum Thema Datenbanken/Grundlagen aus.|<NULL>|<NULL>|1
 GAP|135|8|1|Eine Datenbank ist sinnvoll, wenn man Daten |<NULL>
-GAP_OPTION|135|1|2|1|false|gar nicht
+GAP_OPTION|135|1|29|1|false|gar nicht
+GAP_OPTION|135|1|30|2|true|zentral
+GAP_OPTION|135|1|31|3|false|nur einmal
+GAP_OPTION|135|1|32|4|false|zufällig
 GAP|135|9|2| verwalten muss, z. B. Kunden, Bestellungen oder Tickets. Wenn Daten doppelt gespeichert werden, kann das zu |<NULL>
+GAP_OPTION|135|2|33|1|true|Inkonsistenzen
+GAP_OPTION|135|2|34|2|false|Designs
+GAP_OPTION|135|2|35|3|false|Updates
+GAP_OPTION|135|2|36|4|false|Indizes
 GAP|135|10|3| führen. „Ein Kunde kann mehrere Bestellungen haben“. Das nennt man |<NULL>
+GAP_OPTION|135|3|37|1|false|1:1
+GAP_OPTION|135|3|38|2|false|n:m
+GAP_OPTION|135|3|39|3|true|1:n
+GAP_OPTION|135|3|40|4|false|0:1
 GAP|135|11|4|. Damit mehrere Änderungen zusammen zuverlässig klappen, nutzt man |<NULL>
+GAP_OPTION|135|4|41|1|false|Indizes
+GAP_OPTION|135|4|42|2|false|Themes
+GAP_OPTION|135|4|43|3|false|Tabellenfarben
+GAP_OPTION|135|4|44|4|true|Transaktionen
 GAP|135|12|5|. Damit Daten nicht verloren gehen, braucht man regelmäßige |<NULL>
+GAP_OPTION|135|5|45|1|true|Backups
+GAP_OPTION|135|5|46|2|false|Views
+GAP_OPTION|135|5|47|3|false|Joins
+GAP_OPTION|135|5|48|4|false|Schedules
 GAP|135|13|6|. Nutzer sollten nur die | bekommen, die sie wirklich benötigen (Least Privilege).
+GAP_OPTION|135|6|49|1|false|Türen
+GAP_OPTION|135|6|50|2|true|Rechte
+GAP_OPTION|135|6|51|3|false|Schulen
+GAP_OPTION|135|6|52|4|false|Geldscheine
 QUESTION|136|1|GAP|false|1|Fülle die folgenden 7 Lücken zum Thema Datenbanktypen aus.|<NULL>|<NULL>|1
 GAP|136|14|1|Welche Datenbanktypen gibt es? Die Merkmale einer |<NULL>
-GAP_OPTION|136|1|3|1|false|Kühlschrank-Datenbank
+GAP_OPTION|136|1|53|1|false|Kühlschrank-Datenbank
+GAP_OPTION|136|1|54|2|false|Cloud-Datenbank
+GAP_OPTION|136|1|55|3|false|Turbo-Tabellen-Speicher
+GAP_OPTION|136|1|56|4|true|Relationalen Datenbank
 GAP|136|15|2| sind eine feste Struktur mit Primär- und Fremdschlüsseln und man kann durch SQL abfragen. Dagegen stehen die |<NULL>
+GAP_OPTION|136|2|57|1|true|NoSQL-Datenbanken
+GAP_OPTION|136|2|58|2|false|NoSleep-Datenbanken
+GAP_OPTION|136|2|59|3|false|NoSound-Datenbanken
+GAP_OPTION|136|2|60|4|false|NoSpace-Datenbanken
 GAP|136|16|3|. Sie sind nicht-rational. |<NULL>
+GAP_OPTION|136|3|61|1|false|Dokumentenvernichter-Datenbanken
+GAP_OPTION|136|3|62|2|false|Domino-Datenbanken
+GAP_OPTION|136|3|63|3|true|Dokumentenorientierte Datenbank
+GAP_OPTION|136|3|64|4|false|DORA-Datenbanken
 GAP|136|17|4| beinhalten ihre Daten meist als JSON- oder XML-Dokumente (z. B. MongoDB). |<NULL>
+GAP_OPTION|136|4|65|1|false|Key-Voice-Datenbanken
+GAP_OPTION|136|4|66|2|true|Key-Value-Datenbanken
+GAP_OPTION|136|4|67|3|false|Key-Vault-Datenbanken
+GAP_OPTION|136|4|68|4|false|Key-Video-Datenbanken
 GAP|136|18|5| speichern Daten als Schlüssel-Wert-Paare (z. B. Redis). |<NULL>
+GAP_OPTION|136|5|69|1|true|Spaltenorientierte Datenbanken
+GAP_OPTION|136|5|70|2|false|Spalten-Urlaubs-Datenbanken
+GAP_OPTION|136|5|71|3|false|Spaltenlose Datenbanken
+GAP_OPTION|136|5|72|4|false|Spaltpilz-Datenbanken
 GAP|136|19|6| speichern Daten spaltenweise und sind gut für Analysen. |<NULL>
+GAP_OPTION|136|6|73|1|false|Grafikkarten-Datenbanken
+GAP_OPTION|136|6|74|2|false|Graffiti-Datenbanken
+GAP_OPTION|136|6|75|3|true|Graphdatenbanken
+GAP_OPTION|136|6|76|4|false|Gras-Datenbanken
 GAP|136|20|7| speichern Daten als Knoten und Kanten (Graph). | speichern Daten als Objekte inkl. Attributen und Referenzen.
+GAP_OPTION|136|7|77|1|false|Objektive Datenbanken
+GAP_OPTION|136|7|78|2|true|Objektorientierte Datenbanken
+GAP_OPTION|136|7|79|3|false|Objektlager-Datenbanken
+GAP_OPTION|136|7|80|4|false|Objektivitäts-Datenbanken
 QUESTION|137|2|GAP|false|1|Fülle die folgenden 3 Lücken zum Thema Programmiergrundlagen aus.|<NULL>|<NULL>|2
 GAP|137|21|1|Programmierung bedeutet, dass man einem Computer |<NULL>
-GAP_OPTION|137|1|4|1|false|Farben
+GAP_OPTION|137|1|81|1|false|Farben
+GAP_OPTION|137|1|82|2|true|Anweisungen
+GAP_OPTION|137|1|83|3|false|Bilder
+GAP_OPTION|137|1|84|4|false|Tabellen
 GAP|137|22|2| gibt, um ein Problem zu lösen. Gute Programme sind nicht nur „funktional“, sondern auch |<NULL>
+GAP_OPTION|137|2|85|1|false|unlesbar
+GAP_OPTION|137|2|86|2|true|wartbar
+GAP_OPTION|137|2|87|3|false|zufällig
+GAP_OPTION|137|2|88|4|false|geheim
 GAP|137|23|3| und leicht zu ändern. Um Fehler früh zu finden, schreibt man oft |.
+GAP_OPTION|137|3|89|1|false|Backups
+GAP_OPTION|137|3|90|2|false|Verschlüsselung
+GAP_OPTION|137|3|91|3|true|Tests
+GAP_OPTION|137|3|92|4|false|Dokumentationen
 QUESTION|138|2|GAP|false|1|Fülle die folgenden 3 Lücken zum Thema Projektstruktur und Versionsverwaltung aus.|<NULL>|<NULL>|2
 GAP|138|24|1|Bei größeren Projekten teilt man Code in |<NULL>
-GAP_OPTION|138|1|5|1|true|Module/Schichten
+GAP_OPTION|138|1|93|1|true|Module/Schichten
+GAP_OPTION|138|1|94|2|false|zufällige Dateien
+GAP_OPTION|138|1|95|3|false|4 Teile
+GAP_OPTION|138|1|96|4|false|Tabellen
 GAP|138|25|2| auf, damit jeder Part eine eindeutige Aufgabe hat. Das erreicht man zum Beispiel durch |<NULL>
+GAP_OPTION|138|2|97|1|false|globale Variablen
+GAP_OPTION|138|2|98|2|true|Interfaces/Abstraktionen
+GAP_OPTION|138|2|99|3|false|Copy-Paste
+GAP_OPTION|138|2|100|4|false|Hardcoding
 GAP|138|26|3|. Änderungen werden mit Versionsverwaltung wie | nachvollziehbar gespeichert.
+GAP_OPTION|138|3|101|1|false|Excel
+GAP_OPTION|138|3|102|2|false|Paint
+GAP_OPTION|138|3|103|3|false|Word
+GAP_OPTION|138|3|104|4|true|Git
 QUESTION|139|2|GAP|false|1|Fülle die folgenden 4 Lücken zum Thema objektorientierte Programmierung aus.|<NULL>|<NULL>|2
 GAP|139|27|1|In objektorientierter Programmierung modelliert man die Welt mit |<NULL>
-GAP_OPTION|139|1|6|1|false|Farben
+GAP_OPTION|139|1|105|1|false|Farben
+GAP_OPTION|139|1|106|2|false|Tabellen
+GAP_OPTION|139|1|107|3|true|Klassen
+GAP_OPTION|139|1|108|4|false|Pixel
 GAP|139|28|2|. Diese besitzen |<NULL>
+GAP_OPTION|139|2|109|1|false|Kommentare
+GAP_OPTION|139|2|110|2|true|Attribute
+GAP_OPTION|139|2|111|3|false|Icons
+GAP_OPTION|139|2|112|4|false|CSS
 GAP|139|29|3| (Daten) und |<NULL>
+GAP_OPTION|139|3|113|1|true|Methoden
+GAP_OPTION|139|3|114|2|false|Dateiendungen
+GAP_OPTION|139|3|115|3|false|Spalten
+GAP_OPTION|139|3|116|4|false|Schriftarten
 GAP|139|30|4| (Verhalten). Eine Instanz einer Klasse nennt man |.
+GAP_OPTION|139|4|117|1|false|Commit
+GAP_OPTION|139|4|118|2|true|Objekt
+GAP_OPTION|139|4|119|3|false|Router
+GAP_OPTION|139|4|120|4|false|Repository
 QUESTION|140|2|GAP|false|1|Fülle die folgenden 4 Lücken zum Thema Versionsverwaltung/Git aus.|<NULL>|<NULL>|7
 GAP|140|31|1|Bei Versionsverwaltung speichert man Änderungen als |<NULL>
-GAP_OPTION|140|1|7|1|false|Tabs
+GAP_OPTION|140|1|121|1|false|Tabs
+GAP_OPTION|140|1|122|2|false|Cookies
+GAP_OPTION|140|1|123|3|false|Screenshots
+GAP_OPTION|140|1|124|4|true|Commits
 GAP|140|32|2|. In Git arbeitet man oft mit |<NULL>
+GAP_OPTION|140|2|125|1|false|Prozesse
+GAP_OPTION|140|2|126|2|false|Passwörter
+GAP_OPTION|140|2|127|3|false|Treiber
+GAP_OPTION|140|2|128|4|true|Branches
 GAP|140|33|3|, um unabhängig neue Features zu entwickeln. Zum Zusammenführen nutzt man häufig |<NULL>
+GAP_OPTION|140|3|129|1|false|Render
+GAP_OPTION|140|3|130|2|false|Ping
+GAP_OPTION|140|3|131|3|true|Merge
+GAP_OPTION|140|3|132|4|false|Encrypt
 GAP|140|34|4| oder |.
+GAP_OPTION|140|4|133|1|false|Reset Windows
+GAP_OPTION|140|4|134|2|false|Reboot
+GAP_OPTION|140|4|135|3|true|Rebase
+GAP_OPTION|140|4|136|4|false|Repaint

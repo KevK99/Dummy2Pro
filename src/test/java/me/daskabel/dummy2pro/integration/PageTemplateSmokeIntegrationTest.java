@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.IntStream;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -78,7 +79,12 @@ class PageTemplateSmokeIntegrationTest
         User user = userRepository.save(new User(uniqueUsername("smoke-rooms"), encoder.encode("SehrSicheresPass1!"), "duck.jpg"));
         MockHttpSession session = loginAndReturnSession(user.getUsername(), "SehrSicheresPass1!");
 
-        IntStream.rangeClosed(1, 16).forEach(roomId -> {
+        int highestPlayableRoomId = (int) themeRepository.findAllByOrderByThemeIdAsc().stream()
+                .filter(theme -> !Objects.equals(theme.getThemeId(), 17L))
+                .limit(15)
+                .count();
+
+        IntStream.rangeClosed(1, highestPlayableRoomId).forEach(roomId -> {
             try
             {
                 mockMvc.perform(get("/room/{id}", roomId).session(session))
@@ -92,16 +98,35 @@ class PageTemplateSmokeIntegrationTest
                 throw new RuntimeException("Room smoke failed for room " + roomId, exception);
             }
         });
+
+        mockMvc.perform(get("/room/16").session(session))
+                .andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("id=\"questionPanel\"")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("id=\"statusPanel\"")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("id=\"submitAnswerBtn\"")));
+    }
+
+    private int getPlayableRoomCount()
+    {
+        return (int) themeRepository.findAllByOrderByThemeIdAsc().stream()
+                .filter(theme -> !Objects.equals(theme.getThemeId(), 17L))
+                .limit(15)
+                .count();
     }
 
     private void seedThemes(int count)
     {
-        if (themeRepository.count() >= count)
+        long playableThemeCount = themeRepository.findAllByOrderByThemeIdAsc().stream()
+                .filter(theme -> !Objects.equals(theme.getThemeId(), 17L))
+                .limit(15)
+                .count();
+
+        if (playableThemeCount >= count)
         {
             return;
         }
 
-        IntStream.rangeClosed(1, count)
+        IntStream.rangeClosed((int) playableThemeCount + 1, count)
                 .mapToObj(index -> new Theme("Thema Smoke " + index, "Beschreibung " + index))
                 .forEach(themeRepository::save);
     }

@@ -52,8 +52,8 @@ import me.daskabel.dummy2pro.repository.ThemeRepository;
  * Räume sind ein Konzept das Theme + Fragen zusammenbringt.
  * Die erste RaumID entspricht dem ersten Thema der Datenbank, egal welche ThemeID.
  *
- * Medal-Logik: - BRONZE: >= 50% der Fragen beantwortet - SILVER: >= 75% der Fragen korrekt beantwortet - GOLD: 100% der
- * Fragen korrekt beantwortet
+ * Medal-Logik: - BRONZE: >= 50% der Fragen korrekt beantwortet - SILVER: >= 75% der Fragen korrekt beantwortet - GOLD:
+ * 100% der Fragen korrekt beantwortet
  */
 @Service
 public class RoomService
@@ -80,10 +80,10 @@ public class RoomService
                 if (gf.getGapOptions() != null)
                 {
                     gf.getGapOptions()
-                        .stream()
-                        .filter(GapOption::getIsCorrect)
-                        .findFirst()
-                        .ifPresent(o -> correctByGapId.put(gf.getGapId(), o));
+                            .stream()
+                            .filter(GapOption::getIsCorrect)
+                            .findFirst()
+                            .ifPresent(o -> correctByGapId.put(gf.getGapId(), o));
                 }
             }
         }
@@ -147,8 +147,8 @@ public class RoomService
         Set<Long> selectedIds = new HashSet<>(
                 request.getSelectedAnswerIds() != null ? request.getSelectedAnswerIds() : Collections.emptyList());
 
-        boolean correct = !correctIds.isEmpty() &&
-                selectedIds.stream().anyMatch(correctIds::contains);
+        boolean correct = !correctIds.isEmpty()
+                && selectedIds.stream().anyMatch(correctIds::contains);
 
         AnswerResultDto result = new AnswerResultDto();
         result.setCorrect(correct);
@@ -177,13 +177,13 @@ public class RoomService
         if (q.getAnswerOptions() != null && !q.getAnswerOptions().isEmpty())
         {
             List<AnswerOptionDto> options =
-                q.getAnswerOptions().stream().sorted(Comparator.comparingInt(AnswerOption::getOptionOrder)).map(a -> {
-                    AnswerOptionDto aDto = new AnswerOptionDto();
-                    aDto.setAnswerId(a.getAnswerId());
-                    aDto.setOptionText(a.getOptionText());
-                    aDto.setOptionOrder(a.getOptionOrder());
-                    return aDto;
-                }).collect(Collectors.toList());
+                    q.getAnswerOptions().stream().sorted(Comparator.comparingInt(AnswerOption::getOptionOrder)).map(a -> {
+                        AnswerOptionDto aDto = new AnswerOptionDto();
+                        aDto.setAnswerId(a.getAnswerId());
+                        aDto.setOptionText(a.getOptionText());
+                        aDto.setOptionOrder(a.getOptionOrder());
+                        return aDto;
+                    }).collect(Collectors.toList());
             dto.setAnswerOptions(options);
         }
 
@@ -191,30 +191,30 @@ public class RoomService
         if (q.getGapFields() != null && !q.getGapFields().isEmpty())
         {
             List<GapFieldDto> gapDtos =
-                q.getGapFields().stream().sorted(Comparator.comparingInt(GapField::getGapIndex)).map(gf -> {
-                    GapFieldDto gfDto = new GapFieldDto();
-                    gfDto.setGapId(gf.getGapId());
-                    gfDto.setGapIndex(gf.getGapIndex());
-                    gfDto.setTextBefore(gf.getTextBefore());
-                    gfDto.setTextAfter(gf.getTextAfter());
+                    q.getGapFields().stream().sorted(Comparator.comparingInt(GapField::getGapIndex)).map(gf -> {
+                        GapFieldDto gfDto = new GapFieldDto();
+                        gfDto.setGapId(gf.getGapId());
+                        gfDto.setGapIndex(gf.getGapIndex());
+                        gfDto.setTextBefore(gf.getTextBefore());
+                        gfDto.setTextAfter(gf.getTextAfter());
 
-                    if (gf.getGapOptions() != null)
-                    {
-                        List<GapOptionDto> gopts = gf.getGapOptions()
-                            .stream()
-                            .sorted(Comparator.comparingInt(GapOption::getOptionOrder))
-                            .map(go -> {
-                                GapOptionDto goDto = new GapOptionDto();
-                                goDto.setGapOptionId(go.getGapOptionId());
-                                goDto.setOptionText(go.getOptionText());
-                                goDto.setOptionOrder(go.getOptionOrder());
-                                return goDto;
-                            })
-                            .collect(Collectors.toList());
-                        gfDto.setGapOptions(gopts);
-                    }
-                    return gfDto;
-                }).collect(Collectors.toList());
+                        if (gf.getGapOptions() != null)
+                        {
+                            List<GapOptionDto> gopts = gf.getGapOptions()
+                                    .stream()
+                                    .sorted(Comparator.comparingInt(GapOption::getOptionOrder))
+                                    .map(go -> {
+                                        GapOptionDto goDto = new GapOptionDto();
+                                        goDto.setGapOptionId(go.getGapOptionId());
+                                        goDto.setOptionText(go.getOptionText());
+                                        goDto.setOptionOrder(go.getOptionOrder());
+                                        return goDto;
+                                    })
+                                    .collect(Collectors.toList());
+                            gfDto.setGapOptions(gopts);
+                        }
+                        return gfDto;
+                    }).collect(Collectors.toList());
             dto.setGapFields(gapDtos);
         }
 
@@ -236,8 +236,8 @@ public class RoomService
     // =====================================================================
 
     public RoomService(QuestionRepository questionRepo, ThemeRepository themeRepo, GameRunRepository gameRunRepo,
-        QuestionProgressRepository questionProgressRepo, RunSelectedAnswerRepository runSelectedAnswerRepo,
-        RunGapAnswerRepository runGapAnswerRepo)
+                       QuestionProgressRepository questionProgressRepo, RunSelectedAnswerRepository runSelectedAnswerRepo,
+                       RunGapAnswerRepository runGapAnswerRepo)
     {
         this.questionRepo = questionRepo;
         this.themeRepo = themeRepo;
@@ -264,10 +264,10 @@ public class RoomService
         int earnedPoints = 0;
 
         List<QuestionProgress> progressList =
-            this.questionProgressRepo.findByRunIdAndRoomIdOrderByQuestionOrder(runId, roomId);
+                this.questionProgressRepo.findByRunIdAndRoomIdOrderByQuestionOrder(runId, roomId);
 
         Map<Long, QuestionProgress> progressMap =
-            progressList.stream().collect(Collectors.toMap(p -> p.getQuestion().getQuestionId(), p -> p));
+                progressList.stream().collect(Collectors.toMap(p -> p.getQuestion().getQuestionId(), p -> p));
 
         for (Question q : allQuestions)
         {
@@ -335,27 +335,27 @@ public class RoomService
                 comparison.setQuestionId(q.getQuestionId());
                 comparison.setSelectedAnswerIds(new ArrayList<>());
 
-                // Get selected answers based on question type
+                // Ausgewählte Antworten je nach Fragetyp ermitteln
                 if (q.getQuestionType() == QuestionType.GAP)
                 {
-                    // Add logic to get selected gap answers
+                    // Hier fehlt derzeit noch die Logik für ausgewählte Lückenantworten
                 }
                 else
                 {
                     List<Long> selectedIds =
-                        runSelectedAnswerRepo.findByRun_RunIdAndQuestion_QuestionId(runId, q.getQuestionId())
-                            .stream()
-                            .map(a -> a.getAnswerOption().getAnswerId())
-                            .collect(Collectors.toList());
+                            runSelectedAnswerRepo.findByRun_RunIdAndQuestion_QuestionId(runId, q.getQuestionId())
+                                    .stream()
+                                    .map(a -> a.getAnswerOption().getAnswerId())
+                                    .collect(Collectors.toList());
                     comparison.setSelectedAnswerIds(selectedIds);
                 }
 
-                // Collect correct answers
+                // Korrekte Antworten sammeln
                 List<Long> correctAnswers = q.getAnswerOptions()
-                    .stream()
-                    .filter(AnswerOption::getIsCorrect)
-                    .map(AnswerOption::getAnswerId)
-                    .collect(Collectors.toList());
+                        .stream()
+                        .filter(AnswerOption::getIsCorrect)
+                        .map(AnswerOption::getAnswerId)
+                        .collect(Collectors.toList());
                 comparison.setCorrectAnswerIds(correctAnswers);
 
                 comparisons.add(comparison);
@@ -379,7 +379,7 @@ public class RoomService
     public QuestionDto getQuestion(Long questionId, int indexInSequence, int totalInSequence)
     {
         Question q = this.questionRepo.findById(questionId)
-            .orElseThrow(() -> new NoSuchElementException("Frage " + questionId + " nicht gefunden."));
+                .orElseThrow(() -> new NoSuchElementException("Frage " + questionId + " nicht gefunden."));
         return toQuestionDto(q, indexInSequence, totalInSequence);
     }
 
@@ -393,7 +393,7 @@ public class RoomService
         getRun(runId);
         Theme theme = getTheme(roomId);
         List<QuestionProgress> progressList =
-            this.questionProgressRepo.findByRunIdAndRoomIdOrderByQuestionOrder(runId, roomId);
+                this.questionProgressRepo.findByRunIdAndRoomIdOrderByQuestionOrder(runId, roomId);
 
         List<Question> roomQuestions = progressList.stream().map(QuestionProgress::getQuestion).toList();
         return buildStatus(roomId, theme, roomQuestions, runId);
@@ -407,7 +407,7 @@ public class RoomService
         }
 
         return this.gameRunRepo.findById(runId)
-            .orElseThrow(() -> new NoSuchElementException("Run " + runId + " nicht gefunden."));
+                .orElseThrow(() -> new NoSuchElementException("Run " + runId + " nicht gefunden."));
     }
 
     private Theme getTheme(int roomId)
@@ -421,8 +421,7 @@ public class RoomService
     }
 
     /**
-     * Lädt alle Fragen eines Themas — MC/TF-Antworten und GAP-Felder in einer einzigen DB-Runde (verhindert N+1 durch
-     * FETCH JOIN).
+     * Lädt alle Fragen eines Themas — MC/TF-Antworten und GAP-Felder mit möglichst wenigen DB-Zugriffen.
      *
      * Problem: zwei separate FETCH JOINs (Answers + Gaps) können nicht in einer Query kombiniert werden
      * (MultipleBagFetchException). Lösung: erst Fragen laden, dann in zwei separaten Queries die Details ergänzen und
@@ -489,14 +488,14 @@ public class RoomService
         GameRun run = getRun(runId);
 
         QuestionProgress progress =
-            this.questionProgressRepo.findByRun_RunIdAndQuestion_QuestionId(runId, question.getQuestionId())
-                .orElseThrow(
-                    () -> new NoSuchElementException(
-                        "QuestionProgress für runId="
-                            + runId
-                            + " und questionId="
-                            + question.getQuestionId()
-                            + " nicht gefunden."));
+                this.questionProgressRepo.findByRun_RunIdAndQuestion_QuestionId(runId, question.getQuestionId())
+                        .orElseThrow(
+                                () -> new NoSuchElementException(
+                                        "QuestionProgress für runId="
+                                                + runId
+                                                + " und questionId="
+                                                + question.getQuestionId()
+                                                + " nicht gefunden."));
 
         progress.setStatus(result.isCorrect() ? ProgressStatus.CORRECT : ProgressStatus.WRONG);
         progress.setAnsweredAt(LocalDateTime.now());
@@ -507,7 +506,7 @@ public class RoomService
             this.runGapAnswerRepo.deleteByRun_RunIdAndQuestion_QuestionId(runId, question.getQuestionId());
 
             Map<Long, GapField> gapFieldMap =
-                question.getGapFields().stream().collect(Collectors.toMap(GapField::getGapId, gf -> gf));
+                    question.getGapFields().stream().collect(Collectors.toMap(GapField::getGapId, gf -> gf));
 
             if (request.getGapAnswers() != null)
             {
@@ -520,15 +519,15 @@ public class RoomService
                     }
 
                     GapOption selectedOption = gapField.getGapOptions()
-                        .stream()
-                        .filter(o -> o.getGapOptionId().equals(entry.getSelectedGapOptionId()))
-                        .findFirst()
-                        .orElseThrow(
-                            () -> new IllegalArgumentException(
-                                "Ungültige selectedGapOptionId: " + entry.getSelectedGapOptionId()));
+                            .stream()
+                            .filter(o -> o.getGapOptionId().equals(entry.getSelectedGapOptionId()))
+                            .findFirst()
+                            .orElseThrow(
+                                    () -> new IllegalArgumentException(
+                                            "Ungültige selectedGapOptionId: " + entry.getSelectedGapOptionId()));
 
                     RunGapAnswer runGapAnswer =
-                        new RunGapAnswer(run, question, gapField, selectedOption, LocalDateTime.now());
+                            new RunGapAnswer(run, question, gapField, selectedOption, LocalDateTime.now());
 
                     this.runGapAnswerRepo.save(runGapAnswer);
                 }
@@ -539,10 +538,10 @@ public class RoomService
             this.runSelectedAnswerRepo.deleteByRun_RunIdAndQuestion_QuestionId(runId, question.getQuestionId());
 
             List<Long> selectedIds =
-                request.getSelectedAnswerIds() != null ? request.getSelectedAnswerIds() : Collections.emptyList();
+                    request.getSelectedAnswerIds() != null ? request.getSelectedAnswerIds() : Collections.emptyList();
 
             Map<Long, AnswerOption> answerMap =
-                question.getAnswerOptions().stream().collect(Collectors.toMap(AnswerOption::getAnswerId, a -> a));
+                    question.getAnswerOptions().stream().collect(Collectors.toMap(AnswerOption::getAnswerId, a -> a));
 
             for (Long selectedId : selectedIds)
             {
@@ -558,25 +557,24 @@ public class RoomService
         }
     }
 
-	/**
-	 * Startet (oder setzt fort) einen Raum für einen bestimmten Run (Spielstand).
-	 *
-	 * - Lädt alle Fragen des Themas
-     * - Mischt die Reihenfolge zufällig (neuer Spielstand = neue Reihenfolge)
+    /**
+     * Startet (oder setzt fort) einen Raum für einen bestimmten Run (Spielstand).
+     *
+     * - Lädt die Fragen des Raums in der gespeicherten Reihenfolge
      * - Berechnet den aktuellen Status
      * - Gibt die erste Frage + die Sequenz (alle IDs) zurück
-	 *
-	 * @param roomId 1..7 (entsprechend der Themen in der Tabelle theme)
-	 * @param runId aktueller Spielstand
-	 */
-	@Transactional(readOnly = true)
-	public RoomStartDto startRoom(int roomId, Long runId)
-	{
+     *
+     * @param roomId Raum-ID entsprechend der Reihenfolge der Themes in der Tabelle theme
+     * @param runId aktueller Spielstand
+     */
+    @Transactional(readOnly = true)
+    public RoomStartDto startRoom(int roomId, Long runId)
+    {
         getRun(runId);
         Theme theme = getTheme(roomId);
 
         List<QuestionProgress> progressList =
-            this.questionProgressRepo.findByRunIdAndRoomIdOrderByQuestionOrder(runId, roomId);
+                this.questionProgressRepo.findByRunIdAndRoomIdOrderByQuestionOrder(runId, roomId);
 
         List<Question> orderedQuestions = progressList.stream().map(QuestionProgress::getQuestion).toList();
 
@@ -603,7 +601,7 @@ public class RoomService
      * Wertet eine Antwort aus und speichert den Fortschritt im aktuellen Run.
      *
      * @param roomId
-     *        1..7
+     *        Raum-ID entsprechend der Reihenfolge der Themes in der Tabelle theme
      * @param runId
      *        aktueller Spielstand
      * @param request
@@ -615,7 +613,7 @@ public class RoomService
     {
         getRun(runId);
         Question question = this.questionRepo.findById(request.getQuestionId())
-            .orElseThrow(() -> new NoSuchElementException("Frage " + request.getQuestionId() + " nicht gefunden."));
+                .orElseThrow(() -> new NoSuchElementException("Frage " + request.getQuestionId() + " nicht gefunden."));
 
         validateQuestionBelongsToRoom(question, roomId);
         // Antwort auswerten je nach Fragetyp
@@ -636,12 +634,12 @@ public class RoomService
     {
         Theme theme = getTheme(roomId);
         boolean belongs = question.getThemes() != null
-            && question.getThemes().stream().anyMatch(t -> t.getThemeId().equals(theme.getThemeId()));
+                && question.getThemes().stream().anyMatch(t -> t.getThemeId().equals(theme.getThemeId()));
 
         if (!belongs)
         {
             throw new IllegalArgumentException(
-                "Frage " + question.getQuestionId() + " gehört nicht zu Raum " + roomId + ".");
+                    "Frage " + question.getQuestionId() + " gehört nicht zu Raum " + roomId + ".");
         }
     }
 

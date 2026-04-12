@@ -13,6 +13,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+/**
+ * Überträgt Anmeldedaten aus der HTTP-Sitzung in den Sicherheitskontext.
+ *
+ * Dadurch erkennt Spring Security auch bei späteren Anfragen den aktuell
+ * angemeldeten Benutzer wieder.
+ */
 @Component
 public class SessionAuthenticationFilter extends OncePerRequestFilter
 {

@@ -20,8 +20,11 @@ import me.daskabel.dummy2pro.repository.UserRepository;
 /**
  * Erstellen eines neuen Users, prüft Passwortregeln und erstellt einen Hash (BCrypt, weil das der richtige Standard ist
  * und sicherer als normales Hashen).
+ *
+ * Zusätzlich verwaltet der Service Profildaten, Avatar-Einstellungen,
+ * Passwortänderungen und das Löschen eines Benutzers einschließlich
+ * seiner Spielstände.
  */
-
 @Service
 public class UserService
 {
@@ -113,6 +116,9 @@ public class UserService
         this.runGapAnswerRepository = runGapAnswerRepository;
     }
 
+    /**
+     * Prüft die Anmeldedaten und liefert den Benutzer bei Erfolg zurück.
+     */
     public User authenticate(String username, String password)
     {
         validateLoginInput(username, password);
@@ -129,6 +135,9 @@ public class UserService
         return user;
     }
 
+    /**
+     * Lädt einen Benutzer anhand seiner ID.
+     */
     public User getUser(Long userId)
     {
         User user = this.userRepository.findById(userId)
@@ -138,6 +147,10 @@ public class UserService
         return user;
     }
 
+    /**
+     * Löscht einen Benutzer einschließlich aller zugehörigen Spielstände
+     * und gespeicherten Antworten.
+     */
     @org.springframework.transaction.annotation.Transactional
     public void deleteUser(Long userId)
     {
@@ -158,6 +171,9 @@ public class UserService
         this.userRepository.delete(user);
     }
 
+    /**
+     * Prüft Anmeldedaten und liefert nur zurück, ob der Login erfolgreich wäre.
+     */
     public boolean login(String username, String password)
     {
         validateLoginInput(username, password);
@@ -167,6 +183,9 @@ public class UserService
                 .orElse(false);
     }
 
+    /**
+     * Registriert einen neuen Benutzer und legt direkt einen ersten Spielstand an.
+     */
     @org.springframework.transaction.annotation.Transactional
     public User register(String username, String password)
     {
@@ -194,6 +213,9 @@ public class UserService
         return savedUser;
     }
 
+    /**
+     * Ändert den Benutzernamen eines vorhandenen Benutzers.
+     */
     public User updateUsername(Long userId, String newUsername)
     {
         validateUsername(newUsername);
@@ -210,6 +232,9 @@ public class UserService
         return this.userRepository.save(user);
     }
 
+    /**
+     * Ändert den gewählten Avatar.
+     */
     public User updateAvatar(Long userId, String newAvatar)
     {
         User user = getUser(userId);
@@ -229,6 +254,9 @@ public class UserService
         return this.userRepository.save(user);
     }
 
+    /**
+     * Ändert Form und Rahmen des Avatars.
+     */
     public User updateAvatarStyle(Long userId, String avatarShape, String selectedAvatarFrame)
     {
         User user = getUser(userId);
@@ -252,6 +280,10 @@ public class UserService
         return this.userRepository.save(user);
     }
 
+    /**
+     * Ändert das Passwort nach Prüfung des aktuellen Passworts
+     * und der hinterlegten Passwortregeln.
+     */
     public void updatePassword(Long userId, String currentPassword, String newPassword, String newPasswordConfirm)
     {
         if (currentPassword == null || currentPassword.isBlank())
@@ -282,6 +314,10 @@ public class UserService
         this.userRepository.save(user);
     }
 
+    /**
+     * Platzhalter für eine mögliche spätere Funktion zum Speichern
+     * des aktuellen Spielstands.
+     */
     public void saveCurrentGameProgress(Long userId)
     {
         // Hier kannst du die Logik implementieren, um den aktuellen Spielstand zu speichern.
@@ -296,6 +332,9 @@ public class UserService
         // Speichere Fortschritte oder führe hier eine spezifische Logik aus.
     }
 
+    /**
+     * Liefert den Dateinamen des Avatars oder den Standardavatar.
+     */
     public String resolveAvatarFilename(User user)
     {
         if (user == null || user.getAvatar() == null || user.getAvatar().isBlank())
@@ -306,6 +345,9 @@ public class UserService
         return user.getAvatar();
     }
 
+    /**
+     * Setzt bei Bedarf den Standardavatar.
+     */
     private void applyDefaultAvatarIfMissing(User user)
     {
         if (user == null)
@@ -319,6 +361,9 @@ public class UserService
         }
     }
 
+    /**
+     * Prüft, ob Benutzername und Passwort für einen Login grundsätzlich vorhanden sind.
+     */
     private void validateLoginInput(String username, String password)
     {
         if (username == null || username.isBlank())

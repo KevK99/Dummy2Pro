@@ -24,6 +24,12 @@ import me.daskabel.dummy2pro.model.Theme;
 import me.daskabel.dummy2pro.repository.QuestionRepository;
 import me.daskabel.dummy2pro.repository.ThemeRepository;
 
+/**
+ * Stellt die Logik für den wiederholbaren Abkürzungsraum bereit.
+ *
+ * Der Raum arbeitet unabhängig vom normalen Spielfortschritt und lädt
+ * alle Fragen aus Theme 17 in zufälliger Reihenfolge.
+ */
 @Service
 public class AbbreviationPracticeService
 {
@@ -38,6 +44,9 @@ public class AbbreviationPracticeService
         this.themeRepository = themeRepository;
     }
 
+    /**
+     * Lädt den kompletten Übungsraum mit allen Fragen und dem Einleitungsdialog.
+     */
     @Transactional(readOnly = true)
     public PracticeRoomDto loadPracticeRoom()
     {
@@ -67,6 +76,11 @@ public class AbbreviationPracticeService
         return dto;
     }
 
+    /**
+     * Prüft eine Antwort innerhalb des Abkürzungsraums.
+     *
+     * Zugelassen sind hier nur MC- und TF-Fragen aus Theme 17.
+     */
     @Transactional(readOnly = true)
     public AnswerResultDto evaluateAnswer(AnswerRequest request)
     {
@@ -91,6 +105,9 @@ public class AbbreviationPracticeService
         return RoomService.evaluateMcTf(question, request);
     }
 
+    /**
+     * Lädt Fragen in genau der Reihenfolge der übergebenen IDs.
+     */
     @Transactional(readOnly = true)
     protected List<Question> loadQuestionsByIdsOrdered(List<Long> questionIds)
     {
@@ -102,7 +119,12 @@ public class AbbreviationPracticeService
         List<Question> questionsWithAnswers = this.questionRepository.findByQuestionIdsWithAnswers(questionIds);
 
         Map<Long, Question> questionMap = questionsWithAnswers.stream()
-                .collect(Collectors.toMap(Question::getQuestionId, question -> question, (left, right) -> left, LinkedHashMap::new));
+                .collect(Collectors.toMap(
+                        Question::getQuestionId,
+                        question -> question,
+                        (left, right) -> left,
+                        LinkedHashMap::new
+                ));
 
         return questionIds.stream()
                 .map(questionMap::get)
@@ -110,6 +132,11 @@ public class AbbreviationPracticeService
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Wandelt eine Frage in das Datenformat für das Frontend um.
+     *
+     * Korrektheitsinformationen werden dabei bewusst nicht mitgegeben.
+     */
     private static QuestionDto toQuestionDto(Question question, int currentIndex, int totalCount)
     {
         QuestionDto dto = new QuestionDto();

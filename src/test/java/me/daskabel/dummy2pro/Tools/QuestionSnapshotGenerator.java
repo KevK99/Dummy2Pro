@@ -15,7 +15,7 @@ import java.nio.file.Path;
  */
 public final class QuestionSnapshotGenerator {
 
-    private static final Path OUTPUT = Path.of("src/test/resources/reference/question-snapshot.txt");
+    private static final Path OUTPUT = Path.of("src/test/resources/question-snapshot.txt");
 
     private QuestionSnapshotGenerator() {
     }

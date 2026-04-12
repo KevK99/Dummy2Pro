@@ -6,7 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 /*
-Vereinfacht den Prozess mit den Usern. Suche geht schneller
+* Stellt Datenbankzugriffe für Benutzer bereit.
+ *
+ + Vereinfacht den Prozess mit den Usern. Suche geht schneller
+ * Enthält Suchmethoden für Benutzer anhand ihres Namens.
  */
 public interface UserRepository extends JpaRepository<User, Long> {
 

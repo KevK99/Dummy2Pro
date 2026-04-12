@@ -172,7 +172,7 @@ class RoomServiceEvaluationUnitTest
     }
 
     @Test
-    void evaluateMcTf_multipleCorrectAnswers_oneCorrectIsEnoughForFullPoints()
+    void evaluateMcTf_multipleCorrectAnswers_isCorrectWhenAtLeastOneRightAnswerWasSelected()
     {
         Question question = new Question();
         question.setQuestionId(3L);
@@ -203,18 +203,26 @@ class RoomServiceEvaluationUnitTest
         AnswerRequest onlyOneCorrect = new AnswerRequest();
         onlyOneCorrect.setSelectedAnswerIds(List.of(201L));
 
-        AnswerResultDto partialResult = RoomService.evaluateMcTf(question, onlyOneCorrect);
+        AnswerResultDto oneCorrectResult = RoomService.evaluateMcTf(question, onlyOneCorrect);
 
-        assertTrue(partialResult.isCorrect());
-        assertEquals(7, partialResult.getPointsEarned());
+        assertTrue(oneCorrectResult.isCorrect());
+        assertEquals(7, oneCorrectResult.getPointsEarned());
 
-        AnswerRequest exactSelection = new AnswerRequest();
-        exactSelection.setSelectedAnswerIds(List.of(201L, 202L));
+        AnswerRequest oneCorrectAndOneWrong = new AnswerRequest();
+        oneCorrectAndOneWrong.setSelectedAnswerIds(List.of(201L, 203L));
 
-        AnswerResultDto exactResult = RoomService.evaluateMcTf(question, exactSelection);
+        AnswerResultDto mixedResult = RoomService.evaluateMcTf(question, oneCorrectAndOneWrong);
 
-        assertTrue(exactResult.isCorrect());
-        assertEquals(7, exactResult.getPointsEarned());
+        assertTrue(mixedResult.isCorrect());
+        assertEquals(7, mixedResult.getPointsEarned());
+
+        AnswerRequest onlyWrong = new AnswerRequest();
+        onlyWrong.setSelectedAnswerIds(List.of(203L));
+
+        AnswerResultDto wrongResult = RoomService.evaluateMcTf(question, onlyWrong);
+
+        assertFalse(wrongResult.isCorrect());
+        assertEquals(0, wrongResult.getPointsEarned());
     }
 
     @Test

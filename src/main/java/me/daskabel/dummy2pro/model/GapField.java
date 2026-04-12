@@ -4,10 +4,16 @@ import jakarta.persistence.*;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+/**
+ * Repräsentiert eine einzelne Lücke innerhalb einer Lückentextfrage.
+ *
+ * Gespeichert werden die Position der Lücke, der Text davor und danach
+ * sowie die zugehörigen Auswahlmöglichkeiten.
+ */
 @Entity
 @Table(name = "gap_field")
-public class GapField {
-
+public class GapField
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "gap_id")
@@ -31,29 +37,74 @@ public class GapField {
     private Set<GapOption> gapOptions = new LinkedHashSet<>();
 
     // Constructors
-    public GapField() {}
+    public GapField()
+    {
+    }
 
-    public GapField(Question question, int gapIndex) {
+    public GapField(Question question, int gapIndex)
+    {
         this.question = question;
         this.gapIndex = gapIndex;
     }
 
     // Getters & Setters
-    public Long getGapId() { return gapId; }
-    public void setGapId(Long gapId) { this.gapId = gapId; }
+    public Long getGapId()
+    {
+        return gapId;
+    }
 
-    public Question getQuestion() { return question; }
-    public void setQuestion(Question question) { this.question = question; }
+    public void setGapId(Long gapId)
+    {
+        this.gapId = gapId;
+    }
 
-    public int getGapIndex() { return gapIndex; }
-    public void setGapIndex(int gapIndex) { this.gapIndex = gapIndex; }
+    public Question getQuestion()
+    {
+        return question;
+    }
 
-    public String getTextBefore() { return textBefore; }
-    public void setTextBefore(String textBefore) { this.textBefore = textBefore; }
+    public void setQuestion(Question question)
+    {
+        this.question = question;
+    }
 
-    public String getTextAfter() { return textAfter; }
-    public void setTextAfter(String textAfter) { this.textAfter = textAfter; }
+    public int getGapIndex()
+    {
+        return gapIndex;
+    }
 
-    public Set<GapOption> getGapOptions() { return gapOptions; }
-    public void setGapOptions(Set<GapOption> gapOptions) { this.gapOptions = gapOptions; }
+    public void setGapIndex(int gapIndex)
+    {
+        this.gapIndex = gapIndex;
+    }
+
+    public String getTextBefore()
+    {
+        return textBefore;
+    }
+
+    public void setTextBefore(String textBefore)
+    {
+        this.textBefore = textBefore;
+    }
+
+    public String getTextAfter()
+    {
+        return textAfter;
+    }
+
+    public void setTextAfter(String textAfter)
+    {
+        this.textAfter = textAfter;
+    }
+
+    public Set<GapOption> getGapOptions()
+    {
+        return gapOptions;
+    }
+
+    public void setGapOptions(Set<GapOption> gapOptions)
+    {
+        this.gapOptions = gapOptions;
+    }
 }

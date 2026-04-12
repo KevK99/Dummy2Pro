@@ -9,6 +9,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+/**
+ * Stellt Datenbankzugriffe für gespeicherte Lückenantworten bereit.
+ *
+ * Enthält Methoden zum Laden, Suchen und Löschen von Antworten
+ * zu Lückentextfragen innerhalb eines Spielstands.
+ */
 public interface RunGapAnswerRepository extends JpaRepository<RunGapAnswer, RunGapAnswerId>
 {
     List<RunGapAnswer> findByRun_RunId(Long runId);

@@ -7,6 +7,12 @@ import java.util.Set;
 import jakarta.persistence.*;
 import org.hibernate.annotations.BatchSize;
 
+/**
+ * Repräsentiert eine einzelne Frage des Quizsystems.
+ *
+ * Eine Frage gehört zu einem Fragensatz und kann je nach Fragetyp
+ * Antwortoptionen, Lückenfelder und Theme-Zuordnungen besitzen.
+ */
 @Entity
 @Table(name = "question")
 public class Question

@@ -10,6 +10,12 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Verwaltet Fehlversuche bei Anmeldungen und zeitlich begrenzte Sperren.
+ *
+ * Die Sperrung erfolgt benutzerbezogen im Arbeitsspeicher und soll
+ * wiederholte Fehlversuche in kurzer Zeit begrenzen.
+ */
 @Service
 public class LoginAttemptService
 {
@@ -27,6 +33,9 @@ public class LoginAttemptService
         this.clock = clock;
     }
 
+    /**
+     * Prüft, ob ein Benutzername aktuell gesperrt ist.
+     */
     public boolean isBlocked(String username)
     {
         String key = normalizeKey(username);
@@ -55,6 +64,12 @@ public class LoginAttemptService
         return false;
     }
 
+    /**
+     * Erfasst einen fehlgeschlagenen Anmeldeversuch.
+     *
+     * Wird die maximale Anzahl erreicht, wird der Benutzername
+     * für eine begrenzte Zeit gesperrt.
+     */
     public void registerFailure(String username)
     {
         String key = normalizeKey(username);
@@ -93,6 +108,9 @@ public class LoginAttemptService
         }
     }
 
+    /**
+     * Entfernt gespeicherte Fehlversuche nach einer erfolgreichen Anmeldung.
+     */
     public void registerSuccess(String username)
     {
         String key = normalizeKey(username);
@@ -104,6 +122,9 @@ public class LoginAttemptService
         attemptsByUsername.remove(key);
     }
 
+    /**
+     * Vereinheitlicht den Benutzernamen für die interne Speicherung.
+     */
     private String normalizeKey(String username)
     {
         if (username == null)
@@ -115,6 +136,9 @@ public class LoginAttemptService
         return normalized.isEmpty() ? null : normalized;
     }
 
+    /**
+     * Interner Zustand für Fehlversuche und eine mögliche Sperre.
+     */
     private record AttemptState(int failedAttempts, Instant firstFailedAt, Instant lockedUntil)
     {
         private boolean isLocked(Instant now)
