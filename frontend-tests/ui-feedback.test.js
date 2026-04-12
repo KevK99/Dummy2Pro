@@ -1,6 +1,8 @@
 const { createBrowserEnv, loadBrowserScript } = require("./helpers/browser-env");
 
 describe("ui-feedback.js", () => {
+    // Lädt das produktive Skript in eine kleine DOM-Struktur mit einem
+    // vorbereiteten Inline-Ziel für Meldungen im Formular-Kontext.
     function setupDom() {
         const dom = createBrowserEnv(`
             <!doctype html>

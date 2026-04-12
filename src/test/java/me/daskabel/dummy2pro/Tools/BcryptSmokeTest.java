@@ -9,6 +9,12 @@ import java.nio.charset.StandardCharsets;
 import me.daskabel.dummy2pro.tools.Bcrypt;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Smoke-Test für das kleine BCrypt-Hilfsprogramm.
+ *
+ * Geprüft wird, ob der CLI-Einstieg einen Hash ausgibt und ob die
+ * enthaltene Beispielprüfung für Passwort und Hash erfolgreich durchläuft.
+ */
 class BcryptSmokeTest
 {
     @Test

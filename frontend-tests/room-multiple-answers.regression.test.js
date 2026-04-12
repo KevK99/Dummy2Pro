@@ -2,6 +2,10 @@ const fs = require("fs");
 const path = require("path");
 const { createBrowserEnv } = require("./helpers/browser-env");
 
+/**
+ * Extrahiert einzelne Funktionen direkt aus room1.html, damit der
+ * Regressionstest die echte Raumlogik statt nachgebauter Kopien nutzt.
+ */
 function extractFunction(relativePath, functionSignature) {
     const absolutePath = path.join(process.cwd(), relativePath);
     const source = fs.readFileSync(absolutePath, "utf8");
@@ -66,6 +70,8 @@ describe("room1 Mehrfachantworten Regression", () => {
             "async function submitAnswer()"
         );
 
+        // Es wird nur das kleinste benötigte Laufzeitgerüst nachgebildet.
+        // Die eigentliche Fachlogik stammt aus den extrahierten Raumfunktionen.
         dom.window.eval(`
             var sessionId = "sess-1";
             var roomId = 1;
@@ -125,7 +131,7 @@ describe("room1 Mehrfachantworten Regression", () => {
         ${submitAnswer}
             `);
 
-            return dom;
+        return dom;
     }
 
     test("Mehrfachauswahl markiert nur die exakt gewählten Buttons als selektiert", () => {

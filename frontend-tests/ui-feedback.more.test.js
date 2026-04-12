@@ -1,5 +1,9 @@
 const { createBrowserEnv, loadBrowserScript } = require("./helpers/browser-env");
 
+/**
+ * Baut eine minimale DOM-Umgebung für globale Meldungen, Inline-Meldungen
+ * und modale Dialoge auf.
+ */
 function setupDom() {
     const dom = createBrowserEnv(`
         <!doctype html>
@@ -10,6 +14,8 @@ function setupDom() {
         </html>
     `);
 
+    // Animationen werden sofort ausgeführt, damit Ein- und Ausblendzustände
+    // ohne echte Browser-Frames prüfbar bleiben.
     dom.window.requestAnimationFrame = callback => callback();
     loadBrowserScript(dom, "src/main/resources/static/js/ui-feedback.js");
     return dom;
@@ -66,6 +72,8 @@ describe("ui-feedback.js zusätzliche Pfade", () => {
         expect(modalRoot.innerHTML).toContain("from-rose-600 to-red-500");
         expect(modalRoot.innerHTML).toContain(">!<");
 
+        // Ein Klick innerhalb der Dialogkarte darf den Dialog nicht schließen;
+        // nur Overlay oder explizite Buttons sollen reagieren.
         modalRoot.firstElementChild.dispatchEvent(new dom.window.MouseEvent("click", { bubbles: true }));
         expect(modalRoot.classList.contains("flex")).toBe(true);
 

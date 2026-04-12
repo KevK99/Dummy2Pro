@@ -13,6 +13,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ui.ExtendedModelMap;
 
+/**
+ * Unittests für einfache Navigations- und Seitenauswahl im Web-Layer.
+ *
+ * Getestet werden hier die Rückgabewerte der Controller für Startseite,
+ * Dashboard, Räume sowie Endscreen und Review. Die Tests prüfen bewusst nur
+ * die Controllerlogik und Modellbefüllung, nicht Rendering oder Routing im
+ * Browser.
+ */
 @ExtendWith(MockitoExtension.class)
 class NavigationControllerUnitTest
 {

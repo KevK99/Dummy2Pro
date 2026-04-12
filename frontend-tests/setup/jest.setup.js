@@ -1,6 +1,9 @@
 jest.setTimeout(10000);
 
 afterEach(() => {
+    // Jede Testausführung bekommt ihre Timer-/Mock-Umgebung sauber zurück.
+    // Zusätzlich werden alle registrierten jsdom-Fenster explizit geschlossen,
+    // damit keine DOM-Reste zwischen Tests hängenbleiben.
     jest.useRealTimers();
     jest.restoreAllMocks();
 

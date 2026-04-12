@@ -63,6 +63,9 @@ describe("room-common.js weitere Branches", () => {
             "medalCoin"
         ];
 
+        // room-common.js arbeitet an mehreren Stellen mit globalen
+        // Elementreferenzen aus dem Template. Im Test werden diese Knoten
+        // deshalb bewusst zusätzlich auf window gespiegelt.
         ids.forEach(id => {
             dom.window[id] = dom.window.document.getElementById(id);
         });

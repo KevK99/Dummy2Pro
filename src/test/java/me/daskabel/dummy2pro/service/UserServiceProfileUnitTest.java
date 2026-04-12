@@ -22,6 +22,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unittests für Profiländerungen und Kontolöschung im {@link UserService}.
+ *
+ * Die Tests decken Namensänderung, Avatarwechsel, Passwortänderung und das
+ * vollständige Entfernen eines Benutzers mitsamt abhängigen Spiel- und
+ * Fortschrittsdaten ab.
+ */
 @ExtendWith(MockitoExtension.class)
 class UserServiceProfileUnitTest
 {

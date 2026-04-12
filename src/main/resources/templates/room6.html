@@ -5,6 +5,7 @@
 
 <body class="min-h-screen bg-[#695800] text-white font-mono tracking-wider dark:bg-[#000010] overflow-x-hidden">
 
+<!-- Raumseite für Raum 6 mit Introbereich, Quizansicht und statusbezogener Fortschrittsführung. -->
 <div th:replace="~{fragments/headline :: headline(${ 'Raum ' + roomId}, ${'Thema: ' + themeName}, ${avatarUrl}, null, null)}"></div>
 
 <style>
@@ -317,6 +318,7 @@
 
 <script th:src="@{/js/darkmode.js}"></script>
 
+<!-- Enthält die Raumlogik für Laden, Auswerten und Fortschreiben des aktuellen Spielstands in Raum 6. -->
 <script th:inline="javascript">
     const roomId = /*[[${roomId}]]*/ 6;
 

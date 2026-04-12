@@ -3,6 +3,13 @@ const path = require("path");
 const { JSDOM } = require("jsdom");
 const { createInstrumenter } = require("istanbul-lib-instrument");
 
+/**
+ * Kleine Fallback-Implementierung für die Headers-API.
+ *
+ * Einige Tests laufen in jsdom/Node ohne vollständige Browser-Umgebung.
+ * Damit Header-Zugriffe trotzdem wie im Browser funktionieren, wird hier
+ * eine schlanke, kompatible Ersatzklasse bereitgestellt.
+ */
 function createHeadersFallback() {
     return class HeadersFallback {
         constructor(init = {}) {
@@ -53,6 +60,13 @@ function shouldInstrument(relativePath) {
     return normalizePath(relativePath).startsWith("src/main/resources/static/js/");
 }
 
+/**
+ * Instrumentiert ausschließlich produktive Frontend-Skripte für die
+ * Coverage-Erfassung.
+ *
+ * Test-Helfer selbst werden bewusst nicht instrumentiert, damit die
+ * Abdeckung nur die eigentliche Browserlogik widerspiegelt.
+ */
 function instrumentSource(source, relativePath) {
     if (!shouldInstrument(relativePath)) {
         return source;
@@ -68,6 +82,14 @@ function instrumentSource(source, relativePath) {
     return instrumenter.instrumentSync(source, normalizePath(relativePath));
 }
 
+/**
+ * Baut eine jsdom-Umgebung auf, in der die produktiven Browser-Skripte
+ * direkt ausgeführt werden können.
+ *
+ * Zusätzlich werden Browser-nahe APIs und globale Coverage-Strukturen
+ * ergänzt, damit die Tests sich möglichst wie echte Seitenausführung
+ * verhalten.
+ */
 function createBrowserEnv(
     html = "<!doctype html><html><body></body></html>",
     url = "http://localhost/"
@@ -104,6 +126,10 @@ function createBrowserEnv(
     return dom;
 }
 
+/**
+ * Lädt ein produktives Browser-Skript in die Test-Umgebung und verbindet
+ * dessen Coverage-Daten mit dem globalen Sammelobjekt.
+ */
 function loadBrowserScript(dom, relativePath) {
     const normalizedRelativePath = normalizePath(relativePath);
     const absolutePath = path.join(process.cwd(), relativePath);

@@ -24,6 +24,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Einfache Smoke-Tests für den grundlegenden Start der Anwendung.
+ *
+ * Die Klasse prüft nur die gröbsten Basisannahmen:
+ * - Spring-Kontext fährt hoch
+ * - zentrale Beans und Repositories sind vorhanden
+ * - öffentliche und geschützte API-Endpunkte reagieren sicherheitstechnisch wie erwartet
+ *
+ * Ziel ist kein fachlicher Tiefentest, sondern ein schneller Hinweis darauf,
+ * ob die Anwendung in einer Testumgebung grundsätzlich lauffähig ist.
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")

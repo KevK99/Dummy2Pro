@@ -6,6 +6,8 @@
 <body class="min-h-screen bg-[#ffd8bf] text-[#5a2f1f] dark:bg-[#000010] dark:text-slate-100">
 
 <style>
+    /* Die Review-Seite überschreibt die Headline-Farben bewusst lokal,
+       damit sie zum eigenen Farbschema passt. */
     #headlineTitle {
         color: #5a2f1f !important;
     }
@@ -61,6 +63,7 @@
         </div>
     </section>
 
+    <!-- Die Raum-Container werden vollständig aus den Review-Daten aufgebaut. -->
     <section id="reviewRoomsContainer" class="mt-6 space-y-4">
         <div class="rounded-3xl bg-[#fff1e8]/90 p-6 shadow-xl ring-1 ring-[#efc3a8] dark:bg-slate-950/70 dark:ring-white/10">
             Lade Rückschau...
@@ -256,6 +259,8 @@
             return "";
         }
 
+        // GAP-Fragen werden pro Lücke dargestellt, damit Auswahl und richtige
+        // Lösung sauber je Feld nachvollziehbar bleiben.
         return `
             <div class="mt-4 space-y-3">
                 ${gaps.map(gap => `

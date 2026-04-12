@@ -4,6 +4,7 @@
       th:replace="~{base :: layout(~{::body}, 'min-h-screen bg-[linear-gradient(135deg,_#60a5fa_0%,_#a78bfa_35%,_#f87171_70%,_#f472b6_100%)] text-slate-950 dark:bg-none dark:bg-slate-950 dark:text-slate-100')}">
 <body class="min-h-screen text-slate-950 dark:text-slate-100">
 
+<!-- Dashboard-Einstieg für den aktuell bevorzugten Spielstand samt Raumübersicht und Raumwechsel. -->
 <div th:replace="~{fragments/headline :: headline(${ 'Willkommen zurück, ' + username + '!'}, null, ${avatarUrl}, ${answeredQuestions}, ${totalQuestions})}"></div>
 
 <div id="roomsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 px-64 pt-6 pb-10"></div>
@@ -23,6 +24,8 @@
             return null;
         }
 
+        // Bevorzugt wird ein noch nicht abgeschlossener, möglichst neuer Run.
+        // Erst wenn keiner offen ist, fällt die Auswahl auf einen beendeten Run zurück.
         return [...runs].sort((a, b) => {
             const aFinished = Boolean(a.finished);
             const bFinished = Boolean(b.finished);
@@ -133,6 +136,8 @@
             }
         }
 
+        // Die Wiederherstellung folgt bewusst stufenweise:
+        // erst bestehende Session, dann gespeicherter Run, danach bevorzugter/neuer Run.
         if (!payload) {
             const preferredSessionResult = await loadPreferredRunSession(userId);
 
@@ -344,6 +349,8 @@
                 `;
             });
 
+        // Raum 17 ist bewusst kein normaler Themenraum der Abschlusslogik,
+        // sondern ein frei wiederholbares Zusatztraining.
         roomCards.push(`
             <a href="/room17"
                class="block rounded-2xl bg-cyan-300 dark:bg-slate-900/60 p-6 ring-2 ring-cyan-500 dark:ring-white/10 text-center text-slate-950 dark:text-slate-100 shadow-sm dark:shadow-none transition-transform hover:scale-[1.01] hover:ring-cyan-400 dark:hover:ring-white/20 cursor-pointer">
@@ -388,6 +395,8 @@
             }
         }
 
+        // Doppeltes Öffnen desselben oder mehrerer Räume hintereinander wird
+        // blockiert, bis Session-Auflösung und Navigation sauber abgeschlossen sind.
         isOpeningRoom = true;
         setRoomOpeningState(roomId, true);
 

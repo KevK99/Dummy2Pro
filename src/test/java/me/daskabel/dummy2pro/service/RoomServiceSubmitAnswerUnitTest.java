@@ -34,6 +34,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unittests für das Beantworten von Fragen im {@link RoomService}.
+ *
+ * Der Schwerpunkt liegt auf dem Persistieren korrekter Antworten und dem
+ * fachlichen Ablehnen ungültiger Eingaben, etwa bei falscher Raumzuordnung,
+ * unbekannten Antwort-IDs oder ungültigen Lückenreferenzen.
+ */
 @ExtendWith(MockitoExtension.class)
 class RoomServiceSubmitAnswerUnitTest
 {

@@ -22,6 +22,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+/**
+ * Allgemeine Unittests für zentrale Basisfunktionen des {@link UserService}.
+ *
+ * Die Klasse bündelt kompakte Prüfungen für Registrierung, Login,
+ * Authentifizierung und Kontolöschung und dient damit als ergänzende
+ * Absicherung der wichtigsten Service-Abläufe.
+ */
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest
 {

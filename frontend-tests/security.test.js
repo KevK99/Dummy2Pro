@@ -1,6 +1,8 @@
 const { createBrowserEnv, loadBrowserScript } = require("./helpers/browser-env");
 
+// Testet das gepatchte fetch-Verhalten in einer Browser-ähnlichen Umgebung statt als reine Helferfunktion.
 describe("security.js", () => {
+    // Lädt security.js so, wie es später auch im Browser window.fetch überschreibt.
     function setupDom(fetchImpl = jest.fn()) {
         const dom = createBrowserEnv();
         dom.window.fetch = fetchImpl;
@@ -30,7 +32,11 @@ describe("security.js", () => {
     });
 
     test("lädt bei fehlendem Token zuerst /csrf und sendet dann den Header mit", async () => {
+        // /csrf setzt den Cookie erst zur Laufzeit. Der Mock braucht daher Zugriff
+        // auf dieselbe DOM-Instanz, die anschließend den eigentlichen Request sendet.
         let dom;
+        // Der erste Aufruf simuliert den fehlschlagenden Request, der zweite den
+        // Retry nach Token-Aktualisierung.
         const fetchMock = jest.fn(async (input) => {
             if (input === "/csrf") {
                 dom.window.document.cookie = "XSRF-TOKEN=fresh-token";

@@ -31,6 +31,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+/**
+ * Ergänzende Unittests zur Abdeckung zentraler Pfade im
+ * {@link QuizSessionManager}.
+ *
+ * Geprüft werden insbesondere aggregierte Übersichten, vorbereitete
+ * Raumzustände, das Weiterblättern in bereits abgeschlossenen Räumen
+ * und leere Review-Daten ohne vorhandenen Fortschritt.
+ */
 @ExtendWith(MockitoExtension.class)
 class QuizSessionManagerCoverageTest
 {

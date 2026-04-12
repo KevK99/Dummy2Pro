@@ -5,6 +5,7 @@
 
 <body class="min-h-screen bg-[#B45309] text-white font-mono tracking-wider dark:bg-[#000010] overflow-x-hidden">
 
+<!-- Raumseite für Raum 11 mit Welcome-Szene, Quizansicht und Fortschrittsanzeige. -->
 <div th:replace="~{fragments/headline :: headline(${ 'Raum ' + roomId}, ${'Thema: ' + themeName}, ${avatarUrl}, null, null)}"></div>
 
 <style>
@@ -323,6 +324,7 @@
 
 <script th:src="@{/js/darkmode.js}"></script>
 
+<!-- Kapselt die Interaktionslogik des Raums von der Initialisierung bis zur Auswertung der Antworten. -->
 <script th:inline="javascript">
     const roomId = /*[[${roomId}]]*/ 11;
 

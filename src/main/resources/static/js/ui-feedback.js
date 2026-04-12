@@ -1,4 +1,5 @@
 (function () {
+    // Einheitliche UI-Meldungen für globale Hinweise, Inline-Fehler und modale Dialoge.
     const GLOBAL_ID = "dummy2pro-global-feedback";
     const MODAL_ID = "dummy2pro-modal-root";
 
@@ -11,6 +12,8 @@
             .replace(/'/g, "&#039;");
     }
 
+    // Der globale Container wird bei Bedarf lazily erzeugt, damit Seiten ohne
+    // vorbereitete Feedback-Struktur dieselben Hilfsfunktionen nutzen können.
     function ensureGlobalContainer() {
         let container = document.getElementById(GLOBAL_ID);
         if (!container) {
@@ -75,6 +78,8 @@
         return "error";
     }
 
+    // Es wird immer nur eine globale Meldung gleichzeitig angezeigt, damit sich
+    // kurzlebige Hinweise nicht stapeln und gegenseitig verdecken.
     function showGlobalMessage(message, type = inferType(message), options = {}) {
         const container = ensureGlobalContainer();
         const config = getTypeConfig(type);
@@ -189,6 +194,8 @@
             modalRoot.classList.add("flex");
             document.body.classList.add("overflow-hidden");
 
+            // cleanup schließt den Dialog zentral und liefert den semantischen
+            // Rückgabewert an den aufrufenden Code zurück.
             const cleanup = (result) => {
                 modalRoot.innerHTML = "";
                 modalRoot.classList.add("hidden");
@@ -217,6 +224,8 @@
         });
     }
 
+    // Prompt und Confirm teilen sich denselben Modal-Root, damit nie mehrere
+    // blockierende Overlays gleichzeitig konkurrieren.
     function showPrompt(message, defaultValue = "", options = {}) {
         return new Promise(resolve => {
             const modalRoot = ensureModalRoot();
@@ -256,6 +265,8 @@
             input.focus();
             input.select();
 
+            // Null steht hier bewusst für Abbruch, ein String für die
+            // bestätigte Eingabe. So bleibt der Aufrufer API-seitig eindeutig.
             const cleanup = (result) => {
                 modalRoot.innerHTML = "";
                 modalRoot.classList.add("hidden");
@@ -288,6 +299,8 @@
         });
     }
 
+    // Notice ist für blockierende Einzelhinweise gedacht, bei denen der Nutzer
+    // aktiv bestätigen soll, bevor es im Ablauf weitergeht.
     function showNotice(message, options = {}) {
         return new Promise(resolve => {
             const modalRoot = ensureModalRoot();
@@ -361,6 +374,8 @@
         });
     }
 
+    // Die API bündelt absichtlich alle UI-Rückmeldungen unter einem globalen
+    // Namespace, damit statische Seiten und Thymeleaf-Views dieselben Helfer nutzen.
     window.Dummy2ProUI = {
         alert(message, options = {}) {
             return showGlobalMessage(message, options.type || inferType(message), options);

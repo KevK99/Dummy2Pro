@@ -35,6 +35,14 @@ import me.daskabel.dummy2pro.model.User;
 import me.daskabel.dummy2pro.session.QuizSessionManager;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Sammelt einfache Abdeckungstests für DTOs, Modelle und kleine
+ * Hilfsklassen ohne eigene Fachlogik.
+ *
+ * Der Schwerpunkt liegt hier auf Konstruktoren, IDs sowie Getter-/Setter-
+ * Durchläufen, damit einfache Datencontainer konsistent bleiben und bei
+ * Refactorings nicht unbemerkt beschädigt werden.
+ */
 class PojoCoverageTest
 {
     private static final LocalDateTime SAMPLE_TIME = LocalDateTime.of(2026, 4, 6, 9, 30);

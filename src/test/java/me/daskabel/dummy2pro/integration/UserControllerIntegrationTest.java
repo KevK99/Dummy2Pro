@@ -27,6 +27,16 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Integrationstests für die Benutzer-API.
+ *
+ * Geprüft werden die typischen Benutzerflüsse eines angemeldeten Benutzers:
+ * Profil laden, Avatar und Benutzername ändern, Passwortänderung validieren,
+ * Logout sowie das Löschen des eigenen Kontos.
+ *
+ * Die Tests laufen gegen den echten Spring-Kontext mit echter Session und
+ * Repository-Zugriff.
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")

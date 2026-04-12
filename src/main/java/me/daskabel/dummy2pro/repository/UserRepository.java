@@ -1,18 +1,19 @@
 package me.daskabel.dummy2pro.repository;
 
-import me.daskabel.dummy2pro.model.User;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.Optional;
 
-/*
-* Stellt Datenbankzugriffe für Benutzer bereit.
- *
- + Vereinfacht den Prozess mit den Usern. Suche geht schneller
- * Enthält Suchmethoden für Benutzer anhand ihres Namens.
- */
-public interface UserRepository extends JpaRepository<User, Long> {
+import org.springframework.data.jpa.repository.JpaRepository;
 
+import me.daskabel.dummy2pro.model.User;
+
+/**
+ * Stellt Datenbankzugriffe für Benutzer bereit.
+ *
+ * Enthält die projektrelevanten Suchmethoden für Benutzer anhand des
+ * Benutzernamens sowie die Prüfung, ob ein Benutzername bereits vergeben ist.
+ */
+public interface UserRepository extends JpaRepository<User, Long>
+{
     Optional<User> findByUsername(String username);
 
     boolean existsByUsername(String username);

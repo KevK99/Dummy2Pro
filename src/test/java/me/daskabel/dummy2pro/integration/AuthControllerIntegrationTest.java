@@ -25,6 +25,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Integrationstests für Registrierung und Anmeldung über den {@code AuthController}.
+ *
+ * Die Tests laufen gegen den echten Spring-Kontext und prüfen das Zusammenspiel
+ * aus Web-Schicht, Sicherheit, Session-Verwaltung, Passwort-Hashing und
+ * Persistenz. Abgedeckt werden Erfolgs- und Fehlerfälle bei Registrierung und
+ * Login sowie die Weiterverwendung der aufgebauten Sitzung bei geschützten
+ * Endpunkten.
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")

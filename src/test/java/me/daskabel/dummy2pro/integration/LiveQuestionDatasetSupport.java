@@ -14,6 +14,18 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Hilfsklasse für Integrationstests, die direkt gegen einen echten
+ * Fragenbestand aus einer MySQL-Datenbank arbeiten.
+ *
+ * Die Klasse lädt den kompletten Fragenkatalog inklusive Theme-Zuordnungen,
+ * Antwortoptionen und GAP-Strukturen, erzeugt daraus eine stabile
+ * Textdarstellung für Snapshot-Tests und verwaltet die zugehörigen
+ * Referenzdateien.
+ *
+ * Sie ist bewusst paketlokal und zustandslos gehalten, damit die Tests sie
+ * ohne Spring-Kontext als reines Hilfswerkzeug verwenden können.
+ */
 final class LiveQuestionDatasetSupport
 {
     private LiveQuestionDatasetSupport()
@@ -31,6 +43,9 @@ final class LiveQuestionDatasetSupport
             throw new IllegalStateException("MySQL-Treiber wurde nicht gefunden.", e);
         }
 
+        // Die DB-URL darf lokal einen Platzhalter für das Truststore-
+        // Passwort enthalten, damit dieser Wert nicht fest in Konfiguration
+        // oder Repository hinterlegt werden muss.
         String url = readRequiredSetting("DBCHECK_URL");
         String truststorePassword = readOptionalSetting("DBCHECK_TRUSTSTORE_PASSWORD");
 
@@ -52,6 +67,10 @@ final class LiveQuestionDatasetSupport
                 readRequiredSetting("DBCHECK_USERNAME"),
                 readRequiredSetting("DBCHECK_PASSWORD")))
         {
+            // Der Snapshot wird absichtlich schrittweise aufgebaut:
+            // zuerst die Fragen selbst, danach Themes, Antworten, GAP-Felder
+            // und zuletzt GAP-Optionen. So bleiben Zuordnung und Sortierung
+            // je Datenart stabil und gut nachvollziehbar.
             Map<Long, QuestionData> questionsById = new LinkedHashMap<>();
 
             try (PreparedStatement statement = connection.prepareStatement("""
@@ -210,6 +229,9 @@ final class LiveQuestionDatasetSupport
     {
         StringBuilder builder = new StringBuilder();
 
+        // Das Snapshot-Format ist bewusst zeilenorientiert und stabil sortiert,
+        // damit Änderungen im Fragenbestand in Diffs möglichst klein und
+        // lesbar bleiben.
         for (QuestionData question : questions)
         {
             builder.append("QUESTION")
@@ -337,6 +359,8 @@ final class LiveQuestionDatasetSupport
     {
         List<String> candidates = candidateKeys(key);
 
+        // Zuerst System-Properties, danach Umgebungsvariablen.
+        // So können Testaufrufe gezielt lokale Überschreibungen setzen.
         for (String candidate : candidates)
         {
             String systemValue = System.getProperty(candidate);
@@ -360,6 +384,9 @@ final class LiveQuestionDatasetSupport
         List<String> candidates = new ArrayList<>();
         candidates.add(key);
 
+        // Für die DB-Checks werden mehrere Namenskonventionen akzeptiert,
+        // damit die Tests sowohl lokal als auch in CI mit bestehenden
+        // Spring- oder Infrastrukturvariablen laufen können.
         switch (key)
         {
             case "DBCHECK_URL" -> {
@@ -393,6 +420,8 @@ final class LiveQuestionDatasetSupport
             return "<null>";
         }
 
+        // Snapshot-Dateien sollen stabil diffbar bleiben.
+        // Steuerzeichen und Anführungszeichen werden deshalb explizit maskiert.
         return "\"" + value
                 .replace("\\", "\\\\")
                 .replace("\n", "\\n")
@@ -402,6 +431,9 @@ final class LiveQuestionDatasetSupport
                 + "\"";
     }
 
+    /**
+     * Kompakte Datenstruktur für eine Frage im Live-Datensatz.
+     */
     static final class QuestionData
     {
         final long questionId;
@@ -432,6 +464,9 @@ final class LiveQuestionDatasetSupport
         }
     }
 
+    /**
+     * Antwortoption einer MC- oder TF-Frage.
+     */
     static final class AnswerData
     {
         final long answerId;
@@ -448,6 +483,9 @@ final class LiveQuestionDatasetSupport
         }
     }
 
+    /**
+     * Lückenfeld einer GAP-Frage mit zugehörigen Auswahloptionen.
+     */
     static final class GapFieldData
     {
         final long gapId;
@@ -465,6 +503,9 @@ final class LiveQuestionDatasetSupport
         }
     }
 
+    /**
+     * Einzelne Auswahloption innerhalb eines Lückenfelds.
+     */
     static final class GapOptionData
     {
         final long gapOptionId;

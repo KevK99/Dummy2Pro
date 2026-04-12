@@ -29,6 +29,14 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Grundlegende Unittests für die Kernfunktionen des
+ * {@link QuizSessionManager}.
+ *
+ * Getestet werden das Erzeugen und Laden von Sitzungen, das Weiterblättern
+ * im Frageablauf, das Einreichen von Antworten sowie das Entfernen und
+ * Bereinigen gespeicherter Sessions.
+ */
 @ExtendWith(MockitoExtension.class)
 class QuizSessionManagerUnitTest
 {

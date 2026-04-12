@@ -21,6 +21,13 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * JPA-Slice-Test für das {@link RunSelectedAnswerRepository}.
+ *
+ * Geprüft werden hier die Abfragen für gespeicherte MC-/TF-Antworten eines
+ * Spielstands, insbesondere Fetch-Verhalten, fragebezogene Suche,
+ * Zählmethoden und das Entfernen bereits gespeicherter Auswahlen.
+ */
 @DataJpaTest
 @ActiveProfiles("test")
 class RunSelectedAnswerRepositorySliceTest
@@ -38,7 +45,7 @@ class RunSelectedAnswerRepositorySliceTest
     private RunSelectedAnswerRepository runSelectedAnswerRepository;
 
     @Test
-    void findDetailedByRunId_fetchesQuestionAndAnswerOption() 
+    void findDetailedByRunId_fetchesQuestionAndAnswerOption()
     {
         PersistedMcData data = persistMcData();
 

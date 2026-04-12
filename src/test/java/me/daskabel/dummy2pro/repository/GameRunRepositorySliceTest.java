@@ -12,6 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
+/**
+ * JPA-Slice-Test für das {@link GameRunRepository}.
+ *
+ * Geprüft werden hier einfache, aber projektrelevante Repository-Abfragen
+ * rund um Spielstände: Sortierung nach Startzeit und benutzerbezogene Zählung.
+ */
 @DataJpaTest
 @ActiveProfiles("test")
 class GameRunRepositorySliceTest

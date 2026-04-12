@@ -63,6 +63,9 @@ describe("room-common.js weitere Methodenpfade", () => {
             "medalCoin"
         ];
 
+        // room-common.js greift im echten Raumskript teils direkt auf
+        // globale Referenzen zu. Für die Testumgebung werden die relevanten
+        // DOM-Knoten daher explizit auf window abgelegt.
         ids.forEach(id => {
             dom.window[id] = dom.window.document.getElementById(id);
         });

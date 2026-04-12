@@ -35,6 +35,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * End-to-End-Tests für profilbezogene Benutzerflüsse und einen vollständigen
+ * Raumdurchlauf im Browser.
+ *
+ * Die Tests laufen mit echtem Webserver und Playwright gegen die Anwendung.
+ * Abgedeckt werden insbesondere:
+ * - Profiländerungen wie Benutzername, Avatar und Passwort
+ * - erzwungener Relogin nach Passwortänderung
+ * - Spielstandverwaltung im Profil
+ * - Logout und erneuter Login
+ * - Betreten eines Raums inklusive Dialog, Fragebild, Antwort und Abschluss
+ *
+ * Für den Raumfluss wird der notwendige Testdatenbestand gezielt in einer
+ * eigenen Transaktion angelegt, damit der Browser gegen einen definierten
+ * Datenzustand arbeitet.
+ */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -103,7 +119,7 @@ class ProfileAndRoomFlowPlaywrightTest
     }
 
     @Test
-    void profilePage_updatesUsernameAvatarPassword_andRequiresRelogin() 
+    void profilePage_updatesUsernameAvatarPassword_andRequiresRelogin()
     {
         String username = uniqueUsername("profile");
         String password = "SehrSicheresPass1!";
@@ -170,7 +186,7 @@ class ProfileAndRoomFlowPlaywrightTest
     }
 
     @Test
-    void dashboard_profile_and_roomFlow_coverRunCreationLogout_andQuestionAnswering() 
+    void dashboard_profile_and_roomFlow_coverRunCreationLogout_andQuestionAnswering()
     {
         seedRoom1WithImageQuestion();
 
@@ -211,6 +227,10 @@ class ProfileAndRoomFlowPlaywrightTest
 
         Locator nextDialogButton = this.page.locator("#dialogNextBtn");
         Locator startQuizButton = this.page.locator("#startQuizBtn");
+
+        // Der Dialog kann je nach Zustand unterschiedlich viele Schritte haben.
+        // Deshalb wird nicht auf eine feste Anzahl geklickt, sondern bis zum
+        // tatsächlich sichtbaren Startknopf vorgegangen.
         for (int i = 0; i < 10; i++)
         {
             if (nextDialogButton.isVisible())
@@ -246,6 +266,10 @@ class ProfileAndRoomFlowPlaywrightTest
         assertTrue(this.page.textContent("#feedbackBox").contains("Du hast alle Fragen dieses Raums beantwortet."));
     }
 
+    /**
+     * Führt einen echten Login über die UI durch und wartet, bis Navigation
+     * und Session-Daten im Browser abgeschlossen vorliegen.
+     */
     private void login(String username, String password)
     {
         this.page.navigate(baseUrl() + "/");
@@ -266,8 +290,17 @@ class ProfileAndRoomFlowPlaywrightTest
         );
     }
 
+    /**
+     * Legt gezielt einen kleinen, kontrollierten Fragenbestand für Raum 1 an.
+     *
+     * Der E2E-Test bekommt damit eine stabile Frage mit Bild, ohne vom
+     * restlichen Projekt-Datenbestand abhängig zu sein.
+     */
     private void seedRoom1WithImageQuestion()
     {
+        // Die Testdaten werden in einer eigenen Transaktion vorbereitet,
+        // damit der Browser sie anschließend vollständig und konsistent
+        // über die normale Anwendung laden kann.
         new TransactionTemplate(this.transactionManager).executeWithoutResult(status -> {
             Theme theme = entityManager.createQuery(
                             "select t from Theme t where t.name = :name order by t.themeId asc",

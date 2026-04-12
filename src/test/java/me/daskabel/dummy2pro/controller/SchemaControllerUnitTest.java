@@ -17,6 +17,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+/**
+ * Unittests für den {@link SchemaController}.
+ *
+ * Geprüft werden die delegierten Datenbankabfragen über {@link JdbcTemplate},
+ * die Validierung erlaubter Tabellennamen sowie das Begrenzen von
+ * Request-Parametern wie {@code limit}. Der Test bleibt bewusst auf der
+ * Controllerlogik und nutzt deshalb nur Mocks statt einer echten Datenbank.
+ */
 @ExtendWith(MockitoExtension.class)
 class SchemaControllerUnitTest
 {

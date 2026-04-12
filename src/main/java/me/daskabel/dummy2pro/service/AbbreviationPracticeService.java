@@ -33,6 +33,12 @@ import me.daskabel.dummy2pro.repository.ThemeRepository;
 @Service
 public class AbbreviationPracticeService
 {
+    /**
+     * Feste Theme-ID für das Abkürzungstraining.
+     *
+     * Die Kopplung ist hier bewusst hart, weil der Raum funktional genau an
+     * dieses Datenpaket gebunden ist.
+     */
     private static final long ABBREVIATION_THEME_ID = 17L;
 
     private final QuestionRepository questionRepository;
@@ -54,6 +60,9 @@ public class AbbreviationPracticeService
                 .orElseThrow(() -> new NoSuchElementException("Theme 17 wurde nicht gefunden."));
 
         List<Long> questionIds = this.questionRepository.findQuestionIdsByThemeId(ABBREVIATION_THEME_ID);
+
+        // Der Raum ist explizit als wiederholbares Training gedacht und soll
+        // deshalb bei jedem Start in neuer Reihenfolge erscheinen.
         Collections.shuffle(questionIds);
 
         if (questionIds.isEmpty())
@@ -107,6 +116,10 @@ public class AbbreviationPracticeService
 
     /**
      * Lädt Fragen in genau der Reihenfolge der übergebenen IDs.
+     *
+     * Die Datenbank liefert bei {@code IN (...)} keine für die Anwendung
+     * verlässliche Reihenfolge, deshalb wird nach dem Laden auf die zuvor
+     * festgelegte Reihenfolge zurückprojiziert.
      */
     @Transactional(readOnly = true)
     protected List<Question> loadQuestionsByIdsOrdered(List<Long> questionIds)

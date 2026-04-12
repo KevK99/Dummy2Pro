@@ -1,3 +1,4 @@
+<!-- Wiederverwendbares Fragenpanel für die einzelnen Räume mit austauschbaren Farbklassen. -->
 <div th:fragment="questionPanel(outerClass, fillClass, lineClass, submitClass, nextClass)"
      id="questionPanel"
      class="absolute left-[30px] bottom-[30px] w-[830px] h-[520px] z-[60]">
@@ -69,10 +70,12 @@
                 ANTWORTEN
             </div>
 
+            <!-- Hier rendert das Frontend dynamisch MC-, TF- oder GAP-Antwortfelder. -->
             <div id="answerContainer"
                  class="grid grid-cols-2 gap-4 flex-1 min-h-0 content-stretch">
             </div>
 
+            <!-- Die Box wird nur nach einer Auswertung eingeblendet. -->
             <div id="feedbackBox"
                  class="hidden">
             </div>

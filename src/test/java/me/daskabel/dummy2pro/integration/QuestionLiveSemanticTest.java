@@ -9,6 +9,15 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Prüft den Live-Fragenbestand auf fachlich-technische Grundkonsistenz.
+ *
+ * Der Test arbeitet direkt auf dem aus der Datenbank geladenen Snapshotmodell
+ * und kontrolliert, ob Fragen je nach Typ sinnvoll aufgebaut sind:
+ * MC- und TF-Fragen brauchen valide Antwortoptionen, GAP-Fragen eine
+ * konsistente Lückenstruktur. Zusätzlich wird geprüft, ob eine Frage überhaupt
+ * sichtbaren Inhalt besitzt und grundlegende Pflichtwerte gesetzt sind.
+ */
 class QuestionLiveSemanticTest
 {
     @Test
@@ -41,6 +50,8 @@ class QuestionLiveSemanticTest
             errors.add(prefix(question) + "hat kein Theme.");
         }
 
+        // Bei GAP-Fragen kann sichtbarer Inhalt auch ausschließlich in den
+        // Textteilen der einzelnen Lückenfelder liegen.
         boolean hasQuestionText =
                 LiveQuestionDatasetSupport.hasText(question.startText)
                         || LiveQuestionDatasetSupport.hasText(question.endText)

@@ -18,6 +18,13 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unittests für Anmeldung, Authentifizierung und Avatar-Auflösung im
+ * {@link UserService}.
+ *
+ * Geprüft werden erfolgreiche und fehlerhafte Login-Szenarien sowie die
+ * Behandlung von Standard-Avataren und vorhandenen Avatar-Dateinamen.
+ */
 @ExtendWith(MockitoExtension.class)
 class UserServiceAuthenticationUnitTest
 {

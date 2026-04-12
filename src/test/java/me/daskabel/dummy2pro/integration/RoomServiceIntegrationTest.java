@@ -28,6 +28,13 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Integrationstest für die Antwortverarbeitung im {@link RoomService}.
+ *
+ * Der Test prüft den kompletten Ablauf für eine MC-Frage:
+ * Antwort wird ausgewertet, Fortschritt gespeichert, ausgewählte Antwort
+ * persistiert und der Raumstatus anschließend korrekt berechnet.
+ */
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional

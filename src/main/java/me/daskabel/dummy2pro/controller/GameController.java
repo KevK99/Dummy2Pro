@@ -14,7 +14,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.NoSuchElementException;
 
 /**
- * Stellt Endpunkte für die Spielstände bereit.
+ * Stellt Endpunkte für die Verwaltung von Spielständen bereit.
+ *
+ * Der Controller deckt hier das Löschen einzelner Spielstände ab und sorgt
+ * dabei dafür, dass sowohl abhängige Fortschrittsdaten als auch eine eventuell
+ * noch offene Laufzeitsitzung konsistent entfernt werden.
  */
 @RestController
 @RequestMapping("/api/game")

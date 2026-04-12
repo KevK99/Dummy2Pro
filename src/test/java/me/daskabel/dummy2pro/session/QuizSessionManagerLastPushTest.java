@@ -42,6 +42,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+/**
+ * Unittests für späte Hilfs- und Fehlerpfade im {@link QuizSessionManager}.
+ *
+ * Die Tests prüfen den Aufbau der Review-Struktur, Reflection-basierte
+ * Fehlerfälle beim Rekonstruieren von Räumen sowie Schutzlogik beim
+ * Weiterblättern und beim Erzeugen neuer Sitzungen.
+ */
 @ExtendWith(MockitoExtension.class)
 class QuizSessionManagerLastPushTest
 {

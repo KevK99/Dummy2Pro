@@ -23,6 +23,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+/**
+ * Ergänzende Unittests für den {@link QuizSessionGenerator}.
+ *
+ * Der Fokus liegt auf Hilfsmethoden zum Laden und Sortieren von Fragen,
+ * dem Umgang mit leeren Eingaben sowie dem korrekten Aufbau vorbereiteter
+ * Raumzustände für komplette Sitzungen.
+ */
 @ExtendWith(MockitoExtension.class)
 class QuizSessionGeneratorAdditionalTest
 {

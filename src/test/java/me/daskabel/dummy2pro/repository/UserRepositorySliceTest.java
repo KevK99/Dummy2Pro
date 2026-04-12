@@ -9,6 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
+/**
+ * JPA-Slice-Test für das {@link UserRepository}.
+ *
+ * Geprüft werden die projektrelevanten Such- und Existenzabfragen anhand
+ * des Benutzernamens.
+ */
 @DataJpaTest
 @ActiveProfiles("test")
 class UserRepositorySliceTest

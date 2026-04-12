@@ -14,6 +14,13 @@ import me.daskabel.dummy2pro.model.QuestionType;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
+/**
+ * Ergänzende Unittests für die Laufzeitstruktur {@link QuizSession}.
+ *
+ * Geprüft werden hier kleinere Randfälle rund um aktuelle Fragen,
+ * Medaillenberechnung, Wiederherstellung von Ergebnissen, Indexgrenzen
+ * und das Ersetzen einzelner Raumzustände.
+ */
 class QuizSessionAdditionalUnitTest
 {
     @Test

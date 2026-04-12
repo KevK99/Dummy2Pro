@@ -24,6 +24,14 @@ import me.daskabel.dummy2pro.repository.ThemeRepository;
 import me.daskabel.dummy2pro.session.QuizSession;
 import me.daskabel.dummy2pro.session.QuizSession.RoomSession;
 
+/**
+ * Unittests für den {@link QuizSessionGenerator}.
+ *
+ * Getestet werden hier der Aufbau von Platzhalter-Räumen, das Laden von Fragen
+ * in stabiler Reihenfolge und der Aufbau einer vollständigen
+ * {@link RoomSession}. Der Fokus liegt auf der Generatorlogik selbst,
+ * unabhängig von Spring-Kontext oder Datenbank.
+ */
 @ExtendWith(MockitoExtension.class)
 class QuizSessionGeneratorTest
 {

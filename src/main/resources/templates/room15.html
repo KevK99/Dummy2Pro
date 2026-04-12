@@ -5,6 +5,7 @@
 
 <body class="min-h-screen bg-gradient-to-br from-pink-400 via-yellow-300 to-cyan-400 text-white font-mono tracking-wider dark:bg-none dark:from-transparent dark:via-transparent dark:to-transparent dark:bg-[#000010] overflow-x-hidden">
 
+<!-- Raumseite für Raum 15 mit eigenem Abschluss-Look, Introbereich und vollständigem Quizablauf. -->
 <div th:replace="~{fragments/headline :: headline(${ 'Raum ' + roomId}, ${'Thema: ' + themeName}, ${avatarUrl}, null, null)}"></div>
 
 <style>
@@ -566,6 +567,7 @@
 
 <script th:src="@{/js/darkmode.js}"></script>
 
+<!-- Zentrale Raumlogik für den finalen Themenraum einschließlich Auswertung, Status und Abschlussübergang. -->
 <script th:inline="javascript">
     const roomId = /*[[${roomId}]]*/ 15;
 

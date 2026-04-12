@@ -11,6 +11,7 @@
 <body class="min-h-screen bg-slate-950 text-slate-100">
 <div class="mx-auto max-w-6xl px-6 py-10">
 
+    <!-- Eigenständige Registrierungsseite außerhalb des dynamisch geladenen Login-Flows. -->
     <header class="flex items-start justify-between gap-4">
         <div>
             <h1 class="text-4xl font-extrabold tracking-tight">Willkommen auf Dummy2Pro!</h1>
@@ -61,6 +62,7 @@
             Registrieren
         </button>
 
+        <!-- Validierungs- und Serverfehler bleiben direkt unter dem Formular sichtbar. -->
         <div id="registerErrorMessage" class="hidden mt-4"></div>
     </form>
 
@@ -133,6 +135,8 @@
                 return;
             }
 
+            // Die Erfolgsmeldung wird für die nächste Login-Seite im sessionStorage
+            // abgelegt, weil nach erfolgreicher Registrierung direkt weitergeleitet wird.
             sessionStorage.setItem(
                 "loginFlash",
                 data.message || `Registrierung erfolgreich für ${data.username || username}.`

@@ -20,6 +20,14 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * JPA-Slice-Test für das {@link QuestionRepository}.
+ *
+ * Geprüft werden die projektspezifischen Abfragen zum Laden von Fragen,
+ * Fragen-IDs sowie der zugehörigen Antwort- und GAP-Strukturen.
+ * Der Test stellt sicher, dass die Fetch-Queries die erwarteten
+ * Kindobjekte tatsächlich mitladen.
+ */
 @DataJpaTest
 @ActiveProfiles("test")
 class QuestionRepositorySliceTest

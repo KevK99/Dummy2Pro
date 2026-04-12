@@ -20,9 +20,11 @@
 </head>
 
 <body th:class="${bodyClass} ?: 'min-h-screen bg-slate-950 text-white'">
+<!-- Zentrale Feedback-Wurzel für modale Meldungen, Toasts und ähnliche UI-Rückgaben. -->
 <div th:replace="~{fragments/feedback :: feedbackRoot}"></div>
 
 <div class="w-full">
+    <!-- Der eigentliche Seiteninhalt wird von den einzelnen Templates in dieses Layout injiziert. -->
     <th:block th:replace="${content}"></th:block>
 </div>
 

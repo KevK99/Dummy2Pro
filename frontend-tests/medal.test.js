@@ -1,6 +1,7 @@
 const { createBrowserEnv, loadBrowserScript } = require("./helpers/browser-env");
 
 describe("medal.js", () => {
+    // Die Test-DOM bildet nur die beiden Zielknoten der Medaillenlogik nach.
     function setupDom() {
         const dom = createBrowserEnv(`
             <!doctype html>

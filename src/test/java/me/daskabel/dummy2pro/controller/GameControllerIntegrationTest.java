@@ -28,6 +28,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Integrationstests für das Löschen von Spielständen über den
+ * {@code GameController}.
+ *
+ * Die Tests prüfen den Endpunkt gegen die echte Spring-Konfiguration
+ * inklusive Sicherheit, Session, Repository-Zugriff und Transaktionen.
+ * Abgedeckt werden Erfolgsfall, letzter verbleibender Spielstand,
+ * fehlende Anmeldung und der Zugriff auf fremde Spielstände.
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")

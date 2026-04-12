@@ -30,6 +30,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * End-to-End-Tests für Registrierung und Login im Frontend mit Playwright.
+ *
+ * Die Tests fahren die Anwendung mit echtem Webserver hoch und prüfen den
+ * kompletten Browserfluss: Formularinteraktion, HTTP-Antworten,
+ * Weiterleitungen, sichtbare Rückmeldungen im UI und die Befüllung des
+ * sessionStorage nach erfolgreichem Login.
+ */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

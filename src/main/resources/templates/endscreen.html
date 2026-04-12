@@ -5,6 +5,10 @@
 
 <body class="min-h-screen text-[#5a2f1f] dark:text-slate-100">
 
+<!--
+    Abschlussseite für die Gesamtbewertung eines vollständig durchgespielten Runs.
+    Ausgewertet werden ausschließlich die regulären Themenräume 1 bis 15.
+-->
 <div class="min-h-screen px-6 py-6 lg:px-16 bg-[#ffd8bf] dark:bg-transparent">
     <header class="mx-auto flex w-full max-w-7xl items-start justify-between gap-6 pb-6">
         <div class="flex items-start gap-4">
@@ -209,6 +213,8 @@
     }
 
     async function loadOverviewForEndscreen() {
+        // Der Endscreen versucht zuerst die vorhandene Session zu nutzen und lädt
+        // den Run nur dann neu, wenn lokal kein verwertbarer Überblick mehr existiert.
         const userId = sessionStorage.getItem("userId");
         const storedRunId = sessionStorage.getItem("runId");
         let storedSessionId = sessionStorage.getItem("sessionId");
@@ -356,6 +362,8 @@
 
         const overallMedal = window.Dummy2ProSound?.determineOverallMedal(totalCorrect, totalQuestions) ?? "NONE";
 
+        // Die Endscreen-Auszeichnung soll akustisch nur einmal pro Seitenaufruf ausgelöst werden,
+        // auch wenn die Zusammenfassung später erneut gerendert wird.
         if (!window.__dummy2proEndscreenMedalPlayed && overallMedal !== "NONE") {
             window.__dummy2proEndscreenMedalPlayed = true;
             window.Dummy2ProSound?.playMedal(overallMedal, "endscreen");
@@ -406,6 +414,8 @@
             }
 
             const allRooms = Array.isArray(overview.rooms) ? overview.rooms : [];
+            // Zusatzräume oder Trainingsräume werden hier bewusst ignoriert.
+            // Für den Endscreen zählen nur die abgeschlossenen Hauptthemen.
             const quizRooms = allRooms
                 .filter(room => {
                     const roomId = toNumber(room.roomId);

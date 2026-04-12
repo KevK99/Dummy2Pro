@@ -1,3 +1,8 @@
+/**
+ * Gemeinsame Raum-Helfer für Avatar-Styling, Feedback-Texte, Panda-/Speech-
+ * Positionierung, dynamische Fragenlayouts und die Synchronisation der
+ * Status-/Headline-Anzeige.
+ */
 function playDummy2ProSound(soundName) {
     window.Dummy2ProSound?.play(soundName);
 }
@@ -786,6 +791,14 @@ function syncQuestionSideLayout() {
     }
 }
 
+/**
+ * Passt Höhe und Textflächen des Fragepanels dynamisch an die konkrete
+ * Frageart und deren Umfang an.
+ *
+ * Standard- und GAP-Fragen haben unterschiedliche Treiber für den
+ * Platzbedarf. Nach jeder Größenänderung wird die restliche Raumkulisse
+ * erneut auf das neue Panel ausgerichtet.
+ */
 function applyQuestionLayout(question) {
     if (!gameScene || !questionPanel) {
         return;

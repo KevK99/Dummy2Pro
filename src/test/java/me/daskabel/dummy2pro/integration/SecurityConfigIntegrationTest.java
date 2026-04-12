@@ -12,6 +12,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Integrationstests für das Sicherheitsverhalten der Web- und API-Endpunkte.
+ *
+ * Geprüft werden hier die grundlegenden Unterschiede zwischen öffentlichem
+ * Zugriff, HTML-Weiterleitung für nicht angemeldete Benutzer und
+ * API-Antworten ohne Anmeldung.
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")

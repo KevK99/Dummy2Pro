@@ -22,6 +22,13 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * JPA-Slice-Test für das {@link RunGapAnswerRepository}.
+ *
+ * Geprüft werden hier die projektspezifischen Abfragen für gespeicherte
+ * GAP-Antworten eines Spielstands, insbesondere Fetch-Verhalten,
+ * fragebezogene Suche und das Löschen bereits gespeicherter Antworten.
+ */
 @DataJpaTest
 @ActiveProfiles("test")
 class RunGapAnswerRepositorySliceTest

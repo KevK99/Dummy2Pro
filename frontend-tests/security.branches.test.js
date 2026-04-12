@@ -1,6 +1,8 @@
 const { createBrowserEnv, loadBrowserScript } = require("./helpers/browser-env");
 
 describe("security.js weitere Branches", () => {
+    // Lädt security.js mit einem kontrollierten Fetch-Mock, damit die
+    // Wrapper- und Retry-Logik gegen echte Browser-Globals getestet wird.
     function setupDom(fetchImpl = jest.fn()) {
         const dom = createBrowserEnv();
         dom.window.fetch = fetchImpl;
@@ -167,6 +169,8 @@ describe("security.js weitere Branches", () => {
         dom = setupDom(fetchMock);
         dom.window.document.cookie = "XSRF-TOKEN=stale-token";
 
+        // Der Wrapper darf genau einen Refresh- und genau einen Retry-Pfad
+        // ausführen, danach muss der zweite 403 direkt zurückgegeben werden.
         const response = await dom.window.fetch("/api/profile", {
             method: "DELETE"
         });

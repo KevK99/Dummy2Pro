@@ -25,33 +25,21 @@ import me.daskabel.dummy2pro.session.QuizSession;
 import me.daskabel.dummy2pro.session.QuizSession.RoomSession;
 
 /**
- * Erzeugt eine vollständige QuizSession für alle Räume.
+ * Erzeugt Quiz-Sitzungen und Raum-Sitzungen auf Basis der vorhandenen Themes
+ * und Fragen.
  *
- * Was hier passiert: 1. Für jeden Raum (= Theme) werden bis zu 40 Fragen aus
- * der DB geladen 2. Die Fragen werden zufällig gemischt (jede Session = andere
- * Reihenfolge) 3. Die QuestionDtos werden ohne is_correct gebaut und in den
- * Cache gelegt 4. Eine RoomSession pro Raum wird gebaut und in die QuizSession
- * eingehängt
+ * Der Generator übernimmt ausschließlich den Aufbau der Laufzeitstruktur:
+ * Fragen werden themenbezogen geladen, zufällig zusammengestellt und in
+ * {@link QuestionDto}-Objekte ohne Korrektheitsinformationen überführt.
  *
- * Der Generator selbst kennt keine Session-Verwaltung — das ist Sache des
- * QuizSessionManager. Der Generator macht nur: "Gib mir eine neue, fertige
- * Session-Instanz."
- *
- * Warum @Component statt @Service? Generator ist ein reines Fabrikobjekt ohne
- * eigene Geschäftslogik.
- *
- * @Service wäre auch ok, aber @Component drückt den Charakter besser aus.
+ * Die Verwaltung bereits existierender Sitzungen ist nicht Aufgabe dieser
+ * Klasse, sondern des {@code QuizSessionManager}.
  */
 @Component
 public class QuizSessionGenerator
 {
     private static final int QUESTIONS_PER_ROOM = 40;
 
-    /**
-     * Question-Entity → QuestionDto (ohne is_correct). index und total werden
-     * initial gesetzt, können aber von RoomSession.currentQuestion() überschrieben
-     * werden.
-     */
     private static QuestionDto toQuestionDto(Question q, int index, int total)
     {
         QuestionDto dto = new QuestionDto();
@@ -65,7 +53,7 @@ public class QuizSessionGenerator
         dto.setCurrentIndex(index);
         dto.setTotalCount(total);
 
-        // MC / TF: Antwortoptionen ohne is_correct
+        // Antwortdaten werden ohne Korrektheitsflag ins DTO übertragen.
         if (q.getAnswerOptions() != null && !q.getAnswerOptions().isEmpty())
         {
             List<AnswerOptionDto> options = q.getAnswerOptions().stream()
@@ -81,7 +69,6 @@ public class QuizSessionGenerator
             dto.setAnswerOptions(options);
         }
 
-        // GAP: Lücken mit Optionen ohne is_correct
         if (q.getGapFields() != null && !q.getGapFields().isEmpty())
         {
             List<GapFieldDto> gapDtos = q.getGapFields().stream()
@@ -125,11 +112,6 @@ public class QuizSessionGenerator
         this.themeRepo = themeRepo;
     }
 
-    /**
-     * Baut die RoomSession für einen einzelnen Raum. Kann auch einzeln aufgerufen
-     * werden (z.B. wenn nur ein Raum neu gestartet werden soll ohne die ganze
-     * Session zu verwerfen).
-     */
     @Transactional(readOnly = true)
     public RoomSession buildRoomSession(Theme theme, int roomId)
     {
@@ -175,6 +157,9 @@ public class QuizSessionGenerator
             int roomId = i + 1;
             Theme theme = themes.get(i);
 
+            // Beim Skeleton werden Räume zunächst nur als Platzhalter angelegt.
+            // Die eigentliche Fragenliste wird später erst beim Vorbereiten
+            // bzw. Betreten eines Raums geladen.
             RoomSession placeholderRoom = new RoomSession(
                     roomId,
                     theme.getName(),
@@ -208,6 +193,8 @@ public class QuizSessionGenerator
         Map<Long, Question> questionMap = selectedQuestions.stream()
                 .collect(Collectors.toMap(Question::getQuestionId, q -> q));
 
+        // Die Reihenfolge aus der ID-Liste bleibt maßgeblich, weil IN-Abfragen
+        // keine für die Anwendung verlässliche Sortierung garantieren.
         List<Question> orderedSelectedQuestions = questionIds.stream()
                 .map(questionMap::get)
                 .filter(Objects::nonNull)
@@ -221,17 +208,6 @@ public class QuizSessionGenerator
         return orderedSelectedQuestions;
     }
 
-    // ----------------------------------------------------------------
-    // Private Hilfsmethoden
-    // ----------------------------------------------------------------
-
-    /**
-     * Erzeugt eine neue, vollständige QuizSession.
-     *
-     * @param userId DB-User-ID
-     * @param runId aktueller Spielstand
-     * @return Fertige QuizSession, bereit zum Spielen
-     */
     @Transactional(readOnly = true)
     public QuizSession generate(Long userId, Long runId)
     {
@@ -250,11 +226,11 @@ public class QuizSessionGenerator
     }
 
     /**
-     * Lädt eine begrenzte Anzahl an Fragen eines Themas mit MC-Antworten UND GAP-Feldern.
+     * Lädt Antwortdaten und GAP-Daten getrennt und führt sie anschließend
+     * in-memory zusammen.
      *
-     * Da JPA keine zwei Bag-Fetches in einer Query erlaubt
-     * (MultipleBagFetchException), werden zwei Queries gemacht und in-memory
-     * zusammengeführt.
+     * Hintergrund ist die Hibernate-/JPA-Problematik bei mehreren gleichzeitig
+     * gefetchten Bag-Beziehungen.
      */
     private List<Question> loadSelectedQuestions(List<Long> questionIds)
     {

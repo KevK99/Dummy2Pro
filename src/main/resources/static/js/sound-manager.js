@@ -1,4 +1,5 @@
 (() => {
+    // Zentrale Audio-Steuerung für Klicks, Quiz-Feedback, Raumwechsel und Medaillen.
     const SOUND_PATH = "/sounds";
     const STORAGE_KEY_ENABLED = "dummy2proSoundEnabled";
     const STORAGE_KEY_VOLUME = "dummy2proSoundVolume";
@@ -28,7 +29,9 @@
         endscreenGold: `${SOUND_PATH}/medals/endscreen-gold.wav`
     };
 
+    // Vorgehaltene Audio-Objekte vermeiden wiederholte Initialisierung derselben Datei.
     const audioCache = new Map();
+    // Cooldowns verhindern Dopplerauslösung bei schnellen Mehrfachklicks oder Mutation-Spitzen.
     const playCooldowns = new Map();
 
     let unlocked = false;
@@ -91,6 +94,8 @@
         return audio;
     }
 
+    // Browser blockieren Audio oft bis zur ersten echten Benutzerinteraktion.
+    // Der Probe-Play entsperrt die Wiedergabe so früh wie möglich.
     function unlock() {
         if (unlocked) {
             return;
@@ -114,6 +119,8 @@
         }
     }
 
+    // Für jede Wiedergabe wird aus dem gecachten Audio ein Klon erzeugt,
+    // damit parallel ausgelöste Sounds sich nicht gegenseitig überschreiben.
     function playFile(src, cooldownKey = src) {
         if (!isEnabled()) {
             return;
@@ -284,6 +291,8 @@
         return eventTarget?.closest?.("button, a, img, [role='button'], .room-link, .quiz-answer-btn, .gap-option-btn, [id^='gapPreview-']");
     }
 
+    // Ordnet UI-Elemente einer Sound-Kategorie zu, auch wenn die Erkennung
+    // nur über Texte, IDs, Hrefs oder bekannte onclick-Muster möglich ist.
     function classifyClick(element) {
         if (!element) {
             return null;
@@ -481,6 +490,8 @@
         play("login");
     }
 
+    // Quiz-Feedback wird nicht direkt hier ausgelöst, sondern über DOM-Änderungen
+    // an der vorhandenen Feedback-Box beobachtet.
     function attachFeedbackObserver() {
         if (feedbackObserverAttached) {
             return;
@@ -538,6 +549,8 @@
         return "NONE";
     }
 
+    // Auf Raumseiten wird die Medaille aus dem Status-Badge gelesen, weil der
+    // endgültige Wert erst nach der UI-Aktualisierung zuverlässig vorliegt.
     function attachRoomMedalObserver() {
         if (roomMedalObserverAttached) {
             return;
@@ -599,6 +612,8 @@
         return determineOverallMedal(correct, pair.second);
     }
 
+    // Auf dem Endscreen wird die Gesamtmedaille aus den angezeigten Summen
+    // rekonstruiert, damit der passende Abschluss-Sound exakt einmal startet.
     function attachEndscreenObserver() {
         if (endscreenObserverAttached) {
             return;
@@ -644,6 +659,8 @@
         attachEndscreenObserver();
     }
 
+    // Zusätzlich zu den fest definierten UI-Sounds werden die Raum-Sounds
+    // bewusst vorab geladen, damit Übergänge ohne hörbare Verzögerung starten.
     function preloadAll() {
         Object.values(FILES).forEach(preloadFile);
         for (let roomId = 1; roomId <= 16; roomId++) {
@@ -668,6 +685,8 @@
         getVolume
     };
 
+    // Capture-Phase stellt sicher, dass der Sound auch dann erkannt wird,
+    // wenn spätere Handler Navigation oder DOM-Änderungen sofort auslösen.
     document.addEventListener("click", handleDocumentClick, true);
     document.addEventListener("submit", handleFormSubmit, true);
 
@@ -681,6 +700,8 @@
         initObservers();
     }
 
+    // Einige Raum- und Endscreen-Elemente erscheinen verzögert. Die gestaffelten
+    // Re-Initialisierungen hängen Observer deshalb auch nach spätem Rendering an.
     window.addEventListener("load", () => {
         setTimeout(initObservers, 150);
         setTimeout(initObservers, 700);

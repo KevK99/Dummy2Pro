@@ -45,6 +45,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+/**
+ * Unittests für das Persistenzverhalten des {@link QuizSessionManager}.
+ *
+ * Geprüft werden das erstmalige Vorbereiten eines Raums, das Schreiben von
+ * Choice- und Gap-Antworten, das Abschließen eines Runs sowie typische
+ * Fehlerfälle bei ungültigen Antwortreferenzen.
+ */
 @ExtendWith(MockitoExtension.class)
 class QuizSessionManagerPersistenceTest
 {

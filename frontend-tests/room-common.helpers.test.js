@@ -1,6 +1,8 @@
 const { createBrowserEnv, loadBrowserScript } = require("./helpers/browser-env");
 
 describe("room-common.js helper-Funktionen", () => {
+    // Kleine DOM-Umgebung nur für die Helper, die Headline- und Avatar-Daten
+    // direkt gegen vorhandene Seitenelemente schreiben.
     function setupDom() {
         const dom = createBrowserEnv(`
             <!doctype html>
@@ -91,6 +93,8 @@ describe("room-common.js helper-Funktionen", () => {
         dom.window.sessionStorage.setItem("username", "Jan");
         dom.window.sessionStorage.setItem("avatar", "duck.jpg");
 
+        // Der Overview-Helper summiert die Raumzahlen selbst, statt auf
+        // bereits voraggregierte Gesamtwerte angewiesen zu sein.
         dom.window.updateHeadlineOverview({
             rooms: [
                 { answeredQuestions: 2, totalQuestions: 5 },

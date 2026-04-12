@@ -29,6 +29,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 
+/**
+ * Unittests für den {@link GameController}.
+ *
+ * Getestet wird hier die fachliche Logik rund um das Löschen von Spielständen,
+ * ohne Spring-Kontext und ohne echte Datenbank. Die Abhängigkeiten des
+ * Controllers sind gemockt, damit nur das Verhalten des Controllers selbst
+ * bewertet wird.
+ */
 @ExtendWith(MockitoExtension.class)
 class GameControllerUnitTest
 {

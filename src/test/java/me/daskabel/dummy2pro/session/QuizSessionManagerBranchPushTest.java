@@ -36,6 +36,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+/**
+ * Unittests für zusätzliche Branches und Randfälle im
+ * {@link QuizSessionManager}.
+ *
+ * Der Schwerpunkt liegt auf weniger häufigen Ablaufwegen wie Default-
+ * Raumwahl, bereits vorbereiteten Räumen, fehlenden Fortschrittsdaten,
+ * Session-Mappings und dem Bereinigen abgelaufener Sitzungen.
+ */
 @ExtendWith(MockitoExtension.class)
 class QuizSessionManagerBranchPushTest
 {

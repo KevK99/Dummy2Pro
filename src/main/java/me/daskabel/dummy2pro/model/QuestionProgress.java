@@ -1,13 +1,24 @@
 package me.daskabel.dummy2pro.model;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.Table;
+
 /**
- * Speichert den Bearbeitungsstand einer Frage innerhalb eines Spielstands.
+ * Speichert den Bearbeitungsstand einer konkreten Frage in einem konkreten
+ * Spielstand.
  *
- * Gespeichert werden der zugehörige Spielstand, die Frage, der Status,
- * der Raum, die Reihenfolge der Frage im Raum und der Antwortzeitpunkt.
+ * Zusätzlich gespeichert werden Raumzuordnung, Reihenfolge der Frage im Raum
+ * und der Antwortzeitpunkt.
  */
 @Entity
 @Table(name = "question_progress")
@@ -33,9 +44,22 @@ public class QuestionProgress
     @Column(name = "answered_at")
     private LocalDateTime answeredAt;
 
+    /**
+     * Technische Raumzuordnung der Frage innerhalb eines Spielstands.
+     *
+     * Der Wert wird zusätzlich zur eigentlichen Frage gespeichert, damit der
+     * Fortschritt direkt raumbezogen ausgewertet werden kann.
+     */
     @Column(name = "room_id", nullable = false)
     private int roomId;
 
+    /**
+     * Reihenfolge der Frage innerhalb des Raums.
+     *
+     * Diese Information ist wichtig, weil die Frageseite mit einer festen,
+     * gespeicherten Reihenfolge arbeiten soll und nicht nur mit der rohen
+     * Datenbankreihenfolge.
+     */
     @Column(name = "question_order", nullable = false)
     private int questionOrder;
 
@@ -43,6 +67,13 @@ public class QuestionProgress
     {
     }
 
+    /**
+     * Erzeugt einen Fortschrittseintrag für genau eine Frage in genau einem
+     * Spielstand.
+     *
+     * Die zusammengesetzte ID wird dabei direkt aus Spielstand und Frage
+     * aufgebaut, damit Entität und Primärschlüssel konsistent bleiben.
+     */
     public QuestionProgress(GameRun run, Question question, int roomId, int questionOrder, ProgressStatus status, LocalDateTime answeredAt)
     {
         this.id = new QuestionProgressId(run.getRunId(), question.getQuestionId());

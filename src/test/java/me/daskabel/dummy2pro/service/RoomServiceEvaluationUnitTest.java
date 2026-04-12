@@ -15,6 +15,13 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unittests für die Bewertungslogik des {@link RoomService}.
+ *
+ * Geprüft werden hier die fachlichen Auswertungen für MC-/TF- und GAP-
+ * Fragen, insbesondere korrekte Treffer, fehlende Eingaben, Mehrfach-
+ * antworten und die daraus abgeleiteten Punkte- und Ergebniswerte.
+ */
 class RoomServiceEvaluationUnitTest
 {
     @Test

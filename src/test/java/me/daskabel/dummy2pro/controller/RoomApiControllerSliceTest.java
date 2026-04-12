@@ -32,6 +32,13 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+/**
+ * Slice-Test für den {@link RoomApiController}.
+ *
+ * Getestet wird nur die Web-Schicht des Controllers mit gemockten
+ * Abhängigkeiten. Der Fokus liegt hier auf Request-Mapping, Validierung,
+ * Principal-Auswertung und den JSON-Antworten der Endpunkte.
+ */
 @WebMvcTest(RoomApiController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class RoomApiControllerSliceTest
@@ -75,6 +82,8 @@ class RoomApiControllerSliceTest
                 .andExpect(jsonPath("$.runId").value(77))
                 .andExpect(jsonPath("$.displayName").value("Neuer Name"));
 
+        // Geprüft wird nicht nur die Antwort, sondern auch, dass der gespeicherte
+        // Spielstandname tatsächlich bereits getrimmt im Repository ankommt.
         verify(gameRunRepository).save(argThat(savedRun -> "Neuer Name".equals(savedRun.getDisplayName())));
     }
 

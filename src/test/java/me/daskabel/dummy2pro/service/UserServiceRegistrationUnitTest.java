@@ -18,6 +18,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unittests für die Registrierung im {@link UserService}.
+ *
+ * Geprüft werden erfolgreiche Registrierungen sowie die fachlichen
+ * Validierungsregeln für Benutzername und Passwort, darunter Länge,
+ * Zeichentypen, Leerzeichen und doppelte Benutzernamen.
+ */
 @ExtendWith(MockitoExtension.class)
 class UserServiceRegistrationUnitTest
 {

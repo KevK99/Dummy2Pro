@@ -18,11 +18,20 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Prüft den vorhandenen Fragenbestand auf technische Konsistenz und darauf,
+ * ob sich die Fragen mit der aktuellen Auswertungslogik tatsächlich korrekt
+ * verarbeiten lassen.
+ *
+ * Der Test geht alle Fragen durch und unterscheidet zwischen MC/TF und GAP.
+ * Dabei wird nicht nur auf formale Vollständigkeit geprüft, sondern auch,
+ * ob eine mit den als richtig markierten Antworten gebaute Anfrage von der
+ * Fachlogik wirklich als korrekt bewertet wird.
+ */
 @SpringBootTest
 @ActiveProfiles("test")
 class QuestionDataValidationIntegrationTest

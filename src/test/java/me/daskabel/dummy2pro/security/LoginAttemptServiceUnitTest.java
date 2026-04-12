@@ -10,6 +10,14 @@ import java.time.ZoneId;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Unittests für den {@link LoginAttemptService}.
+ *
+ * Geprüft werden Sperrlogik, Zurücksetzen nach erfolgreichem Login und das
+ * Verhalten der Zeitfenster für Fehlversuche und Sperrdauer.
+ * Über eine steuerbare Test-Uhr lassen sich die Zeitabhängigkeiten gezielt
+ * und deterministisch prüfen.
+ */
 class LoginAttemptServiceUnitTest
 {
     private MutableClock clock;
@@ -80,6 +88,9 @@ class LoginAttemptServiceUnitTest
         assertFalse(loginAttemptService.isBlocked("jan"));
     }
 
+    /**
+     * Einfache Test-Uhr, deren Zeitpunkt kontrolliert weitergestellt werden kann.
+     */
     private static class MutableClock extends Clock
     {
         private Instant currentInstant;

@@ -11,6 +11,11 @@
 </head>
 
 <body class="min-h-screen bg-slate-950 text-slate-100">
+<!--
+    Profilseite für Kontoverwaltung, Avatar-Anpassung und Spielstandsverwaltung.
+    Die Seite bündelt bewusst mehrere unabhängige Änderungsflüsse an einer Stelle,
+    damit Profil- und Run-Wechsel ohne Dashboard-Umweg möglich bleiben.
+-->
 <div class="mx-auto max-w-6xl px-6 py-10 space-y-8">
 
     <header class="flex items-start justify-between gap-4">
@@ -53,6 +58,7 @@
             </button>
         </div>
     </header>
+    <!-- Zentrale Inline-Meldungsfläche für Rückgaben aus Profil-, Passwort- und Spielstandaktionen. -->
     <div id="profilePageMessage" class="hidden"></div>
 
     <div class="bg-slate-800 border border-slate-700 shadow-xl rounded-2xl p-8" id="nameForm">
@@ -258,6 +264,8 @@
     </div>
 
     <div id="profilePicForm" class="hidden">
+        <!-- Die Avatar-Auswahl bleibt statisch im Template, damit Reihenfolge und Dateinamen
+             für Tests und manuelle Pflege stabil bleiben. -->
         <div id="profilePicGrid" class="w-full gap-6 pt-6 grid grid-cols-5">
             <img src="/images/Alf.png" onclick="setProfile('Alf.png', this)" alt="Alf" class="w-full aspect-square object-cover hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
             <img src="/images/lama.png" onclick="setProfile('lama.png', this)" alt="lama" class="w-full aspect-square object-cover hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
@@ -550,6 +558,8 @@
     }
 
     function applyAvatarPreviewStyle() {
+        // Für Rahmenfarbe und Form wird das Bild bei Bedarf dynamisch in eine Hülle gelegt.
+        // So lassen sich Tailwind-Klassen für Frame und Clip-Path getrennt steuern.
         const shape = avatarShapeSelect.value || "circle";
         const frame = avatarFrameSelect.value || "default";
 
@@ -621,6 +631,8 @@
     }
 
     async function saveNewPassword() {
+        // Nach einer Passwortänderung wird die lokale Sitzung bewusst komplett verworfen.
+        // Der erneute Login mit Flash-Meldung erzwingt danach einen sauberen Sicherheitszustand.
         const pw = document.getElementById('pw').value;
         const newPw = document.getElementById('newPw').value;
         const newPwConfirm = document.getElementById('newPwConfirm').value;
@@ -773,6 +785,8 @@
                 return;
             }
 
+            // Spielstände werden stabil nach Erstellungszeit sortiert und nur bei Gleichstand
+            // zusätzlich über die runId aufgelöst.
             const sortedRuns = [...runs].sort((a, b) => {
                 const timeDiff = toSortableTimestamp(a.startedAt) - toSortableTimestamp(b.startedAt);
 
@@ -955,6 +969,8 @@
     }
 
     async function initProfilePage() {
+        // Die Seite versucht zuerst, den Benutzer aus dem Session-Storage zu nutzen,
+        // und fällt nur bei Bedarf auf die serverseitige Current-User-Synchronisation zurück.
         let resolvedUserId = userId;
 
         if (!resolvedUserId) {

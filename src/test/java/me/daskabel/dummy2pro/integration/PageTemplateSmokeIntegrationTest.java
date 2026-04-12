@@ -25,6 +25,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Smoke-Tests für die serverseitig gerenderten Seiten und Raumtemplates.
+ *
+ * Die Tests prüfen nicht die komplette Fachlogik der Seiten, sondern nur,
+ * ob die Templates mit realem Spring-Kontext, echter Session und den nötigen
+ * Modeldaten ohne Templatefehler rendern. Damit fallen kaputte Includes,
+ * fehlerhafte Fragmente oder ungültige Template-Ausdrücke schnell auf.
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -99,6 +107,7 @@ class PageTemplateSmokeIntegrationTest
             }
         });
 
+        // Raum 16 ist als Sonderfall zusätzlich fest abgesichert.
         mockMvc.perform(get("/room/16").session(session))
                 .andExpect(status().isOk())
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("id=\"questionPanel\"")))

@@ -9,11 +9,18 @@
 </head>
 
 <body class="min-h-screen bg-slate-950 text-slate-100">
+<!--
+    Statische Einstiegshülle für den Login.
+    Das eigentliche Formular wird als Teilseite geladen, danach werden
+    die benötigten Handler an die frisch eingefügte DOM-Struktur gebunden.
+-->
 <div class="mx-auto max-w-6xl px-6 py-10">
     <div id="login"></div>
 </div>
 
 <script>
+    // login.html wird zuerst in die Seite eingesetzt, erst danach dürfen
+    // Formularinitialisierung und mögliche Flash-Meldungen laufen.
     fetch('/login.html')
         .then(response => {
             if (!response.ok) {
@@ -32,6 +39,7 @@
             console.error(error);
         });
 
+    // Einheitliche Box-Meldungen für Fehler- und Erfolgsfälle auf der Login-Seite.
     function setBoxMessage(targetId, message, type = "error") {
         const element = document.getElementById(targetId);
         if (!element) {
@@ -132,8 +140,8 @@
             sessionStorage.setItem("username", data.username);
             sessionStorage.setItem("avatar", data.avatar || "duck.jpg");
 
-            // Alte Session-/Run-Daten verwerfen.
-            // Das Dashboard lädt oder erstellt danach den AKTIVEN Spielstand.
+            // Alte Session-/Run-Daten werden bewusst verworfen.
+            // Das Dashboard lädt oder erstellt danach den aktiven Spielstand neu.
             sessionStorage.removeItem("sessionId");
             sessionStorage.removeItem("runId");
 

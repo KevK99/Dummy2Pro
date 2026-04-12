@@ -4,10 +4,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Enthält die Review-Daten eines kompletten Spielstands.
+ * Transportobjekt für die Review-Ansicht eines kompletten Spielstands.
  *
  * Die Struktur bildet den Spielstand hierarchisch ab:
  * Spielstand -> Räume -> Fragen -> Antworten bzw. Lücken.
+ *
+ * Das DTO ist rein für die Auslieferung an das Frontend gedacht und enthält
+ * deshalb nur darstellungs- und auswertungsrelevante Daten, keine
+ * Fachlogik.
  */
 public class RunReviewDto
 {
@@ -47,6 +51,9 @@ public class RunReviewDto
 
     /**
      * Review-Daten eines einzelnen Raums.
+     *
+     * Enthält sowohl die aggregierten Kennzahlen des Raums als auch die
+     * detaillierte Fragenliste.
      */
     public static class RoomReviewDto
     {
@@ -142,6 +149,9 @@ public class RunReviewDto
 
     /**
      * Review-Daten einer einzelnen Frage.
+     *
+     * Je nach Fragetyp werden entweder {@code choices} oder {@code gaps}
+     * befüllt.
      */
     public static class QuestionReviewDto
     {
@@ -259,6 +269,9 @@ public class RunReviewDto
 
     /**
      * Review-Daten einer Antwortoption bei MC- oder TF-Fragen.
+     *
+     * Damit kann das Frontend sowohl die richtige Lösung als auch die
+     * Benutzerauswahl gegenüberstellen.
      */
     public static class ChoiceReviewDto
     {
@@ -310,6 +323,9 @@ public class RunReviewDto
 
     /**
      * Review-Daten einer einzelnen Lücke bei GAP-Fragen.
+     *
+     * Gespeichert werden sowohl gewählte als auch korrekte Lösung, damit eine
+     * differenzierte Nachbesprechung möglich ist.
      */
     public static class GapReviewDto
     {

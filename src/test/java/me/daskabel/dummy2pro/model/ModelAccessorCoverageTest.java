@@ -15,6 +15,14 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+/**
+ * Sammelt breit angelegte Abdeckungstests für die Modellklassen.
+ *
+ * Der Fokus liegt hier nicht auf Fachlogik, sondern auf den eher mechanischen
+ * Teilen der Entitäten und ID-Klassen: Getter/Setter, Konstruktoren,
+ * zusammengesetzte Schlüssel und kleinere Randfälle bei einfachen
+ * Hilfsobjekten wie {@code Room}.
+ */
 class ModelAccessorCoverageTest
 {
     private static final LocalDateTime SAMPLE_TIME = LocalDateTime.of(2026, 4, 6, 10, 30);

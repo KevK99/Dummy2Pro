@@ -21,6 +21,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/**
+ * Unittests für das Lesen des aktuellen Spielstands im {@link UserService}.
+ *
+ * Der Fokus liegt auf dem Zugriff auf den neuesten Run eines Benutzers und
+ * auf dem Verhalten, wenn kein aktiver oder auswertbarer Spielstand
+ * vorhanden ist.
+ */
 @ExtendWith(MockitoExtension.class)
 class UserServiceSaveCurrentGameProgressUnitTest
 {

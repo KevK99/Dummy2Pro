@@ -34,6 +34,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+/**
+ * Unittests für den Raumablauf im {@link RoomService}.
+ *
+ * Getestet werden hier das Laden einzelner Fragen, die fachlich korrekte
+ * Sortierung von Antwortoptionen und Lückenfeldern sowie der Aufbau von
+ * Raumstatus und Startdaten für einen Raum.
+ */
 @ExtendWith(MockitoExtension.class)
 class RoomServiceRoomFlowUnitTest
 {

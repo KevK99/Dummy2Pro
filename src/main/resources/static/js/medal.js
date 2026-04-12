@@ -6,6 +6,8 @@ function updateMedalCoin(medal) {
         return;
     }
 
+    // Der Zustand wird immer zuerst auf "unsichtbar" zurückgesetzt, damit
+    // alte Medaillenreste bei Raumwechseln oder erneuter Auswertung verschwinden.
     medalContainer.classList.add("hidden");
     medalCoin.classList.add("hidden");
     medalCoin.textContent = "";

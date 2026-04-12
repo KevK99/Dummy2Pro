@@ -22,6 +22,16 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+/**
+ * Integrationstests für das {@link QuestionProgressRepository}.
+ *
+ * Geprüft werden projektspezifische Repository-Methoden für Fortschrittsdaten
+ * eines Spielstands, insbesondere Update-Abfragen, Statusfilter,
+ * Reihenfolgesortierung und aggregierte Raumauswertungen.
+ *
+ * Die Tests laufen als JPA-Slice gegen eine echte Testdatenbank und bauen sich
+ * den nötigen Datenbestand jeweils gezielt selbst auf.
+ */
 @DataJpaTest
 @ActiveProfiles("test")
 class QuestionProgressRepositoryIntegrationTest

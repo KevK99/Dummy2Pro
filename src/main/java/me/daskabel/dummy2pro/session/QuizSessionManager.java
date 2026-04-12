@@ -235,6 +235,9 @@ public class QuizSessionManager
             return existingRoom;
         }
 
+        // Die erstmalige Raumvorbereitung wird pro Run/Raum serialisiert,
+        // damit parallele Requests weder doppelte Progress-Einträge anlegen
+        // noch denselben Raum konkurrierend rekonstruieren.
         String lockKey = session.getRunId() + ":" + roomId;
         Object lock = this.roomPreparationLocks.computeIfAbsent(lockKey, key -> new Object());
 
@@ -728,6 +731,12 @@ public class QuizSessionManager
 
         GameRun run = this.gameRunRepo.getReferenceById(runId);
 
+        // Gespeicherte Antworten werden pro Frage immer vollständig ersetzt.
+        // So bleiben erneute Versuche, geänderte Mehrfachauswahlen und neue
+        // GAP-Kombinationen konsistent mit dem letzten Submit.
+        // Gespeicherte Antworten werden pro Frage immer vollständig ersetzt.
+        // So bleiben erneute Versuche, geänderte Mehrfachauswahlen und neue
+        // GAP-Kombinationen konsistent mit dem letzten Submit.
         if (question.getQuestionType() == QuestionType.GAP)
         {
             this.runGapAnswerRepo.deleteByRun_RunIdAndQuestion_QuestionId(runId, question.getQuestionId());
@@ -838,6 +847,9 @@ public class QuizSessionManager
 
         int answeredCount = 0;
 
+        // In die Laufzeit-Session werden nur bereits bewertete Fragen
+        // zurückgeschrieben. Offene Einträge bleiben unberührt, damit
+        // Fortschritt und aktuelle Position sauber aus dem DB-Stand folgen.
         for (QuestionProgress progress : roomProgressEntries)
         {
             if (progress.getStatus() == ProgressStatus.CORRECT
@@ -973,6 +985,14 @@ public class QuizSessionManager
         return dto;
     }
 
+    /**
+     * Baut eine vollständige Review-Sicht für einen abgeschlossenen oder
+     * laufenden Spielstand auf.
+     *
+     * Dafür werden Fortschritt, Fragen, ausgewählte Choice-Antworten und
+     * GAP-Antworten aus mehreren Quellen zusammengeführt und wieder nach
+     * Raum- und Fragenreihenfolge sortiert ausgegeben.
+     */
     @Transactional(readOnly = true)
     public RunReviewDto getRunReview(String sessionId)
     {
@@ -994,6 +1014,8 @@ public class QuizSessionManager
             return dto;
         }
 
+        // Choice- und GAP-Fragen werden getrennt geladen, weil dafür
+        // unterschiedliche Detailstrukturen benötigt werden.
         Set<Long> choiceQuestionIds = progressEntries.stream()
                 .map(QuestionProgress::getQuestion)
                 .filter(question -> question.getQuestionType() == QuestionType.MC || question.getQuestionType() == QuestionType.TF)
@@ -1020,6 +1042,8 @@ public class QuizSessionManager
                     .forEach(question -> questionsById.put(question.getQuestionId(), question));
         }
 
+        // Für das Review werden Choice-Antworten und GAP-Antworten in
+        // schnelle Lookup-Strukturen je Frage überführt.
         Map<Long, Set<Long>> selectedChoiceIdsByQuestionId = this.runSelectedAnswerRepo.findDetailedByRunId(runId).stream()
                 .collect(Collectors.groupingBy(
                         answer -> answer.getQuestion().getQuestionId(),
@@ -1046,6 +1070,8 @@ public class QuizSessionManager
             themeNameByRoomId.put(i + 1, themes.get(i).getName());
         }
 
+        // LinkedHashMap bewahrt die aus der Query gelieferte Raumreihenfolge,
+        // damit das Review stabil in Spielreihenfolge bleibt.
         Map<Integer, List<QuestionProgress>> progressByRoom = progressEntries.stream()
                 .collect(Collectors.groupingBy(
                         QuestionProgress::getRoomId,
@@ -1080,7 +1106,10 @@ public class QuizSessionManager
 
             List<RunReviewDto.QuestionReviewDto> questionDtos = new ArrayList<>();
 
-            for (QuestionProgress progress : roomProgressEntries)
+            // In die Laufzeit-Session werden nur bereits bewertete Fragen
+        // zurückgeschrieben. Offene Einträge bleiben unberührt, damit
+        // Fortschritt und aktuelle Position sauber aus dem DB-Stand folgen.
+        for (QuestionProgress progress : roomProgressEntries)
             {
                 Question question = questionsById.get(progress.getQuestion().getQuestionId());
 
@@ -1100,7 +1129,10 @@ public class QuizSessionManager
                 questionDto.setStatus(progress.getStatus().name());
                 questionDto.setAnsweredAt(progress.getAnsweredAt());
 
-                if (question.getQuestionType() == QuestionType.GAP)
+                // Gespeicherte Antworten werden pro Frage immer vollständig ersetzt.
+        // So bleiben erneute Versuche, geänderte Mehrfachauswahlen und neue
+        // GAP-Kombinationen konsistent mit dem letzten Submit.
+        if (question.getQuestionType() == QuestionType.GAP)
                 {
                     questionDto.setChoices(List.of());
                     questionDto.setGaps(buildGapReviews(
@@ -1190,6 +1222,12 @@ public class QuizSessionManager
                 .toList();
     }
 
+    /**
+     * Baut einen lesbaren Review-Text für die Frage auf.
+     *
+     * Bei GAP-Fragen werden die einzelnen Lückenfelder wieder in einen
+     * zusammenhängenden Text mit Platzhaltern zusammengesetzt.
+     */
     private String buildQuestionReviewText(Question question)
     {
         StringBuilder builder = new StringBuilder();

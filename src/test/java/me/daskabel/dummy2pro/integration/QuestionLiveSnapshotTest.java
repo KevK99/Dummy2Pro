@@ -4,6 +4,15 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Vergleicht den aktuell geladenen Live-Fragenbestand mit dem eingecheckten
+ * Referenz-Snapshot.
+ *
+ * Der Test dient als Frühwarnsystem für unbeabsichtigte Änderungen am
+ * produktiven Fragenkatalog. Bei Abweichungen wird zusätzlich eine aktuelle
+ * Snapshot-Datei unter {@code target/dbcheck} geschrieben, damit Unterschiede
+ * leichter geprüft werden können.
+ */
 class QuestionLiveSnapshotTest
 {
     @Test

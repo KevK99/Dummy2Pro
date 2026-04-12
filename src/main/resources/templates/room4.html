@@ -5,6 +5,7 @@
 
 <body class="min-h-screen bg-[#E10589] text-white font-mono tracking-wider dark:bg-[#000010] overflow-x-hidden">
 
+<!-- Raumseite mit vorgeschaltetem Intro und anschließendem Fragenmodus für Raum 4. -->
 <div th:replace="~{fragments/headline :: headline(${ 'Raum ' + roomId}, ${'Thema: ' + themeName}, ${avatarUrl}, null, null)}"></div>
 
 <style>
@@ -317,6 +318,7 @@
 
 <script th:src="@{/js/darkmode.js}"></script>
 
+<!-- Verwaltet Raumzustand, Fragewechsel, Benutzereingaben, Feedbackdarstellung und Abschlussnavigation. -->
 <script th:inline="javascript">
     const roomId = /*[[${roomId}]]*/ 4;
 

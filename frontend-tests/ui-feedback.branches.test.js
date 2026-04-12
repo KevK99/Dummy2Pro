@@ -1,10 +1,13 @@
 const { createBrowserEnv, loadBrowserScript } = require("./helpers/browser-env");
 
+// Kleiner Helfer, um MutationObserver- und Event-Folgen in jsdom sauber abwarten zu können.
 function flush(dom, ms = 0) {
     return new Promise(resolve => dom.window.setTimeout(resolve, ms));
 }
 
 describe("sound-manager.js weitere Branches", () => {
+    // Audio wird vollständig gemockt, damit sich abgespielte Dateien und
+    // Cooldowns ohne echte Medienwiedergabe nachvollziehen lassen.
     class AudioMock {
         static instances = [];
 
@@ -56,6 +59,8 @@ describe("sound-manager.js weitere Branches", () => {
 
         dom.window.localStorage.clear();
 
+        // Der künstlich steigende Zeitwert macht die Cooldown-Logik
+        // deterministisch testbar, ohne echte Wartezeiten einzubauen.
         let currentTime = 0;
         dom.window.performance.now = () => {
             currentTime += 120;
@@ -126,6 +131,8 @@ describe("sound-manager.js weitere Branches", () => {
         await dom.window.Dummy2ProSound.unlock();
         clearAudioHistory();
 
+        // Der Helper baut gezielt kleine klickbare Elemente, weil die
+        // Klassifikation in sound-manager.js stark an IDs, Texten und Attributen hängt.
         const makeButton = (attrs = {}, text = "") => {
             const button = dom.window.document.createElement("button");
             Object.entries(attrs).forEach(([key, value]) => {
@@ -230,6 +237,8 @@ describe("sound-manager.js weitere Branches", () => {
         correct.textContent = "x";
         await flush(dom, 0);
 
+        // Gleiche oder fachlich nicht auswertbare Zustände dürfen keinen
+        // zusätzlichen Sound mehr auslösen.
         feedback.textContent = "Richtig";
         await flush(dom, 0);
         feedback.textContent = "Richtig";

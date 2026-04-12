@@ -25,6 +25,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+/**
+ * Regressionstests für bereits behobene Fehlerbilder im
+ * {@link QuizSessionManager}.
+ *
+ * Der Schwerpunkt liegt auf dem Wiederverwenden bereits geladener Sessions
+ * und auf der korrekten Auswahl des ersten noch unvollständigen Raums beim
+ * Laden vorhandener Spielstände.
+ */
 @ExtendWith(MockitoExtension.class)
 class QuizSessionManagerRegressionTest
 {

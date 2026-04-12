@@ -39,6 +39,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Integrationstests für die API rund um Sitzungen, Räume und Spielstände.
+ *
+ * Die Tests laufen gegen den echten Spring-Kontext und prüfen das
+ * Zusammenspiel von Anmeldung, Session-Verwaltung, Spielstandlogik,
+ * Raumvorbereitung, Antwortverarbeitung und Übersichtsdaten.
+ *
+ * Abgedeckt werden sowohl Erfolgsfälle als auch typische Fehlersituationen
+ * wie ungültige Raum-IDs, falsche Frage-IDs oder der Zugriff auf fremde
+ * Spielstände.
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")

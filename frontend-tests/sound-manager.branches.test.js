@@ -56,6 +56,8 @@ describe("sound-manager.js weitere Branches", () => {
 
         dom.window.localStorage.clear();
         let currentTime = 0;
+        // Der künstlich ansteigende Zeitwert macht die Cooldown-Logik
+        // deterministisch testbar, ohne echte Wartezeiten einzubauen.
         dom.window.performance.now = () => {
             currentTime += 120;
             return currentTime;
@@ -124,6 +126,9 @@ describe("sound-manager.js weitere Branches", () => {
         await dom.window.Dummy2ProSound.unlock();
         clearAudioHistory();
 
+        // Die Klickklassifikation im Sound-Manager hängt stark an IDs,
+        // Texten und Attributen. Der Helper baut dafür gezielt kleine,
+        // variierbare DOM-Buttons auf.
         const makeButton = (attrs = {}, text = "") => {
             const button = dom.window.document.createElement("button");
             Object.entries(attrs).forEach(([key, value]) => {

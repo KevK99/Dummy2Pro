@@ -1,6 +1,7 @@
 const { createBrowserEnv, loadBrowserScript } = require("./helpers/browser-env");
 
 describe("darkmode.js", () => {
+    // Minimale DOM-Struktur mit genau dem Button, den darkmode.js beim Laden erwartet.
     function setupDom() {
         return createBrowserEnv(`
             <!doctype html>

@@ -18,11 +18,17 @@ import me.daskabel.dummy2pro.model.QuestionProgressId;
  *
  * Enthält Such-, Änderungs- und Auswertungsmethoden für Fragen
  * innerhalb eines Spielstands.
+ *
+ * Die Methoden decken sowohl einfache CRUD-Zugriffe als auch projektspezifische
+ * Auswertungen für Raumübersichten, Wiederherstellung und Review ab.
  */
 public interface QuestionProgressRepository extends JpaRepository<QuestionProgress, QuestionProgressId>
 {
     /**
      * Projektion für die zusammengefasste Raumübersicht eines Spielstands.
+     *
+     * Das Interface wird direkt von Spring Data befüllt und vermeidet dafür
+     * eine zusätzliche DTO-Mappingklasse auf Repository-Ebene.
      */
     interface RoomProgressSummary
     {
@@ -35,18 +41,41 @@ public interface QuestionProgressRepository extends JpaRepository<QuestionProgre
         Long getEarnedPoints();
     }
 
+    /**
+     * Zählt alle Fortschrittseinträge eines Spielstands.
+     */
     long countByRun_RunId(Long runId);
 
+    /**
+     * Zählt alle Fortschrittseinträge eines Spielstands in einem bestimmten Status.
+     */
     long countByRun_RunIdAndStatus(Long runId, ProgressStatus status);
 
+    /**
+     * Entfernt sämtliche Fortschrittsdaten eines Spielstands.
+     */
     void deleteByRun_RunId(Long runId);
 
+    /**
+     * Lädt alle Fortschrittsdaten eines Spielstands ohne feste Sortierung.
+     */
     List<QuestionProgress> findByRun_RunId(Long runId);
 
+    /**
+     * Lädt den Fortschritt einer konkreten Frage innerhalb eines Spielstands.
+     */
     Optional<QuestionProgress> findByRun_RunIdAndQuestion_QuestionId(Long runId, Long questionId);
 
+    /**
+     * Lädt alle Fortschrittsdaten eines Spielstands in stabiler Raum- und Fragefolge.
+     */
     List<QuestionProgress> findByRun_RunIdOrderByRoomIdAscQuestionOrderAsc(Long runId);
 
+    /**
+     * Lädt Fortschrittsdaten inklusive Frageentität für eine detaillierte Ansicht.
+     *
+     * Der Fetch Join reduziert Nachladezugriffe bei nachgelagerter Auswertung.
+     */
     @Query("""
         SELECT qp
         FROM QuestionProgress qp
@@ -56,6 +85,12 @@ public interface QuestionProgressRepository extends JpaRepository<QuestionProgre
     """)
     List<QuestionProgress> findDetailedByRunIdOrderByRoomIdAscQuestionOrderAsc(@Param("runId") Long runId);
 
+    /**
+     * Lädt alle Fragen eines Raums mit einem bestimmten Bearbeitungsstatus.
+     *
+     * Die Reihenfolge folgt der gespeicherten Raumreihenfolge und nicht der
+     * zufälligen Datenbankreihenfolge.
+     */
     @Query("""
         SELECT qp FROM QuestionProgress qp
         WHERE qp.run.runId = :runId
@@ -69,6 +104,9 @@ public interface QuestionProgressRepository extends JpaRepository<QuestionProgre
             @Param("status") ProgressStatus status
     );
 
+    /**
+     * Lädt alle Fragen eines Raums in der gespeicherten Bearbeitungsreihenfolge.
+     */
     @Query("""
         SELECT qp FROM QuestionProgress qp
         WHERE qp.run.runId = :runId
@@ -80,6 +118,12 @@ public interface QuestionProgressRepository extends JpaRepository<QuestionProgre
             @Param("roomId") int roomId
     );
 
+    /**
+     * Erzeugt eine zusammengefasste Raumübersicht für den kompletten Spielstand.
+     *
+     * Berechnet werden Anzahl, Statusverteilung und Punktesummen je Raum.
+     * Die Abfrage dient als Grundlage für Übersichten und Dashboardwerte.
+     */
     @Query("""
         SELECT
             qp.roomId AS roomId,
@@ -113,6 +157,9 @@ public interface QuestionProgressRepository extends JpaRepository<QuestionProgre
     """)
     List<RoomProgressSummary> summarizeRoomProgressByRunId(@Param("runId") Long runId);
 
+    /**
+     * Aktualisiert Status und Antwortzeitpunkt einer konkreten Frage.
+     */
     @Modifying
     @Query("""
         UPDATE QuestionProgress qp

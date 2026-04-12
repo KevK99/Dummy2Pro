@@ -34,6 +34,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+/**
+ * Unittests für zusätzliche Fehler- und Randfälle im {@link RoomService}.
+ *
+ * Der Schwerpunkt liegt hier auf Branches, die in den regulären
+ * Ablauf-Tests leicht untergehen: fehlende Runs, ungültige Räume,
+ * leere Antwortabgaben, fehlender Fortschrittseintrag und Ausnahmen
+ * in internen Hilfsmethoden.
+ */
 @ExtendWith(MockitoExtension.class)
 class RoomServiceBranchPushTest
 {

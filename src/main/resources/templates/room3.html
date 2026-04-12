@@ -5,7 +5,7 @@
 
 <body class="bg-indigo-700 dark:bg-[#000010] text-white font-mono tracking-wider min-h-screen">
 
-<!-- HEADER FULL WIDTH -->
+<!-- Raumseite mit Introdialog, Spielansicht und quizbezogener Benutzerführung für Raum 3. -->
 <div th:replace="~{fragments/headline :: headline(${ 'Raum ' + roomId}, ${'Thema: ' + themeName}, ${avatarUrl}, null, null)}"></div>
 
 <style>
@@ -318,6 +318,7 @@
 <!-- TODO Sessionproblem beim Laden des Raumes. Der Raum kann oft nicht laden. -->
 <script th:src="@{/js/darkmode.js}"></script>
 
+<!-- Bündelt Theme-/Raumlogik, UI-Umschaltungen, Fragebearbeitung und den Übergang nach Raumende. -->
 <script th:inline="javascript">
     const roomId = /*[[${roomId}]]*/ 3;
 

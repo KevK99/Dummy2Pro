@@ -8,8 +8,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.IOException;
 
@@ -20,6 +20,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
+/**
+ * Unittests für den {@link SessionAuthenticationFilter}.
+ *
+ * Geprüft wird, wie der Filter Sitzungsdaten in den Security-Kontext
+ * überführt und wie er sich bei fehlender oder unvollständiger Sitzung
+ * verhält. Der Test läuft bewusst ohne Spring-Kontext und arbeitet direkt
+ * mit Mock-Servletobjekten.
+ */
 class SessionAuthenticationFilterUnitTest
 {
     private final SessionAuthenticationFilter filter = new SessionAuthenticationFilter();

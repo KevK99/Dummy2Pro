@@ -31,6 +31,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+/**
+ * Unittests für interne Hilfsmethoden des {@link QuizSessionManager}, die
+ * Review-Daten und Hilfstexte aufbauen.
+ *
+ * Die Tests greifen per Reflection auf private Methoden zu, weil hier keine
+ * öffentliche API geprüft wird, sondern gezielt die Aufbereitung von
+ * Choice-/Gap-Reviews und normalisierten Textdarstellungen.
+ */
 class QuizSessionManagerReviewHelperTest
 {
     private QuizSessionManager manager;

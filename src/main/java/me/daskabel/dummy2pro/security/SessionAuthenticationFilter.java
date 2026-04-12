@@ -22,12 +22,20 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class SessionAuthenticationFilter extends OncePerRequestFilter
 {
+    /**
+     * Baut den Sicherheitskontext aus den Sitzungsdaten wieder auf.
+     *
+     * Die Anmeldung wird hier nicht erneut geprüft. Es werden nur die bereits
+     * beim Login abgelegten Sitzungsattribute in eine Spring-Security-
+     * Authentifizierung überführt.
+     */
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException
     {
+        // Ohne HTTP-Sitzung gibt es keine persistierten Anmeldedaten.
         HttpSession session = request.getSession(false);
 
         if (session != null)
@@ -45,6 +53,8 @@ public class SessionAuthenticationFilter extends OncePerRequestFilter
                 if (currentAuthentication != null
                         && currentAuthentication.getPrincipal() instanceof AuthenticatedUser currentUser)
                 {
+                    // Eine bereits vorhandene Authentifizierung bleibt erhalten,
+                    // solange sie inhaltlich zur Sitzung passt.
                     needsRefresh = !userId.equals(currentUser.userId())
                             || !username.equals(currentUser.username());
                 }
@@ -65,14 +75,18 @@ public class SessionAuthenticationFilter extends OncePerRequestFilter
             }
             else
             {
+                // Unvollständige oder inkonsistente Sitzungsdaten dürfen nicht
+                // dazu führen, dass ein alter Sicherheitskontext weiterlebt.
                 SecurityContextHolder.clearContext();
             }
         }
         else
         {
+            // Ohne Sitzung darf auch keine Benutzeridentität im Kontext stehen.
             SecurityContextHolder.clearContext();
         }
 
+        // Die eigentliche Anfrage läuft danach normal weiter durch die Kette.
         filterChain.doFilter(request, response);
     }
 }

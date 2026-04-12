@@ -8,6 +8,12 @@ import java.util.List;
 import me.daskabel.dummy2pro.dto.RoomDtos.DialogLineDto;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Unittests für die statischen Raum-Einleitungsdialoge.
+ *
+ * Geprüft wird, ob bekannte Räume ihren konfigurierten Dialog liefern und
+ * unbekannte Räume auf eine definierte Fallback-Zeile zurückfallen.
+ */
 class RoomIntroDialogsUnitTest
 {
     @Test

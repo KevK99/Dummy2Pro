@@ -38,6 +38,13 @@ describe("sound-manager.js", () => {
         });
     }
 
+    /**
+     * Baut eine kleine Browserumgebung für den Sound-Manager auf.
+     *
+     * Dabei werden Audio, localStorage und Zeitmessung kontrolliert
+     * nachgebildet, damit Sound-Auswahl und Cooldowns deterministisch
+     * testbar bleiben.
+     */
     function setupDom(url = "http://localhost/") {
         AudioMock.instances = [];
 
@@ -58,6 +65,10 @@ describe("sound-manager.js", () => {
         dom.window.localStorage.removeItem("dummy2proSoundVolume");
 
         let currentTime = 0;
+
+        // Der Sound-Manager nutzt performance.now() für interne Sperrzeiten.
+        // Mit dem künstlich steigenden Zeitwert werden diese Pfade ohne
+        // echte Wartezeiten reproduzierbar testbar.
         dom.window.performance.now = () => {
             currentTime += 120;
             return currentTime;

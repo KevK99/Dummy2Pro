@@ -1,4 +1,5 @@
 (function () {
+    // Kapselt CSRF-Handling und Nutzer-Synchronisation zentral um window.fetch.
     const originalFetch = window.fetch.bind(window);
 
     function getCookie(name) {
@@ -14,6 +15,8 @@
         return !["GET", "HEAD", "OPTIONS", "TRACE"].includes(String(method || "GET").toUpperCase());
     }
 
+    // Holt bewusst /csrf über das ungepatchte fetch, damit ein fehlender Token
+    // nicht erneut durch die Retry-Logik dieser Datei läuft.
     async function refreshCsrfToken() {
         const response = await originalFetch("/csrf", {
             method: "GET",
@@ -27,6 +30,8 @@
         return getCookie("XSRF-TOKEN");
     }
 
+    // Unsichere Same-Origin-Requests bekommen automatisch einen CSRF-Header.
+    // Bei einem einzelnen 403 wird der Token einmal erneuert und der Request wiederholt.
     async function fetchWithCsrfRetry(input, init = {}, alreadyRetried = false) {
         const options = { ...init };
         const method = String(options.method || "GET").toUpperCase();
@@ -54,6 +59,8 @@
 
         const response = await originalFetch(input, options);
 
+        // Login, Registrierung und /csrf selbst werden bewusst von der Retry-
+        // Logik ausgenommen, damit keine falschen Zweitaufrufe entstehen.
         if (
             response.status === 403 &&
             !alreadyRetried &&
@@ -82,6 +89,8 @@
         return response;
     }
 
+    // Der Namespace stellt bewusst nur die Funktionen bereit, die andere
+    // Seiten für Session- und Token-Synchronisation direkt benötigen.
     window.Dummy2ProSecurity = {
         async syncCurrentUser() {
             const response = await originalFetch("/api/user/me", {

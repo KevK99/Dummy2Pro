@@ -19,6 +19,13 @@ describe("room-common.js Avatar-Rahmen und Panda-Sprechblase", () => {
         return dom;
     }
 
+    /**
+     * Baut die minimale DOM-Struktur für die Panda-Sprechblase und die
+     * Spielfläche nach.
+     *
+     * Zusätzlich werden Geometrieinformationen gestubbt, weil die getestete
+     * Positionierungslogik auf clientWidth und Bounding-Rects basiert.
+     */
     function setupSpeechDom() {
         const dom = createBrowserEnv(`
             <!doctype html>
@@ -63,6 +70,8 @@ describe("room-common.js Avatar-Rahmen und Panda-Sprechblase", () => {
         const gameScene = dom.window.document.getElementById("gameScene");
         const gamePanda = dom.window.document.getElementById("gamePanda");
 
+        // jsdom berechnet keine echten Layoutmaße. Für die
+        // Positionsberechnung werden deshalb feste Testwerte vorgegeben.
         Object.defineProperty(gameScene, "clientWidth", {
             configurable: true,
             get: () => 1000

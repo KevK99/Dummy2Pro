@@ -16,6 +16,14 @@ import me.daskabel.dummy2pro.model.Question;
 import me.daskabel.dummy2pro.model.QuestionType;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Unittests für negative und fachliche Randfälle in der Bewertungslogik
+ * des {@link RoomService}.
+ *
+ * Der Fokus liegt auf leeren, doppelten oder unvollständigen Eingaben
+ * sowie auf der Frage, wie die Auswertung mit unbekannten oder teilweise
+ * fehlenden Gap-Angaben umgeht.
+ */
 class RoomServiceNegativeBoundaryTest
 {
     @Test

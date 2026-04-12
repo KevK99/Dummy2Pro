@@ -58,6 +58,13 @@ public final class QuestionSqlDatasetLoader {
         return parse(rawSql);
     }
 
+    /**
+     * Zerlegt den SQL-Bestand in ein testbares In-Memory-Modell der Fragen.
+     *
+     * Unterstützt werden die im Projekt verwendeten INSERT-Varianten,
+     * einschließlich LAST_INSERT_ID-Weitergaben und GAP-Optionen per
+     * INSERT ... SELECT.
+     */
     public static QuestionDataset parse(String rawSql) {
         ParserState state = new ParserState();
         List<String> statements = splitStatements(removeCommentLines(rawSql));
@@ -207,6 +214,14 @@ public final class QuestionSqlDatasetLoader {
         }
     }
 
+    /**
+     * Liest gap_option sowohl aus normalen VALUES-Statements als auch aus
+     * INSERT ... SELECT-Konstrukten.
+     *
+     * Der SELECT-Fall ist für den Projektbestand wichtig, weil GAP-Optionen
+     * teilweise über question_id und gap_index indirekt einem konkreten
+     * gap_field zugeordnet werden.
+     */
     private static void parseGapOption(List<String> columns, String mode, String payload, ParserState state) {
         if ("VALUES".equals(mode)) {
             for (List<String> tuple : parseValuesTuples(payload)) {
@@ -284,6 +299,12 @@ public final class QuestionSqlDatasetLoader {
         return asLong(trimmed);
     }
 
+    /**
+     * Löst einen SQL-Wert in einen Java-Wert auf.
+     *
+     * Unterstützt NULL, numerische Literale, String-Literale und die im
+     * Datensatz verwendeten @Variablen aus LAST_INSERT_ID-Ketten.
+     */
     private static Object resolveValue(String token, ParserState state) {
         if (token == null) {
             return null;
@@ -320,6 +341,12 @@ public final class QuestionSqlDatasetLoader {
                 .collect(Collectors.joining("\n"));
     }
 
+    /**
+     * Trennt SQL-Statements nur an Semikolons außerhalb von String-Literalen.
+     *
+     * Ein einfaches split(";") würde bei Texten mit Semikolon falsche
+     * Ergebnisse liefern.
+     */
     private static List<String> splitStatements(String sql) {
         List<String> statements = new ArrayList<>();
         StringBuilder current = new StringBuilder();
@@ -355,6 +382,13 @@ public final class QuestionSqlDatasetLoader {
         return statements;
     }
 
+    /**
+     * Zerlegt einen VALUES-Block in einzelne Tupel und respektiert dabei
+     * Strings sowie verschachtelte Klammern.
+     *
+     * Dadurch bleiben auch komplexere SQL-Werte robust lesbar, ohne auf
+     * einen vollständigen SQL-Parser angewiesen zu sein.
+     */
     private static List<List<String>> parseValuesTuples(String payload) {
         List<List<String>> tuples = new ArrayList<>();
         int i = 0;
@@ -399,6 +433,13 @@ public final class QuestionSqlDatasetLoader {
         return tuples;
     }
 
+    /**
+     * Trennt CSV-artige SQL-Teile nur an Kommata außerhalb von Strings und
+     * Klammerausdrücken.
+     *
+     * Das wird sowohl für Spaltenlisten als auch für VALUES-Inhalte
+     * verwendet.
+     */
     private static List<String> splitCsv(String text) {
         List<String> parts = new ArrayList<>();
         StringBuilder current = new StringBuilder();

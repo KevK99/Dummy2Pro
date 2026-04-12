@@ -44,21 +44,21 @@ import me.daskabel.dummy2pro.repository.RunSelectedAnswerRepository;
 import me.daskabel.dummy2pro.repository.ThemeRepository;
 
 /**
- * Kernlogik für die Raum/Quiz-Mechanik.
+ * Kernlogik für Räume, Fragen, Antwortauswertung und Fortschrittsspeicherung.
  *
- * Zuständigkeiten: - Fragen des Raums dieser Sitzung laden - Antworten auswerten (MC, TF, GAP) - Fortschritt in der DB
- * speichern - Raum-Status berechnen (%, Medal)
+ * Der Service verbindet die fachliche Raumlogik mit der Persistenz:
+ * Fragen werden themenbezogen geladen, Antworten je nach Fragetyp ausgewertet
+ * und der Bearbeitungsstand inklusive ausgewählter Antworten in der Datenbank
+ * abgelegt.
  *
- * Räume sind ein Konzept das Theme + Fragen zusammenbringt.
- * Die erste RaumID entspricht dem ersten Thema der Datenbank, egal welche ThemeID.
- *
- * Medal-Logik: - BRONZE: >= 50% der Fragen korrekt beantwortet - SILVER: >= 75% der Fragen korrekt beantwortet - GOLD:
- * 100% der Fragen korrekt beantwortet
+ * Wichtig ist hier vor allem die Unterscheidung zwischen:
+ * - Raumstruktur über die Reihenfolge der Themes
+ * - Fragen und deren Detaildaten
+ * - Fortschritt eines konkreten Spielstands
  */
 @Service
 public class RoomService
 {
-
     // Schwellwerte für Medaillen (Anteil der KORREKTEN Antworten an Gesamtfragen)
     private static final double BRONZE_THRESHOLD = 0.50;
     private static final double SILVER_THRESHOLD = 0.75;
@@ -68,7 +68,6 @@ public class RoomService
      * GAP auswerten. Jede Lücke wird einzeln bewertet. Die Gesamtfrage gilt als korrekt, wenn ALLE Lücken richtig
      * ausgefüllt wurden.
      */
-
     public static AnswerResultDto evaluateGap(Question question, AnswerRequest request)
     {
         // Gap-Options aus der DB: gap_id -> korrekte gap_option_id + Text
@@ -98,7 +97,6 @@ public class RoomService
             }
         }
 
-        // Jede Lücke auswerten
         List<GapResultEntry> gapResults = new ArrayList<>();
         boolean allCorrect = true;
 
@@ -157,9 +155,6 @@ public class RoomService
         return result;
     }
 
-    /**
-     * Eine Question-Entity in ein QuestionDto umwandeln (ohne is_correct!).
-     */
     private static QuestionDto toQuestionDto(Question q, int currentIndex, int total)
     {
         QuestionDto dto = new QuestionDto();
@@ -173,25 +168,30 @@ public class RoomService
         dto.setCurrentIndex(currentIndex);
         dto.setTotalCount(total);
 
-        // MC / TF: Antwortoptionen ohne is_correct
+        // Korrektheitsinformationen bleiben bewusst draußen, damit das Frontend
+        // die Lösung nicht schon vor der Auswertung kennt.
         if (q.getAnswerOptions() != null && !q.getAnswerOptions().isEmpty())
         {
-            List<AnswerOptionDto> options =
-                    q.getAnswerOptions().stream().sorted(Comparator.comparingInt(AnswerOption::getOptionOrder)).map(a -> {
+            List<AnswerOptionDto> options = q.getAnswerOptions()
+                    .stream()
+                    .sorted(Comparator.comparingInt(AnswerOption::getOptionOrder))
+                    .map(a -> {
                         AnswerOptionDto aDto = new AnswerOptionDto();
                         aDto.setAnswerId(a.getAnswerId());
                         aDto.setOptionText(a.getOptionText());
                         aDto.setOptionOrder(a.getOptionOrder());
                         return aDto;
-                    }).collect(Collectors.toList());
+                    })
+                    .collect(Collectors.toList());
             dto.setAnswerOptions(options);
         }
 
-        // GAP: Lücken mit Optionen ohne is_correct
         if (q.getGapFields() != null && !q.getGapFields().isEmpty())
         {
-            List<GapFieldDto> gapDtos =
-                    q.getGapFields().stream().sorted(Comparator.comparingInt(GapField::getGapIndex)).map(gf -> {
+            List<GapFieldDto> gapDtos = q.getGapFields()
+                    .stream()
+                    .sorted(Comparator.comparingInt(GapField::getGapIndex))
+                    .map(gf -> {
                         GapFieldDto gfDto = new GapFieldDto();
                         gfDto.setGapId(gf.getGapId());
                         gfDto.setGapIndex(gf.getGapIndex());
@@ -214,7 +214,8 @@ public class RoomService
                             gfDto.setGapOptions(gopts);
                         }
                         return gfDto;
-                    }).collect(Collectors.toList());
+                    })
+                    .collect(Collectors.toList());
             dto.setGapFields(gapDtos);
         }
 
@@ -224,20 +225,17 @@ public class RoomService
     private final QuestionRepository questionRepo;
     private final ThemeRepository themeRepo;
     private final GameRunRepository gameRunRepo;
-
     private final QuestionProgressRepository questionProgressRepo;
-
     private final RunSelectedAnswerRepository runSelectedAnswerRepo;
-
     private final RunGapAnswerRepository runGapAnswerRepo;
 
-    // =====================================================================
-    // ANSWER: Antwort auswerten und optional Fortschritt speichern
-    // =====================================================================
-
-    public RoomService(QuestionRepository questionRepo, ThemeRepository themeRepo, GameRunRepository gameRunRepo,
-                       QuestionProgressRepository questionProgressRepo, RunSelectedAnswerRepository runSelectedAnswerRepo,
-                       RunGapAnswerRepository runGapAnswerRepo)
+    public RoomService(
+            QuestionRepository questionRepo,
+            ThemeRepository themeRepo,
+            GameRunRepository gameRunRepo,
+            QuestionProgressRepository questionProgressRepo,
+            RunSelectedAnswerRepository runSelectedAnswerRepo,
+            RunGapAnswerRepository runGapAnswerRepo)
     {
         this.questionRepo = questionRepo;
         this.themeRepo = themeRepo;
@@ -247,12 +245,14 @@ public class RoomService
         this.runGapAnswerRepo = runGapAnswerRepo;
     }
 
-    // =====================================================================
-    // STATUS: Raum-Status berechnen
-    // =====================================================================
-
     /**
-     * Raum-Status aus DB-Einträgen berechnen.
+     * Baut den fachlichen Status eines Raums aus Fragen und gespeichertem
+     * Fortschritt zusammen.
+     *
+     * Grundlage ist nicht nur die Fragenmenge des Themas, sondern der
+     * konkrete Fortschritt des aktuellen Runs. Dadurch lassen sich Punkte,
+     * Medaille, offene Fragen und Antwortvergleiche konsistent aus einem
+     * gemeinsamen Datenstand ableiten.
      */
     private RoomStatusDto buildStatus(int roomId, Theme theme, List<Question> allQuestions, Long runId)
     {
@@ -266,6 +266,9 @@ public class RoomService
         List<QuestionProgress> progressList =
                 this.questionProgressRepo.findByRunIdAndRoomIdOrderByQuestionOrder(runId, roomId);
 
+        // Für die Statusberechnung wird der Fortschritt nach questionId
+        // indiziert, damit Fragenbestand und gespeicherter Run-Stand später
+        // ohne weitere Repository-Zugriffe zusammengeführt werden können.
         Map<Long, QuestionProgress> progressMap =
                 progressList.stream().collect(Collectors.toMap(p -> p.getQuestion().getQuestionId(), p -> p));
 
@@ -291,7 +294,6 @@ public class RoomService
         double pct = total > 0 ? (double) answered / total * 100.0 : 0.0;
         double correctRatio = total > 0 ? (double) correct / total : 0.0;
 
-        /* Medal-Logik nur für den aktuellen Raum */
         String medal;
         if (correctRatio >= GOLD_THRESHOLD)
         {
@@ -335,10 +337,10 @@ public class RoomService
                 comparison.setQuestionId(q.getQuestionId());
                 comparison.setSelectedAnswerIds(new ArrayList<>());
 
-                // Ausgewählte Antworten je nach Fragetyp ermitteln
                 if (q.getQuestionType() == QuestionType.GAP)
                 {
-                    // Hier fehlt derzeit noch die Logik für ausgewählte Lückenantworten
+                    // Für GAP-Fragen gibt es hier aktuell noch keine Detailrückgabe
+                    // der konkret ausgewählten Optionen.
                 }
                 else
                 {
@@ -350,7 +352,6 @@ public class RoomService
                     comparison.setSelectedAnswerIds(selectedIds);
                 }
 
-                // Korrekte Antworten sammeln
                 List<Long> correctAnswers = q.getAnswerOptions()
                         .stream()
                         .filter(AnswerOption::getIsCorrect)
@@ -367,14 +368,6 @@ public class RoomService
         return s;
     }
 
-    // =====================================================================
-    // Private Hilfsmethoden
-    // =====================================================================
-
-    /**
-     * Gibt eine bestimmte Frage aus der Sequenz zurück. Der Client schickt die question_id und den Index in der
-     * Sequenz.
-     */
     @Transactional(readOnly = true)
     public QuestionDto getQuestion(Long questionId, int indexInSequence, int totalInSequence)
     {
@@ -383,10 +376,6 @@ public class RoomService
         return toQuestionDto(q, indexInSequence, totalInSequence);
     }
 
-    /**
-     * Berechnet den aktuellen Status eines Raums für einen bestimmten Run, also einen bestimmten Spielstand eines
-     * Users.
-     */
     @Transactional(readOnly = true)
     public RoomStatusDto getRoomStatus(int roomId, Long runId)
     {
@@ -421,11 +410,12 @@ public class RoomService
     }
 
     /**
-     * Lädt alle Fragen eines Themas — MC/TF-Antworten und GAP-Felder mit möglichst wenigen DB-Zugriffen.
+     * Lädt alle Fragen eines Themas mit ihren Detaildaten.
      *
-     * Problem: zwei separate FETCH JOINs (Answers + Gaps) können nicht in einer Query kombiniert werden
-     * (MultipleBagFetchException). Lösung: erst Fragen laden, dann in zwei separaten Queries die Details ergänzen und
-     * in-memory zusammenführen.
+     * Hintergrund: Antworten und GAP-Strukturen können wegen der JPA/Hibernate-
+     * Mehrfach-Bag-Problematik nicht sauber in einer einzigen FETCH-JOIN-Abfrage
+     * kombiniert werden. Deshalb werden beide Sichten getrennt geladen und
+     * anschließend anhand der questionId zusammengeführt.
      */
     private List<Question> loadAllQuestionsForTheme(int roomId)
     {
@@ -466,6 +456,8 @@ public class RoomService
 
         List<Question> orderedQuestions = new ArrayList<>();
 
+        // Die Reihenfolge wird nicht dem Repository überlassen, sondern explizit
+        // über die zuvor geladene ID-Sequenz stabilisiert.
         for (Long questionId : questionIds)
         {
             Question question = mergedMap.get(questionId);
@@ -482,6 +474,14 @@ public class RoomService
     /**
      * Fortschritt für eine Frage speichern oder aktualisieren. Wenn der User dieselbe Frage erneut beantwortet, wird
      * der Eintrag überschrieben.
+     */
+    /**
+     * Persistiert das Ergebnis einer beantworteten Frage samt konkreter
+     * Auswahl.
+     *
+     * Vorhandene Detailantworten werden dabei pro Frage vollständig ersetzt,
+     * damit bei erneutem Submit keine alten MC-/GAP-Auswahlen im Run
+     * zurückbleiben.
      */
     private void saveProgress(Long runId, Question question, AnswerResultDto result, AnswerRequest request)
     {
@@ -503,6 +503,8 @@ public class RoomService
 
         if (question.getQuestionType() == QuestionType.GAP)
         {
+            // GAP-Antworten werden vor dem Neuschreiben komplett entfernt,
+            // weil jede Lücke als eigener Datensatz gespeichert wird.
             this.runGapAnswerRepo.deleteByRun_RunIdAndQuestion_QuestionId(runId, question.getQuestionId());
 
             Map<Long, GapField> gapFieldMap =
@@ -557,16 +559,6 @@ public class RoomService
         }
     }
 
-    /**
-     * Startet (oder setzt fort) einen Raum für einen bestimmten Run (Spielstand).
-     *
-     * - Lädt die Fragen des Raums in der gespeicherten Reihenfolge
-     * - Berechnet den aktuellen Status
-     * - Gibt die erste Frage + die Sequenz (alle IDs) zurück
-     *
-     * @param roomId Raum-ID entsprechend der Reihenfolge der Themes in der Tabelle theme
-     * @param runId aktueller Spielstand
-     */
     @Transactional(readOnly = true)
     public RoomStartDto startRoom(int roomId, Long runId)
     {
@@ -587,7 +579,6 @@ public class RoomService
 
         QuestionDto firstQuestion = toQuestionDto(orderedQuestions.get(0), 0, orderedQuestions.size());
 
-        // Status berechnen
         RoomStatusDto status = buildStatus(roomId, theme, orderedQuestions, runId);
 
         RoomStartDto result = new RoomStartDto();
@@ -597,17 +588,6 @@ public class RoomService
         return result;
     }
 
-    /**
-     * Wertet eine Antwort aus und speichert den Fortschritt im aktuellen Run.
-     *
-     * @param roomId
-     *        Raum-ID entsprechend der Reihenfolge der Themes in der Tabelle theme
-     * @param runId
-     *        aktueller Spielstand
-     * @param request
-     *        Antwort des Users
-     * @return Ergebnis: richtig/falsch + korrekte Antworten
-     */
     @Transactional
     public AnswerResultDto submitAnswer(int roomId, Long runId, AnswerRequest request)
     {
@@ -616,7 +596,7 @@ public class RoomService
                 .orElseThrow(() -> new NoSuchElementException("Frage " + request.getQuestionId() + " nicht gefunden."));
 
         validateQuestionBelongsToRoom(question, roomId);
-        // Antwort auswerten je nach Fragetyp
+
         AnswerResultDto result = switch (question.getQuestionType())
         {
             case MC, TF -> evaluateMcTf(question, request);
@@ -624,7 +604,6 @@ public class RoomService
             default -> throw new IllegalArgumentException("Unbekannter Fragetyp: " + question.getQuestionType());
         };
 
-        // Fortschritt speichern, User ist eingeloggt
         saveProgress(runId, question, result, request);
 
         return result;
@@ -675,5 +654,4 @@ public class RoomService
         Long themeId = question.getThemes().get(0).getThemeId();
         return getRoomIdForThemeId(themeId);
     }
-
 }

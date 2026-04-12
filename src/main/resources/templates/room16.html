@@ -5,6 +5,7 @@
 
 <body class="min-h-screen bg-[#020403] text-white font-mono tracking-wider dark:bg-[#000000] overflow-x-hidden">
 
+<!-- Raumseite für Raum 16 mit eigener Themeninszenierung und quizgesteuertem Ablauf im Raum. -->
 <div th:replace="~{fragments/headline :: headline(${ 'Raum ' + roomId}, ${'Thema: ' + themeName}, ${avatarUrl}, null, null)}"></div>
 
 <style>
@@ -348,6 +349,7 @@
 
 <script th:src="@{/js/darkmode.js}"></script>
 
+<!-- Raumlogik für Laden, Interaktion, Antwortprüfung und Raumfortschritt innerhalb von Raum 16. -->
 <script th:inline="javascript">
     const roomId = /*[[${roomId}]]*/ 16;
     const maxRoomId = 16;

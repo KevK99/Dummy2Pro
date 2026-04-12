@@ -38,6 +38,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+/**
+ * Ergänzende Unittests für weitere Ablaufpfade im {@link QuizSessionManager}.
+ *
+ * Getestet werden Wiederherstellung und Laden bestehender Räume, das
+ * Verhalten bei bereits beantworteten Fragen sowie Fehlerfälle beim Laden
+ * nicht existierender Runs.
+ */
 @ExtendWith(MockitoExtension.class)
 class QuizSessionManagerAdditionalTest
 {

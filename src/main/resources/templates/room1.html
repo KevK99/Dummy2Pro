@@ -13,6 +13,7 @@
 
 <body class="min-h-screen bg-[#000010] text-white font-mono tracking-wider dark:text-slate-700">
 
+<!-- Raumseite mit Intro-Szene, Spielfeld und dem eigentlichen Frageablauf für Raum 1. -->
 <div th:replace="~{fragments/headline :: headline(${ 'Raum ' + roomId}, ${'Thema: ' + themeName}, ${avatarUrl}, null, null)}"></div>
 
 <style>
@@ -324,6 +325,7 @@
 
 <script th:src="@{/js/darkmode.js}"></script>
 
+<!-- Zentrale Raumlogik für Introdialog, Session-Anbindung, Frageanzeige, Antwortprüfung und Raumabschluss. -->
 <script th:inline="javascript">
     const roomId = /*[[${roomId}]]*/ 1;
 

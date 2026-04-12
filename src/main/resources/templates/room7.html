@@ -5,6 +5,7 @@
 
 <body class="min-h-screen text-white font-mono tracking-wider overflow-x-hidden room7-theme-page">
 
+<!-- Raumseite mit eigenem Theme-Look und dem vollständigen Intro-/Quizablauf für Raum 7. -->
 <div th:replace="~{fragments/headline :: headline(${ 'Raum ' + roomId}, ${'Thema: ' + themeName}, ${avatarUrl}, null, null)}"></div>
 
 <style>
@@ -688,6 +689,7 @@
     </div>
 </div>
 
+<!-- Zentrale Ablaufsteuerung für Raum 7 einschließlich Theme-spezifischer UI-Zustände und Quizlogik. -->
 <script th:inline="javascript">
     const themeModeBtn = document.getElementById("darkmodeBtn");
     const htmlElement = document.documentElement;

@@ -10,6 +10,14 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Vergleicht den aus {@code data.sql} geladenen Fragenbestand mit einer
+ * freigegebenen Referenzdatei.
+ *
+ * Der Test schützt den versionierten Projektbestand vor unbeabsichtigten
+ * Änderungen. Bei absichtlichen Anpassungen kann die Referenzdatei per
+ * System-Property gezielt neu erzeugt werden.
+ */
 class QuestionSqlSnapshotReferenceTest
 {
     private static final Path REFERENCE_FILE = Path.of("src/test/resources/question-snapshot.txt");

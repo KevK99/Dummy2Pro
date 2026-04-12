@@ -11,6 +11,13 @@ import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unittests für die reine Laufzeitlogik der {@link QuizSession}.
+ *
+ * Geprüft werden Navigation und Status innerhalb einzelner Räume, die
+ * Fortschritts- und Medaillenberechnung sowie das Aggregieren mehrerer
+ * Räume in einer Sitzung.
+ */
 class QuizSessionUnitTest
 {
     @Test
