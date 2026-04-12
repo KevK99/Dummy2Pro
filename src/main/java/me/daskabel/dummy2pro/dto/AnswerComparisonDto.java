@@ -2,6 +2,10 @@ package me.daskabel.dummy2pro.dto;
 
 import java.util.List;
 
+/**
+ * Enthält den Vergleich zwischen ausgewählten und richtigen Antworten
+ * zu einer Frage.
+ */
 public class AnswerComparisonDto
 {
     private Long questionId;

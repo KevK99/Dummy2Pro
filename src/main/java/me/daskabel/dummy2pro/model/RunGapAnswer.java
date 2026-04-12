@@ -3,10 +3,17 @@ package me.daskabel.dummy2pro.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * Speichert die ausgewählte Antwort zu einer einzelnen Lücke innerhalb
+ * eines Spielstands.
+ *
+ * Damit kann für jede Lücke einer Frage nachvollzogen werden, welche
+ * Option gewählt wurde und wann die Antwort erfolgt ist.
+ */
 @Entity
 @Table(name = "run_gap_answer")
-public class RunGapAnswer {
-
+public class RunGapAnswer
+{
     @EmbeddedId
     private RunGapAnswerId id;
 
@@ -32,11 +39,13 @@ public class RunGapAnswer {
     @Column(name = "answered_at")
     private LocalDateTime answeredAt;
 
-    public RunGapAnswer() {
+    public RunGapAnswer()
+    {
     }
 
     public RunGapAnswer(GameRun run, Question question, GapField gapField,
-                        GapOption selectedGapOption, LocalDateTime answeredAt) {
+                        GapOption selectedGapOption, LocalDateTime answeredAt)
+    {
         this.id = new RunGapAnswerId(run.getRunId(), question.getQuestionId(), gapField.getGapId());
         this.run = run;
         this.question = question;
@@ -45,51 +54,63 @@ public class RunGapAnswer {
         this.answeredAt = answeredAt;
     }
 
-    public RunGapAnswerId getId() {
+    public RunGapAnswerId getId()
+    {
         return id;
     }
 
-    public void setId(RunGapAnswerId id) {
+    public void setId(RunGapAnswerId id)
+    {
         this.id = id;
     }
 
-    public GameRun getRun() {
+    public GameRun getRun()
+    {
         return run;
     }
 
-    public void setRun(GameRun run) {
+    public void setRun(GameRun run)
+    {
         this.run = run;
     }
 
-    public Question getQuestion() {
+    public Question getQuestion()
+    {
         return question;
     }
 
-    public void setQuestion(Question question) {
+    public void setQuestion(Question question)
+    {
         this.question = question;
     }
 
-    public GapField getGapField() {
+    public GapField getGapField()
+    {
         return gapField;
     }
 
-    public void setGapField(GapField gapField) {
+    public void setGapField(GapField gapField)
+    {
         this.gapField = gapField;
     }
 
-    public GapOption getSelectedGapOption() {
+    public GapOption getSelectedGapOption()
+    {
         return selectedGapOption;
     }
 
-    public void setSelectedGapOption(GapOption selectedGapOption) {
+    public void setSelectedGapOption(GapOption selectedGapOption)
+    {
         this.selectedGapOption = selectedGapOption;
     }
 
-    public LocalDateTime getAnsweredAt() {
+    public LocalDateTime getAnsweredAt()
+    {
         return answeredAt;
     }
 
-    public void setAnsweredAt(LocalDateTime answeredAt) {
+    public void setAnsweredAt(LocalDateTime answeredAt)
+    {
         this.answeredAt = answeredAt;
     }
 }

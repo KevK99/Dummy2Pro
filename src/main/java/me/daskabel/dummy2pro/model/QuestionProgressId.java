@@ -6,6 +6,12 @@ import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * Zusammengesetzter Schlüssel für den Bearbeitungsstand einer Frage.
+ *
+ * Der Schlüssel besteht aus Spielstand und Frage, damit jede Frage
+ * pro Spielstand genau einen Bearbeitungsstand besitzt.
+ */
 @Embeddable
 public class QuestionProgressId implements Serializable
 {
@@ -48,8 +54,14 @@ public class QuestionProgressId implements Serializable
     @Override
     public boolean equals(Object o)
     {
-        if (this == o) return true;
-        if (!(o instanceof QuestionProgressId that)) return false;
+        if (this == o)
+        {
+            return true;
+        }
+        if (!(o instanceof QuestionProgressId that))
+        {
+            return false;
+        }
         return Objects.equals(runId, that.runId)
                 && Objects.equals(questionId, that.questionId);
     }

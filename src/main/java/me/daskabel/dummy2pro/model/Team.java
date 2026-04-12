@@ -3,10 +3,16 @@ package me.daskabel.dummy2pro.model;
 import jakarta.persistence.*;
 import java.util.List;
 
+/**
+ * Repräsentiert ein Team, das Fragensätze erstellt oder verwaltet.
+ *
+ * Ein Team besitzt einen Namen und kann mehreren Fragensätzen
+ * zugeordnet sein.
+ */
 @Entity
 @Table(name = "team")
-public class Team {
-
+public class Team
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "team_id")
@@ -18,20 +24,42 @@ public class Team {
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuestionSet> questionSets;
 
-    // Constructors
-    public Team() {}
+    public Team()
+    {
+    }
 
-    public Team(String name) {
+    public Team(String name)
+    {
         this.name = name;
     }
 
-    // Getters & Setters
-    public Long getTeamId() { return teamId; }
-    public void setTeamId(Long teamId) { this.teamId = teamId; }
+    public Long getTeamId()
+    {
+        return teamId;
+    }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public void setTeamId(Long teamId)
+    {
+        this.teamId = teamId;
+    }
 
-    public List<QuestionSet> getQuestionSets() { return questionSets; }
-    public void setQuestionSets(List<QuestionSet> questionSets) { this.questionSets = questionSets; }
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    public List<QuestionSet> getQuestionSets()
+    {
+        return questionSets;
+    }
+
+    public void setQuestionSets(List<QuestionSet> questionSets)
+    {
+        this.questionSets = questionSets;
+    }
 }

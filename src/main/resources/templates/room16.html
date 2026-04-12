@@ -5,6 +5,7 @@
 
 <body class="min-h-screen bg-[#020403] text-white font-mono tracking-wider dark:bg-[#000000] overflow-x-hidden">
 
+<!-- Raumseite für Raum 16 mit eigener Themeninszenierung und quizgesteuertem Ablauf im Raum. -->
 <div th:replace="~{fragments/headline :: headline(${ 'Raum ' + roomId}, ${'Thema: ' + themeName}, ${avatarUrl}, null, null)}"></div>
 
 <style>
@@ -66,6 +67,10 @@
 
             <!-- ROOM CONTENT -->
             <div class="relative h-[560px] flex items-center justify-center">
+                <!-- MINI-PANDAS BACKGROUND -->
+                <div id="welcomeMiniPandas"
+                     class="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-80">
+                </div>
 
                 <!-- SPEECH PANEL -->
                 <div id="speechPanel" class="absolute top-8 left-1/2 -translate-x-[42%] w-[62%] z-20 transition-all duration-300">
@@ -214,8 +219,8 @@
                 <!-- Raum-CHARACTER -->
                 <div class="absolute right-[140px] bottom-[95px] z-10">
                     <img
-                            src="/room-characters/Schmied.png"
-                            alt="Raumcharakter Schmied"
+                            src="/room-characters/Org.png"
+                            alt="Raumcharakter Ork"
                             class="w-[150px]"
                             style="image-rendering: pixelated; filter: drop-shadow(0 0 10px rgba(34,197,94,0.45));"
                     >
@@ -277,11 +282,16 @@
             background-position: 0 0, 0 0, 6px 6px;
          ">
 
+        <!-- MINI-PANDAS BACKGROUND -->
+        <div id="gameMiniPandas"
+             class="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-70">
+        </div>
+
         <!-- ROOM CHARACTER -->
         <div id="gameRoomCharacter" class="absolute left-[105px] top-[-5px] z-20 pointer-events-none">
             <img
-                    src="/room-characters/Schmied.png"
-                    alt="Raumcharakter Schmied"
+                    src="/room-characters/Org.png"
+                    alt="Raumcharakter Ork"
                     class="w-[110px]"
                     style="image-rendering: pixelated; transform: scaleX(-1); filter: drop-shadow(0 0 10px rgba(34,197,94,0.45));"
             >
@@ -339,6 +349,7 @@
 
 <script th:src="@{/js/darkmode.js}"></script>
 
+<!-- Raumlogik für Laden, Interaktion, Antwortprüfung und Raumfortschritt innerhalb von Raum 16. -->
 <script th:inline="javascript">
     const roomId = /*[[${roomId}]]*/ 16;
     const maxRoomId = 16;
@@ -374,6 +385,7 @@
     let selectedAnswerIds = [];
     let selectedGapAnswers = [];
     let selectedGapAnswersMap = {};
+    let isSubmittingAnswer = false;
     let currentGapStep = 0;
     let roomLoaded = false;
 
@@ -385,37 +397,179 @@
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    function startFallingPanda(element, maxX, minY, maxY, intervalMs) {
+    function randomFloat(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+
+    function getMiniPandaSvgMarkup() {
+        return `
+        <div class="flex flex-col items-center">
+            <div class="w-[110px] h-[18px] bg-[#22c55e]/20 rounded-full blur-sm"></div>
+
+            <svg class="w-[160px] mt-[-8px]" viewBox="0 0 24 24" shape-rendering="crispEdges">
+                <rect x="19" y="4" width="2" height="16" fill="#14532d"/>
+                <rect x="18" y="3" width="4" height="2" fill="#14532d"/>
+                <rect x="18" y="2" width="4" height="1" fill="#166534"/>
+                <rect x="19" y="1" width="2" height="2" class="panda-leaf-fill"/>
+
+                <rect x="7" y="3" width="10" height="8" fill="#050a14"/>
+                <rect x="8" y="4" width="8" height="6" fill="#d9ffe7"/>
+
+                <rect x="10" y="6" width="2" height="2" fill="#050a14"/>
+                <rect x="14" y="6" width="2" height="2" fill="#050a14"/>
+
+                <rect x="12" y="8" width="1" height="1" fill="#050a14"/>
+
+                <rect x="6" y="12" width="12" height="9" fill="#050a14"/>
+                <rect x="7" y="13" width="10" height="7" fill="#00ff66"/>
+
+                <rect x="5" y="14" width="2" height="3" fill="#d9ffe7"/>
+                <rect x="17" y="14" width="2" height="3" fill="#d9ffe7"/>
+
+                <rect x="8" y="20" width="3" height="2" fill="#d9ffe7"/>
+                <rect x="13" y="20" width="3" height="2" fill="#d9ffe7"/>
+            </svg>
+        </div>
+    `;
+    }
+
+    function startFallingPanda(element, config = {}) {
         if (!element) {
             return;
         }
 
-        const drop = () => {
+        const {
+            maxX = 420,
+            startYMin = -320,
+            startYMax = -180,
+            endY = 720,
+            durationMin = 5000,
+            durationMax = 8000,
+            tiltMin = -8,
+            tiltMax = 8,
+            delayMin = 0,
+            delayMax = 0
+        } = config;
+
+        const fall = () => {
             const x = randomInt(0, maxX);
-            const endY = randomInt(minY, maxY);
-            const tilt = randomInt(-18, 18);
+            const startY = randomInt(startYMin, startYMax);
+            const finishY = endY;
+            const startTilt = randomInt(-4, 4);
+            const endTilt = randomInt(tiltMin, tiltMax);
+            const duration = randomInt(durationMin, durationMax);
 
             element.getAnimations().forEach(animation => animation.cancel());
 
-            element.animate([
-                { transform: `translate(${x}px, -180px) rotate(0deg)` },
-                { transform: `translate(${x}px, ${endY}px) rotate(${tilt}deg)` },
-                { transform: `translate(${x}px, ${Math.max(0, endY - 14)}px) rotate(${Math.trunc(tilt / 2)}deg)` },
-                { transform: `translate(${x}px, ${endY}px) rotate(0deg)` }
+            const animation = element.animate([
+                { transform: `translate(${x}px, ${startY}px) rotate(${startTilt}deg)` },
+                { transform: `translate(${x}px, ${finishY}px) rotate(${endTilt}deg)` }
             ], {
-                duration: randomInt(900, 1500),
-                easing: "cubic-bezier(.18,.72,.22,1.18)",
+                duration,
+                easing: "linear",
                 fill: "forwards"
             });
+
+            animation.onfinish = () => {
+                const nextDelay = randomInt(delayMin, delayMax);
+                setTimeout(fall, nextDelay);
+            };
         };
 
-        drop();
-        setInterval(drop, intervalMs);
+        fall();
+    }
+
+    function spawnMiniPandas(container, options = {}) {
+        if (!container) {
+            return;
+        }
+
+        const count = randomInt(options.minCount ?? 3, options.maxCount ?? 7);
+
+        for (let i = 0; i < count; i++) {
+            const panda = document.createElement("div");
+            const scale = randomFloat(options.minScale ?? 0.24, options.maxScale ?? 0.5);
+
+            panda.className = "absolute left-0 top-0 z-0 pointer-events-none";
+            panda.style.opacity = String(randomFloat(0.18, 0.45));
+            panda.style.transformOrigin = "top left";
+            panda.innerHTML = `
+            <div style="transform: scale(${scale}); transform-origin: top left;">
+                ${getMiniPandaSvgMarkup()}
+            </div>
+        `;
+
+            container.appendChild(panda);
+
+            setTimeout(() => {
+                startFallingPanda(panda, {
+                    maxX: options.maxX ?? 920,
+                    startYMin: options.startYMin ?? -420,
+                    startYMax: options.startYMax ?? -180,
+                    endY: options.endY ?? 760,
+                    durationMin: options.durationMin ?? 9000,
+                    durationMax: options.durationMax ?? 14000,
+                    tiltMin: -6,
+                    tiltMax: 6,
+                    delayMin: 0,
+                    delayMax: 0
+                });
+            }, randomInt(0, 2500));
+        }
     }
 
     function initRandomPandas() {
-        startFallingPanda(welcomePandaInner, 420, 35, 170, 1700);
-        startFallingPanda(gamePandaInner, 860, 45, 255, 1400);
+        startFallingPanda(welcomePandaInner, {
+            maxX: 420,
+            startYMin: -300,
+            startYMax: -180,
+            endY: 500,
+            durationMin: 7000,
+            durationMax: 10500,
+            tiltMin: -8,
+            tiltMax: 8,
+            delayMin: 0,
+            delayMax: 0
+        });
+
+        startFallingPanda(gamePandaInner, {
+            maxX: 860,
+            startYMin: -320,
+            startYMax: -200,
+            endY: 760,
+            durationMin: 6500,
+            durationMax: 9800,
+            tiltMin: -8,
+            tiltMax: 8,
+            delayMin: 0,
+            delayMax: 0
+        });
+
+        spawnMiniPandas(document.getElementById("welcomeMiniPandas"), {
+            minCount: 3,
+            maxCount: 7,
+            maxX: 820,
+            startYMin: -420,
+            startYMax: -180,
+            endY: 760,
+            durationMin: 10000,
+            durationMax: 15000,
+            minScale: 0.22,
+            maxScale: 0.48
+        });
+
+        spawnMiniPandas(document.getElementById("gameMiniPandas"), {
+            minCount: 3,
+            maxCount: 7,
+            maxX: 980,
+            startYMin: -450,
+            startYMax: -180,
+            endY: 860,
+            durationMin: 9500,
+            durationMax: 14500,
+            minScale: 0.2,
+            maxScale: 0.44
+        });
     }
 
     const welcomeContainer = document.getElementById("welcomeContainer");
@@ -443,6 +597,105 @@
 
     let dialogIndex = 0;
 
+    async function ensureFinalRoomUnlocked() {
+        try {
+            const response = await fetch(`/api/session/${sessionId}/overview`);
+
+            if (!response.ok) {
+                alert("Abschlussstatus konnte nicht geprüft werden.");
+                window.location.href = "/dashboard";
+                return false;
+            }
+
+            const overview = await response.json();
+            const rooms = Array.isArray(overview.rooms) ? overview.rooms : [];
+
+            const quizRooms = rooms.filter(room => Number(room.roomId) >= 1 && Number(room.roomId) <= 15);
+
+            const allQuizRoomsCompleted =
+                quizRooms.length === 15 &&
+                quizRooms.every(room =>
+                    Number(room.totalQuestions ?? 0) > 0 &&
+                    Number(room.answeredQuestions ?? 0) >= Number(room.totalQuestions ?? 0)
+                );
+
+            if (!allQuizRoomsCompleted) {
+                alert("Du musst zuerst alle Räume 1 bis 15 abschließen.");
+                window.location.href = "/dashboard";
+                return false;
+            }
+
+            return true;
+        } catch (error) {
+            console.error("Fehler beim Prüfen des Abschlussstatus:", error);
+            alert("Abschlussstatus konnte nicht geprüft werden.");
+            window.location.href = "/dashboard";
+            return false;
+        }
+    }
+
+    function nextDialogLine() {
+        if (!introDialog || dialogIndex >= introDialog.length - 1) {
+            return;
+        }
+
+        dialogIndex++;
+        showCurrentDialogLine();
+    }
+
+    function startQuiz() {
+        window.location.href = "/endscreen";
+    }
+
+    async function initWelcomeRoom() {
+        const unlocked = await ensureFinalRoomUnlocked();
+        if (!unlocked) {
+            return;
+        }
+
+        introDialog = [
+            {
+                speaker: "room",
+                text: "Du hast es tatsächlich bis hierhin geschafft."
+            },
+            {
+                speaker: "player",
+                text: "Dann ist das hier also der letzte Raum?"
+            },
+            {
+                speaker: "room",
+                text: "Kein weiterer Test. Kein weiteres Quiz. Nur noch ein letzter Blick zurück."
+            },
+            {
+                speaker: "room",
+                text: "Du hast alle fünfzehn Prüfungsräume abgeschlossen."
+            },
+            {
+                speaker: "room",
+                text: "Geh weiter. Dein Endscreen wartet schon."
+            }
+        ];
+
+        dialogIndex = 0;
+        currentQuestion = null;
+        roomLoaded = true;
+
+        if (submitAnswerBtn) {
+            submitAnswerBtn.classList.add("hidden");
+        }
+
+        if (nextQuestionBtn) {
+            nextQuestionBtn.classList.add("hidden");
+        }
+
+        if (startQuizBtn) {
+            startQuizBtn.innerText = "Zum Endscreen";
+            startQuizBtn.classList.add("hidden");
+        }
+
+        showCurrentDialogLine();
+    }
+
     function showCurrentDialogLine() {
         if (!introDialog || introDialog.length === 0) {
             dialogText.innerText = "...";
@@ -453,7 +706,7 @@
         }
 
         const line = introDialog[dialogIndex];
-        const speakerLabel = line.speaker === "player" ? "Du" : "Schmied";
+        const speakerLabel = line.speaker === "player" ? "Du" : "Org";
 
         updateSpeechTailPosition(line.speaker);
         dialogText.innerText = `${speakerLabel}: ${line.text}`;
@@ -472,7 +725,15 @@
         selectedGapAnswers = [];
         selectedGapAnswersMap = {};
         currentGapStep = 0;
-        feedbackBox.innerText = "";
+        isSubmittingAnswer = false;
+        clearRoomFeedbackBox(feedbackBox);
+
+        if (!gameContainer.classList.contains("hidden")) {
+            hidePandaGameComment();
+        }
+
+        submitAnswerBtn.disabled = false;
+        submitAnswerBtn.classList.remove("opacity-70", "cursor-not-allowed");
         submitAnswerBtn.classList.add("hidden");
         nextQuestionBtn.classList.add("hidden");
 
@@ -498,9 +759,10 @@
             return;
         }
 
-        questionText.className = "text-center px-6 shrink-0 min-h-[72px] max-h-[250px] overflow-hidden leading-[1.08] text-[clamp(10px,1.15vw,18px)] text-[#86efac]";
-        questionText.innerText = question.startText || "Keine Frage vorhanden.";
-        questionText.style.wordBreak = "break-word";
+        renderStandardQuestionText(
+            question,
+            "text-center px-6 shrink-0 min-h-[72px] max-h-[250px] overflow-hidden leading-[1.08] text-[clamp(10px,1.15vw,18px)] text-[#86efac]"
+        );
 
         if (!question.answerOptions || question.answerOptions.length === 0) {
             answerContainer.innerHTML = `
@@ -511,10 +773,12 @@
             return;
         }
 
-        answerContainer.className = "grid grid-cols-2 gap-4 flex-1 min-h-0 content-stretch";
-
         const optionCount = question.answerOptions.length;
         const rows = Math.ceil(optionCount / 2);
+
+        answerContainer.className = rows >= 3
+            ? "grid grid-cols-2 gap-3 flex-1 min-h-0 content-stretch"
+            : "grid grid-cols-2 gap-4 flex-1 min-h-0 content-stretch";
 
         answerContainer.style.gridAutoRows = "1fr";
 
@@ -537,12 +801,20 @@
                 flex items-center
             `;
 
-            button.style.minHeight = rows >= 2 ? "120px" : "150px";
+            if (rows >= 4) {
+    button.style.minHeight = "72px";
+} else if (rows === 3) {
+    button.style.minHeight = "92px";
+} else if (rows === 2) {
+    button.style.minHeight = "120px";
+} else {
+    button.style.minHeight = "150px";
+}
             button.style.boxShadow = "0 0 14px rgba(34,197,94,0.14)";
 
             const label = document.createElement("div");
             label.className = "answer-label w-full leading-[1.35]";
-            label.innerText = `${String.fromCharCode(65 + index)}) ${option.optionText}`;
+            label.innerText = buildAnswerPreviewText(index, option.optionText);
 
             button.appendChild(label);
 
@@ -926,6 +1198,10 @@
             return;
         }
 
+        if (isSubmittingAnswer) {
+            return;
+        }
+
         if (!gapQuestion && selectedAnswerIds.length === 0) {
             return;
         }
@@ -938,6 +1214,10 @@
                 return;
             }
         }
+
+        isSubmittingAnswer = true;
+        submitAnswerBtn.disabled = true;
+        submitAnswerBtn.classList.add("opacity-70", "cursor-not-allowed");
 
         try {
             const requestBody = {
@@ -957,6 +1237,9 @@
             const data = await response.json();
 
             if (!response.ok) {
+                isSubmittingAnswer = false;
+                submitAnswerBtn.disabled = false;
+                submitAnswerBtn.classList.remove("opacity-70", "cursor-not-allowed");
                 alert(data.message || "Antwort konnte nicht geprüft werden.");
                 return;
             }
@@ -1013,19 +1296,30 @@
                 }
             }
 
-            feedbackBox.innerText = data.correct
-                ? `Richtig! +${data.pointsEarned} Punkt(e)`
-                : `Falsch! +${data.pointsEarned} Punkt(e)`;
+            const pandaWrongComment = data.correct ? "" : getRoomWrongFeedbackLine(roomId);
 
-            feedbackBox.className = data.correct
-                ? "mt-6 text-center text-lg font-black text-emerald-400"
-                : "mt-6 text-center text-lg font-black text-red-400";
+            showRoomFeedbackBox(
+                feedbackBox,
+                data.correct
+                    ? `Richtig! +${data.pointsEarned} Punkt(e)`
+                    : buildRoomWrongFeedbackText(roomId, data.pointsEarned),
+                data.correct ? "success" : "error"
+            );
+
+            if (data.correct) {
+                hidePandaGameComment();
+            } else {
+                showPandaGameComment(pandaWrongComment);
+            }
 
             submitAnswerBtn.classList.add("hidden");
             nextQuestionBtn.classList.remove("hidden");
 
             await refreshRoomStatus();
         } catch (error) {
+            isSubmittingAnswer = false;
+            submitAnswerBtn.disabled = false;
+            submitAnswerBtn.classList.remove("opacity-70", "cursor-not-allowed");
             console.error("Fehler beim Prüfen der Antwort:", error);
             alert("Antwort konnte nicht geprüft werden.");
         }
@@ -1085,8 +1379,11 @@
         questionText.innerText = "Raum abgeschlossen.";
         answerContainer.innerHTML = "";
 
-        feedbackBox.innerText = "Du hast alle Fragen dieses Raums beantwortet.";
-        feedbackBox.className = "mt-6 text-center text-lg font-black text-emerald-400";
+        showRoomFeedbackBox(
+            feedbackBox,
+            "Du hast alle Fragen dieses Raums beantwortet.",
+            "success"
+        );
 
         submitAnswerBtn.classList.add("hidden");
 

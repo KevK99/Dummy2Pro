@@ -10,10 +10,20 @@ import org.springframework.data.repository.query.Param;
 import me.daskabel.dummy2pro.model.Question;
 
 /**
- * Datenbankzugriff für Fragen.
+ * Stellt Datenbankzugriffe für Fragen bereit.
+ *
+ * Enthält Methoden zum Laden von Fragen, Fragen-IDs und den zugehörigen
+ * Antwort- bzw. Lückendaten.
  */
 public interface QuestionRepository extends JpaRepository<Question, Long>
 {
+    /**
+     * Liefert die IDs aller Fragen eines Themes in aufsteigender Reihenfolge.
+     *
+     * Die Methode wird dann verwendet, wenn zunächst nur die Reihenfolge
+     * bestimmt werden soll und die eigentlichen Fragedaten in einem zweiten
+     * Schritt gezielt mit Unterobjekten nachgeladen werden.
+     */
     @Query("""
         SELECT q.questionId
         FROM Question q
@@ -23,6 +33,12 @@ public interface QuestionRepository extends JpaRepository<Question, Long>
     """)
     List<Long> findQuestionIdsByThemeId(@Param("themeId") Long themeId);
 
+    /**
+     * Lädt Fragen zusammen mit ihren Antwortoptionen.
+     *
+     * Das {@code FETCH JOIN} verhindert zusätzliche Nachladezugriffe beim
+     * Zugriff auf MC- oder TF-Antworten.
+     */
     @Query("""
         SELECT DISTINCT q
         FROM Question q
@@ -31,6 +47,12 @@ public interface QuestionRepository extends JpaRepository<Question, Long>
     """)
     List<Question> findByQuestionIdsWithAnswers(@Param("questionIds") List<Long> questionIds);
 
+    /**
+     * Lädt Fragen zusammen mit ihren Lückenfeldern und deren Auswahloptionen.
+     *
+     * Die Abfrage ist für GAP-Fragen gedacht, damit die komplette Struktur in
+     * einem Zugriff vorliegt.
+     */
     @Query("""
         SELECT DISTINCT q
         FROM Question q
@@ -40,6 +62,11 @@ public interface QuestionRepository extends JpaRepository<Question, Long>
     """)
     List<Question> findByQuestionIdsWithGaps(@Param("questionIds") List<Long> questionIds);
 
+    /**
+     * Lädt genau eine Frage inklusive Antwortoptionen.
+     *
+     * Wird typischerweise für die Auswertung von MC- und TF-Antworten verwendet.
+     */
     @Query("""
         SELECT DISTINCT q
         FROM Question q
@@ -48,6 +75,12 @@ public interface QuestionRepository extends JpaRepository<Question, Long>
     """)
     Optional<Question> findByQuestionIdWithAnswers(@Param("questionId") Long questionId);
 
+    /**
+     * Lädt genau eine Frage inklusive Lückenfeldern und deren Optionen.
+     *
+     * Damit kann eine GAP-Frage vollständig ausgewertet werden, ohne dass
+     * weitere Lazy-Loads nötig sind.
+     */
     @Query("""
         SELECT DISTINCT q
         FROM Question q

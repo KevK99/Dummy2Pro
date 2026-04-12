@@ -3,11 +3,18 @@ package me.daskabel.dummy2pro.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * Repräsentiert einen einzelnen Spielstand eines Benutzers.
+ *
+ * Gespeichert werden der Besitzer des Spielstands, der Startzeitpunkt,
+ * ein möglicher Abschlusszeitpunkt und ein optionaler Anzeigename.
+ */
 @Entity
 @Table(name = "game_run")
-public class GameRun {
-
-    public GameRun(User user, LocalDateTime startedAt) {
+public class GameRun
+{
+    public GameRun(User user, LocalDateTime startedAt)
+    {
         this.user = user;
         this.startedAt = startedAt;
     }
@@ -30,46 +37,57 @@ public class GameRun {
     @Column(name = "display_name")
     private String displayName;
 
-    public GameRun() {
+    public GameRun()
+    {
     }
 
-    public Long getRunId() {
+    public Long getRunId()
+    {
         return runId;
     }
 
-    public void setRunId(Long runId) {
+    public void setRunId(Long runId)
+    {
         this.runId = runId;
     }
 
-    public User getUser() {
+    public User getUser()
+    {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(User user)
+    {
         this.user = user;
     }
 
-    public LocalDateTime getStartedAt() {
+    public LocalDateTime getStartedAt()
+    {
         return startedAt;
     }
 
-    public void setStartedAt(LocalDateTime startedAt) {
+    public void setStartedAt(LocalDateTime startedAt)
+    {
         this.startedAt = startedAt;
     }
 
-    public LocalDateTime getFinishedAt() {
+    public LocalDateTime getFinishedAt()
+    {
         return finishedAt;
     }
 
-    public void setFinishedAt(LocalDateTime finishedAt) {
+    public void setFinishedAt(LocalDateTime finishedAt)
+    {
         this.finishedAt = finishedAt;
     }
 
-    public String getDisplayName() {
+    public String getDisplayName()
+    {
         return this.displayName;
     }
 
-    public void setDisplayName(String displayName) {
+    public void setDisplayName(String displayName)
+    {
         this.displayName = displayName;
     }
 }

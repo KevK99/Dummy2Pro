@@ -4,6 +4,11 @@
       th:replace="~{base :: layout(~{::body}, 'min-h-screen bg-[linear-gradient(135deg,_#60a5fa_0%,_#a78bfa_35%,_#f87171_70%,_#f472b6_100%)] text-slate-950 dark:bg-none dark:bg-slate-950 dark:text-slate-100')}">
 <body>
 
+<!--
+    Entwicklungsvariante des Dashboards.
+    Die Seite lädt Übersicht und Session-Zustand direkt über die API und
+    bildet damit den Dashboard-Flow unabhängig vom finalen Template nach.
+-->
 <div class="bg-transparent text-slate-950 dark:bg-transparent dark:text-inherit">
     <div th:replace="~{fragments/headline :: headline(${username}, ${answeredQuestions}, ${totalQuestions}, ${avatarUrl})}"></div>
 </div>
@@ -12,6 +17,8 @@
 
 <script th:src="@{/js/darkmode.js}"></script>
 <script>
+    // Hält die zuletzt geladene Dashboard-Übersicht vor, damit beim Öffnen
+    // eines Raums der passende Run wiederverwendet werden kann.
     let currentDashboardOverview = null;
 
     async function fetchDashboardOverview() {
@@ -47,6 +54,8 @@
         const storedSessionId = sessionStorage.getItem("sessionId");
         const storedRunId = sessionStorage.getItem("runId");
 
+        // Eine vorhandene Session wird nur weiterverwendet, wenn sie noch
+        // zum aktuell angezeigten Run passt und serverseitig weiterhin gültig ist.
         if (storedSessionId && storedRunId && desiredRunId && storedRunId === String(desiredRunId)) {
             const probeResponse = await fetch(`/api/session/${storedSessionId}/overview`);
 
@@ -58,6 +67,8 @@
             }
         }
 
+        // Veraltete Session-Daten werden vor dem Neuaufbau bewusst entfernt,
+        // damit kein Raum mit einem falschen Run geöffnet wird.
         sessionStorage.removeItem("sessionId");
         sessionStorage.removeItem("runId");
 
@@ -97,6 +108,8 @@
 
         const rooms = Array.isArray(data.rooms) ? data.rooms : [];
 
+        // Die Headline summiert ihre Zahlen aus allen Raumübersichten und
+        // nicht aus separaten zusätzlichen API-Werten.
         const totalAnsweredQuestions = rooms.reduce((sum, room) => {
             return sum + Number(room.answeredQuestions ?? 0);
         }, 0);

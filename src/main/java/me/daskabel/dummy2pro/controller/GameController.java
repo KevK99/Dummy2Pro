@@ -1,27 +1,32 @@
 package me.daskabel.dummy2pro.controller;
 
-import java.util.NoSuchElementException;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import me.daskabel.dummy2pro.model.GameRun;
 import me.daskabel.dummy2pro.repository.GameRunRepository;
 import me.daskabel.dummy2pro.repository.QuestionProgressRepository;
 import me.daskabel.dummy2pro.repository.RunGapAnswerRepository;
 import me.daskabel.dummy2pro.repository.RunSelectedAnswerRepository;
 import me.daskabel.dummy2pro.session.QuizSessionManager;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.NoSuchElementException;
+
+/**
+ * Stellt Endpunkte für die Verwaltung von Spielständen bereit.
+ *
+ * Der Controller deckt hier das Löschen einzelner Spielstände ab und sorgt
+ * dabei dafür, dass sowohl abhängige Fortschrittsdaten als auch eine eventuell
+ * noch offene Laufzeitsitzung konsistent entfernt werden.
+ */
 @RestController
 @RequestMapping("/api/game")
 public class GameController
 {
+    /**
+     * Einfache Antwort für erfolgreiche oder erwartbare Meldungen.
+     */
     public static class MessageResponse
     {
         private final String message;
@@ -37,6 +42,9 @@ public class GameController
         }
     }
 
+    /**
+     * Einheitliches Fehlerobjekt für API-Antworten.
+     */
     public static class ErrorResponse
     {
         private final String error;
@@ -79,10 +87,21 @@ public class GameController
         this.sessionManager = sessionManager;
     }
 
+    /**
+     * Löscht einen Spielstand des aktuell angemeldeten Benutzers.
+     *
+     * Der letzte verbleibende Spielstand darf nicht gelöscht werden.
+     *
+     * @param runId          ID des zu löschenden Spielstands
+     * @param authentication aktuelle Anmeldung
+     * @return Erfolgsmeldung oder fachliche Fehlermeldung
+     */
     @Transactional
     @DeleteMapping("/{runId}")
-    public ResponseEntity<MessageResponse> deleteGameRun(@PathVariable Long runId, @RequestParam Long userId)
+    public ResponseEntity<MessageResponse> deleteGameRun(@PathVariable Long runId, Authentication authentication)
     {
+        Long userId = AuthController.extractUserId(authentication);
+
         GameRun run = this.gameRunRepository.findByRunIdAndUser_UserId(runId, userId)
                 .orElseThrow(() -> new NoSuchElementException("Spielstand nicht gefunden"));
 
@@ -93,14 +112,23 @@ public class GameController
                     .body(new MessageResponse("Der letzte Spielstand kann nicht gelöscht werden."));
         }
 
+        // Zuerst abhängige Daten löschen, danach den eigentlichen Spielstand.
+        this.runSelectedAnswerRepository.deleteByRun_RunId(runId);
+        this.runGapAnswerRepository.deleteByRun_RunId(runId);
+        this.questionProgressRepository.deleteByRun_RunId(runId);
+
         this.gameRunRepository.delete(run);
         this.gameRunRepository.flush();
 
+        // Eine eventuell noch offene Sitzung zu diesem Spielstand ebenfalls entfernen.
         this.sessionManager.removeRunSession(runId);
 
         return ResponseEntity.ok(new MessageResponse("Spielstand erfolgreich gelöscht."));
     }
 
+    /**
+     * Wandelt einen nicht gefundenen Spielstand in eine 404-Antwort um.
+     */
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<ErrorResponse> handleNotFound(NoSuchElementException ex)
     {

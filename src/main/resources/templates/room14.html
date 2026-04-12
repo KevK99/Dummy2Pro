@@ -5,6 +5,7 @@
 
 <body class="min-h-screen bg-[#93C5FD] text-white font-mono tracking-wider dark:bg-[#000010] overflow-x-hidden">
 
+<!-- Raumseite für Raum 14 mit Introbereich, aktiver Spielszene und themenbezogenem Quizfluss. -->
 <div th:replace="~{fragments/headline :: headline(${ 'Raum ' + roomId}, ${'Thema: ' + themeName}, ${avatarUrl}, null, null)}"></div>
 
 <style>
@@ -171,7 +172,7 @@
                 </div>
 
                 <!-- Troll-CHARACTER PANDA -->
-                <div id="welcomePanda" class="absolute left-[120px] top-[180px] z-10 pointer-events-none">
+                <div id="welcomePanda" class="absolute right-[-12px] top-[0px] z-10 pointer-events-none">
                     <div id="welcomePandaInner" class="transition-all duration-700 ease-in-out flex flex-col items-center">
                         <div class="w-[170px] h-[30px] bg-white/40 rounded-full blur-sm"></div>
 
@@ -204,8 +205,8 @@
                 <!-- Raum-CHARACTER -->
                 <div class="absolute right-[140px] bottom-[95px] z-10">
                     <img
-                            src="/room-characters/Schmied.png"
-                            alt="Raumcharakter Schmied"
+                            src="/room-characters/Frosch.png"
+                            alt="Raumcharakter Frosch"
                             class="w-[150px]"
                             style="image-rendering: pixelated;"
                     >
@@ -268,15 +269,15 @@
         <!-- ROOM CHARACTER -->
         <div id="gameRoomCharacter" class="absolute left-[105px] top-[-5px] z-20 pointer-events-none">
             <img
-                    src="/room-characters/Schmied.png"
-                    alt="Raumcharakter Schmied"
+                    src="/room-characters/Frosch.png"
+                    alt="Raumcharakter Frosch"
                     class="w-[110px]"
                     style="image-rendering: pixelated; transform: scaleX(-1);"
             >
         </div>
 
         <!-- PANDA -->
-        <div id="gamePanda" class="absolute left-[80px] top-[-24px] z-50 pointer-events-none">
+        <div id="gamePanda" class="absolute right-[-34px] top-0 z-50 pointer-events-none">
             <div id="gamePandaInner" class="transition-all duration-700 ease-in-out flex flex-col items-center">
                 <div class="w-[130px] h-[22px] bg-white/60 rounded-full blur-sm"></div>
 
@@ -327,6 +328,7 @@
 
 <script th:src="@{/js/darkmode.js}"></script>
 
+<!-- Führt die Rauminteraktion von der Initialisierung über Antworten bis zum Raumende zusammen. -->
 <script th:inline="javascript">
     const roomId = /*[[${roomId}]]*/ 14;
 
@@ -361,6 +363,7 @@
     let selectedAnswerIds = [];
     let selectedGapAnswers = [];
     let selectedGapAnswersMap = {};
+    let isSubmittingAnswer = false;
     let currentGapStep = 0;
     let roomLoaded = false;
 
@@ -388,8 +391,8 @@
     }
 
     function initRandomPandas() {
-        animateRightSideJump(welcomePandaInner, 390, 85, 90, 2200);
-        animateRightSideJump(gamePandaInner, 785, 115, 120, 1850);
+        animateRightSideJump(welcomePandaInner, 0, 330, 185, 2200);
+        animateRightSideJump(gamePandaInner, 0, 545, 240, 1850);
     }
 
     const welcomeContainer = document.getElementById("welcomeContainer");
@@ -427,7 +430,7 @@
         }
 
         const line = introDialog[dialogIndex];
-        const speakerLabel = line.speaker === "player" ? "Du" : "Schmied";
+        const speakerLabel = line.speaker === "player" ? "Du" : "Frosch";
 
         updateSpeechTailPosition(line.speaker);
         dialogText.innerText = `${speakerLabel}: ${line.text}`;
@@ -446,7 +449,15 @@
         selectedGapAnswers = [];
         selectedGapAnswersMap = {};
         currentGapStep = 0;
-        feedbackBox.innerText = "";
+        isSubmittingAnswer = false;
+        clearRoomFeedbackBox(feedbackBox);
+
+        if (!gameContainer.classList.contains("hidden")) {
+            hidePandaGameComment();
+        }
+
+        submitAnswerBtn.disabled = false;
+        submitAnswerBtn.classList.remove("opacity-70", "cursor-not-allowed");
         submitAnswerBtn.classList.add("hidden");
         nextQuestionBtn.classList.add("hidden");
 
@@ -472,9 +483,10 @@
             return;
         }
 
-        questionText.className = "text-center px-6 shrink-0 min-h-[72px] max-h-[250px] overflow-hidden leading-[1.08] text-[clamp(10px,1.15vw,18px)]";
-        questionText.innerText = question.startText || "Keine Frage vorhanden.";
-        questionText.style.wordBreak = "break-word";
+        renderStandardQuestionText(
+            question,
+            "text-center px-6 shrink-0 min-h-[72px] max-h-[250px] overflow-hidden leading-[1.08] text-[clamp(10px,1.15vw,18px)]"
+        );
 
         if (!question.answerOptions || question.answerOptions.length === 0) {
             answerContainer.innerHTML = `
@@ -485,10 +497,12 @@
             return;
         }
 
-        answerContainer.className = "grid grid-cols-2 gap-4 flex-1 min-h-0 content-stretch";
-
         const optionCount = question.answerOptions.length;
         const rows = Math.ceil(optionCount / 2);
+
+        answerContainer.className = rows >= 3
+            ? "grid grid-cols-2 gap-3 flex-1 min-h-0 content-stretch"
+            : "grid grid-cols-2 gap-4 flex-1 min-h-0 content-stretch";
 
         answerContainer.style.gridAutoRows = "1fr";
 
@@ -511,11 +525,19 @@
                 flex items-center
             `;
 
-            button.style.minHeight = rows >= 2 ? "120px" : "150px";
+            if (rows >= 4) {
+    button.style.minHeight = "72px";
+} else if (rows === 3) {
+    button.style.minHeight = "92px";
+} else if (rows === 2) {
+    button.style.minHeight = "120px";
+} else {
+    button.style.minHeight = "150px";
+}
 
             const label = document.createElement("div");
             label.className = "answer-label w-full leading-[1.35]";
-            label.innerText = `${String.fromCharCode(65 + index)}) ${option.optionText}`;
+            label.innerText = buildAnswerPreviewText(index, option.optionText);
 
             button.appendChild(label);
 
@@ -903,6 +925,10 @@
             return;
         }
 
+        if (isSubmittingAnswer) {
+            return;
+        }
+
         if (!gapQuestion && selectedAnswerIds.length === 0) {
             return;
         }
@@ -915,6 +941,10 @@
                 return;
             }
         }
+
+        isSubmittingAnswer = true;
+        submitAnswerBtn.disabled = true;
+        submitAnswerBtn.classList.add("opacity-70", "cursor-not-allowed");
 
         try {
             const requestBody = {
@@ -934,6 +964,9 @@
             const data = await response.json();
 
             if (!response.ok) {
+                isSubmittingAnswer = false;
+                submitAnswerBtn.disabled = false;
+                submitAnswerBtn.classList.remove("opacity-70", "cursor-not-allowed");
                 alert(data.message || "Antwort konnte nicht geprüft werden.");
                 return;
             }
@@ -990,19 +1023,30 @@
                 }
             }
 
-            feedbackBox.innerText = data.correct
-                ? `Richtig! +${data.pointsEarned} Punkt(e)`
-                : `Falsch! +${data.pointsEarned} Punkt(e)`;
+            const pandaWrongComment = data.correct ? "" : getRoomWrongFeedbackLine(roomId);
 
-            feedbackBox.className = data.correct
-                ? "mt-6 text-center text-lg font-black text-emerald-400"
-                : "mt-6 text-center text-lg font-black text-red-400";
+            showRoomFeedbackBox(
+                feedbackBox,
+                data.correct
+                    ? `Richtig! +${data.pointsEarned} Punkt(e)`
+                    : buildRoomWrongFeedbackText(roomId, data.pointsEarned),
+                data.correct ? "success" : "error"
+            );
+
+            if (data.correct) {
+                hidePandaGameComment();
+            } else {
+                showPandaGameComment(pandaWrongComment);
+            }
 
             submitAnswerBtn.classList.add("hidden");
             nextQuestionBtn.classList.remove("hidden");
 
             await refreshRoomStatus();
         } catch (error) {
+            isSubmittingAnswer = false;
+            submitAnswerBtn.disabled = false;
+            submitAnswerBtn.classList.remove("opacity-70", "cursor-not-allowed");
             console.error("Fehler beim Prüfen der Antwort:", error);
             alert("Antwort konnte nicht geprüft werden.");
         }
@@ -1062,8 +1106,11 @@
         questionText.innerText = "Raum abgeschlossen.";
         answerContainer.innerHTML = "";
 
-        feedbackBox.innerText = "Du hast alle Fragen dieses Raums beantwortet.";
-        feedbackBox.className = "mt-6 text-center text-lg font-black text-emerald-400";
+        showRoomFeedbackBox(
+            feedbackBox,
+            "Du hast alle Fragen dieses Raums beantwortet.",
+            "success"
+        );
 
         submitAnswerBtn.classList.add("hidden");
 

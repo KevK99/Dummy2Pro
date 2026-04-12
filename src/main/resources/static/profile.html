@@ -4,10 +4,18 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/js/sound-manager.js"></script>
+    <script src="/js/ui-feedback.js"></script>
+    <script src="/js/security.js"></script>
     <title>Dummy2Pro</title>
 </head>
 
 <body class="min-h-screen bg-slate-950 text-slate-100">
+<!--
+    Profilseite für Kontoverwaltung, Avatar-Anpassung und Spielstandsverwaltung.
+    Die Seite bündelt bewusst mehrere unabhängige Änderungsflüsse an einer Stelle,
+    damit Profil- und Run-Wechsel ohne Dashboard-Umweg möglich bleiben.
+-->
 <div class="mx-auto max-w-6xl px-6 py-10 space-y-8">
 
     <header class="flex items-start justify-between gap-4">
@@ -26,20 +34,32 @@
                 <img id="currentProfileImage" src="/images/duck.jpg" alt="duck" class="w-20 h-20 rounded-full hover:cursor-pointer object-cover" />
 
                 <div>
-                    <h1 class="text-3xl font-extrabold tracking-tight">Benutzerprofil</h1>
+                    <h1 id="headlineTitle" class="text-3xl font-extrabold tracking-tight">Benutzerprofil</h1>
                     <p class="mt-2 text-slate-300">Hier kannst du deine Profil Einstellungen ändern</p>
                 </div>
             </div>
         </div>
 
-        <button
-                type="button"
-                class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-1.5 p-1 px-2 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20 disabled:bg-gray-700 disabled:shadow-none"
-                onclick="deleteUser()"
-        >
-            Account löschen
-        </button>
+        <div class="flex items-center gap-3 flex-wrap justify-end">
+            <button
+                    type="button"
+                    class="bg-slate-700 hover:bg-slate-600 text-white font-semibold py-1.5 px-3 rounded-lg transition duration-200"
+                    onclick="logoutUser()"
+            >
+                Ausloggen
+            </button>
+
+            <button
+                    type="button"
+                    class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-1.5 px-3 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20 disabled:bg-gray-700 disabled:shadow-none"
+                    onclick="deleteUser()"
+            >
+                Account löschen
+            </button>
+        </div>
     </header>
+    <!-- Zentrale Inline-Meldungsfläche für Rückgaben aus Profil-, Passwort- und Spielstandaktionen. -->
+    <div id="profilePageMessage" class="hidden"></div>
 
     <div class="bg-slate-800 border border-slate-700 shadow-xl rounded-2xl p-8" id="nameForm">
         <form class="space-y-5">
@@ -117,6 +137,74 @@
         </button>
     </div>
 
+    <div class="bg-slate-800 border border-slate-700 shadow-xl rounded-2xl p-8 space-y-6">
+        <div>
+            <h2 class="text-2xl font-bold">Avatar-Stil</h2>
+            <p class="mt-2 text-slate-300">Wähle Form und Rahmen für deinen Avatar.</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6">
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-2">Form</label>
+                <select
+                        id="avatarShapeSelect"
+                        class="w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition"
+                >
+                    <option value="circle">Kreis</option>
+                    <option value="square">Viereck</option>
+                    <option value="rounded-square">Abgerundetes Viereck</option>
+                    <option value="triangle">Dreieck</option>
+                    <option value="trapezoid">Trapez</option>
+                    <option value="hexagon">6-Eck</option>
+                    <option value="octagon">8-Eck</option>
+                    <option value="diamond">Diamant</option>
+                    <option value="star">Stern</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-2">Rahmen</label>
+                <select
+                        id="avatarFrameSelect"
+                        class="w-full bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition"
+                >
+                    <option value="default">Standard</option>
+                    <option value="red">Rot</option>
+                    <option value="orange">Orange</option>
+                    <option value="amber">Amber</option>
+                    <option value="yellow">Gelb</option>
+                    <option value="lime">Lime</option>
+                    <option value="green">Grün</option>
+                    <option value="emerald">Emerald</option>
+                    <option value="teal">Teal</option>
+                    <option value="cyan">Cyan</option>
+                    <option value="sky">Sky</option>
+                    <option value="blue">Blau</option>
+                    <option value="indigo">Indigo</option>
+                    <option value="violet">Violett</option>
+                    <option value="purple">Purple</option>
+                    <option value="fuchsia">Fuchsia</option>
+                    <option value="pink">Pink</option>
+                    <option value="rose">Rose</option>
+                    <option value="slate">Slate</option>
+                    <option value="gray">Grau</option>
+                    <option value="black">Schwarz</option>
+                    <option value="bronze">Bronze</option>
+                    <option value="silver">Silber</option>
+                    <option value="gold">Gold</option>
+                </select>
+            </div>
+        </div>
+
+        <button
+                type="button"
+                class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-lg shadow-indigo-600/20 disabled:bg-gray-700 disabled:shadow-none"
+                onclick="saveAvatarStyle()"
+        >
+            Avatar-Stil speichern
+        </button>
+    </div>
+
     <div class="bg-slate-800 border border-slate-700 shadow-xl rounded-2xl p-8 space-y-5 hidden" id="passwordForm">
         <form class="space-y-5">
             <div>
@@ -176,6 +264,8 @@
     </div>
 
     <div id="profilePicForm" class="hidden">
+        <!-- Die Avatar-Auswahl bleibt statisch im Template, damit Reihenfolge und Dateinamen
+             für Tests und manuelle Pflege stabil bleiben. -->
         <div id="profilePicGrid" class="w-full gap-6 pt-6 grid grid-cols-5">
             <img src="/images/Alf.png" onclick="setProfile('Alf.png', this)" alt="Alf" class="w-full aspect-square object-cover hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
             <img src="/images/lama.png" onclick="setProfile('lama.png', this)" alt="lama" class="w-full aspect-square object-cover hover:cursor-pointer hover:outline hover:outline-offset-2 hover:outline-4 hover:outline-indigo-600" />
@@ -260,6 +350,8 @@
     const createRunBtn = document.getElementById('createRunBtn');
     const runsContainer = document.getElementById('runsContainer');
     const currentProfileImage = document.getElementById('currentProfileImage');
+    const avatarShapeSelect = document.getElementById('avatarShapeSelect');
+    const avatarFrameSelect = document.getElementById('avatarFrameSelect');
 
     const userId = sessionStorage.getItem("userId");
     let selectedProfileImage = null;
@@ -270,6 +362,24 @@
         const div = document.createElement("div");
         div.textContent = value ?? "";
         return div.innerHTML;
+    }
+
+    function showProfileMessage(message, type = "success") {
+        window.Dummy2ProUI.setInlineMessage("profilePageMessage", message, type);
+        const target = document.getElementById("profilePageMessage");
+        target?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    function clearProfileMessage() {
+        window.Dummy2ProUI.clearInlineMessage("profilePageMessage");
+    }
+
+    async function showProfileSuccessModal(message, title = "Erfolgreich") {
+        await window.Dummy2ProUI.notice(message, {
+            title,
+            okText: "OK",
+            type: "success"
+        });
     }
 
     function openNameEdit() {
@@ -288,6 +398,8 @@
     button.addEventListener("click", openNameEdit);
     currentNameInput.addEventListener("click", openNameEdit);
     newNameButton.addEventListener("click", saveNewName);
+    avatarShapeSelect.addEventListener("change", applyAvatarPreviewStyle);
+    avatarFrameSelect.addEventListener("change", applyAvatarPreviewStyle);
 
     function showPwForm() {
         pwForm.classList.remove("hidden");
@@ -362,53 +474,176 @@
         currentProfileImage.src = `/images/${resolvedAvatar}`;
         currentAvatar = resolvedAvatar;
 
+        avatarShapeSelect.value = profile.avatarShape || "circle";
+        avatarFrameSelect.value = profile.selectedAvatarFrame || "default";
+        applyAvatarPreviewStyle();
+
         sessionStorage.setItem("username", profile.username || "");
         sessionStorage.setItem("avatar", resolvedAvatar);
+        sessionStorage.setItem("avatarShape", profile.avatarShape || "circle");
+        sessionStorage.setItem("selectedAvatarFrame", profile.selectedAvatarFrame || "default");
 
         highlightSelectedAvatar(resolvedAvatar);
     }
 
+    function getAvatarShapeClasses(shape) {
+        if (shape === "circle") {
+            return ["rounded-full"];
+        }
+
+        if (shape === "square") {
+            return ["rounded-none"];
+        }
+
+        if (shape === "rounded-square") {
+            return ["rounded-2xl"];
+        }
+
+        if (shape === "triangle") {
+            return ["[clip-path:polygon(50%_0%,100%_100%,0%_100%)]"];
+        }
+
+        if (shape === "trapezoid") {
+            return ["[clip-path:polygon(20%_0%,80%_0%,100%_100%,0%_100%)]"];
+        }
+
+        if (shape === "hexagon") {
+            return ["[clip-path:polygon(25%_6%,75%_6%,100%_50%,75%_94%,25%_94%,0%_50%)]"];
+        }
+
+        if (shape === "octagon") {
+            return ["[clip-path:polygon(30%_0%,70%_0%,100%_30%,100%_70%,70%_100%,30%_100%,0%_70%,0%_30%)]"];
+        }
+
+        if (shape === "diamond") {
+            return ["[clip-path:polygon(50%_0%,100%_50%,50%_100%,0%_50%)]"];
+        }
+
+        if (shape === "star") {
+            return ["[clip-path:polygon(50%_0%,61%_35%,98%_35%,68%_57%,79%_91%,50%_70%,21%_91%,32%_57%,2%_35%,39%_35%)]"];
+        }
+
+        return ["rounded-full"];
+    }
+
+    function getAvatarFrameClass(frame) {
+        const frameClassMap = {
+            default: "bg-slate-500",
+            red: "bg-red-500",
+            orange: "bg-orange-500",
+            amber: "bg-amber-500",
+            yellow: "bg-yellow-400",
+            lime: "bg-lime-500",
+            green: "bg-green-500",
+            emerald: "bg-emerald-500",
+            teal: "bg-teal-500",
+            cyan: "bg-cyan-500",
+            sky: "bg-sky-500",
+            blue: "bg-blue-500",
+            indigo: "bg-indigo-500",
+            violet: "bg-violet-500",
+            purple: "bg-purple-500",
+            fuchsia: "bg-fuchsia-500",
+            pink: "bg-pink-500",
+            rose: "bg-rose-500",
+            slate: "bg-slate-400",
+            gray: "bg-gray-400",
+            black: "bg-black",
+            bronze: "bg-[#cd7f32]",
+            silver: "bg-[#c0c0c0]",
+            gold: "bg-[#ffd700]"
+        };
+
+        return frameClassMap[frame] || "bg-slate-500";
+    }
+
+    function applyAvatarPreviewStyle() {
+        // Für Rahmenfarbe und Form wird das Bild bei Bedarf dynamisch in eine Hülle gelegt.
+        // So lassen sich Tailwind-Klassen für Frame und Clip-Path getrennt steuern.
+        const shape = avatarShapeSelect.value || "circle";
+        const frame = avatarFrameSelect.value || "default";
+
+        const shapeClasses = getAvatarShapeClasses(shape);
+        const frameClass = getAvatarFrameClass(frame);
+
+        let wrapper = currentProfileImage.parentElement;
+
+        if (!wrapper || !wrapper.classList.contains("avatar-frame-shell")) {
+            wrapper = document.createElement("div");
+            wrapper.className = "avatar-frame-shell inline-flex items-center justify-center p-[4px] overflow-hidden transition-all duration-200";
+            currentProfileImage.parentNode.insertBefore(wrapper, currentProfileImage);
+            wrapper.appendChild(currentProfileImage);
+        }
+
+        wrapper.className = `avatar-frame-shell inline-flex items-center justify-center p-[4px] overflow-hidden transition-all duration-200 w-20 h-20 ${frameClass}`;
+        wrapper.classList.add(...shapeClasses);
+
+        currentProfileImage.className = "block w-full h-full object-cover transition-all duration-200";
+        currentProfileImage.classList.add(...shapeClasses);
+    }
+
+    async function saveAvatarStyle() {
+        try {
+            const data = await apiRequest(`/api/user/me/avatar-style`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    avatarShape: avatarShapeSelect.value,
+                    selectedAvatarFrame: avatarFrameSelect.value
+                })
+            });
+
+            updateProfileUi(data);
+            await showProfileSuccessModal("Avatar-Stil gespeichert.", "Avatar-Stil geändert");
+        } catch (error) {
+            showProfileMessage(error.message, "error");
+        }
+    }
+
     async function loadUserProfile() {
-        const profile = await apiRequest(`/api/user/${userId}`);
+        const profile = await apiRequest(`/api/user/me`);
         updateProfileUi(profile);
     }
 
     async function saveNewName() {
         const newName = newNameInput.value.trim();
 
+        clearProfileMessage();
+
         if (!newName) {
-            alert("Bitte gib einen neuen Namen ein.");
+            showProfileMessage("Bitte gib einen neuen Namen ein.", "warning");
             return;
         }
 
         try {
-            const data = await apiRequest(`/api/user/${userId}/username`, {
+            const data = await apiRequest(`/api/user/me/username`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username: newName })
             });
 
             updateProfileUi(data);
-            profileForm.classList.add("hidden");
-            profilePicBtn.disabled = false;
-            alert("Profilbild gespeichert.");
+            closeNameEdit();
+            await showProfileSuccessModal("Name erfolgreich geändert.", "Name geändert");
         } catch (error) {
-            alert(error.message);
+            showProfileMessage(error.message, "error");
         }
     }
 
     async function saveNewPassword() {
+        // Nach einer Passwortänderung wird die lokale Sitzung bewusst komplett verworfen.
+        // Der erneute Login mit Flash-Meldung erzwingt danach einen sauberen Sicherheitszustand.
         const pw = document.getElementById('pw').value;
         const newPw = document.getElementById('newPw').value;
         const newPwConfirm = document.getElementById('newPwConfirm').value;
 
         if (!pw || !newPw || !newPwConfirm) {
-            alert("Bitte fülle alle Passwortfelder aus.");
+            showProfileMessage("Bitte fülle alle Passwortfelder aus.", "warning");
             return;
         }
 
         try {
-            const data = await apiRequest(`/api/user/${userId}/password`, {
+            const data = await apiRequest(`/api/user/me/password`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -422,42 +657,78 @@
             document.getElementById('newPw').value = "";
             document.getElementById('newPwConfirm').value = "";
 
-            alert((data.message || "Passwort erfolgreich geändert.") + " Bitte melde dich jetzt mit dem neuen Passwort erneut an.");
+            const loginFlashMessage =
+                (data.message || "Passwort erfolgreich geändert.") + " Bitte melde dich jetzt mit dem neuen Passwort erneut an.";
 
             sessionStorage.clear();
+            sessionStorage.setItem("loginFlash", loginFlashMessage);
             window.location.replace("/");
         } catch (error) {
-            alert(error.message);
+            showProfileMessage(error.message, "error");
         }
     }
 
     async function deleteUser() {
-        const confirmed = confirm("Willst du deinen Account wirklich endgültig löschen?");
+        clearProfileMessage();
+
+        const confirmed = await window.Dummy2ProUI.confirm("Willst du deinen Account wirklich endgültig löschen?", {
+            title: "Account löschen",
+            confirmText: "Endgültig löschen",
+            cancelText: "Abbrechen",
+            variant: "danger"
+        });
+
         if (!confirmed) {
             return;
         }
 
         try {
-            const data = await apiRequest(`/api/user/${userId}?confirmation=CONFIRM`, {
+            const data = await apiRequest(`/api/user/me?confirmation=CONFIRM`, {
                 method: "DELETE"
             });
 
+            localStorage.setItem("dummy2proRegisterFlash", data.message || "Benutzer erfolgreich gelöscht.");
             sessionStorage.clear();
-            alert(data.message || "Benutzer erfolgreich gelöscht.");
             window.location.replace("/register.html");
         } catch (error) {
-            alert(error.message);
+            showProfileMessage(error.message, "error");
         }
     }
 
-    async function saveProfilePic() {
-        if (!selectedProfileImage) {
-            alert("Bitte zuerst ein Profilbild auswählen.");
+    async function logoutUser() {
+        clearProfileMessage();
+
+        const confirmed = await window.Dummy2ProUI.confirm("Willst du dich wirklich ausloggen?", {
+            title: "Ausloggen",
+            confirmText: "Ausloggen",
+            cancelText: "Abbrechen"
+        });
+
+        if (!confirmed) {
             return;
         }
 
         try {
-            const data = await apiRequest(`/api/user/${userId}/avatar`, {
+            await apiRequest(`/api/user/logout`, {
+                method: "POST"
+            });
+        } catch (error) {
+            console.warn("Logout-API fehlgeschlagen:", error);
+        }
+
+        sessionStorage.clear();
+        sessionStorage.setItem("loginFlash", "Du wurdest erfolgreich ausgeloggt.");
+        window.location.replace("/");
+    }
+
+    async function saveProfilePic() {
+        if (!selectedProfileImage) {
+            showProfileMessage("Bitte zuerst ein Profilbild auswählen.", "warning");
+            return;
+        }
+
+        try {
+            const data = await apiRequest(`/api/user/me/avatar`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ avatar: selectedProfileImage })
@@ -465,9 +736,9 @@
 
             updateProfileUi(data);
             profileForm.classList.add("hidden");
-            alert("Profilbild gespeichert.");
+            await showProfileSuccessModal("Profilbild gespeichert.", "Profilbild geändert");
         } catch (error) {
-            alert(error.message);
+            showProfileMessage(error.message, "error");
         }
     }
 
@@ -501,7 +772,7 @@
 
     async function loadRuns() {
         try {
-            const runs = await apiRequest(`/api/session/runs?userId=${userId}`);
+            const runs = await apiRequest(`/api/session/runs`);
             const activeRunId = sessionStorage.getItem("runId");
 
             if (!Array.isArray(runs) || runs.length === 0) {
@@ -514,6 +785,8 @@
                 return;
             }
 
+            // Spielstände werden stabil nach Erstellungszeit sortiert und nur bei Gleichstand
+            // zusätzlich über die runId aufgelöst.
             const sortedRuns = [...runs].sort((a, b) => {
                 const timeDiff = toSortableTimestamp(a.startedAt) - toSortableTimestamp(b.startedAt);
 
@@ -537,7 +810,7 @@
                     <div class="bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <div>
                             <div class="flex items-center gap-2 flex-wrap">
-                                <span class="font-bold">${displayName}</span>
+                                <span class="font-bold">${escapeHtml(displayName)}</span>
                                 <span class="${statusClass} text-white text-xs font-semibold px-2 py-1 rounded-full">${statusText}</span>
                                 ${isActive ? '<span class="bg-indigo-600 text-white text-xs font-semibold px-2 py-1 rounded-full">Ausgewählt</span>' : ''}
                             </div>
@@ -578,7 +851,7 @@
         } catch (error) {
             runsContainer.innerHTML = `
                 <div class="bg-slate-900 border border-red-500 text-red-300 rounded-lg px-4 py-3">
-                    ${error.message}
+                    ${escapeHtml(error.message)}
                 </div>
             `;
         }
@@ -588,13 +861,21 @@
         const run = currentRuns.find(entry => String(entry.runId) === String(runId));
 
         if (!run) {
-            alert("Spielstand nicht gefunden.");
+            showProfileMessage("Spielstand nicht gefunden.", "error");
             return;
         }
 
-        const newName = prompt(
+        clearProfileMessage();
+
+        const newName = await window.Dummy2ProUI.prompt(
             "Gib einen Namen für den Spielstand ein. Leer lassen = Standardname.",
-            run.displayName ?? ""
+            run.displayName ?? "",
+            {
+                title: "Spielstand umbenennen",
+                confirmText: "Speichern",
+                cancelText: "Abbrechen",
+                placeholder: "Spielstandname"
+            }
         );
 
         if (newName === null) {
@@ -609,9 +890,9 @@
             });
 
             await loadRuns();
-            alert("Spielstand wurde aktualisiert.");
+            await showProfileSuccessModal("Spielstand wurde aktualisiert.", "Spielstand umbenannt");
         } catch (error) {
-            alert(error.message);
+            showProfileMessage(error.message, "error");
         }
     }
 
@@ -625,9 +906,9 @@
             sessionStorage.setItem("runId", String(data.runId));
 
             await loadRuns();
-            alert("Spielstand wurde geladen.");
+            showProfileMessage("Spielstand wurde geladen.", "success");
         } catch (error) {
-            alert(error.message);
+            showProfileMessage(error.message, "error");
         }
     }
 
@@ -646,9 +927,9 @@
             sessionStorage.setItem("runId", String(data.runId));
 
             await loadRuns();
-            alert("Neuer Spielstand wurde angelegt.");
+            showProfileMessage("Neuer Spielstand wurde angelegt.", "success");
         } catch (error) {
-            alert(error.message);
+            showProfileMessage(error.message, "error");
         } finally {
             createRunBtn.disabled = false;
             createRunBtn.textContent = originalText;
@@ -657,7 +938,14 @@
 
     async function deleteRun(runId) {
         const activeRunId = sessionStorage.getItem("runId");
-        const confirmed = confirm("Soll dieser Spielstand wirklich gelöscht werden?");
+        clearProfileMessage();
+
+        const confirmed = await window.Dummy2ProUI.confirm("Soll dieser Spielstand wirklich gelöscht werden?", {
+            title: "Spielstand löschen",
+            confirmText: "Löschen",
+            cancelText: "Abbrechen",
+            variant: "danger"
+        });
 
         if (!confirmed) {
             return;
@@ -674,19 +962,29 @@
             }
 
             await loadRuns();
-            alert(data.message || "Spielstand erfolgreich gelöscht.");
+            showProfileMessage(data.message || "Spielstand erfolgreich gelöscht.", "success");
         } catch (error) {
-            alert(error.message);
+            showProfileMessage(error.message, "error");
         }
     }
 
     async function initProfilePage() {
-        if (!userId) {
-            alert("Kein Benutzer gefunden. Bitte neu einloggen.");
+        // Die Seite versucht zuerst, den Benutzer aus dem Session-Storage zu nutzen,
+        // und fällt nur bei Bedarf auf die serverseitige Current-User-Synchronisation zurück.
+        let resolvedUserId = userId;
+
+        if (!resolvedUserId) {
+            const currentUser = await window.Dummy2ProSecurity.syncCurrentUser();
+            resolvedUserId = currentUser?.userId ? String(currentUser.userId) : null;
+        }
+
+        if (!resolvedUserId) {
+            showProfileMessage("Kein Benutzer gefunden. Bitte neu einloggen.", "error");
             window.location.href = "/";
             return;
         }
 
+        await window.Dummy2ProSecurity.ensureCsrfToken();
         await loadUserProfile();
         await loadRuns();
     }

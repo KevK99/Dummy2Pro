@@ -1,26 +1,31 @@
 package me.daskabel.dummy2pro.controller;
 
-import java.util.NoSuchElementException;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import me.daskabel.dummy2pro.model.User;
 import me.daskabel.dummy2pro.service.UserService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.NoSuchElementException;
+
+/**
+ * Stellt Endpunkte für Profil- und Kontoverwaltung bereit.
+ *
+ * Der Controller liefert Profildaten, übernimmt Änderungen an Name,
+ * Passwort und Avatar und ermöglicht Logout sowie das Löschen des
+ * Benutzerkontos.
+ */
 @RestController
 @RequestMapping("/api/user")
 public class UserController
 {
+    /**
+     * Einfache Standardantwort für erfolgreiche oder erwartbare Meldungen.
+     */
     public static class MessageResponse
     {
         private final String message;
@@ -36,6 +41,9 @@ public class UserController
         }
     }
 
+    /**
+     * Einheitliches Fehlerobjekt für API-Antworten.
+     */
     public static class ErrorResponse
     {
         private final String error;
@@ -58,11 +66,16 @@ public class UserController
         }
     }
 
+    /**
+     * Antwortformat für Profildaten des aktuellen Benutzers.
+     */
     public static class UserProfileResponse
     {
         private Long userId;
         private String username;
         private String avatar;
+        private String avatarShape;
+        private String selectedAvatarFrame;
 
         public Long getUserId()
         {
@@ -93,8 +106,31 @@ public class UserController
         {
             this.avatar = avatar;
         }
+
+        public String getAvatarShape()
+        {
+            return avatarShape;
+        }
+
+        public void setAvatarShape(String avatarShape)
+        {
+            this.avatarShape = avatarShape;
+        }
+
+        public String getSelectedAvatarFrame()
+        {
+            return selectedAvatarFrame;
+        }
+
+        public void setSelectedAvatarFrame(String selectedAvatarFrame)
+        {
+            this.selectedAvatarFrame = selectedAvatarFrame;
+        }
     }
 
+    /**
+     * Anfragedaten zum Ändern des Avatars.
+     */
     public static class AvatarUpdateRequest
     {
         private String avatar;
@@ -110,6 +146,38 @@ public class UserController
         }
     }
 
+    /**
+     * Anfragedaten zum Ändern von Form und Rahmen des Avatars.
+     */
+    public static class AvatarStyleUpdateRequest
+    {
+        private String avatarShape;
+        private String selectedAvatarFrame;
+
+        public String getAvatarShape()
+        {
+            return avatarShape;
+        }
+
+        public void setAvatarShape(String avatarShape)
+        {
+            this.avatarShape = avatarShape;
+        }
+
+        public String getSelectedAvatarFrame()
+        {
+            return selectedAvatarFrame;
+        }
+
+        public void setSelectedAvatarFrame(String selectedAvatarFrame)
+        {
+            this.selectedAvatarFrame = selectedAvatarFrame;
+        }
+    }
+
+    /**
+     * Anfragedaten zum Ändern des Benutzernamens.
+     */
     public static class UsernameUpdateRequest
     {
         private String username;
@@ -125,6 +193,9 @@ public class UserController
         }
     }
 
+    /**
+     * Anfragedaten zum Ändern des Passworts.
+     */
     public static class PasswordUpdateRequest
     {
         private String currentPassword;
@@ -169,40 +240,77 @@ public class UserController
         this.userService = userService;
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<UserProfileResponse> getUserProfile(@PathVariable Long userId)
+    /**
+     * Liefert das Profil des aktuell angemeldeten Benutzers.
+     */
+    @GetMapping("/me")
+    public ResponseEntity<UserProfileResponse> getUserProfile(Authentication authentication)
     {
-        User user = this.userService.getUser(userId);
+        User user = this.userService.getUser(requireCurrentUserId(authentication));
 
         UserProfileResponse response = new UserProfileResponse();
         response.setUserId(user.getUserId());
         response.setUsername(user.getUsername());
         response.setAvatar(this.userService.resolveAvatarFilename(user));
+        response.setAvatarShape(user.getAvatarShape());
+        response.setSelectedAvatarFrame(user.getSelectedAvatarFrame());
 
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{userId}/avatar")
+    /**
+     * Ändert den Avatar des aktuellen Benutzers.
+     */
+    @PutMapping("/me/avatar")
     public ResponseEntity<UserProfileResponse> updateAvatar(
-            @PathVariable Long userId,
+            Authentication authentication,
             @RequestBody AvatarUpdateRequest request)
     {
-        User user = this.userService.updateAvatar(userId, request.getAvatar());
+        User user = this.userService.updateAvatar(requireCurrentUserId(authentication), request.getAvatar());
 
         UserProfileResponse response = new UserProfileResponse();
         response.setUserId(user.getUserId());
         response.setUsername(user.getUsername());
         response.setAvatar(this.userService.resolveAvatarFilename(user));
+        response.setAvatarShape(user.getAvatarShape());
+        response.setSelectedAvatarFrame(user.getSelectedAvatarFrame());
 
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{userId}/username")
+    /**
+     * Ändert Form und Rahmen des Avatars.
+     */
+    @PutMapping("/me/avatar-style")
+    public ResponseEntity<UserProfileResponse> updateAvatarStyle(
+            Authentication authentication,
+            @RequestBody AvatarStyleUpdateRequest request)
+    {
+        User user = this.userService.updateAvatarStyle(
+                requireCurrentUserId(authentication),
+                request.getAvatarShape(),
+                request.getSelectedAvatarFrame()
+        );
+
+        UserProfileResponse response = new UserProfileResponse();
+        response.setUserId(user.getUserId());
+        response.setUsername(user.getUsername());
+        response.setAvatar(this.userService.resolveAvatarFilename(user));
+        response.setAvatarShape(user.getAvatarShape());
+        response.setSelectedAvatarFrame(user.getSelectedAvatarFrame());
+
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Ändert den Benutzernamen des aktuellen Benutzers.
+     */
+    @PutMapping("/me/username")
     public ResponseEntity<UserProfileResponse> updateUsername(
-            @PathVariable Long userId,
+            Authentication authentication,
             @RequestBody UsernameUpdateRequest request)
     {
-        User user = this.userService.updateUsername(userId, request.getUsername());
+        User user = this.userService.updateUsername(requireCurrentUserId(authentication), request.getUsername());
 
         UserProfileResponse response = new UserProfileResponse();
         response.setUserId(user.getUserId());
@@ -212,13 +320,16 @@ public class UserController
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{userId}/password")
+    /**
+     * Ändert das Passwort des aktuellen Benutzers.
+     */
+    @PutMapping("/me/password")
     public ResponseEntity<MessageResponse> updatePassword(
-            @PathVariable Long userId,
+            Authentication authentication,
             @RequestBody PasswordUpdateRequest request)
     {
         this.userService.updatePassword(
-                userId,
+                requireCurrentUserId(authentication),
                 request.getCurrentPassword(),
                 request.getNewPassword(),
                 request.getNewPasswordConfirm()
@@ -227,34 +338,74 @@ public class UserController
         return ResponseEntity.ok(new MessageResponse("Passwort erfolgreich geändert."));
     }
 
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<MessageResponse> deleteUser(@PathVariable Long userId, @RequestParam String confirmation)
+    /**
+     * Löscht das Benutzerkonto nach ausdrücklicher Bestätigung.
+     */
+    @DeleteMapping("/me")
+    public ResponseEntity<MessageResponse> deleteUser(
+            Authentication authentication,
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @RequestParam String confirmation)
     {
         if (!"CONFIRM".equals(confirmation))
         {
             return ResponseEntity.badRequest().body(new MessageResponse("Bestätigung erforderlich."));
         }
 
+        Long userId = requireCurrentUserId(authentication);
         this.userService.deleteUser(userId);
+
+        new SecurityContextLogoutHandler().logout(request, response, authentication);
+
         return ResponseEntity.ok(new MessageResponse("Benutzer erfolgreich gelöscht."));
     }
 
-    @PostMapping("/logout/{userId}")
-    public ResponseEntity<MessageResponse> logout(@PathVariable Long userId)
+    /**
+     * Meldet den aktuellen Benutzer ab.
+     */
+    @PostMapping("/logout")
+    public ResponseEntity<MessageResponse> logout(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Authentication authentication)
     {
-        this.userService.saveCurrentGameProgress(userId);
+        new SecurityContextLogoutHandler().logout(request, response, authentication);
         return ResponseEntity.ok(new MessageResponse("Erfolgreich ausgeloggt."));
     }
 
+    /**
+     * Liest die Benutzer-ID des aktuellen Benutzers aus der Anmeldung aus.
+     */
+    private Long requireCurrentUserId(Authentication authentication)
+    {
+        return AuthController.extractUserId(authentication);
+    }
+
+    /**
+     * Wandelt ungültige Eingaben in eine 400-Antwort um.
+     */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleBadRequest(IllegalArgumentException ex)
     {
         return ResponseEntity.badRequest().body(new ErrorResponse("BAD_REQUEST", ex.getMessage()));
     }
 
+    /**
+     * Wandelt nicht gefundene Daten in eine 404-Antwort um.
+     */
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<ErrorResponse> handleNotFound(NoSuchElementException ex)
     {
         return ResponseEntity.status(404).body(new ErrorResponse("NOT_FOUND", ex.getMessage()));
+    }
+
+    /**
+     * Wandelt unzulässige Zugriffe in eine 403-Antwort um.
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleForbidden(AccessDeniedException ex)
+    {
+        return ResponseEntity.status(403).body(new ErrorResponse("FORBIDDEN", ex.getMessage()));
     }
 }

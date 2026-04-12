@@ -4,12 +4,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/js/sound-manager.js"></script>
     <title>Dummy2Pro - Registrierung</title>
 </head>
 
 <body class="min-h-screen bg-slate-950 text-slate-100">
 <div class="mx-auto max-w-6xl px-6 py-10">
 
+    <!-- Eigenständige Registrierungsseite außerhalb des dynamisch geladenen Login-Flows. -->
     <header class="flex items-start justify-between gap-4">
         <div>
             <h1 class="text-4xl font-extrabold tracking-tight">Willkommen auf Dummy2Pro!</h1>
@@ -59,6 +61,9 @@
         >
             Registrieren
         </button>
+
+        <!-- Validierungs- und Serverfehler bleiben direkt unter dem Formular sichtbar. -->
+        <div id="registerErrorMessage" class="hidden mt-4"></div>
     </form>
 
     <div class="text-center text-sm text-gray-500 mt-6">
@@ -73,9 +78,40 @@
 
 <script>
     document.getElementById("registerForm").addEventListener("submit", registerUser);
+
+    function setRegisterMessage(message) {
+        const element = document.getElementById("registerErrorMessage");
+        if (!element) {
+            return;
+        }
+
+        element.className = "mt-4 rounded-lg border border-rose-400/40 bg-rose-500/10 px-4 py-3 text-rose-100";
+        element.innerHTML = `
+            <div class="flex items-start gap-3">
+                <span class="shrink-0 rounded-full px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.24em] bg-rose-400/15 text-rose-100 border border-rose-300/30">
+                    Fehler
+                </span>
+                <p class="min-w-0 flex-1 text-sm font-medium leading-6">${message}</p>
+            </div>
+        `;
+    }
+
+    function clearRegisterMessage() {
+        const element = document.getElementById("registerErrorMessage");
+        if (!element) {
+            return;
+        }
+
+        element.className = "hidden";
+        element.innerHTML = "";
+    }
+
     // damit das mit dem Backend interagiert.
     async function registerUser(event) {
         event.preventDefault();
+        window.Dummy2ProSound?.play("register");
+
+        clearRegisterMessage();
 
         const username = document.getElementById("username").value.trim();
         const password = document.getElementById("password").value;
@@ -95,14 +131,19 @@
             }
 
             if (!response.ok) {
-                alert(data.message || "Registrierung fehlgeschlagen.");
+                setRegisterMessage(data.message || "Registrierung fehlgeschlagen.");
                 return;
             }
 
-            alert(data.message || `Registrierung erfolgreich für ${data.username || username}.`);
+            // Die Erfolgsmeldung wird für die nächste Login-Seite im sessionStorage
+            // abgelegt, weil nach erfolgreicher Registrierung direkt weitergeleitet wird.
+            sessionStorage.setItem(
+                "loginFlash",
+                data.message || `Registrierung erfolgreich für ${data.username || username}.`
+            );
             window.location.href = "/";
         } catch (error) {
-            alert("Verbindung zum Server fehlgeschlagen.");
+            setRegisterMessage("Verbindung zum Server fehlgeschlagen.");
             console.error(error);
         }
     }

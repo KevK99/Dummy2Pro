@@ -1,21 +1,44 @@
-# Eintrag Passwort für Datenbank:
-Envirement: OPENSHIFT_MYSQL_DB_PASSWORD =
+# =========================================================
+# Interne Notizen für lokale Tests und Datenbankzugriffe
+# =========================================================
+#
+# Zweck:
+# Diese Datei sammelt Hilfsbefehle, Testzugänge und kurze
+# Notizen für lokale Prüfungen während der Entwicklung.
+#
+# Inhalt:
+# - Datenbankzugriff per PowerShell
+# - Testbenutzer
+# - Beispielaufrufe für Login-Tests
+# - einzelne SQL-Prüfabfragen
+# - Maven-Befehle für Testläufe
+#
+# Hinweis:
+# Die Datei dient nur als Arbeitsspeicher für Entwickler und
+# gehört nicht zur eigentlichen Anwendungslogik.
+# =========================================================
+
+
+# Passwort für die Datenbank als Umgebungsvariable:
+# OPENSHIFT_MYSQL_DB_PASSWORD =
 
 # Datenbankverbindung
 Get-Content .\schema.txt | mysql -h 178.63.60.92 -P 31337 -u schulprojekt -p schulprojekt
 
-# Testabfragen für Powershell
 
-# Daten für Testuser:
-Username = "Test"
+# =========================================================
+# Testbenutzer
+# =========================================================
+
+# Daten für einen einfachen Testzugang
 Passwort = "ASDFqwer1234!"
 BcryptHash = "$2a$10$BzsrNXld8dbvPX7D8gUpAe0qa21gfyj9AKHYtBMWPKmO3nKmBA8QC"
 
-("ByteBard", "Banane1234!!!"); # 1. Raum durchgespielt
+# Weitere mögliche Testzugänge
 ("NullNinja", "NullWert2026!!");
 ("JoinJunkie", "LeftJoin1234!!A");
 ("IndexIgel", "IndexBoost2026!!");
----------------
+
 ("MergeMeister", "MergeMaster2026!");
 ("RebaseRitter", "RebaseKnight2026!");
 ("RollbackRudi", "Rollback2026!!Aa");
@@ -31,20 +54,55 @@ BcryptHash = "$2a$10$BzsrNXld8dbvPX7D8gUpAe0qa21gfyj9AKHYtBMWPKmO3nKmBA8QC"
 ("FKFuchs", "ForeignKey2026!!A");
 ("TransaktionsToni", "Transaktion2026!!A");
 
-# Test1: richtige Daten
+
+# =========================================================
+# Login-Tests per REST-Aufruf
+# =========================================================
+
+# Test 1: richtige Zugangsdaten
 $body = @{ username="Test"; password="ASDFqwer1234!" } | ConvertTo-Json
 Invoke-RestMethod -Method Post -Uri "http://localhost:8080/api/login" -ContentType "application/json" -Body $body
 
-#Test2: falsches Passwort
+# Test 2: falsches Passwort
 $body = @{ username="Test"; password="ASDFqwer1234" } | ConvertTo-Json
 Invoke-RestMethod -Method Post -Uri "http://localhost:8080/api/login" -ContentType "application/json" -Body $body
 
-# Test3: falscher Benutzername
+# Test 3: falscher Benutzername
 $body = @{ username="ABCD"; password="ASDFqwer1234!" } | ConvertTo-Json
 Invoke-RestMethod -Method Post -Uri "http://localhost:8080/api/login" -ContentType "application/json" -Body $body
 
-# Test Fragen in den Themen. SQL query
+
+# =========================================================
+# Hilfsabfragen
+# =========================================================
+
+# Fragt alle Fragen eines bestimmten Themes ab.
 SELECT q.*
 FROM question q
          JOIN question_theme qt ON qt.question_id = q.question_id
 WHERE qt.theme_id = ?
+
+
+# =========================================================
+# Testbefehle
+# =========================================================
+
+# Gesamte Tests ausführen
+.\mvnw.cmd test
+
+# Projekt bereinigen und Tests ausführen
+.\mvnw.cmd clean test
+
+# Tests mit JaCoCo-Bericht ausführen
+.\mvnw.cmd clean test jacoco:report
+
+# Einzelnen Frontend-Test ausführen
+.\mvnw.cmd -Dtest=AuthFrontendPlaywrightTest test
+
+# Fragedaten prüfen mit echter Datenbank
+$env:DBCHECK_URL='jdbc:mysql://178.63.60.92:31337/schulprojekt?sslMode=VERIFY_CA&enabledTLSProtocols=TLSv1.2,TLSv1.3&serverTimezone=UTC&rewriteBatchedStatements=true&cachePrepStmts=true&prepStmtCacheSize=250&prepStmtCacheSqlLimit=2048&useServerPrepStmts=true&trustCertificateKeyStoreUrl=file:src/main/resources/ssl/truststore.jks&trustCertificateKeyStoreType=JKS&trustCertificateKeyStorePassword=***'
+$env:DBCHECK_USERNAME='schulprojekt'
+$env:DBCHECK_PASSWORD='***'
+# beide *** müssen ersetzt werden dann
+.\mvnw.cmd "-Dtest=QuestionLiveSnapshotTest" test
+

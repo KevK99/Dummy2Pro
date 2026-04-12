@@ -13,14 +13,22 @@
         }
     </script>
     <link rel="stylesheet" th:href="@{/css/room-common.css}">
+    <script th:src="@{/js/sound-manager.js}"></script>
+    <script th:src="@{/js/ui-feedback.js}"></script>
+    <script th:src="@{/js/security.js}"></script>
     <script th:src="@{/js/room-common.js}"></script>
 </head>
 
 <body th:class="${bodyClass} ?: 'min-h-screen bg-slate-950 text-white'">
-    <div class="w-full">
-        <th:block th:replace="${content}"></th:block>
-    </div>
-    <script defer src="/js/medal.js"></script>
+<!-- Zentrale Feedback-Wurzel für modale Meldungen, Toasts und ähnliche UI-Rückgaben. -->
+<div th:replace="~{fragments/feedback :: feedbackRoot}"></div>
+
+<div class="w-full">
+    <!-- Der eigentliche Seiteninhalt wird von den einzelnen Templates in dieses Layout injiziert. -->
+    <th:block th:replace="${content}"></th:block>
+</div>
+
+<script defer src="/js/medal.js"></script>
 </body>
 
 <style>

@@ -6,6 +6,8 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
+    // Der Buttontext richtet sich ausschließlich nach der aktiven HTML-Klasse,
+    // damit Anzeige und tatsächlicher Zustand immer zusammenpassen.
     function updateButtonText() {
         if (html.classList.contains("dark")) {
             button.textContent = "Light Mode ☀️";
@@ -14,6 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Beim Laden wird nur der gespeicherte Theme-Zustand wiederhergestellt.
     if (localStorage.theme === "dark") {
         html.classList.add("dark");
     } else {

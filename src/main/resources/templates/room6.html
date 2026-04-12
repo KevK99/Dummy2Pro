@@ -5,6 +5,7 @@
 
 <body class="min-h-screen bg-[#695800] text-white font-mono tracking-wider dark:bg-[#000010] overflow-x-hidden">
 
+<!-- Raumseite für Raum 6 mit Introbereich, Quizansicht und statusbezogener Fortschrittsführung. -->
 <div th:replace="~{fragments/headline :: headline(${ 'Raum ' + roomId}, ${'Thema: ' + themeName}, ${avatarUrl}, null, null)}"></div>
 
 <style>
@@ -317,6 +318,7 @@
 
 <script th:src="@{/js/darkmode.js}"></script>
 
+<!-- Enthält die Raumlogik für Laden, Auswerten und Fortschreiben des aktuellen Spielstands in Raum 6. -->
 <script th:inline="javascript">
     const roomId = /*[[${roomId}]]*/ 6;
 
@@ -351,6 +353,7 @@
     let selectedAnswerIds = [];
     let selectedGapAnswers = [];
     let selectedGapAnswersMap = {};
+    let isSubmittingAnswer = false;
     let currentGapStep = 0;
     let roomLoaded = false;
 
@@ -449,7 +452,15 @@
         selectedGapAnswers = [];
         selectedGapAnswersMap = {};
         currentGapStep = 0;
-        feedbackBox.innerText = "";
+        isSubmittingAnswer = false;
+        clearRoomFeedbackBox(feedbackBox);
+
+        if (!gameContainer.classList.contains("hidden")) {
+            hidePandaGameComment();
+        }
+
+        submitAnswerBtn.disabled = false;
+        submitAnswerBtn.classList.remove("opacity-70", "cursor-not-allowed");
         submitAnswerBtn.classList.add("hidden");
         nextQuestionBtn.classList.add("hidden");
 
@@ -475,9 +486,10 @@
             return;
         }
 
-        questionText.className = "text-center px-6 shrink-0 min-h-[72px] max-h-[250px] overflow-hidden leading-[1.08] text-[clamp(10px,1.15vw,18px)]";
-        questionText.innerText = question.startText || "Keine Frage vorhanden.";
-        questionText.style.wordBreak = "break-word";
+        renderStandardQuestionText(
+            question,
+            "text-center px-6 shrink-0 min-h-[72px] max-h-[250px] overflow-hidden leading-[1.08] text-[clamp(10px,1.15vw,18px)]"
+        );
 
         if (!question.answerOptions || question.answerOptions.length === 0) {
             answerContainer.innerHTML = `
@@ -488,10 +500,12 @@
             return;
         }
 
-        answerContainer.className = "grid grid-cols-2 gap-4 flex-1 min-h-0 content-stretch";
-
         const optionCount = question.answerOptions.length;
         const rows = Math.ceil(optionCount / 2);
+
+        answerContainer.className = rows >= 3
+            ? "grid grid-cols-2 gap-3 flex-1 min-h-0 content-stretch"
+            : "grid grid-cols-2 gap-4 flex-1 min-h-0 content-stretch";
 
         answerContainer.style.gridAutoRows = "1fr";
 
@@ -511,11 +525,19 @@
                 flex items-center
             `;
 
-            button.style.minHeight = rows >= 2 ? "120px" : "150px";
+            if (rows >= 4) {
+    button.style.minHeight = "72px";
+} else if (rows === 3) {
+    button.style.minHeight = "92px";
+} else if (rows === 2) {
+    button.style.minHeight = "120px";
+} else {
+    button.style.minHeight = "150px";
+}
 
             const label = document.createElement("div");
             label.className = "answer-label w-full leading-[1.35]";
-            label.innerText = `${String.fromCharCode(65 + index)}) ${option.optionText}`;
+            label.innerText = buildAnswerPreviewText(index, option.optionText);
 
             button.appendChild(label);
 
@@ -866,6 +888,10 @@
             return;
         }
 
+        if (isSubmittingAnswer) {
+            return;
+        }
+
         if (!gapQuestion && selectedAnswerIds.length === 0) {
             return;
         }
@@ -878,6 +904,10 @@
                 return;
             }
         }
+
+        isSubmittingAnswer = true;
+        submitAnswerBtn.disabled = true;
+        submitAnswerBtn.classList.add("opacity-70", "cursor-not-allowed");
 
         try {
             const requestBody = {
@@ -897,6 +927,9 @@
             const data = await response.json();
 
             if (!response.ok) {
+                isSubmittingAnswer = false;
+                submitAnswerBtn.disabled = false;
+                submitAnswerBtn.classList.remove("opacity-70", "cursor-not-allowed");
                 alert(data.message || "Antwort konnte nicht geprüft werden.");
                 return;
             }
@@ -953,19 +986,30 @@
                 }
             }
 
-            feedbackBox.innerText = data.correct
-                ? `Richtig! +${data.pointsEarned} Punkt(e)`
-                : `Falsch! +${data.pointsEarned} Punkt(e)`;
+            const pandaWrongComment = data.correct ? "" : getRoomWrongFeedbackLine(roomId);
 
-            feedbackBox.className = data.correct
-                ? "mt-6 text-center text-lg font-black text-emerald-400"
-                : "mt-6 text-center text-lg font-black text-red-400";
+            showRoomFeedbackBox(
+                feedbackBox,
+                data.correct
+                    ? `Richtig! +${data.pointsEarned} Punkt(e)`
+                    : buildRoomWrongFeedbackText(roomId, data.pointsEarned),
+                data.correct ? "success" : "error"
+            );
+
+            if (data.correct) {
+                hidePandaGameComment();
+            } else {
+                showPandaGameComment(pandaWrongComment);
+            }
 
             submitAnswerBtn.classList.add("hidden");
             nextQuestionBtn.classList.remove("hidden");
 
             await refreshRoomStatus();
         } catch (error) {
+            isSubmittingAnswer = false;
+            submitAnswerBtn.disabled = false;
+            submitAnswerBtn.classList.remove("opacity-70", "cursor-not-allowed");
             console.error("Fehler beim Prüfen der Antwort:", error);
             alert("Antwort konnte nicht geprüft werden.");
         }
@@ -1025,8 +1069,11 @@
         questionText.innerText = "Raum abgeschlossen.";
         answerContainer.innerHTML = "";
 
-        feedbackBox.innerText = "Du hast alle Fragen dieses Raums beantwortet.";
-        feedbackBox.className = "mt-6 text-center text-lg font-black text-emerald-400";
+        showRoomFeedbackBox(
+            feedbackBox,
+            "Du hast alle Fragen dieses Raums beantwortet.",
+            "success"
+        );
 
         submitAnswerBtn.classList.add("hidden");
 

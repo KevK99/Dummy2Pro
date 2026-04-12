@@ -1,0 +1,41 @@
+package me.daskabel.dummy2pro.Tools;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+
+import me.daskabel.dummy2pro.tools.Bcrypt;
+import org.junit.jupiter.api.Test;
+
+/**
+ * Smoke-Test für das kleine BCrypt-Hilfsprogramm.
+ *
+ * Geprüft wird, ob der CLI-Einstieg einen Hash ausgibt und ob die
+ * enthaltene Beispielprüfung für Passwort und Hash erfolgreich durchläuft.
+ */
+class BcryptSmokeTest
+{
+    @Test
+    void main_printsHashAndSuccessfulMatch()
+    {
+        PrintStream originalOut = System.out;
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+        try
+        {
+            System.setOut(new PrintStream(buffer, true, StandardCharsets.UTF_8));
+            Bcrypt.main(new String[0]);
+        }
+        finally
+        {
+            System.setOut(originalOut);
+        }
+
+        String output = buffer.toString(StandardCharsets.UTF_8);
+
+        assertTrue(output.contains("hash="));
+        assertTrue(output.contains("matches=true"));
+    }
+}

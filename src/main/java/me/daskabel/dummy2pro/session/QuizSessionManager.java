@@ -3,10 +3,14 @@ package me.daskabel.dummy2pro.session;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -22,6 +26,7 @@ import me.daskabel.dummy2pro.dto.RoomDtos.AnswerResultDto;
 import me.daskabel.dummy2pro.dto.RoomDtos.QuestionDto;
 import me.daskabel.dummy2pro.dto.RoomDtos.RoomStartDto;
 import me.daskabel.dummy2pro.dto.RoomDtos.RoomStatusDto;
+import me.daskabel.dummy2pro.dto.RunReviewDto;
 import me.daskabel.dummy2pro.session.QuizSession.RoomSession;
 import me.daskabel.dummy2pro.service.RoomIntroDialogs;
 
@@ -230,7 +235,10 @@ public class QuizSessionManager
             return existingRoom;
         }
 
-        String lockKey = session.getSessionId() + ":" + roomId;
+        // Die erstmalige Raumvorbereitung wird pro Run/Raum serialisiert,
+        // damit parallele Requests weder doppelte Progress-Einträge anlegen
+        // noch denselben Raum konkurrierend rekonstruieren.
+        String lockKey = session.getRunId() + ":" + roomId;
         Object lock = this.roomPreparationLocks.computeIfAbsent(lockKey, key -> new Object());
 
         synchronized (lock)
@@ -306,7 +314,10 @@ public class QuizSessionManager
             ));
         }
 
-        this.questionProgressRepo.saveAll(progressEntries);
+        if (!progressEntries.isEmpty())
+        {
+            this.questionProgressRepo.saveAll(progressEntries);
+        }
     }
 
     private static String calculateMedal(int correctAnswers, int totalQuestions)
@@ -532,6 +543,7 @@ public class QuizSessionManager
 
         SessionOverviewDto overview = new SessionOverviewDto();
         overview.setSessionId(sessionId);
+        overview.setUsername(username);
         overview.setTotalEarnedPoints(totalEarnedPoints);
         overview.setTotalMaxPoints(totalMaxPoints);
         overview.setTotalCorrect(totalCorrect);
@@ -719,6 +731,12 @@ public class QuizSessionManager
 
         GameRun run = this.gameRunRepo.getReferenceById(runId);
 
+        // Gespeicherte Antworten werden pro Frage immer vollständig ersetzt.
+        // So bleiben erneute Versuche, geänderte Mehrfachauswahlen und neue
+        // GAP-Kombinationen konsistent mit dem letzten Submit.
+        // Gespeicherte Antworten werden pro Frage immer vollständig ersetzt.
+        // So bleiben erneute Versuche, geänderte Mehrfachauswahlen und neue
+        // GAP-Kombinationen konsistent mit dem letzten Submit.
         if (question.getQuestionType() == QuestionType.GAP)
         {
             this.runGapAnswerRepo.deleteByRun_RunIdAndQuestion_QuestionId(runId, question.getQuestionId());
@@ -784,8 +802,6 @@ public class QuizSessionManager
                 this.runSelectedAnswerRepo.saveAll(selectedAnswersToSave);
             }
         }
-
-        this.questionProgressRepo.saveAll(progressEntries);
     }
 
     private RoomSession buildRoomSessionFromProgressEntries(
@@ -831,6 +847,9 @@ public class QuizSessionManager
 
         int answeredCount = 0;
 
+        // In die Laufzeit-Session werden nur bereits bewertete Fragen
+        // zurückgeschrieben. Offene Einträge bleiben unberührt, damit
+        // Fortschritt und aktuelle Position sauber aus dem DB-Stand folgen.
         for (QuestionProgress progress : roomProgressEntries)
         {
             if (progress.getStatus() == ProgressStatus.CORRECT
@@ -966,4 +985,295 @@ public class QuizSessionManager
         return dto;
     }
 
+    /**
+     * Baut eine vollständige Review-Sicht für einen abgeschlossenen oder
+     * laufenden Spielstand auf.
+     *
+     * Dafür werden Fortschritt, Fragen, ausgewählte Choice-Antworten und
+     * GAP-Antworten aus mehreren Quellen zusammengeführt und wieder nach
+     * Raum- und Fragenreihenfolge sortiert ausgegeben.
+     */
+    @Transactional(readOnly = true)
+    public RunReviewDto getRunReview(String sessionId)
+    {
+        QuizSession session = getSession(sessionId);
+        Long runId = session.getRunId();
+
+        List<QuestionProgress> progressEntries =
+                this.questionProgressRepo.findDetailedByRunIdOrderByRoomIdAscQuestionOrderAsc(runId);
+
+        RunReviewDto dto = new RunReviewDto();
+        dto.setRunId(runId);
+        dto.setUsername(this.userRepo.findById(session.getUserId())
+                .map(User::getUsername)
+                .orElse("Unbekannt"));
+
+        if (progressEntries.isEmpty())
+        {
+            dto.setRooms(List.of());
+            return dto;
+        }
+
+        // Choice- und GAP-Fragen werden getrennt geladen, weil dafür
+        // unterschiedliche Detailstrukturen benötigt werden.
+        Set<Long> choiceQuestionIds = progressEntries.stream()
+                .map(QuestionProgress::getQuestion)
+                .filter(question -> question.getQuestionType() == QuestionType.MC || question.getQuestionType() == QuestionType.TF)
+                .map(Question::getQuestionId)
+                .collect(Collectors.toCollection(HashSet::new));
+
+        Set<Long> gapQuestionIds = progressEntries.stream()
+                .map(QuestionProgress::getQuestion)
+                .filter(question -> question.getQuestionType() == QuestionType.GAP)
+                .map(Question::getQuestionId)
+                .collect(Collectors.toCollection(HashSet::new));
+
+        Map<Long, Question> questionsById = new HashMap<>();
+
+        if (!choiceQuestionIds.isEmpty())
+        {
+            this.questionRepo.findByQuestionIdsWithAnswers(new ArrayList<>(choiceQuestionIds))
+                    .forEach(question -> questionsById.put(question.getQuestionId(), question));
+        }
+
+        if (!gapQuestionIds.isEmpty())
+        {
+            this.questionRepo.findByQuestionIdsWithGaps(new ArrayList<>(gapQuestionIds))
+                    .forEach(question -> questionsById.put(question.getQuestionId(), question));
+        }
+
+        // Für das Review werden Choice-Antworten und GAP-Antworten in
+        // schnelle Lookup-Strukturen je Frage überführt.
+        Map<Long, Set<Long>> selectedChoiceIdsByQuestionId = this.runSelectedAnswerRepo.findDetailedByRunId(runId).stream()
+                .collect(Collectors.groupingBy(
+                        answer -> answer.getQuestion().getQuestionId(),
+                        Collectors.mapping(
+                                answer -> answer.getAnswerOption().getAnswerId(),
+                                Collectors.toSet()
+                        )
+                ));
+
+        Map<Long, Map<Long, RunGapAnswer>> gapAnswersByQuestionId = new HashMap<>();
+
+        for (RunGapAnswer answer : this.runGapAnswerRepo.findDetailedByRunId(runId))
+        {
+            gapAnswersByQuestionId
+                    .computeIfAbsent(answer.getQuestion().getQuestionId(), ignored -> new HashMap<>())
+                    .put(answer.getGapField().getGapId(), answer);
+        }
+
+        Map<Integer, String> themeNameByRoomId = new HashMap<>();
+        List<Theme> themes = this.generator.getThemesOrdered();
+
+        for (int i = 0; i < themes.size(); i++)
+        {
+            themeNameByRoomId.put(i + 1, themes.get(i).getName());
+        }
+
+        // LinkedHashMap bewahrt die aus der Query gelieferte Raumreihenfolge,
+        // damit das Review stabil in Spielreihenfolge bleibt.
+        Map<Integer, List<QuestionProgress>> progressByRoom = progressEntries.stream()
+                .collect(Collectors.groupingBy(
+                        QuestionProgress::getRoomId,
+                        LinkedHashMap::new,
+                        Collectors.toList()
+                ));
+
+        List<RunReviewDto.RoomReviewDto> rooms = new ArrayList<>();
+
+        for (Map.Entry<Integer, List<QuestionProgress>> roomEntry : progressByRoom.entrySet())
+        {
+            int roomId = roomEntry.getKey();
+            List<QuestionProgress> roomProgressEntries = roomEntry.getValue();
+
+            int totalQuestions = roomProgressEntries.size();
+            int correctAnswers = (int) roomProgressEntries.stream()
+                    .filter(progress -> progress.getStatus() == ProgressStatus.CORRECT)
+                    .count();
+            int wrongAnswers = (int) roomProgressEntries.stream()
+                    .filter(progress -> progress.getStatus() == ProgressStatus.WRONG)
+                    .count();
+            int openQuestions = totalQuestions - correctAnswers - wrongAnswers;
+
+            RunReviewDto.RoomReviewDto roomDto = new RunReviewDto.RoomReviewDto();
+            roomDto.setRoomId(roomId);
+            roomDto.setThemeName(themeNameByRoomId.getOrDefault(roomId, "Raum " + roomId));
+            roomDto.setMedal(calculateMedal(correctAnswers, totalQuestions));
+            roomDto.setTotalQuestions(totalQuestions);
+            roomDto.setCorrectAnswers(correctAnswers);
+            roomDto.setWrongAnswers(wrongAnswers);
+            roomDto.setOpenQuestions(openQuestions);
+
+            List<RunReviewDto.QuestionReviewDto> questionDtos = new ArrayList<>();
+
+            // In die Laufzeit-Session werden nur bereits bewertete Fragen
+        // zurückgeschrieben. Offene Einträge bleiben unberührt, damit
+        // Fortschritt und aktuelle Position sauber aus dem DB-Stand folgen.
+        for (QuestionProgress progress : roomProgressEntries)
+            {
+                Question question = questionsById.get(progress.getQuestion().getQuestionId());
+
+                if (question == null)
+                {
+                    throw new NoSuchElementException(
+                            "Frage " + progress.getQuestion().getQuestionId() + " für Review nicht gefunden.");
+                }
+
+                RunReviewDto.QuestionReviewDto questionDto = new RunReviewDto.QuestionReviewDto();
+                questionDto.setQuestionId(question.getQuestionId());
+                questionDto.setQuestionOrder(progress.getQuestionOrder());
+                questionDto.setQuestionType(question.getQuestionType().name());
+                questionDto.setQuestionText(buildQuestionReviewText(question));
+                questionDto.setImageUrl(question.getImageUrl());
+                questionDto.setPoints(question.getPoints());
+                questionDto.setStatus(progress.getStatus().name());
+                questionDto.setAnsweredAt(progress.getAnsweredAt());
+
+                // Gespeicherte Antworten werden pro Frage immer vollständig ersetzt.
+        // So bleiben erneute Versuche, geänderte Mehrfachauswahlen und neue
+        // GAP-Kombinationen konsistent mit dem letzten Submit.
+        if (question.getQuestionType() == QuestionType.GAP)
+                {
+                    questionDto.setChoices(List.of());
+                    questionDto.setGaps(buildGapReviews(
+                            question,
+                            gapAnswersByQuestionId.getOrDefault(question.getQuestionId(), Collections.emptyMap())
+                    ));
+                }
+                else
+                {
+                    questionDto.setChoices(buildChoiceReviews(
+                            question,
+                            selectedChoiceIdsByQuestionId.getOrDefault(question.getQuestionId(), Collections.emptySet())
+                    ));
+                    questionDto.setGaps(List.of());
+                }
+
+                questionDtos.add(questionDto);
+            }
+
+            roomDto.setQuestions(questionDtos);
+            rooms.add(roomDto);
+        }
+
+        dto.setRooms(rooms);
+        return dto;
+    }
+
+    private List<RunReviewDto.ChoiceReviewDto> buildChoiceReviews(Question question, Set<Long> selectedIds)
+    {
+        if (question.getAnswerOptions() == null)
+        {
+            return List.of();
+        }
+
+        return question.getAnswerOptions().stream()
+                .sorted((left, right) -> Integer.compare(left.getOptionOrder(), right.getOptionOrder()))
+                .map(option -> {
+                    RunReviewDto.ChoiceReviewDto dto = new RunReviewDto.ChoiceReviewDto();
+                    dto.setAnswerId(option.getAnswerId());
+                    dto.setOptionText(option.getOptionText());
+                    dto.setSelected(selectedIds.contains(option.getAnswerId()));
+                    dto.setCorrect(option.getIsCorrect());
+                    return dto;
+                })
+                .toList();
+    }
+
+    private List<RunReviewDto.GapReviewDto> buildGapReviews(Question question, Map<Long, RunGapAnswer> selectedAnswersByGapId)
+    {
+        if (question.getGapFields() == null)
+        {
+            return List.of();
+        }
+
+        return question.getGapFields().stream()
+                .sorted((left, right) -> Integer.compare(left.getGapIndex(), right.getGapIndex()))
+                .map(gapField -> {
+                    GapOption correctOption = gapField.getGapOptions().stream()
+                            .filter(GapOption::getIsCorrect)
+                            .findFirst()
+                            .orElse(null);
+
+                    RunGapAnswer selectedAnswer = selectedAnswersByGapId.get(gapField.getGapId());
+
+                    String selectedText = selectedAnswer != null && selectedAnswer.getSelectedGapOption() != null
+                            ? selectedAnswer.getSelectedGapOption().getOptionText()
+                            : null;
+
+                    String correctText = correctOption != null
+                            ? correctOption.getOptionText()
+                            : null;
+
+                    boolean correct = selectedAnswer != null
+                            && selectedAnswer.getSelectedGapOption() != null
+                            && correctOption != null
+                            && selectedAnswer.getSelectedGapOption().getGapOptionId().equals(correctOption.getGapOptionId());
+
+                    RunReviewDto.GapReviewDto dto = new RunReviewDto.GapReviewDto();
+                    dto.setGapId(gapField.getGapId());
+                    dto.setGapIndex(gapField.getGapIndex());
+                    dto.setLabel(buildGapLabel(gapField));
+                    dto.setSelectedText(selectedText);
+                    dto.setCorrectText(correctText);
+                    dto.setCorrect(correct);
+                    return dto;
+                })
+                .toList();
+    }
+
+    /**
+     * Baut einen lesbaren Review-Text für die Frage auf.
+     *
+     * Bei GAP-Fragen werden die einzelnen Lückenfelder wieder in einen
+     * zusammenhängenden Text mit Platzhaltern zusammengesetzt.
+     */
+    private String buildQuestionReviewText(Question question)
+    {
+        StringBuilder builder = new StringBuilder();
+
+        appendQuestionPart(builder, question.getStartText());
+
+        if (question.getQuestionType() == QuestionType.GAP && question.getGapFields() != null)
+        {
+            question.getGapFields().stream()
+                    .sorted((left, right) -> Integer.compare(left.getGapIndex(), right.getGapIndex()))
+                    .forEach(gapField -> {
+                        appendQuestionPart(builder, gapField.getTextBefore());
+                        appendQuestionPart(builder, "_____");
+                        appendQuestionPart(builder, gapField.getTextAfter());
+                    });
+        }
+
+        appendQuestionPart(builder, question.getEndText());
+
+        return builder.toString().trim().replaceAll("\\s+", " ");
+    }
+
+    private String buildGapLabel(GapField gapField)
+    {
+        StringBuilder builder = new StringBuilder();
+
+        appendQuestionPart(builder, gapField.getTextBefore());
+        appendQuestionPart(builder, "_____");
+        appendQuestionPart(builder, gapField.getTextAfter());
+
+        String result = builder.toString().trim().replaceAll("\\s+", " ");
+        return result.isBlank() ? "Lücke " + (gapField.getGapIndex() + 1) : result;
+    }
+
+    private void appendQuestionPart(StringBuilder builder, String part)
+    {
+        if (part == null || part.isBlank())
+        {
+            return;
+        }
+
+        if (builder.length() > 0)
+        {
+            builder.append(' ');
+        }
+
+        builder.append(part.trim());
+    }
 }

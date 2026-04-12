@@ -1,0 +1,239 @@
+-- =========================================================
+-- Abschlusskorrekturen für fehlerhafte Datenbankeinträge
+-- =========================================================
+--
+-- Zweck:
+-- Dieses Skript korrigiert nachträglich fehlerhafte Fragen, Antworten
+-- und Lückentext-Optionen in der vorhandenen Datenbank.
+--
+-- Inhalt:
+-- - Korrektur falscher Fragetypen
+-- - Korrektur von richtig/falsch-Markierungen
+-- - Korrektur einzelner Antworttexte
+-- - sprachliche und fachliche Überarbeitung einzelner Fragen
+--
+-- Hinweis:
+-- Mehrere Änderungen sind in Transaktionen gruppiert, damit zusammengehörige
+-- Korrekturen geschlossen ausgeführt werden können.
+-- =========================================================
+
+
+-- Fragetyp mehrerer Fragen auf MC korrigieren.
+UPDATE question
+SET question_type = 'MC'
+WHERE question_id IN (70,71,72,83,84,85,93,94,95,103,104,105);
+
+
+-- Richtige Antwortmarkierung für eine MC-Frage berichtigen.
+UPDATE answer_option
+SET is_correct = CASE answer_id
+    WHEN 1882 THEN 0
+    WHEN 1883 THEN 1
+END
+WHERE answer_id IN (1882,1883);
+
+
+-- Richtige Option eines Lückentexts korrigieren.
+UPDATE gap_option
+SET is_correct = CASE gap_option_id
+    WHEN 438 THEN 1
+    WHEN 439 THEN 0
+END
+WHERE gap_option_id IN (438,439);
+
+
+-- Richtige Option eines weiteren Lückentexts korrigieren.
+UPDATE gap_option
+SET is_correct = CASE gap_option_id
+    WHEN 449 THEN 0
+    WHEN 450 THEN 1
+END
+WHERE gap_option_id IN (449,450);
+
+
+-- Richtige Option eines weiteren Lückentexts korrigieren.
+UPDATE gap_option
+SET is_correct = CASE gap_option_id
+    WHEN 454 THEN 1
+    WHEN 455 THEN 0
+END
+WHERE gap_option_id IN (454,455);
+
+
+-- Richtige Option eines Lückentexts mit drei Auswahlwerten korrigieren.
+UPDATE gap_option
+SET is_correct = CASE gap_option_id
+    WHEN 476 THEN 1
+    WHEN 477 THEN 0
+    WHEN 478 THEN 0
+END
+WHERE gap_option_id IN (476,477,478);
+
+
+-- Richtige Option eines weiteren Lückentexts korrigieren.
+UPDATE gap_option
+SET is_correct = CASE gap_option_id
+    WHEN 485 THEN 1
+    WHEN 486 THEN 0
+END
+WHERE gap_option_id IN (485,486);
+
+
+-- Richtige Option eines weiteren Lückentexts korrigieren.
+UPDATE gap_option
+SET is_correct = CASE gap_option_id
+    WHEN 487 THEN 1
+    WHEN 488 THEN 0
+END
+WHERE gap_option_id IN (487,488);
+
+
+-- Zusammengehörige Korrekturen an mehreren MC-Fragen.
+START TRANSACTION;
+
+-- Frage 3:
+-- Korrekt sind nur Option 3 und 5.
+UPDATE answer_option
+SET is_correct = CASE option_order
+    WHEN 3 THEN 1
+    WHEN 5 THEN 1
+    ELSE 0
+END
+WHERE question_id = 3;
+
+-- Frage 27:
+-- Korrekt ist nur Option 4.
+UPDATE answer_option
+SET is_correct = CASE option_order
+    WHEN 4 THEN 1
+    ELSE 0
+END
+WHERE question_id = 27;
+
+-- Frage 32:
+-- Korrekt sind nur Option 3 und 5.
+UPDATE answer_option
+SET is_correct = CASE option_order
+    WHEN 3 THEN 1
+    WHEN 5 THEN 1
+    ELSE 0
+END
+WHERE question_id = 32;
+
+-- Frage 65:
+-- Antwort 4 bleibt korrekt, der Antworttext wird aber berichtigt.
+UPDATE answer_option
+SET option_text = 'Er dokumentiert die Abnahme.'
+WHERE question_id = 65
+  AND option_order = 4;
+
+COMMIT;
+
+
+-- Fachliche und sprachliche Korrekturen an einzelnen Fragen und Antworten.
+START TRANSACTION;
+
+-- Frage 269:
+-- Aussage auf Microsoft SQL Server eingrenzen.
+UPDATE question
+SET start_text = 'Ein TRUNCATE TABLE-Befehl kann in Microsoft SQL Server innerhalb einer Transaktion durch ein ROLLBACK rückgängig gemacht werden.'
+WHERE question_id = 269;
+
+-- Frage 269:
+-- Danach ist "True" die richtige Antwort.
+UPDATE answer_option
+SET is_correct = CASE option_order
+    WHEN 1 THEN 1
+    WHEN 2 THEN 0
+END
+WHERE question_id = 269
+  AND option_order IN (1, 2);
+
+-- Frage 345:
+-- Aussage allgemeingültig und sauber formulieren.
+UPDATE question
+SET start_text = 'In Java besitzt jeder Thread einen begrenzten Stack, während der Heap dynamisch verwaltet wird.'
+WHERE question_id = 345;
+
+-- Frage 362:
+-- Option 3 fachlich eindeutig formulieren.
+UPDATE answer_option
+SET option_text = 'ArrayList kann keine primitiven Datentypen direkt speichern.'
+WHERE question_id = 362
+  AND option_order = 3;
+
+-- Frage 362:
+-- Option 4 fachlich eindeutig formulieren.
+UPDATE answer_option
+SET option_text = 'Eine ArrayList kann ihre Größe dynamisch verändern.'
+WHERE question_id = 362
+  AND option_order = 4;
+
+COMMIT;
+
+
+-- Einzelkorrekturen an Lückentexten und Fragetexten.
+START TRANSACTION;
+
+-- GAP 481:
+-- Eine doppelte Antwort durch eine falsche Option ersetzen.
+UPDATE gap_option
+SET option_text = 'Indizes',
+    is_correct = 0
+WHERE gap_id = 138
+  AND option_order = 2;
+
+-- Frage 528:
+-- Fragetext etwas allgemeiner und fachlich sauberer formulieren.
+UPDATE question
+SET start_text = 'Welche Lizenz erlaubt eine sehr weitgehende kommerzielle Nutzung mit wenigen Pflichten?'
+WHERE question_id = 528;
+
+COMMIT;
+
+
+-- Kleine Textkorrekturen an Antwortoptionen.
+START TRANSACTION;
+
+UPDATE gap_option
+SET option_text = 'B) Qualität'
+WHERE gap_option_id = 203;
+
+UPDATE gap_option
+SET option_text = 'A) Typen'
+WHERE gap_option_id = 214;
+
+COMMIT;
+
+
+-- Weitere Korrekturen an Fragen und Antworttexten.
+START TRANSACTION;
+
+UPDATE question
+SET start_text = 'Welche Angabe gehört zu einer Methodendarstellung in UML?'
+WHERE question_id = 1277;
+
+UPDATE question
+SET start_text = REPLACE(start_text, 'Sentinentelwert', 'Sentinelwert')
+WHERE question_id = 1321;
+
+UPDATE gap_option
+SET option_text = 'B) Stack Overflow'
+WHERE gap_option_id = 299;
+
+COMMIT;
+
+
+-- Abschließende sprachliche Korrekturen.
+START TRANSACTION;
+
+UPDATE question
+SET start_text = 'Was ist unabhängig vom Vorgehensmodell wichtig – egal ob agil oder klassisch?'
+WHERE start_text = 'Was ist in bei alten Vorgehensmodellen wichtig: egal ob agil und klassisch?';
+
+UPDATE answer_option
+SET option_text = 'Zum Beispiel weil der Port bereits belegt ist oder der Anwendung die nötigen Rechte bzw. die passende Bind-Konfiguration fehlen'
+WHERE option_text = 'Zum Beispiel weil der Port bereits belegt ist oder Rechte bzw. Firewall-Regeln entgegenstehen'
+  AND is_correct = 1;
+
+COMMIT;

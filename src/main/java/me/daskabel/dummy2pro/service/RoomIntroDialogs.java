@@ -5,12 +5,21 @@ import java.util.Map;
 
 import me.daskabel.dummy2pro.dto.RoomDtos.DialogLineDto;
 
+/**
+ * Stellt die Einleitungsdialoge der einzelnen Räume bereit.
+ *
+ * Die Dialoge sind fest im Code hinterlegt und werden über die Raum-ID
+ * ausgewählt.
+ */
 public final class RoomIntroDialogs
 {
     private RoomIntroDialogs()
     {
     }
 
+    /**
+     * Enthält die Dialogzeilen je Raum.
+     */
     private static final Map<Integer, List<DialogLineDto>> ROOM_DIALOGS = Map.ofEntries(
             Map.entry(1, List.of(
                     new DialogLineDto("player", "Huch... wo bin ich denn nun gelandet?"),
@@ -149,9 +158,22 @@ public final class RoomIntroDialogs
                     new DialogLineDto("char15", "Unterschätze niemals die Restekiste. Dort verstecken sich die seltsam präzisen Prüfungsfragen."),
                     new DialogLineDto("player", "Und warum steht da Java?"),
                     new DialogLineDto("char15", "Weil Java offenbar überall mitreden möchte.")
+            )),
+            Map.entry(17, List.of(
+                    new DialogLineDto("player", "Noch ein Raum?"),
+                    new DialogLineDto("warrior", "Eher ein Trainingsplatz. Hier schleifst du nur deine Abkürzungen."),
+                    new DialogLineDto("player", "Also kein normaler Prüfungsraum?"),
+                    new DialogLineDto("warrior", "Nein. Keine Wertung, kein Speicherstand-Zwang. Einfach üben, so oft du willst."),
+                    new DialogLineDto("warrior", "Alle Fragen aus Theme 17 warten hier komplett auf dich.")
             ))
     );
 
+    /**
+     * Liefert den Einleitungsdialog für einen Raum.
+     *
+     * Wenn kein eigener Dialog hinterlegt ist, wird ein kurzer
+     * Standarddialog zurückgegeben.
+     */
     public static List<DialogLineDto> getDialogForRoom(int roomId)
     {
         return ROOM_DIALOGS.getOrDefault(

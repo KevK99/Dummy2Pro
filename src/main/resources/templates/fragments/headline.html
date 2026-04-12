@@ -1,6 +1,7 @@
 <header th:fragment="headline(title, subtitle, avatarUrl, answeredQuestions, totalQuestions)" class="w-full px-64 pt-6 pb-2">
     <div class="flex justify-between gap-6">
         <div class="flex items-start gap-4">
+            <!-- Der Home-Button wird nur in Ansichten ohne Fortschrittsanzeige eingeblendet. -->
             <div th:if="${answeredQuestions == null and totalQuestions == null}" th:replace="~{fragments/home-button :: homeButton}"></div>
 
             <div>
@@ -26,6 +27,7 @@
             <div th:replace="~{fragments/darkmode-button :: darkmodeButton}"></div>
 
             <div>
+                <!-- Das Avatarbild dient gleichzeitig als Einstieg in die Profilseite. -->
                 <a th:href="@{/profile.html}" class="block text-center">
                     <img id="headlineAvatar"
                          th:src="${avatarUrl}"

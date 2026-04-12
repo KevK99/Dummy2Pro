@@ -3,10 +3,16 @@ package me.daskabel.dummy2pro.model;
 import jakarta.persistence.*;
 import java.util.List;
 
+/**
+ * Repräsentiert einen Fragensatz innerhalb des Systems.
+ *
+ * Ein Fragensatz gehört zu einem Team und fasst mehrere Fragen
+ * unter einem gemeinsamen Titel zusammen.
+ */
 @Entity
 @Table(name = "question_set")
-public class QuestionSet {
-
+public class QuestionSet
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "question_set_id")
@@ -23,23 +29,54 @@ public class QuestionSet {
     private List<Question> questions;
 
     // Constructors
-    public QuestionSet() {}
+    public QuestionSet()
+    {
+    }
 
-    public QuestionSet(Team team, String title) {
+    public QuestionSet(Team team, String title)
+    {
         this.team = team;
         this.title = title;
     }
 
     // Getters & Setters
-    public Long getQuestionSetId() { return questionSetId; }
-    public void setQuestionSetId(Long questionSetId) { this.questionSetId = questionSetId; }
+    public Long getQuestionSetId()
+    {
+        return questionSetId;
+    }
 
-    public Team getTeam() { return team; }
-    public void setTeam(Team team) { this.team = team; }
+    public void setQuestionSetId(Long questionSetId)
+    {
+        this.questionSetId = questionSetId;
+    }
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public Team getTeam()
+    {
+        return team;
+    }
 
-    public List<Question> getQuestions() { return questions; }
-    public void setQuestions(List<Question> questions) { this.questions = questions; }
+    public void setTeam(Team team)
+    {
+        this.team = team;
+    }
+
+    public String getTitle()
+    {
+        return title;
+    }
+
+    public void setTitle(String title)
+    {
+        this.title = title;
+    }
+
+    public List<Question> getQuestions()
+    {
+        return questions;
+    }
+
+    public void setQuestions(List<Question> questions)
+    {
+        this.questions = questions;
+    }
 }

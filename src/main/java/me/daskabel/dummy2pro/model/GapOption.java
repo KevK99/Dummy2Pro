@@ -2,10 +2,16 @@ package me.daskabel.dummy2pro.model;
 
 import jakarta.persistence.*;
 
+/**
+ * Repräsentiert eine auswählbare Antwortmöglichkeit für eine einzelne Lücke.
+ *
+ * Gespeichert werden der Antworttext, die Reihenfolge innerhalb der Lücke
+ * und die Information, ob die Option korrekt ist.
+ */
 @Entity
 @Table(name = "gap_option")
-public class GapOption {
-
+public class GapOption
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "gap_option_id")
@@ -25,9 +31,12 @@ public class GapOption {
     private int optionOrder;
 
     // Constructors
-    public GapOption() {}
+    public GapOption()
+    {
+    }
 
-    public GapOption(GapField gapField, String optionText, boolean isCorrect, int optionOrder) {
+    public GapOption(GapField gapField, String optionText, boolean isCorrect, int optionOrder)
+    {
         this.gapField = gapField;
         this.optionText = optionText;
         this.isCorrect = isCorrect;
@@ -35,18 +44,53 @@ public class GapOption {
     }
 
     // Getters & Setters
-    public Long getGapOptionId() { return gapOptionId; }
-    public void setGapOptionId(Long gapOptionId) { this.gapOptionId = gapOptionId; }
+    public Long getGapOptionId()
+    {
+        return gapOptionId;
+    }
 
-    public GapField getGapField() { return gapField; }
-    public void setGapField(GapField gapField) { this.gapField = gapField; }
+    public void setGapOptionId(Long gapOptionId)
+    {
+        this.gapOptionId = gapOptionId;
+    }
 
-    public String getOptionText() { return optionText; }
-    public void setOptionText(String optionText) { this.optionText = optionText; }
+    public GapField getGapField()
+    {
+        return gapField;
+    }
 
-    public boolean getIsCorrect() { return isCorrect; }
-    public void setIsCorrect(boolean isCorrect) { this.isCorrect = isCorrect; }
+    public void setGapField(GapField gapField)
+    {
+        this.gapField = gapField;
+    }
 
-    public int getOptionOrder() { return optionOrder; }
-    public void setOptionOrder(int optionOrder) { this.optionOrder = optionOrder; }
+    public String getOptionText()
+    {
+        return optionText;
+    }
+
+    public void setOptionText(String optionText)
+    {
+        this.optionText = optionText;
+    }
+
+    public boolean getIsCorrect()
+    {
+        return isCorrect;
+    }
+
+    public void setIsCorrect(boolean isCorrect)
+    {
+        this.isCorrect = isCorrect;
+    }
+
+    public int getOptionOrder()
+    {
+        return optionOrder;
+    }
+
+    public void setOptionOrder(int optionOrder)
+    {
+        this.optionOrder = optionOrder;
+    }
 }

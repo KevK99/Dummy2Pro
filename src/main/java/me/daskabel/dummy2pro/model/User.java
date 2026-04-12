@@ -4,6 +4,12 @@ import java.util.List;
 
 import jakarta.persistence.*;
 
+/**
+ * Repräsentiert einen Benutzer der Anwendung.
+ *
+ * Gespeichert werden Anmeldedaten, Avatar-Einstellungen und die
+ * zugehörigen Spielstände.
+ */
 @Entity
 @Table(name = "users")
 public class User
@@ -21,6 +27,12 @@ public class User
 
     @Column(name = "avatar")
     private String avatar;
+
+    @Column(name = "avatar_shape", nullable = false)
+    private String avatarShape = "circle";
+
+    @Column(name = "selected_avatar_frame", nullable = false)
+    private String selectedAvatarFrame = "default";
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GameRun> gameRuns;
@@ -80,6 +92,26 @@ public class User
     public void setAvatar(String avatar)
     {
         this.avatar = avatar;
+    }
+
+    public String getAvatarShape()
+    {
+        return avatarShape;
+    }
+
+    public void setAvatarShape(String avatarShape)
+    {
+        this.avatarShape = avatarShape;
+    }
+
+    public String getSelectedAvatarFrame()
+    {
+        return selectedAvatarFrame;
+    }
+
+    public void setSelectedAvatarFrame(String selectedAvatarFrame)
+    {
+        this.selectedAvatarFrame = selectedAvatarFrame;
     }
 
     public List<GameRun> getGameRuns()

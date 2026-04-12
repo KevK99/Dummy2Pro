@@ -1404,39 +1404,39 @@ INSERT INTO gap_field (question_id, gap_index, text_before, text_after) VALUES
 
 INSERT INTO gap_option (gap_id, option_text, is_correct, option_order)
 SELECT gap_id,'zufällige',0,1 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=1;
-INSERT INTO gap_option SELECT gap_id,'strukturierte',1,2 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=1;
-INSERT INTO gap_option SELECT gap_id,'verschlüsselte',0,3 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=1;
-INSERT INTO gap_option SELECT gap_id,'temporäre',0,4 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=1;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'strukturierte',1,2 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=1;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'verschlüsselte',0,3 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=1;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'temporäre',0,4 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=1;
 
-INSERT INTO gap_option SELECT gap_id,'nur einmalig',0,1 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=2;
-INSERT INTO gap_option SELECT gap_id,'dauerhaft',1,2 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=2;
-INSERT INTO gap_option SELECT gap_id,'ausschließlich offline',0,3 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=2;
-INSERT INTO gap_option SELECT gap_id,'nur im Arbeitsspeicher',0,4 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'nur einmalig',0,1 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'dauerhaft',1,2 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'ausschließlich offline',0,3 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'nur im Arbeitsspeicher',0,4 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=2;
 
-INSERT INTO gap_option SELECT gap_id,'keinen',0,1 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=3;
-INSERT INTO gap_option SELECT gap_id,'mehreren',1,2 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=3;
-INSERT INTO gap_option SELECT gap_id,'maximal zwei',0,3 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=3;
-INSERT INTO gap_option SELECT gap_id,'immer genau einem',0,4 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'keinen',0,1 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'mehreren',1,2 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'maximal zwei',0,3 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'immer genau einem',0,4 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=3;
 
-INSERT INTO gap_option SELECT gap_id,'unsicher',0,1 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=4;
-INSERT INTO gap_option SELECT gap_id,'konsistent',1,2 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=4;
-INSERT INTO gap_option SELECT gap_id,'unsortiert',0,3 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=4;
-INSERT INTO gap_option SELECT gap_id,'unvollständig',0,4 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=4;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'unsicher',0,1 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=4;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'konsistent',1,2 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=4;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'unsortiert',0,3 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=4;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'unvollständig',0,4 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=4;
 
-INSERT INTO gap_option SELECT gap_id,'Backups',0,1 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=5;
-INSERT INTO gap_option SELECT gap_id,'Constraints',1,2 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=5;
-INSERT INTO gap_option SELECT gap_id,'Templates',0,3 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=5;
-INSERT INTO gap_option SELECT gap_id,'Themes',0,4 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=5;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Backups',0,1 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=5;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Constraints',1,2 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=5;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Templates',0,3 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=5;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Themes',0,4 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=5;
 
-INSERT INTO gap_option SELECT gap_id,'Dateien',0,1 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=6;
-INSERT INTO gap_option SELECT gap_id,'Beziehungen',1,2 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=6;
-INSERT INTO gap_option SELECT gap_id,'Passwörter',0,3 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=6;
-INSERT INTO gap_option SELECT gap_id,'Cookies',0,4 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=6;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Dateien',0,1 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=6;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Beziehungen',1,2 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=6;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Passwörter',0,3 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=6;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Cookies',0,4 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=6;
 
-INSERT INTO gap_option SELECT gap_id,'Caching',0,1 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=7;
-INSERT INTO gap_option SELECT gap_id,'Defense in Depth',1,2 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=7;
-INSERT INTO gap_option SELECT gap_id,'Denormalisierung',0,3 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=7;
-INSERT INTO gap_option SELECT gap_id,'Saving',0,4 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=7;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Caching',0,1 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=7;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Defense in Depth',1,2 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=7;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Denormalisierung',0,3 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=7;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Saving',0,4 FROM gap_field WHERE question_id=@db_gap1 AND gap_index=7;
 
 
 -- =========================================================
@@ -1457,34 +1457,34 @@ INSERT INTO gap_field (question_id, gap_index, text_before, text_after) VALUES
 
 INSERT INTO gap_option (gap_id, option_text, is_correct, option_order)
 SELECT gap_id,'gar nicht',0,1 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=1;
-INSERT INTO gap_option SELECT gap_id,'zentral',1,2 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=1;
-INSERT INTO gap_option SELECT gap_id,'nur einmal',0,3 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=1;
-INSERT INTO gap_option SELECT gap_id,'zufällig',0,4 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=1;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'zentral',1,2 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=1;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'nur einmal',0,3 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=1;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'zufällig',0,4 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=1;
 
-INSERT INTO gap_option SELECT gap_id,'Inkonsistenzen',1,1 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=2;
-INSERT INTO gap_option SELECT gap_id,'Designs',0,2 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=2;
-INSERT INTO gap_option SELECT gap_id,'Updates',0,3 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=2;
-INSERT INTO gap_option SELECT gap_id,'Indizes',0,4 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Inkonsistenzen',1,1 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Designs',0,2 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Updates',0,3 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Indizes',0,4 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=2;
 
-INSERT INTO gap_option SELECT gap_id,'1:1',0,1 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=3;
-INSERT INTO gap_option SELECT gap_id,'n:m',0,2 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=3;
-INSERT INTO gap_option SELECT gap_id,'1:n',1,3 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=3;
-INSERT INTO gap_option SELECT gap_id,'0:1',0,4 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'1:1',0,1 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'n:m',0,2 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'1:n',1,3 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'0:1',0,4 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=3;
 
-INSERT INTO gap_option SELECT gap_id,'Indizes',0,1 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=4;
-INSERT INTO gap_option SELECT gap_id,'Themes',0,2 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=4;
-INSERT INTO gap_option SELECT gap_id,'Tabellenfarben',0,3 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=4;
-INSERT INTO gap_option SELECT gap_id,'Transaktionen',1,4 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=4;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Indizes',0,1 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=4;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Themes',0,2 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=4;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Tabellenfarben',0,3 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=4;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Transaktionen',1,4 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=4;
 
-INSERT INTO gap_option SELECT gap_id,'Backups',1,1 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=5;
-INSERT INTO gap_option SELECT gap_id,'Views',0,2 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=5;
-INSERT INTO gap_option SELECT gap_id,'Joins',0,3 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=5;
-INSERT INTO gap_option SELECT gap_id,'Schedules',0,4 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=5;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Backups',1,1 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=5;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Views',0,2 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=5;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Joins',0,3 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=5;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Schedules',0,4 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=5;
 
-INSERT INTO gap_option SELECT gap_id,'Türen',0,1 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=6;
-INSERT INTO gap_option SELECT gap_id,'Rechte',1,2 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=6;
-INSERT INTO gap_option SELECT gap_id,'Schulen',0,3 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=6;
-INSERT INTO gap_option SELECT gap_id,'Geldscheine',0,4 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=6;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Türen',0,1 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=6;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Rechte',1,2 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=6;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Schulen',0,3 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=6;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Geldscheine',0,4 FROM gap_field WHERE question_id=@db_gap2 AND gap_index=6;
 
 
 -- =========================================================
@@ -1506,39 +1506,39 @@ INSERT INTO gap_field (question_id, gap_index, text_before, text_after) VALUES
 
 INSERT INTO gap_option (gap_id, option_text, is_correct, option_order)
 SELECT gap_id,'Kühlschrank-Datenbank',0,1 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=1;
-INSERT INTO gap_option SELECT gap_id,'Cloud-Datenbank',0,2 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=1;
-INSERT INTO gap_option SELECT gap_id,'Turbo-Tabellen-Speicher',0,3 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=1;
-INSERT INTO gap_option SELECT gap_id,'Relationalen Datenbank',1,4 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=1;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Cloud-Datenbank',0,2 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=1;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Turbo-Tabellen-Speicher',0,3 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=1;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Relationalen Datenbank',1,4 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=1;
 
-INSERT INTO gap_option SELECT gap_id,'NoSQL-Datenbanken',1,1 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=2;
-INSERT INTO gap_option SELECT gap_id,'NoSleep-Datenbanken',0,2 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=2;
-INSERT INTO gap_option SELECT gap_id,'NoSound-Datenbanken',0,3 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=2;
-INSERT INTO gap_option SELECT gap_id,'NoSpace-Datenbanken',0,4 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'NoSQL-Datenbanken',1,1 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'NoSleep-Datenbanken',0,2 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'NoSound-Datenbanken',0,3 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'NoSpace-Datenbanken',0,4 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=2;
 
-INSERT INTO gap_option SELECT gap_id,'Dokumentenvernichter-Datenbanken',0,1 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=3;
-INSERT INTO gap_option SELECT gap_id,'Domino-Datenbanken',0,2 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=3;
-INSERT INTO gap_option SELECT gap_id,'Dokumentenorientierte Datenbank',1,3 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=3;
-INSERT INTO gap_option SELECT gap_id,'DORA-Datenbanken',0,4 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Dokumentenvernichter-Datenbanken',0,1 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Domino-Datenbanken',0,2 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Dokumentenorientierte Datenbank',1,3 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'DORA-Datenbanken',0,4 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=3;
 
-INSERT INTO gap_option SELECT gap_id,'Key-Voice-Datenbanken',0,1 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=4;
-INSERT INTO gap_option SELECT gap_id,'Key-Value-Datenbanken',1,2 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=4;
-INSERT INTO gap_option SELECT gap_id,'Key-Vault-Datenbanken',0,3 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=4;
-INSERT INTO gap_option SELECT gap_id,'Key-Video-Datenbanken',0,4 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=4;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Key-Voice-Datenbanken',0,1 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=4;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Key-Value-Datenbanken',1,2 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=4;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Key-Vault-Datenbanken',0,3 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=4;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Key-Video-Datenbanken',0,4 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=4;
 
-INSERT INTO gap_option SELECT gap_id,'Spaltenorientierte Datenbanken',1,1 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=5;
-INSERT INTO gap_option SELECT gap_id,'Spalten-Urlaubs-Datenbanken',0,2 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=5;
-INSERT INTO gap_option SELECT gap_id,'Spaltenlose Datenbanken',0,3 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=5;
-INSERT INTO gap_option SELECT gap_id,'Spaltpilz-Datenbanken',0,4 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=5;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Spaltenorientierte Datenbanken',1,1 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=5;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Spalten-Urlaubs-Datenbanken',0,2 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=5;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Spaltenlose Datenbanken',0,3 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=5;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Spaltpilz-Datenbanken',0,4 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=5;
 
-INSERT INTO gap_option SELECT gap_id,'Grafikkarten-Datenbanken',0,1 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=6;
-INSERT INTO gap_option SELECT gap_id,'Graffiti-Datenbanken',0,2 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=6;
-INSERT INTO gap_option SELECT gap_id,'Graphdatenbanken',1,3 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=6;
-INSERT INTO gap_option SELECT gap_id,'Gras-Datenbanken',0,4 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=6;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Grafikkarten-Datenbanken',0,1 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=6;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Graffiti-Datenbanken',0,2 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=6;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Graphdatenbanken',1,3 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=6;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Gras-Datenbanken',0,4 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=6;
 
-INSERT INTO gap_option SELECT gap_id,'Objektive Datenbanken',0,1 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=7;
-INSERT INTO gap_option SELECT gap_id,'Objektorientierte Datenbanken',1,2 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=7;
-INSERT INTO gap_option SELECT gap_id,'Objektlager-Datenbanken',0,3 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=7;
-INSERT INTO gap_option SELECT gap_id,'Objektivitäts-Datenbanken',0,4 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=7;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Objektive Datenbanken',0,1 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=7;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Objektorientierte Datenbanken',1,2 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=7;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Objektlager-Datenbanken',0,3 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=7;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Objektivitäts-Datenbanken',0,4 FROM gap_field WHERE question_id=@db_gap3 AND gap_index=7;
 
 
 -- =========================================================
@@ -1558,19 +1558,19 @@ INSERT INTO gap_field (question_id, gap_index, text_before, text_after) VALUES
 
 INSERT INTO gap_option (gap_id, option_text, is_correct, option_order)
 SELECT gap_id,'Farben',0,1 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=1;
-INSERT INTO gap_option SELECT gap_id,'Anweisungen',1,2 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=1;
-INSERT INTO gap_option SELECT gap_id,'Bilder',0,3 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=1;
-INSERT INTO gap_option SELECT gap_id,'Tabellen',0,4 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=1;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Anweisungen',1,2 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=1;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Bilder',0,3 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=1;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Tabellen',0,4 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=1;
 
-INSERT INTO gap_option SELECT gap_id,'unlesbar',0,1 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=2;
-INSERT INTO gap_option SELECT gap_id,'wartbar',1,2 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=2;
-INSERT INTO gap_option SELECT gap_id,'zufällig',0,3 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=2;
-INSERT INTO gap_option SELECT gap_id,'geheim',0,4 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'unlesbar',0,1 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'wartbar',1,2 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'zufällig',0,3 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'geheim',0,4 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=2;
 
-INSERT INTO gap_option SELECT gap_id,'Backups',0,1 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=3;
-INSERT INTO gap_option SELECT gap_id,'Verschlüsselung',0,2 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=3;
-INSERT INTO gap_option SELECT gap_id,'Tests',1,3 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=3;
-INSERT INTO gap_option SELECT gap_id,'Dokumentationen',0,4 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Backups',0,1 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Verschlüsselung',0,2 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Tests',1,3 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Dokumentationen',0,4 FROM gap_field WHERE question_id=@pr_gap1 AND gap_index=3;
 
 -- GAP 2
 INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
@@ -1585,19 +1585,19 @@ INSERT INTO gap_field (question_id, gap_index, text_before, text_after) VALUES
 
 INSERT INTO gap_option (gap_id, option_text, is_correct, option_order)
 SELECT gap_id,'Module/Schichten',1,1 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=1;
-INSERT INTO gap_option SELECT gap_id,'zufällige Dateien',0,2 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=1;
-INSERT INTO gap_option SELECT gap_id,'4 Teile',0,3 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=1;
-INSERT INTO gap_option SELECT gap_id,'Tabellen',0,4 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=1;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'zufällige Dateien',0,2 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=1;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'4 Teile',0,3 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=1;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Tabellen',0,4 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=1;
 
-INSERT INTO gap_option SELECT gap_id,'globale Variablen',0,1 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=2;
-INSERT INTO gap_option SELECT gap_id,'Interfaces/Abstraktionen',1,2 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=2;
-INSERT INTO gap_option SELECT gap_id,'Copy-Paste',0,3 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=2;
-INSERT INTO gap_option SELECT gap_id,'Hardcoding',0,4 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'globale Variablen',0,1 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Interfaces/Abstraktionen',1,2 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Copy-Paste',0,3 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Hardcoding',0,4 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=2;
 
-INSERT INTO gap_option SELECT gap_id,'Excel',0,1 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=3;
-INSERT INTO gap_option SELECT gap_id,'Paint',0,2 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=3;
-INSERT INTO gap_option SELECT gap_id,'Word',0,3 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=3;
-INSERT INTO gap_option SELECT gap_id,'Git',1,4 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Excel',0,1 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Paint',0,2 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Word',0,3 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Git',1,4 FROM gap_field WHERE question_id=@pr_gap2 AND gap_index=3;
 
 -- GAP 3
 INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
@@ -1613,24 +1613,24 @@ INSERT INTO gap_field (question_id, gap_index, text_before, text_after) VALUES
 
 INSERT INTO gap_option (gap_id, option_text, is_correct, option_order)
 SELECT gap_id,'Farben',0,1 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=1;
-INSERT INTO gap_option SELECT gap_id,'Tabellen',0,2 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=1;
-INSERT INTO gap_option SELECT gap_id,'Klassen',1,3 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=1;
-INSERT INTO gap_option SELECT gap_id,'Pixel',0,4 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=1;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Tabellen',0,2 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=1;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Klassen',1,3 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=1;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Pixel',0,4 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=1;
 
-INSERT INTO gap_option SELECT gap_id,'Kommentare',0,1 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=2;
-INSERT INTO gap_option SELECT gap_id,'Attribute',1,2 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=2;
-INSERT INTO gap_option SELECT gap_id,'Icons',0,3 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=2;
-INSERT INTO gap_option SELECT gap_id,'CSS',0,4 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Kommentare',0,1 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Attribute',1,2 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Icons',0,3 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'CSS',0,4 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=2;
 
-INSERT INTO gap_option SELECT gap_id,'Methoden',1,1 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=3;
-INSERT INTO gap_option SELECT gap_id,'Dateiendungen',0,2 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=3;
-INSERT INTO gap_option SELECT gap_id,'Spalten',0,3 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=3;
-INSERT INTO gap_option SELECT gap_id,'Schriftarten',0,4 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Methoden',1,1 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Dateiendungen',0,2 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Spalten',0,3 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Schriftarten',0,4 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=3;
 
-INSERT INTO gap_option SELECT gap_id,'Commit',0,1 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=4;
-INSERT INTO gap_option SELECT gap_id,'Objekt',1,2 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=4;
-INSERT INTO gap_option SELECT gap_id,'Router',0,3 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=4;
-INSERT INTO gap_option SELECT gap_id,'Repository',0,4 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=4;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Commit',0,1 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=4;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Objekt',1,2 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=4;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Router',0,3 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=4;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Repository',0,4 FROM gap_field WHERE question_id=@pr_gap3 AND gap_index=4;
 
 -- GAP 4
 INSERT INTO question (question_set_id, question_type, start_text, image_url, end_text, allows_multiple, points)
@@ -1646,24 +1646,24 @@ INSERT INTO gap_field (question_id, gap_index, text_before, text_after) VALUES
 
 INSERT INTO gap_option (gap_id, option_text, is_correct, option_order)
 SELECT gap_id,'Tabs',0,1 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=1;
-INSERT INTO gap_option SELECT gap_id,'Cookies',0,2 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=1;
-INSERT INTO gap_option SELECT gap_id,'Screenshots',0,3 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=1;
-INSERT INTO gap_option SELECT gap_id,'Commits',1,4 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=1;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Cookies',0,2 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=1;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Screenshots',0,3 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=1;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Commits',1,4 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=1;
 
-INSERT INTO gap_option SELECT gap_id,'Prozesse',0,1 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=2;
-INSERT INTO gap_option SELECT gap_id,'Passwörter',0,2 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=2;
-INSERT INTO gap_option SELECT gap_id,'Treiber',0,3 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=2;
-INSERT INTO gap_option SELECT gap_id,'Branches',1,4 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Prozesse',0,1 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Passwörter',0,2 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Treiber',0,3 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=2;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Branches',1,4 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=2;
 
-INSERT INTO gap_option SELECT gap_id,'Render',0,1 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=3;
-INSERT INTO gap_option SELECT gap_id,'Ping',0,2 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=3;
-INSERT INTO gap_option SELECT gap_id,'Merge',1,3 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=3;
-INSERT INTO gap_option SELECT gap_id,'Encrypt',0,4 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Render',0,1 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Ping',0,2 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Merge',1,3 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=3;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Encrypt',0,4 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=3;
 
-INSERT INTO gap_option SELECT gap_id,'Reset Windows',0,1 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=4;
-INSERT INTO gap_option SELECT gap_id,'Reboot',0,2 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=4;
-INSERT INTO gap_option SELECT gap_id,'Rebase',1,3 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=4;
-INSERT INTO gap_option SELECT gap_id,'Repaint',0,4 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=4;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Reset Windows',0,1 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=4;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Reboot',0,2 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=4;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Rebase',1,3 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=4;
+INSERT INTO gap_option (gap_id, option_text, is_correct, option_order) SELECT gap_id,'Repaint',0,4 FROM gap_field WHERE question_id=@pr_gap4 AND gap_index=4;
 
 COMMIT;
 

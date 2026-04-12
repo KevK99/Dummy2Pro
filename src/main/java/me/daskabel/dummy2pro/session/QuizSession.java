@@ -13,22 +13,36 @@ import java.util.UUID;
 import me.daskabel.dummy2pro.dto.RoomDtos.QuestionDto;
 
 /**
- * Eine vollständige Quiz-Instanz für einen Spieler — alle 7 Räume.
+ * Repräsentiert eine laufende Quiz-Sitzung im Arbeitsspeicher.
  *
- * Lebt im Arbeitsspeicher (kein DB-Schema nötig). Wird vom QuizSessionGenerator
- * erzeugt und vom QuizSessionManager verwaltet.
+ * Die Klasse bildet den aktuellen Stand eines Spielers über alle Räume hinweg ab,
+ * ohne selbst persistent zu sein. Gespeichert werden unter anderem die
+ * Raumstruktur, die Reihenfolge der Fragen, die bisher erzielten Ergebnisse und
+ * Metadaten zur Aktivität der Sitzung.
+ *
+ * Die eigentliche Persistenz des Spielfortschritts liegt in der Datenbank. Diese
+ * Klasse ist das zur Laufzeit genutzte Arbeitsmodell, das vom
+ * {@code QuizSessionGenerator} vorbereitet und vom {@code QuizSessionManager}
+ * verwaltet wird.
  *
  * Aufbau:
  * QuizSession
- * └── Map<roomId, RoomSession> (7 Einträge, roomId = 1..7)
- *     └── questionSequence (geshuffelte Liste der Fragen-IDs)
- *     └── Map<questionId, QuestionResult>
+ * └── Map<roomId, RoomSession>
+ *     └── questionSequence
+ *     └── questionCache
+ *     └── results
  *     └── currentIndex
  *     └── completed
  */
 public class QuizSession
 {
 
+    /**
+     * Kapselt das Ergebnis einer beantworteten Frage innerhalb einer Sitzung.
+     *
+     * Gespeichert werden nur die für die Laufzeit relevanten Auswertungsdaten,
+     * nicht die komplette Frage selbst.
+     */
     public static class QuestionResult
     {
         private final Long questionId;
@@ -71,6 +85,13 @@ public class QuizSession
         }
     }
 
+    /**
+     * Hält den Laufzeitstand eines einzelnen Raums.
+     *
+     * Ein Raum kennt seine feste Fragenreihenfolge, die bereits geladenen
+     * Frageobjekte, die bisherigen Ergebnisse sowie den aktuellen Fortschritt
+     * innerhalb dieser Sequenz.
+     */
     public static class RoomSession
     {
         private final int roomId;
@@ -107,7 +128,13 @@ public class QuizSession
             this.maxPoints = maxPoints;
         }
 
-        /** Rückt zur nächsten Frage vor. Gibt false zurück wenn keine mehr da. */
+        /**
+         * Verschiebt den Raum auf die nächste Frage.
+         *
+         * Gibt {@code true} zurück, wenn noch eine weitere Frage erreicht wurde.
+         * Ist keine weitere Frage vorhanden, wird der Raum als abgeschlossen
+         * markiert und {@code false} geliefert.
+         */
         public boolean advance()
         {
             if (this.currentIndex < this.questionSequence.size() - 1)
@@ -120,7 +147,13 @@ public class QuizSession
             return false;
         }
 
-        /** Gibt die aktuelle Frage zurück (null wenn Raum leer/fertig). */
+        /**
+         * Liefert die aktuell aktive Frage des Raums.
+         *
+         * Vor der Rückgabe werden Index- und Gesamtinformationen in das DTO
+         * eingetragen, damit das Frontend Fortschritt und Position direkt
+         * anzeigen kann.
+         */
         public QuestionDto currentQuestion()
         {
             if (this.completed
@@ -147,6 +180,12 @@ public class QuizSession
             return this.results.size();
         }
 
+        /**
+         * Berechnet den Bearbeitungsfortschritt des Raums in Prozent.
+         *
+         * Gerundet wird auf eine Nachkommastelle, damit der Wert im Frontend
+         * stabil und gut lesbar dargestellt werden kann.
+         */
         public double getCompletionPercent()
         {
             if (this.questionSequence.isEmpty())
@@ -178,6 +217,11 @@ public class QuizSession
             return this.maxPoints;
         }
 
+        /**
+         * Ermittelt die Medaille des Raums anhand des Anteils korrekter Fragen.
+         *
+         * Die Schwellenwerte bilden direkt die Fachlogik des Spiels ab.
+         */
         public String getMedal()
         {
             if (this.questionSequence.isEmpty())
@@ -237,6 +281,9 @@ public class QuizSession
             return (int) this.results.values().stream().filter(r -> !r.isCorrect()).count();
         }
 
+        /**
+         * Prüft, ob für die angegebene Frage bereits ein Ergebnis vorliegt.
+         */
         public boolean isAnswered(Long questionId)
         {
             return this.results.containsKey(questionId);
@@ -247,11 +294,17 @@ public class QuizSession
             return this.completed;
         }
 
+        /**
+         * Kennzeichnet, ob die aktuelle Position bereits auf der letzten Frage liegt.
+         */
         public boolean isLastQuestion()
         {
             return this.currentIndex >= this.questionSequence.size() - 1;
         }
 
+        /**
+         * Trägt das Ergebnis einer neu beantworteten Frage ein.
+         */
         public void recordResult(Long questionId, boolean correct, int pointsEarned)
         {
             this.results.put(questionId, new QuestionResult(questionId, correct, pointsEarned));
@@ -271,6 +324,9 @@ public class QuizSession
         /**
          * Für Restore aus der DB:
          * Aktuellen Fragenindex setzen.
+         *
+         * Der Wert wird defensiv auf den gültigen Bereich begrenzt, damit
+         * inkonsistente Wiederherstellungsdaten die Sitzung nicht beschädigen.
          */
         public void setCurrentIndex(int currentIndex)
         {
@@ -318,6 +374,11 @@ public class QuizSession
     // aktiver Raum
     private int activeRoomId;
 
+    /**
+     * Erzeugt eine neue Laufzeitsitzung für einen Benutzer und einen Spielstand.
+     *
+     * Die eigentlichen Räume werden anschließend separat ergänzt.
+     */
     public QuizSession(Long userId, Long runId)
     {
         this.sessionId = UUID.randomUUID().toString();
@@ -329,11 +390,17 @@ public class QuizSession
         this.activeRoomId = 1;
     }
 
+    /**
+     * Liefert den aktuell aktiven Raum der Sitzung.
+     */
     public RoomSession activeRoom()
     {
         return this.rooms.get(this.activeRoomId);
     }
 
+    /**
+     * Fügt einen Raum in die Sitzung ein und aktualisiert den Aktivitätszeitpunkt.
+     */
     public void addRoom(RoomSession roomSession)
     {
         this.rooms.put(roomSession.getRoomId(), roomSession);
@@ -365,12 +432,20 @@ public class QuizSession
         return this.rooms.get(roomId);
     }
 
+    /**
+     * Ersetzt den Laufzeitstand eines vorhandenen Raums.
+     *
+     * Das ist vor allem beim Wiederherstellen oder Neuaufbau eines Raums nützlich.
+     */
     public void replaceRoom(RoomSession roomSession)
     {
         this.rooms.put(roomSession.getRoomId(), roomSession);
         touch();
     }
 
+    /**
+     * Externer Einstiegspunkt, um die Sitzung als benutzt zu markieren.
+     */
     public void touchSession()
     {
         touch();
@@ -381,16 +456,25 @@ public class QuizSession
         return this.sessionId;
     }
 
+    /**
+     * Summiert alle korrekt beantworteten Fragen über sämtliche Räume.
+     */
     public int getTotalCorrect()
     {
         return this.rooms.values().stream().mapToInt(RoomSession::getCorrectCount).sum();
     }
 
+    /**
+     * Summiert alle bisher erreichten Punkte der Sitzung.
+     */
     public int getTotalEarnedPoints()
     {
         return this.rooms.values().stream().mapToInt(RoomSession::getEarnedPoints).sum();
     }
 
+    /**
+     * Summiert die maximal möglichen Punkte aller Räume.
+     */
     public int getTotalMaxPoints()
     {
         return this.rooms.values().stream().mapToInt(RoomSession::getMaxPoints).sum();
@@ -411,11 +495,19 @@ public class QuizSession
         return this.runId;
     }
 
+    /**
+     * Prüft, ob alle Räume bereits abgeschlossen wurden.
+     */
     public boolean isFullyCompleted()
     {
         return this.rooms.values().stream().allMatch(RoomSession::isCompleted);
     }
 
+    /**
+     * Wechselt den aktiven Raum.
+     *
+     * Es werden nur Räume akzeptiert, die tatsächlich in der Sitzung vorhanden sind.
+     */
     public void setActiveRoomId(int roomId)
     {
         if (!this.rooms.containsKey(roomId))
@@ -428,6 +520,9 @@ public class QuizSession
         touch();
     }
 
+    /**
+     * Aktualisiert den letzten Aktivitätszeitpunkt der Sitzung.
+     */
     private void touch()
     {
         this.lastActivityAt = LocalDateTime.now();

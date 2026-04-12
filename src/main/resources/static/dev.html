@@ -8,7 +8,13 @@
 </head>
 
 <body class="min-h-screen bg-slate-950 text-slate-100">
+<!--
+    Einfache Entwicklungsseite zum parallelen Laden einzelner statischer
+    Teilseiten und zum schnellen Prüfen von Assets außerhalb des normalen
+    Thymeleaf-/Routing-Flows.
+-->
 <div class="mx-auto max-w-6xl px-6 py-10 space-y-8">
+    <!-- Zielcontainer für separat geladene Teilseiten. -->
     <div id="register"></div>
     <div id="login"></div>
     <div id="dashboard"></div>
@@ -17,6 +23,7 @@
     <div id="endscreen"></div>
 </div>
 
+<!-- Bilddateien werden hier direkt eingebunden, um Asset-Pfade und Grafiken schnell manuell zu prüfen. -->
 <img src="/images/lama.png" alt="lama" />
 <img src="/images/catBlack.PNG" alt="cat" />
 <img src="/images/catFar.png" alt="cat" />
@@ -29,6 +36,8 @@
 <img src="/images/panda.PNG" alt="panda" />
 
 <script>
+    // Die Teilseiten werden bewusst unabhängig geladen, damit sich defekte Fragmente
+    // beim Testen leichter isolieren lassen.
     fetch('/headline.html')
         .then(response => response.text())
         .then(headlineHTML => {

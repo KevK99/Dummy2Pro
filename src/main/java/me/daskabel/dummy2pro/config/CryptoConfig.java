@@ -5,14 +5,20 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
- * liefert den BCryptPasswordEncoder als Bean, damit du man im UserService injizieren kann
+ * Stellt sicherheitsrelevante Hilfsklassen der Anwendung bereit.
+ *
  */
-
 @Configuration
-public class CryptoConfig {
-
+public class CryptoConfig
+{
+    /**
+     * Stellt den Passwort-Encoder für Registrierung und Login bereit.
+     *
+     * @return BCrypt-Encoder für Passwort-Hashing
+     */
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
+    public BCryptPasswordEncoder passwordEncoder()
+    {
         return new BCryptPasswordEncoder();
     }
 }

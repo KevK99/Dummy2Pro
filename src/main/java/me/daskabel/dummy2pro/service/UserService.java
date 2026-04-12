@@ -18,10 +18,15 @@ import me.daskabel.dummy2pro.repository.RunSelectedAnswerRepository;
 import me.daskabel.dummy2pro.repository.UserRepository;
 
 /**
- * Erstellen eines neuen Users, prüft Passwortregeln und erstellt einen Hash (BCrypt, weil das der richtige Standard ist
- * und sicherer als normales Hashen).
+ * Kapselt die Benutzerverwaltung des Projekts.
+ *
+ * Der Service ist für Registrierung, Anmeldung, Profiländerungen,
+ * Avatar-Verwaltung, Passwortwechsel und das Löschen eines Benutzers
+ * einschließlich der zugehörigen Spielstände zuständig.
+ *
+ * Zusätzlich liegen hier die zentralen Validierungsregeln für Benutzername,
+ * Passwort und Avatar-Einstellungen.
  */
-
 @Service
 public class UserService
 {
@@ -49,6 +54,45 @@ public class UserService
             "subi.PNG",
             "sunflower.PNG",
             "sunflowerCursed.PNG"
+    );
+
+    private static final Set<String> ALLOWED_AVATAR_SHAPES = Set.of(
+            "circle",
+            "square",
+            "rounded-square",
+            "triangle",
+            "trapezoid",
+            "hexagon",
+            "octagon",
+            "diamond",
+            "star"
+    );
+
+    private static final Set<String> ALLOWED_AVATAR_FRAMES = Set.of(
+            "default",
+            "red",
+            "orange",
+            "amber",
+            "yellow",
+            "lime",
+            "green",
+            "emerald",
+            "teal",
+            "cyan",
+            "sky",
+            "blue",
+            "indigo",
+            "violet",
+            "purple",
+            "fuchsia",
+            "pink",
+            "rose",
+            "slate",
+            "gray",
+            "black",
+            "bronze",
+            "silver",
+            "gold"
     );
 
     private final BCryptPasswordEncoder encoder;
@@ -99,12 +143,18 @@ public class UserService
         return user;
     }
 
+    /**
+     * Löscht einen Benutzer einschließlich aller zugehörigen Spielstände
+     * und gespeicherten Antworten.
+     */
+    @org.springframework.transaction.annotation.Transactional
     public void deleteUser(Long userId)
     {
         User user =
                 this.userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Benutzer nicht gefunden"));
 
-        // Lösche alle Spielstände des Benutzers
+        // Die abhängigen Laufdaten werden vor dem Benutzer gelöscht,
+        // damit keine verwaisten Einträge zurückbleiben.
         List<GameRun> gameRuns = this.gameRunRepository.findByUser_UserId(userId);
         for (GameRun run : gameRuns)
         {
@@ -114,7 +164,6 @@ public class UserService
         }
         this.gameRunRepository.deleteAll(gameRuns);
 
-        // Lösche den Benutzer
         this.userRepository.delete(user);
     }
 
@@ -127,6 +176,9 @@ public class UserService
                 .orElse(false);
     }
 
+    /**
+     * Registriert einen neuen Benutzer und legt direkt einen ersten Spielstand an.
+     */
     @org.springframework.transaction.annotation.Transactional
     public User register(String username, String password)
     {
@@ -143,6 +195,7 @@ public class UserService
 
         User savedUser = userRepository.save(user);
 
+        // Ein neu registrierter Benutzer bekommt sofort einen ersten Spielstand.
         GameRun initialRun = new GameRun();
         initialRun.setUser(savedUser);
         initialRun.setStartedAt(LocalDateTime.now());
@@ -189,6 +242,29 @@ public class UserService
         return this.userRepository.save(user);
     }
 
+    public User updateAvatarStyle(Long userId, String avatarShape, String selectedAvatarFrame)
+    {
+        User user = getUser(userId);
+
+        String resolvedShape = (avatarShape == null || avatarShape.isBlank()) ? "circle" : avatarShape.trim();
+        String resolvedFrame = (selectedAvatarFrame == null || selectedAvatarFrame.isBlank()) ? "default" : selectedAvatarFrame.trim();
+
+        if (!ALLOWED_AVATAR_SHAPES.contains(resolvedShape))
+        {
+            throw new IllegalArgumentException("Ungültige Avatar-Form.");
+        }
+
+        if (!ALLOWED_AVATAR_FRAMES.contains(resolvedFrame))
+        {
+            throw new IllegalArgumentException("Ungültiger Avatar-Rahmen.");
+        }
+
+        user.setAvatarShape(resolvedShape);
+        user.setSelectedAvatarFrame(resolvedFrame);
+
+        return this.userRepository.save(user);
+    }
+
     public void updatePassword(Long userId, String currentPassword, String newPassword, String newPasswordConfirm)
     {
         if (currentPassword == null || currentPassword.isBlank())
@@ -219,6 +295,10 @@ public class UserService
         this.userRepository.save(user);
     }
 
+    /**
+     * Platzhalter für eine mögliche spätere Funktion zum Speichern
+     * des aktuellen Spielstands.
+     */
     public void saveCurrentGameProgress(Long userId)
     {
         // Hier kannst du die Logik implementieren, um den aktuellen Spielstand zu speichern.

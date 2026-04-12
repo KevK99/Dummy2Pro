@@ -5,6 +5,9 @@
     </div>
 </header>
 
+<!-- Erfolgsnachrichten nach Weiterleitung von der Registrierung werden hier eingeblendet. -->
+<div id="loginSuccessMessage" class="hidden"></div>
+
 <form id="loginForm"> <!-- relevant für die Spring Boot Connection -->
     <div class="pt-12">
         <label class="block font-medium text-white mb-3">
@@ -47,6 +50,9 @@
     >
         Anmelden
     </button>
+
+    <!-- Fehler beim Login werden bewusst im Formularkontext angezeigt. -->
+    <div id="loginErrorMessage" class="hidden mt-4"></div>
 </form>
 
 <div class="text-center text-sm text-gray-500 mt-6">
@@ -58,4 +64,5 @@
 </div>
 
 <script>
+    <!-- Das Script bleibt hier leer, weil die Initialisierung aus index.html nach dem dynamischen Einfügen erfolgt. -->
 </script>
