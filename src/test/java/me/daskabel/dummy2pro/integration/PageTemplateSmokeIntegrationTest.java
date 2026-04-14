@@ -148,6 +148,7 @@ class PageTemplateSmokeIntegrationTest
         ));
 
         MvcResult result = mockMvc.perform(post("/api/login")
+                        .header("Origin", "http://localhost")
                         .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())

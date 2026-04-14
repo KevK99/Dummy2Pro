@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,7 @@ import me.daskabel.dummy2pro.repository.UserRepository;
 public class UserService
 {
     private static final String DEFAULT_AVATAR = "duck.jpg";
+    private static final Pattern USERNAME_PATTERN = Pattern.compile("^[\\p{L}\\p{N}_.-]+$");
 
     private static final Set<String> ALLOWED_AVATARS = Set.of(
             "Alf.png",
@@ -120,9 +122,10 @@ public class UserService
 
     public User authenticate(String username, String password)
     {
-        validateLoginInput(username, password);
+        String normalizedUsername = normalizeUsername(username);
+        validateLoginInput(normalizedUsername, password);
 
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByUsername(normalizedUsername)
                 .orElseThrow(() -> new IllegalArgumentException("Benutzername oder Passwort falsch."));
 
         if (!encoder.matches(password, user.getPasswordHash()))
@@ -169,9 +172,10 @@ public class UserService
 
     public boolean login(String username, String password)
     {
-        validateLoginInput(username, password);
+        String normalizedUsername = normalizeUsername(username);
+        validateLoginInput(normalizedUsername, password);
 
-        return userRepository.findByUsername(username)
+        return userRepository.findByUsername(normalizedUsername)
                 .map(u -> encoder.matches(password, u.getPasswordHash()))
                 .orElse(false);
     }
@@ -182,16 +186,18 @@ public class UserService
     @org.springframework.transaction.annotation.Transactional
     public User register(String username, String password)
     {
-        validateUsername(username);
+        String normalizedUsername = normalizeUsername(username);
+
+        validateUsername(normalizedUsername);
         validatePassword(password);
 
-        if (userRepository.existsByUsername(username))
+        if (userRepository.existsByUsername(normalizedUsername))
         {
             throw new IllegalArgumentException("Username ist bereits vergeben.");
         }
 
         String passwordHash = encoder.encode(password);
-        User user = new User(username, passwordHash, DEFAULT_AVATAR);
+        User user = new User(normalizedUsername, passwordHash, DEFAULT_AVATAR);
 
         User savedUser = userRepository.save(user);
 
@@ -209,17 +215,18 @@ public class UserService
 
     public User updateUsername(Long userId, String newUsername)
     {
-        validateUsername(newUsername);
+        String normalizedUsername = normalizeUsername(newUsername);
+        validateUsername(normalizedUsername);
 
         User user = getUser(userId);
 
-        boolean usernameAlreadyUsed = this.userRepository.existsByUsername(newUsername);
-        if (usernameAlreadyUsed && !newUsername.equals(user.getUsername()))
+        boolean usernameAlreadyUsed = this.userRepository.existsByUsername(normalizedUsername);
+        if (usernameAlreadyUsed && !normalizedUsername.equals(user.getUsername()))
         {
             throw new IllegalArgumentException("Username ist bereits vergeben.");
         }
 
-        user.setUsername(newUsername);
+        user.setUsername(normalizedUsername);
         return this.userRepository.save(user);
     }
 
@@ -336,6 +343,11 @@ public class UserService
         }
     }
 
+    private String normalizeUsername(String username)
+    {
+        return username == null ? null : username.trim();
+    }
+
     private void validateLoginInput(String username, String password)
     {
         if (username == null || username.isBlank())
@@ -377,17 +389,33 @@ public class UserService
     // Regeln für den Usernamen
     private void validateUsername(String username)
     {
-        if (username == null || username.isBlank())
+        if (username == null)
         {
             throw new IllegalArgumentException("Username darf nicht leer sein.");
         }
-        if (username.length() < 3)
+
+        String trimmed = username.trim();
+
+        if (trimmed.isEmpty())
+        {
+            throw new IllegalArgumentException("Username darf nicht leer sein.");
+        }
+
+        if (trimmed.length() < 3)
         {
             throw new IllegalArgumentException("Username muss mindestens 3 Zeichen lang sein.");
         }
-        if (username.length() > 30)
+
+        if (trimmed.length() > 30)
         {
             throw new IllegalArgumentException("Username ist zu lang. Er darf nur 30 Zeichen lang sein.");
+        }
+
+        if (!USERNAME_PATTERN.matcher(trimmed).matches())
+        {
+            throw new IllegalArgumentException(
+                    "Username darf nur Buchstaben, Zahlen, Punkt, Unterstrich und Bindestrich enthalten."
+            );
         }
     }
 }

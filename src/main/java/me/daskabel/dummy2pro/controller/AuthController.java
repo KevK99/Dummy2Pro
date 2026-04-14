@@ -8,6 +8,7 @@ import me.daskabel.dummy2pro.security.LoginAttemptService;
 import me.daskabel.dummy2pro.security.SecuritySessionKeys;
 import me.daskabel.dummy2pro.service.UserService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -49,9 +50,18 @@ public class AuthController
      * @param request Benutzername und Passwort
      * @return Bestätigung der erfolgreichen Registrierung
      */
-    @PostMapping("/register")
-    public RegisterResponse register(@RequestBody RegisterRequest request)
+    @PostMapping(
+            value = "/register",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public RegisterResponse register(
+            @RequestBody RegisterRequest request,
+            HttpServletRequest httpRequest)
     {
+        validateSameOrigin(httpRequest);
+        validateFetchMetadata(httpRequest);
+
         User user = userService.register(request.getUsername(), request.getPassword());
         return new RegisterResponse(user.getUsername(), "Registrierung erfolgreich");
     }
@@ -63,14 +73,23 @@ public class AuthController
      * @param httpRequest aktuelle HTTP-Anfrage
      * @return Benutzerdaten für das Frontend
      */
-    @PostMapping("/login")
+    @PostMapping(
+            value = "/login",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public LoginResponse login(
             @RequestBody LoginRequest request,
             HttpServletRequest httpRequest)
     {
+        validateSameOrigin(httpRequest);
+        validateFetchMetadata(httpRequest);
+
+        HttpSession preAuthSession = httpRequest.getSession(true);
+        String throttleKey = "session:" + preAuthSession.getId();
         String username = request.getUsername();
 
-        if (loginAttemptService.isBlocked(username))
+        if (loginAttemptService.isBlocked(throttleKey))
         {
             throw new UnauthorizedException(GENERIC_LOGIN_ERROR);
         }
@@ -78,7 +97,7 @@ public class AuthController
         try
         {
             User user = userService.authenticate(username, request.getPassword());
-            loginAttemptService.registerSuccess(username);
+            loginAttemptService.registerSuccess(throttleKey);
 
             HttpSession existingSession = httpRequest.getSession(false);
             if (existingSession != null)
@@ -104,8 +123,6 @@ public class AuthController
             context.setAuthentication(authentication);
             SecurityContextHolder.setContext(context);
 
-            // Security-Kontext zusätzlich in der Sitzung ablegen,
-            // damit Spring Security den Benutzer über weitere Requests erkennt.
             session.setAttribute(
                     HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
                     context
@@ -120,9 +137,63 @@ public class AuthController
         }
         catch (IllegalArgumentException ex)
         {
-            loginAttemptService.registerFailure(username);
+            loginAttemptService.registerFailure(throttleKey);
             throw new UnauthorizedException(GENERIC_LOGIN_ERROR);
         }
+    }
+
+    private void validateSameOrigin(HttpServletRequest request)
+    {
+        String expectedOrigin = buildExpectedOrigin(request);
+        String origin = request.getHeader("Origin");
+
+        if (origin != null)
+        {
+            if (!origin.equalsIgnoreCase(expectedOrigin))
+            {
+                throw new AccessDeniedException("Ungültige Herkunft der Anfrage.");
+            }
+            return;
+        }
+
+        String referer = request.getHeader("Referer");
+        if (referer == null || !referer.startsWith(expectedOrigin + "/"))
+        {
+            throw new AccessDeniedException("Ungültige Herkunft der Anfrage.");
+        }
+    }
+
+    private void validateFetchMetadata(HttpServletRequest request)
+    {
+        String fetchSite = request.getHeader("Sec-Fetch-Site");
+
+        if (fetchSite == null || fetchSite.isBlank())
+        {
+            return;
+        }
+
+        if (!"same-origin".equalsIgnoreCase(fetchSite) && !"none".equalsIgnoreCase(fetchSite))
+        {
+            throw new AccessDeniedException("Ungültige Herkunft der Anfrage.");
+        }
+    }
+
+    private String buildExpectedOrigin(HttpServletRequest request)
+    {
+        String scheme = request.getScheme();
+        String serverName = request.getServerName();
+        int serverPort = request.getServerPort();
+
+        boolean standardPort =
+                ("http".equalsIgnoreCase(scheme) && serverPort == 80)
+                        || ("https".equalsIgnoreCase(scheme) && serverPort == 443);
+
+        if (standardPort)
+        {
+            return scheme + "://" + serverName;
+        }
+
+        return scheme + "://" + serverName + ":" + serverPort;
     }
 
     /**
@@ -149,6 +220,13 @@ public class AuthController
     public ErrorResponse handleUnauthorized(UnauthorizedException ex)
     {
         return new ErrorResponse("UNAUTHORIZED", ex.getMessage());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleForbidden(AccessDeniedException ex)
+    {
+        return new ErrorResponse("FORBIDDEN", ex.getMessage());
     }
 
     /**

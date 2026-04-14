@@ -237,3 +237,412 @@ WHERE option_text = 'Zum Beispiel weil der Port bereits belegt ist oder Rechte b
   AND is_correct = 1;
 
 COMMIT;
+
+------------------------
+
+-- Inhaltliche und Tippfehler
+
+START TRANSACTION;
+
+-- Vorher zur Kontrolle anzeigen
+SELECT
+    q.question_id,
+    q.question_type,
+    q.start_text AS old_start_text,
+    ao.option_text AS misplaced_question_in_answer1
+FROM question q
+JOIN answer_option ao
+  ON ao.question_id = q.question_id
+ AND ao.option_order = 1
+WHERE q.question_id IN (13, 24, 27, 31, 35, 38, 41, 45, 46, 49)
+ORDER BY q.question_id;
+
+-- 1) Fragetext aus Antwort 1 an den start_text anhängen
+UPDATE question q
+JOIN answer_option ao
+  ON ao.question_id = q.question_id
+ AND ao.option_order = 1
+SET q.start_text = CONCAT(
+    TRIM(q.start_text),
+    ' ',
+    TRIM(ao.option_text)
+)
+WHERE q.question_id IN (13, 24, 27, 31, 35, 38, 41, 45, 46, 49);
+
+-- 2) Die verrutschte Antwort 1 löschen
+DELETE FROM answer_option
+WHERE question_id IN (13, 24, 27, 31, 35, 38, 41, 45, 46, 49)
+  AND option_order = 1;
+
+-- 3) Restliche Antworten um 1 nach vorne schieben
+UPDATE answer_option
+SET option_order = option_order - 1
+WHERE question_id IN (13, 24, 27, 31, 35, 38, 41, 45, 46, 49)
+  AND option_order > 1;
+
+-- Nachher zur Kontrolle anzeigen
+SELECT
+    q.question_id,
+    q.question_type,
+    q.start_text AS new_start_text,
+    ao.option_order,
+    ao.option_text
+FROM question q
+JOIN answer_option ao
+  ON ao.question_id = q.question_id
+WHERE q.question_id IN (13, 24, 27, 31, 35, 38, 41, 45, 46, 49)
+ORDER BY q.question_id, ao.option_order;
+
+COMMIT;
+
+UPDATE question
+SET start_text = 'Lückentext 11'
+WHERE question_id = 309
+  AND start_text = 'Lückentet 11';
+
+UPDATE gap_field
+SET text_after = REPLACE(text_after, 'unktioniert', 'funktioniert')
+WHERE question_id = 304
+  AND text_after LIKE '%unktioniert%';
+
+
+START TRANSACTION;
+
+-- Vorschau: Was würde geändert?
+SELECT
+    'answer_option' AS table_name,
+    answer_id AS row_id,
+    question_id,
+    option_order,
+    option_text AS old_text,
+    REGEXP_REPLACE(option_text, '^[[:space:]]*[A-Za-zÄÖÜäöüß][\\)\\.:][[:space:]]*', '') AS new_text
+FROM answer_option
+WHERE option_text REGEXP '^[[:space:]]*[A-Za-zÄÖÜäöüß][\\)\\.:][[:space:]]*'
+
+UNION ALL
+
+SELECT
+    'gap_option' AS table_name,
+    gap_option_id AS row_id,
+    gf.question_id,
+    go.option_order,
+    go.option_text AS old_text,
+    REGEXP_REPLACE(go.option_text, '^[[:space:]]*[A-Za-zÄÖÜäöüß][\\)\\.:][[:space:]]*', '') AS new_text
+FROM gap_option go
+JOIN gap_field gf
+  ON gf.gap_id = go.gap_id
+WHERE go.option_text REGEXP '^[[:space:]]*[A-Za-zÄÖÜäöüß][\\)\\.:][[:space:]]*';
+
+-- Wenn die Vorschau gut aussieht: Präfixe in answer_option entfernen
+UPDATE answer_option
+SET option_text = REGEXP_REPLACE(
+    option_text,
+    '^[[:space:]]*[A-Za-zÄÖÜäöüß][\\)\\.:][[:space:]]*',
+    ''
+)
+WHERE option_text REGEXP '^[[:space:]]*[A-Za-zÄÖÜäöüß][\\)\\.:][[:space:]]*';
+
+-- Präfixe in gap_option entfernen
+UPDATE gap_option
+SET option_text = REGEXP_REPLACE(
+    option_text,
+    '^[[:space:]]*[A-Za-zÄÖÜäöüß][\\)\\.:][[:space:]]*',
+    ''
+)
+WHERE option_text REGEXP '^[[:space:]]*[A-Za-zÄÖÜäöüß][\\)\\.:][[:space:]]*';
+
+COMMIT;
+
+START TRANSACTION;
+
+-- =========================
+-- 1) Fehlende / unvollständige Fragestellungen
+-- =========================
+
+UPDATE question
+SET start_text = 'Bei der MaHaG KG stehen Wahlen zur Jugend- und Auszubildendenvertretung an. Katja Sommer (Vertriebsmitarbeiterin, 24 Jahre alt), die bereits im Betriebsrat ist und umfangreiche Erfahrungen dort gesammelt hat, will nun auch für dieses Amt kandidieren. Ist das zulässig?'
+WHERE question_id = 9;
+
+UPDATE question
+SET start_text = 'Für welche Unternehmensform würde sich Claudia Both typischerweise entscheiden, wenn sie ein Unternehmen mit mindestens einer voll haftenden Person und weiteren nur beschränkt haftenden Kapitalgebern gründen möchte?'
+WHERE question_id = 25;
+
+UPDATE question
+SET start_text = 'Der Auszubildende Igor Czerwinski muss im Rahmen seiner Ausbildung immer wieder Tätigkeiten verrichten, die nach dem Berufsbild ausbildungsfremd und im betrieblichen Ausbildungsplan nicht vorgesehen sind. An welche Stelle kann er sich deswegen wenden?'
+WHERE question_id = 28;
+
+UPDATE question
+SET start_text = 'In der MaHaG KG stehen Betriebsratswahlen an. Das Unternehmen hat 134 Beschäftigte (volljährig) und 16 Azubis (12 davon volljährig). Darüber hinaus sind 3 Zeitarbeitnehmer seit 4 Monaten im Betrieb damit beschäftigt, für die IT-Sicherheit zu sorgen. Wie viele Mitglieder hat der Betriebsrat?'
+WHERE question_id = 37;
+
+UPDATE question
+SET start_text = 'Immer wieder fragen Kunden nach einer weiteren Entwicklung vernetzter Haushaltsgeräte. Bundesweit gibt es neben der MaHaG KG nur noch drei weitere Hersteller dieser zukunftsweisenden Technologie. Welche Marktform liegt damit vor?'
+WHERE question_id = 40;
+
+-- =========================
+-- 2) Kaputte Antworten / Optionen
+-- =========================
+
+UPDATE answer_option
+SET option_text = 'Passwörter im Klartext speichern, wenn das System intern ist'
+WHERE answer_id = 1257;
+
+UPDATE answer_option
+SET option_text = 'n:m'
+WHERE answer_id = 1262;
+
+-- Falls durch die Präfix-Bereinigung ebenfalls beschädigt:
+UPDATE gap_option
+SET option_text = 'n:m'
+WHERE gap_option_id = 392
+  AND option_text = 'm';
+
+-- Falls in deiner DB auch dieser Distraktor beschädigt wurde:
+UPDATE answer_option
+SET option_text = 'n:m'
+WHERE answer_id = 1619
+  AND option_text = 'm';
+
+UPDATE answer_option
+SET option_text = 'Keine Transaktionen'
+WHERE answer_id = 1403;
+
+-- Frage 457 komplett neu bereinigen
+UPDATE answer_option
+SET option_text = 'Partielle Abhängigkeiten bei zusammengesetzten Schlüsseln'
+WHERE answer_id = 1420;
+
+UPDATE answer_option
+SET option_text = 'Fehlende Primärschlüssel'
+WHERE answer_id = 1421;
+
+UPDATE answer_option
+SET option_text = 'Transitive Abhängigkeiten'
+WHERE answer_id = 1422;
+
+UPDATE answer_option
+SET option_text = 'Mehrere Tabellen in einem Schema'
+WHERE answer_id = 1423;
+
+-- Durch Regex-Bereinigung beschädigte falsche GAP-Optionen
+UPDATE gap_option
+SET option_text = 'RIGHT'
+WHERE gap_option_id = 203;
+
+UPDATE gap_option
+SET option_text = 'LEFT'
+WHERE gap_option_id = 214;
+
+-- =========================
+-- 3) Reine Schreibfehler
+-- =========================
+
+UPDATE question
+SET start_text = REPLACE(start_text, 'in der absteigende Reihenfolge', 'in der absteigenden Reihenfolge')
+WHERE question_id = 203;
+
+UPDATE answer_option
+SET option_text = 'Boyce-Codd Normalform'
+WHERE answer_id = 701;
+
+UPDATE answer_option
+SET option_text = 'Sie erlaubt transitive Abhängigkeiten.'
+WHERE answer_id = 744;
+
+UPDATE answer_option
+SET option_text = 'Dauerhaftigkeit: Nach einem ROLLBACK sind die Daten dauerhaft verloren.'
+WHERE answer_id = 827;
+
+COMMIT;
+
+
+START TRANSACTION;
+
+-- =========================
+-- 1) Inhaltliche / sprachliche Korrekturen
+-- =========================
+
+-- Frage 236 / Antwort 759
+UPDATE answer_option
+SET option_text = 'n:m-Beziehungen erfordern eine zusätzliche Tabelle'
+WHERE answer_id = 759;
+
+-- 3 / Fragetext
+UPDATE question
+SET start_text = REPLACE(start_text, 'Auszubildenen', 'Auszubildenden')
+WHERE question_id = 3;
+
+-- 5 / Antwort 23
+UPDATE answer_option
+SET option_text = 'Sie beherrschen die englische Sprache in Wort und Schrift.'
+WHERE answer_id = 23;
+
+-- 5 / Antwort 26
+UPDATE answer_option
+SET option_text = 'Sie sind mobil und auch bereit, unsere Kunden deutschlandweit zu besuchen.'
+WHERE answer_id = 26;
+
+-- 134 / Antwort 518
+UPDATE answer_option
+SET option_text = 'Vereinheitlichung aller kulturellen Bräuche weltweit innerhalb eines Jahres.'
+WHERE answer_id = 518;
+
+-- 9 / Antwort 42
+UPDATE answer_option
+SET option_text = 'Frau Sommer kann kandidieren, weil für die JAV nur das Alter, nicht aber die Mitgliedschaft im Betriebsrat relevant ist.'
+WHERE answer_id = 42;
+
+-- =========================
+-- 2) Frage 26 – saubere Businessplan-Antworten
+-- =========================
+
+UPDATE answer_option
+SET option_text = 'Ein Businessplan ist lediglich ein formloser Lebenslauf des Gründers.'
+WHERE answer_id = 125;
+
+UPDATE answer_option
+SET option_text = 'Er wird vom Amt für Wirtschaftsförderung ausgestellt.'
+WHERE answer_id = 126;
+
+UPDATE answer_option
+SET option_text = 'Er dient ausschließlich der Sicherheit bei einer Kreditaufnahme.'
+WHERE answer_id = 127;
+
+UPDATE answer_option
+SET option_text = 'Er muss nur bei der Gründung von Kapitalgesellschaften erstellt werden.'
+WHERE answer_id = 128;
+
+UPDATE answer_option
+SET option_text = 'Er legt die strategischen Ziele eines Unternehmens fest.'
+WHERE answer_id = 129;
+
+UPDATE answer_option
+SET option_text = 'Er wird beim Amtsgericht (Handelsregister) hinterlegt.'
+WHERE answer_id = 130;
+
+-- =========================
+-- 3) Frage 242 – grammatisch glätten
+-- =========================
+
+-- Statt "Die Kardinalitäten beschreibt ..."
+UPDATE gap_field
+SET text_before = 'Eine'
+WHERE gap_id = 56;
+
+UPDATE gap_option
+SET option_text = 'Kardinalität'
+WHERE gap_option_id = 129;
+
+-- =========================
+-- 4) True / False vollständig auf Deutsch umstellen
+-- =========================
+
+UPDATE answer_option
+SET option_text = CASE
+    WHEN option_text = 'True' THEN 'Wahr'
+    WHEN option_text = 'False' THEN 'Falsch'
+    ELSE option_text
+END
+WHERE answer_id BETWEEN 718 AND 743
+  AND option_text IN ('True', 'False');
+
+COMMIT;
+
+
+START TRANSACTION;
+
+UPDATE question
+SET start_text = REPLACE(REPLACE(REPLACE(REPLACE(start_text, ' ?', '?'), ' ,', ','), ' .', '.'), ' !', '!')
+WHERE question_id BETWEEN 1 AND 69
+  AND start_text IS NOT NULL;
+
+UPDATE answer_option
+SET option_text = REPLACE(REPLACE(REPLACE(REPLACE(option_text, ' ?', '?'), ' ,', ','), ' .', '.'), ' !', '!')
+WHERE answer_id BETWEEN 1 AND 326
+  AND option_text IS NOT NULL;
+
+COMMIT;
+
+-------------
+
+UPDATE answer_option
+SET option_text = 'Die Handelsvertreterin Claudia Roth, die seit 15 Jahren eng mit der MaHaG KG zusammenarbeitet.'
+WHERE answer_id = 10;
+
+UPDATE answer_option
+SET option_text = CASE
+    WHEN option_text = 'True' THEN 'Wahr'
+    WHEN option_text = 'False' THEN 'Falsch'
+    ELSE option_text
+END
+WHERE option_text IN ('True', 'False');
+
+----
+
+UPDATE question
+SET allows_multiple = 1
+WHERE question_id = 32;
+
+UPDATE question
+SET allows_multiple = 0
+WHERE id = 131;
+
+START TRANSACTION;
+
+UPDATE gap_field
+SET text_after = 'vertrag schuldet der Auftragnehmer keinen Erfolg, sondern nur eine Tätigkeit.'
+WHERE gap_id = 144;
+
+UPDATE gap_field
+SET text_after = 'recht schützt Softwareentwickler vor unerlaubter Nutzung ihres Codes.'
+WHERE gap_id = 145;
+
+UPDATE gap_field
+SET text_before = 'Personenbezogene Daten dürfen nur verarbeitet werden, wenn eine'
+WHERE gap_id = 146;
+
+UPDATE gap_option
+SET option_text = 'Datenschutzerklärung'
+WHERE gap_id = 462;
+
+UPDATE gap_option
+SET option_text = 'behördliche Genehmigung'
+WHERE gap_id = 463;
+
+UPDATE gap_option
+SET option_text = 'Nacherfüllung'
+WHERE gap_id = 464;
+
+UPDATE gap_option
+SET option_text = 'sofortige Rückerstattung'
+WHERE gap_id = 465;
+
+UPDATE gap_field
+SET text_before = 'Die DSGVO gilt für alle Unternehmen, die Daten von'
+WHERE gap_id = 148;
+
+UPDATE gap_option
+SET option_text = 'natürlichen Personen'
+WHERE gap_id = 467;
+
+UPDATE gap_option
+SET option_text = 'ausschließlich EU-Bürgern'
+WHERE gap_id = 469;
+
+UPDATE gap_field
+SET text_before = 'Fixe Kosten bleiben unabhängig von der'
+WHERE gap_id = 153;
+
+UPDATE gap_option
+SET option_text = 'Qualität'
+WHERE gap_id = 480;
+
+UPDATE gap_field
+SET text_after = 'für zukünftige Ausgaben.'
+WHERE gap_id = 154;
+
+COMMIT;
+
+UPDATE question
+SET start_text = 'Was bedeutet 3. Normalform?'
+WHERE question_id = 483;

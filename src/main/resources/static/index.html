@@ -39,12 +39,20 @@
             console.error(error);
         });
 
+    function escapeHtml(value) {
+        const div = document.createElement("div");
+        div.textContent = value ?? "";
+        return div.innerHTML;
+    }
+
     // Einheitliche Box-Meldungen für Fehler- und Erfolgsfälle auf der Login-Seite.
     function setBoxMessage(targetId, message, type = "error") {
         const element = document.getElementById(targetId);
         if (!element) {
             return;
         }
+
+        const safeMessage = escapeHtml(message);
 
         const config = type === "success"
             ? {
@@ -66,7 +74,7 @@
                 <span class="shrink-0 rounded-full px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.24em] ${config.badge}">
                     ${config.label}
                 </span>
-                <p class="min-w-0 flex-1 text-sm font-medium leading-6">${message}</p>
+                <p class="min-w-0 flex-1 text-sm font-medium leading-6">${safeMessage}</p>
             </div>
         `;
     }

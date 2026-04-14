@@ -2,6 +2,7 @@ package me.daskabel.dummy2pro.session;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
@@ -226,5 +227,83 @@ class QuizSessionManagerCoverageTest
                 return earnedPoints;
             }
         };
+    }
+
+    @Test
+    void getRoomState_skipsAlreadyAnsweredCurrentQuestion_inPreparedRoom()
+    {
+        QuizSession session = new QuizSession(7L, 70L);
+
+        QuestionDto question1 = new QuestionDto();
+        question1.setQuestionId(101L);
+        question1.setQuestionType(QuestionType.MC);
+
+        QuestionDto question2 = new QuestionDto();
+        question2.setQuestionId(102L);
+        question2.setQuestionType(QuestionType.MC);
+
+        Map<Long, QuestionDto> cache = new HashMap<>();
+        cache.put(101L, question1);
+        cache.put(102L, question2);
+
+        QuizSession.RoomSession room = new QuizSession.RoomSession(
+                1,
+                "Recht",
+                List.of(101L, 102L),
+                cache,
+                8
+        );
+
+        // Simuliert genau den Bugfall:
+        // erste Frage beantwortet, aber Raum-Cursor noch nicht manuell weitergesetzt.
+        room.recordResult(101L, true, 5);
+
+        session.addRoom(room);
+        cacheSession(session);
+
+        RoomStartDto roomState = manager.getRoomState(session.getSessionId(), 1);
+
+        assertNotNull(roomState.getFirstQuestion());
+        assertEquals(102L, roomState.getFirstQuestion().getQuestionId());
+    }
+
+    @Test
+    void switchRoom_skipsAlreadyAnsweredCurrentQuestion_inPreparedTargetRoom()
+    {
+        QuizSession session = new QuizSession(7L, 70L);
+
+        session.addRoom(preparedRoom(1, 201L));
+
+        QuestionDto question1 = new QuestionDto();
+        question1.setQuestionId(301L);
+        question1.setQuestionType(QuestionType.MC);
+
+        QuestionDto question2 = new QuestionDto();
+        question2.setQuestionId(302L);
+        question2.setQuestionType(QuestionType.MC);
+
+        Map<Long, QuestionDto> cache = new HashMap<>();
+        cache.put(301L, question1);
+        cache.put(302L, question2);
+
+        QuizSession.RoomSession targetRoom = new QuizSession.RoomSession(
+                2,
+                "SQL",
+                List.of(301L, 302L),
+                cache,
+                10
+        );
+
+        // Erste Frage ist schon beantwortet, aber noch kein advance().
+        targetRoom.recordResult(301L, true, 5);
+
+        session.addRoom(targetRoom);
+        cacheSession(session);
+
+        RoomStartDto switchedRoom = manager.switchRoom(session.getSessionId(), 2);
+
+        assertEquals(2, session.getActiveRoomId());
+        assertNotNull(switchedRoom.getFirstQuestion());
+        assertEquals(302L, switchedRoom.getFirstQuestion().getQuestionId());
     }
 }

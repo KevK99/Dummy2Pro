@@ -102,13 +102,14 @@ class Dummy2ProSmokeTest
                 .andExpect(status().isUnauthorized());
 
         mockMvc.perform(post("/api/login")
+                        .header("Origin", "http://localhost")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                            {
-                              "username": "niemand",
-                              "password": "falsch"
-                            }
-                            """))
+                    {
+                      "username": "niemand",
+                      "password": "falsch"
+                    }
+                    """))
                 .andExpect(status().isUnauthorized());
     }
 }

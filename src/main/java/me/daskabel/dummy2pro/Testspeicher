@@ -106,3 +106,84 @@ $env:DBCHECK_PASSWORD='***'
 # beide *** müssen ersetzt werden dann
 .\mvnw.cmd "-Dtest=QuestionLiveSnapshotTest" test
 
+---------------
+
+-- Inhalt DB-Check:
+
+SELECT line
+FROM (
+         SELECT
+             q.question_id AS sort_question_id,
+             0 AS sort_block,
+             0 AS sort_sub,
+             CONCAT(
+                     'QUESTION|id=', q.question_id,
+                     '|set=', q.question_set_id,
+                     '|type=', q.question_type,
+                     '|allowsMultiple=', IF(q.allows_multiple = 1, 'true', 'false'),
+                     '|points=', q.points,
+                     '|themes=[',
+                     IFNULL(GROUP_CONCAT(qt.theme_id ORDER BY qt.theme_id SEPARATOR ','), ''),
+                     ']',
+                     '|start=', IF(q.start_text IS NULL, '<null>', JSON_QUOTE(q.start_text)),
+                     '|end=', IF(q.end_text IS NULL, '<null>', JSON_QUOTE(q.end_text)),
+                     '|image=', IF(q.image_url IS NULL, '<null>', JSON_QUOTE(q.image_url))
+             ) AS line
+         FROM question q
+                  LEFT JOIN question_theme qt
+                            ON qt.question_id = q.question_id
+         GROUP BY
+             q.question_id,
+             q.question_set_id,
+             q.question_type,
+             q.allows_multiple,
+             q.points,
+             q.start_text,
+             q.end_text,
+             q.image_url
+
+         UNION ALL
+
+         SELECT
+             ao.question_id AS sort_question_id,
+             1 AS sort_block,
+             ao.option_order AS sort_sub,
+             CONCAT(
+                     'ANSWER|id=', ao.answer_id,
+                     '|order=', ao.option_order,
+                     '|correct=', IF(ao.is_correct = 1, 'true', 'false'),
+                     '|text=', IF(ao.option_text IS NULL, '<null>', JSON_QUOTE(ao.option_text))
+             ) AS line
+         FROM answer_option ao
+
+         UNION ALL
+
+         SELECT
+             gf.question_id AS sort_question_id,
+             2 AS sort_block,
+             gf.gap_index * 1000 AS sort_sub,
+             CONCAT(
+                     'GAP|id=', gf.gap_id,
+                     '|index=', gf.gap_index,
+                     '|before=', IF(gf.text_before IS NULL, '<null>', JSON_QUOTE(gf.text_before)),
+                     '|after=', IF(gf.text_after IS NULL, '<null>', JSON_QUOTE(gf.text_after))
+             ) AS line
+         FROM gap_field gf
+
+         UNION ALL
+
+         SELECT
+             gf.question_id AS sort_question_id,
+             3 AS sort_block,
+             gf.gap_index * 1000 + go.option_order AS sort_sub,
+             CONCAT(
+                     'GAP_OPTION|id=', go.gap_option_id,
+                     '|order=', go.option_order,
+                     '|correct=', IF(go.is_correct = 1, 'true', 'false'),
+                     '|text=', IF(go.option_text IS NULL, '<null>', JSON_QUOTE(go.option_text))
+             ) AS line
+         FROM gap_option go
+                  JOIN gap_field gf
+                       ON gf.gap_id = go.gap_id
+     ) x
+ORDER BY sort_question_id, sort_block, sort_sub;

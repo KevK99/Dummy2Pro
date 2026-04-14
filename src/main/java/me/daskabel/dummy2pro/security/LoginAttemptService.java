@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Verwaltet Fehlversuche bei Anmeldungen und zeitlich begrenzte Sperren.
  *
- * Die Sperrung erfolgt benutzerbezogen im Arbeitsspeicher und soll
+ * Die Sperrung erfolgt schlüsselbezogen im Arbeitsspeicher und soll
  * wiederholte Fehlversuche in kurzer Zeit begrenzen.
  */
 @Service
@@ -26,7 +26,7 @@ public class LoginAttemptService
     private static final Logger log = LoggerFactory.getLogger(LoginAttemptService.class);
 
     private final Clock clock;
-    private final Map<String, AttemptState> attemptsByUsername = new ConcurrentHashMap<>();
+    private final Map<String, AttemptState> attemptsByKey = new ConcurrentHashMap<>();
 
     public LoginAttemptService(Clock clock)
     {
@@ -34,17 +34,17 @@ public class LoginAttemptService
     }
 
     /**
-     * Prüft, ob ein Benutzername aktuell gesperrt ist.
+     * Prüft, ob ein Schlüssel aktuell gesperrt ist.
      */
-    public boolean isBlocked(String username)
+    public boolean isBlocked(String key)
     {
-        String key = normalizeKey(username);
-        if (key == null)
+        String normalizedKey = normalizeKey(key);
+        if (normalizedKey == null)
         {
             return false;
         }
 
-        AttemptState state = attemptsByUsername.get(key);
+        AttemptState state = attemptsByKey.get(normalizedKey);
         if (state == null)
         {
             return false;
@@ -58,7 +58,7 @@ public class LoginAttemptService
 
         if (state.isExpired(now))
         {
-            attemptsByUsername.remove(key);
+            attemptsByKey.remove(normalizedKey);
         }
 
         return false;
@@ -67,23 +67,23 @@ public class LoginAttemptService
     /**
      * Erfasst einen fehlgeschlagenen Anmeldeversuch.
      *
-     * Wird die maximale Anzahl erreicht, wird der Benutzername
+     * Wird die maximale Anzahl erreicht, wird der Schlüssel
      * für eine begrenzte Zeit gesperrt.
      */
-    public void registerFailure(String username)
+    public void registerFailure(String key)
     {
-        String key = normalizeKey(username);
-        if (key == null)
+        String normalizedKey = normalizeKey(key);
+        if (normalizedKey == null)
         {
             return;
         }
 
         Instant now = clock.instant();
-        AttemptState state = attemptsByUsername.get(key);
+        AttemptState state = attemptsByKey.get(normalizedKey);
 
         if (state == null || state.isExpired(now))
         {
-            attemptsByUsername.put(key, new AttemptState(1, now, null));
+            attemptsByKey.put(normalizedKey, new AttemptState(1, now, null));
             return;
         }
 
@@ -95,13 +95,15 @@ public class LoginAttemptService
         int updatedFailedAttempts = state.failedAttempts + 1;
         Instant lockedUntil = updatedFailedAttempts >= MAX_FAILED_ATTEMPTS ? now.plus(LOCK_DURATION) : null;
 
-        attemptsByUsername.put(key, new AttemptState(updatedFailedAttempts, state.firstFailedAt, lockedUntil));
+        attemptsByKey.put(
+                normalizedKey,
+                new AttemptState(updatedFailedAttempts, state.firstFailedAt, lockedUntil)
+        );
 
         if (lockedUntil != null)
         {
             log.warn(
-                    "Login für Benutzer '{}' bis {} gesperrt nach {} Fehlversuchen.",
-                    key,
+                    "Login vorübergehend gesperrt bis {} nach {} Fehlversuchen.",
                     lockedUntil,
                     updatedFailedAttempts
             );
@@ -111,28 +113,28 @@ public class LoginAttemptService
     /**
      * Entfernt gespeicherte Fehlversuche nach einer erfolgreichen Anmeldung.
      */
-    public void registerSuccess(String username)
+    public void registerSuccess(String key)
     {
-        String key = normalizeKey(username);
-        if (key == null)
+        String normalizedKey = normalizeKey(key);
+        if (normalizedKey == null)
         {
             return;
         }
 
-        attemptsByUsername.remove(key);
+        attemptsByKey.remove(normalizedKey);
     }
 
     /**
-     * Vereinheitlicht den Benutzernamen für die interne Speicherung.
+     * Vereinheitlicht den Schlüssel für die interne Speicherung.
      */
-    private String normalizeKey(String username)
+    private String normalizeKey(String key)
     {
-        if (username == null)
+        if (key == null)
         {
             return null;
         }
 
-        String normalized = username.trim();
+        String normalized = key.trim();
         return normalized.isEmpty() ? null : normalized;
     }
 

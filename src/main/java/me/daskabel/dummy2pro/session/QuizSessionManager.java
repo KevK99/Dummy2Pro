@@ -553,11 +553,43 @@ public class QuizSessionManager
         return overview;
     }
 
+    /**
+     * Schiebt den Raum-Cursor beim erneuten Betreten auf die erste noch offene Frage.
+     *
+     * Das verhindert, dass eine bereits beantwortete aktuelle Frage erneut als
+     * firstQuestion ausgeliefert wird, wenn der Benutzer den Raum verlassen hat,
+     * bevor er auf "Nächste Frage" geklickt hat.
+     */
+    private void syncRoomCursorToFirstOpenQuestion(RoomSession room)
+    {
+        while (!room.isCompleted())
+        {
+            QuestionDto currentQuestion = room.currentQuestion();
+
+            if (currentQuestion == null)
+            {
+                return;
+            }
+
+            if (!room.isAnswered(currentQuestion.getQuestionId()))
+            {
+                return;
+            }
+
+            boolean hasNext = room.advance();
+            if (!hasNext)
+            {
+                return;
+            }
+        }
+    }
+
     @Transactional
     public RoomStartDto getRoomState(String sessionId, int roomId)
     {
         QuizSession session = getSession(sessionId);
         RoomSession room = ensureRoomPrepared(session, roomId);
+        syncRoomCursorToFirstOpenQuestion(room);
 
         RoomStartDto dto = new RoomStartDto();
         dto.setStatus(buildRoomStatus(room));
@@ -581,8 +613,9 @@ public class QuizSessionManager
         QuizSession session = getSession(sessionId);
         RoomSession room = ensureRoomPrepared(session, roomId);
         session.setActiveRoomId(roomId);
+        syncRoomCursorToFirstOpenQuestion(room);
 
-        QuestionDto currentQuestion = room.currentQuestion();
+        QuestionDto currentQuestion = room.isCompleted() ? null : room.currentQuestion();
 
         RoomStartDto dto = new RoomStartDto();
         dto.setStatus(buildRoomStatus(room));

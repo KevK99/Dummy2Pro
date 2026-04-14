@@ -67,6 +67,7 @@ class AuthControllerIntegrationTest
         ));
 
         mockMvc.perform(post("/api/register")
+                        .header("Origin", "http://localhost")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
@@ -91,6 +92,7 @@ class AuthControllerIntegrationTest
         ));
 
         mockMvc.perform(post("/api/register")
+                        .header("Origin", "http://localhost")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isBadRequest())
@@ -112,6 +114,7 @@ class AuthControllerIntegrationTest
         ));
 
         mockMvc.perform(post("/api/login")
+                        .header("Origin", "http://localhost")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
@@ -136,6 +139,7 @@ class AuthControllerIntegrationTest
         ));
 
         mockMvc.perform(post("/api/login")
+                        .header("Origin", "http://localhost")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isUnauthorized())
@@ -143,13 +147,15 @@ class AuthControllerIntegrationTest
     }
 
     @Test
-    void login_tooManyFailedAttempts_blocksFurtherAttemptsTemporarily() throws Exception
+    void login_tooManyFailedAttempts_blockOnlyCurrentSession() throws Exception
     {
         String username = "limit" + System.nanoTime();
         String password = "SehrSicheresPass1!";
 
         User user = new User(username, encoder.encode(password), "duck.jpg");
         userRepository.save(user);
+
+        MockHttpSession blockedSession = new MockHttpSession();
 
         String wrongPasswordJson = objectMapper.writeValueAsString(Map.of(
                 "username", username,
@@ -159,6 +165,8 @@ class AuthControllerIntegrationTest
         for (int attempt = 0; attempt < 5; attempt++)
         {
             mockMvc.perform(post("/api/login")
+                            .session(blockedSession)
+                            .header("Origin", "http://localhost")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(wrongPasswordJson))
                     .andExpect(status().isUnauthorized())
@@ -172,11 +180,70 @@ class AuthControllerIntegrationTest
         ));
 
         mockMvc.perform(post("/api/login")
+                        .session(blockedSession)
+                        .header("Origin", "http://localhost")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(correctPasswordJson))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.error").value("UNAUTHORIZED"))
                 .andExpect(jsonPath("$.message").value("Benutzername oder Passwort falsch."));
+
+        mockMvc.perform(post("/api/login")
+                        .session(new MockHttpSession())
+                        .header("Origin", "http://localhost")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(correctPasswordJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value(username));
+    }
+
+    @Test
+    void register_scriptUsername_returnsBadRequest() throws Exception
+    {
+        String json = objectMapper.writeValueAsString(Map.of(
+                "username", "<script>alert(1)</script>",
+                "password", "SehrSicheresPass1!"
+        ));
+
+        mockMvc.perform(post("/api/register")
+                        .header("Origin", "http://localhost")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("BAD_REQUEST"));
+    }
+
+    @Test
+    void login_wrongOrigin_returnsForbidden() throws Exception
+    {
+        String json = objectMapper.writeValueAsString(Map.of(
+                "username", "jan",
+                "password", "SehrSicheresPass1!"
+        ));
+
+        mockMvc.perform(post("/api/login")
+                        .header("Origin", "https://evil.example")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.error").value("FORBIDDEN"));
+    }
+
+    @Test
+    void login_crossSiteFetchMetadata_returnsForbidden() throws Exception
+    {
+        String json = objectMapper.writeValueAsString(Map.of(
+                "username", "jan",
+                "password", "SehrSicheresPass1!"
+        ));
+
+        mockMvc.perform(post("/api/login")
+                        .header("Origin", "http://localhost")
+                        .header("Sec-Fetch-Site", "cross-site")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.error").value("FORBIDDEN"));
     }
 
     @Test
@@ -231,6 +298,7 @@ class AuthControllerIntegrationTest
         ));
 
         var requestBuilder = post("/api/login")
+                .header("Origin", "http://localhost")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
 
